@@ -23,10 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Resource Include="Images/*.png" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="Flow.Launcher.Plugin" Version="4.3.0" />
       <PackageReference Include="FluentIcons.WPF" Version="1.1.249" />
       <PackageReference Include="Material.Icons" Version="2.1.10" />
