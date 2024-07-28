@@ -9,13 +9,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClipboardPlus", "src\Clipbo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClipboardPlus.Panels", "src\ClipboardPlus.Panels\ClipboardPlus.Panels.csproj", "{DB894ED7-0905-4CAF-A529-CCF27B3C9410}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipboardPlus.Core.Test", "src\ClipboardPlus.Core.Test\ClipboardPlus.Core.Test.csproj", "{1D2F05B7-1520-4D05-9B2A-0628B29C13AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClipboardPlus.Core.Test", "src\ClipboardPlus.Core.Test\ClipboardPlus.Core.Test.csproj", "{1D2F05B7-1520-4D05-9B2A-0628B29C13AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Build", "build\Build.csproj", "{8AE1016A-11A6-4A6C-B5F4-97149923841C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Build", "build\Build.csproj", "{8AE1016A-11A6-4A6C-B5F4-97149923841C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipboardPlus.Panels.Test", "src\ClipboardPlus.Panels.Test\ClipboardPlus.Panels.Test.csproj", "{B5DC21C9-618A-48D1-969F-E8D5BF7FBFD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClipboardPlus.Panels.Test", "src\ClipboardPlus.Panels.Test\ClipboardPlus.Panels.Test.csproj", "{B5DC21C9-618A-48D1-969F-E8D5BF7FBFD6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{3C9C90EC-A670-441E-81C6-B857DEF8374E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D51778AD-3C76-4C6F-AFA0-7D8BE32D9264}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		build.ps1 = build.ps1
+		build.sh = build.sh
+		cake.config = cake.config
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
