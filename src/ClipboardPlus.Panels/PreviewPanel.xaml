@@ -46,6 +46,7 @@
             HorizontalAlignment="Center"
             HorizontalContentAlignment="Left"
             MinWidth="320"
+            MaxHeight="400"
             Panel.ZIndex="1"
             Text=""
             TextAlignment="Left"
