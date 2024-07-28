@@ -63,7 +63,7 @@
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Status Bar -->
+            <!-- Word Count Text -->
             <TextBlock
                 x:Name="TextBlockWordCount"
                 Grid.Column="0"

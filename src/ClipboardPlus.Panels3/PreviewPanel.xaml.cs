@@ -141,7 +141,7 @@ public sealed partial class PreviewPanel : UserControl
 
     #endregion
 
-    #region Status Bar
+    #region Text Viewer
 
     private void TxtBoxPre_GotFocus(object sender, RoutedEventArgs e)
     {
