@@ -4,7 +4,7 @@ The Clipboard plugin for [Flow.Launcher](https://github.com/Flow-Launcher/Flow.L
 
 Give me a star :star: if you like this project~
 
-![images/preview.gif](https://raw.githubusercontent.com/rainyl/Flow.Launcher.Plugin.ClipboardR/master/Images/preview.gif)
+![images/preview.gif](https://raw.githubusercontent.com/rainyl/Flow.Launcher.Plugin.ClipboardPlus/master/Images/preview.gif)
 
 ## About
 
@@ -28,19 +28,19 @@ Ported to Flow.Launcher: [Flow.Launcher.Plugin.ClipboardHistory](https://github.
 
 ### Using release
 
-1. Downlaod zip file from [Release](https://github.com/rainyl/Flow.Launcher.Plugin.ClipboardR/releases)
+1. Downlaod zip file from [Release](https://github.com/rainyl/Flow.Launcher.Plugin.ClipboardPlus/releases)
 2. Place the contents of the Release zip in your %appdata%/FlowLauncher/Plugins folder and **restart**  FlowLauncher.
 
 ### Using plugin store
 
 Now you can install it using plugin store!
 
-1. Install: `pm install ClipboardR`
-2. Update: `pm update ClipboardR`
+1. Install: `pm install ClipboardPlus`
+2. Update: `pm update ClipboardPlus`
 
 ## Usage
 
-The default keyword is `clipboardr`, you can change it in the FlowLauncher settings.
+The default keyword is `ClipboardPlus`, you can change it in the FlowLauncher settings.
 
 Click `Copy` or directly the `search result` to copy the current data to clipboard, click `Delete` to delete the record.
 

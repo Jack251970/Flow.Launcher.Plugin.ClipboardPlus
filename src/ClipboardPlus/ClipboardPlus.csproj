@@ -1,0 +1,60 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>ClipboardPlus</PackageId>
+    <Authors>Rainyl</Authors>
+    <PackageProjectUrl>https://github.com/rainyl/Flow.Launcher.Plugin.ClipboardPlus</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/rainyl/Flow.Launcher.Plugin.ClipboardPlus</RepositoryUrl>
+    <PackageTags>flow-launcher flow-plugin</PackageTags>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	<UseWindowsForms>true</UseWindowsForms>
+	<LangVersion>11</LangVersion>
+	<Nullable>enable</Nullable>
+	<TargetFramework>net7.0-windows</TargetFramework>
+	<Version>0.1.3</Version>
+    <ReleaseOutputPath>./bin/Release</ReleaseOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\Flow.Launcher.Plugin.ClipboardPlus.xml</DocumentationFile>
+    <DebugType>none</DebugType>
+    <DebugSymbols>False</DebugSymbols>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>$(ReleaseOutputPath)</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="plugin.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images/*.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Flow.Launcher.Plugin" Version="4.1.1" />
+    <PackageReference Include="H.InputSimulator" Version="1.4.0">
+    </PackageReference>
+    <PackageReference Include="Material.Icons" Version="2.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ClipboardPlus.Core\ClipboardPlus.Core.csproj" />
+    <ProjectReference Include="..\ClipboardPlus.Panels\ClipboardPlus.Panels.csproj" />
+  </ItemGroup>
+
+<!--  <Target Name="CreateReleaseZip" AfterTargets="Publish">-->
+<!--    <PropertyGroup>-->
+<!--      <ZipOutputPath>$(ReleaseOutputPath)/../ZipFiles</ZipOutputPath>-->
+<!--      <PublishDir>$(ReleaseOutputPath)/net7.0-windows/publish/</PublishDir>-->
+<!--    </PropertyGroup>-->
+<!--    <MakeDir Directories="$(ZipOutputPath)" />-->
+<!--    <ZipDirectory DestinationFile="$(ZipOutputPath)\$(PackageId)-v$(Version).zip" SourceDirectory="$(PublishDir)" Overwrite="true" />-->
+<!--  </Target>-->
+
+</Project>

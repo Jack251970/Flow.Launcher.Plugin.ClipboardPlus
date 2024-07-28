@@ -1,0 +1,128 @@
+﻿<UserControl x:Class="ClipboardPlus.Panels.PreviewPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ClipboardPlus.Panels"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Path
+            x:Key="PathPin"
+            Grid.Column="0"
+            Stretch="Uniform"
+            Fill="{Binding IconColor}"
+            Data="{Binding PathPin}" />
+        <Path
+            x:Key="PathPinOff"
+            Stretch="Uniform"
+            Fill="{Binding IconColor}"
+            Data="{Binding PathPinOff}" />
+        <Path
+            x:Key="PathCopy"
+            Stretch="Uniform"
+            Fill="{Binding IconColor}"
+            Data="{Binding PathCopy}" />
+        <Path
+            x:Key="PathDelete"
+            Stretch="Uniform"
+            Fill="{Binding IconColor}"
+            Data="{Binding PathDelete}" />
+        <Path
+            x:Key="PathSave"
+            Stretch="Uniform"
+            Fill="{Binding IconColor}"
+            Data="{Binding PathSave}" />
+    </UserControl.Resources>
+    <Grid
+        Width="Auto"
+        Height="Auto"
+        HorizontalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="90*" />
+            <RowDefinition Height="20*" />
+        </Grid.RowDefinitions>
+        <Image
+            Grid.Row="0"
+            Grid.Column="0"
+            Panel.ZIndex="0"
+            x:Name="PreImage" Margin="3,3,3,3"
+            HorizontalAlignment="Center" VerticalAlignment="Center"
+            Visibility="Hidden"
+            MaxWidth="320" MaxHeight="400">
+            <Image.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Save" Click="ImSaveAs_Click">
+                        <MenuItem.Icon>
+                            <DynamicResource ResourceKey="PathSave" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </Image.ContextMenu>
+        </Image>
+        <TextBox
+            Grid.Row="0"
+            Grid.Column="0"
+            x:Name="TxtBoxPre"
+            IsUndoEnabled="True"
+            HorizontalAlignment="Center"
+            HorizontalContentAlignment="Left"
+            MinWidth="320"
+            Panel.ZIndex="1"
+            Text=""
+            TextAlignment="Left"
+            FontSize="14"
+            IsReadOnly="False"
+            Margin="5,5,5,5"
+            Padding="5,5,5,5"
+            Focusable="True"
+            VerticalScrollBarVisibility="Auto"
+            HorizontalScrollBarVisibility="Auto"
+            GotFocus="TxtBoxPre_GotFocus"
+            TextChanged="TxtBoxPre_TextChanged"
+            UseLayoutRounding="False" />
+        <DockPanel
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="10 5 5 5"
+            HorizontalAlignment="Stretch">
+            <TextBlock
+                x:Name="TextBlockWordCount"
+                DockPanel.Dock="Left"
+                Margin="10 5 10 5"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+            </TextBlock>
+            <StackPanel
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right">
+                <Button
+                    x:Name="BtnCopy" ToolTip="Copy to clipboard"
+                    Width="33" Height="33"
+                    HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                    Padding="3"
+                    Margin="5" Click="BtnCopy_Click">
+                    <DynamicResource ResourceKey="PathCopy" />
+                </Button>
+                <Button
+                    x:Name="BtnPin" ToolTip="Pin on top"
+                    Width="33" Height="33"
+                    HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                    Padding="3"
+                    Margin="5,5,5,5" Click="BtnPin_Click">
+                    <DynamicResource ResourceKey="PathPin" />
+                </Button>
+                <Button
+                    x:Name="BtnDelete" ToolTip="Delete this record"
+                    Width="33" Height="33"
+                    HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                    Padding="3"
+                    Margin="5,5,5,5" Click="BtnDelete_Click">
+                    <DynamicResource ResourceKey="PathDelete" />
+                </Button>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</UserControl>

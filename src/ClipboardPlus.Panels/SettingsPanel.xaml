@@ -1,0 +1,287 @@
+<UserControl x:Class="ClipboardPlus.Panels.SettingsPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ClipboardPlus.Panels"
+             mc:Ignorable="d"
+             d:DesignHeight="200" d:DesignWidth="600"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+
+    <StackPanel
+        Orientation="Vertical">
+        <TabControl>
+            <TabItem
+                Header="General" IsSelected="True">
+                <StackPanel
+                    Orientation="Vertical">
+                    <StackPanel
+                        Orientation="Horizontal">
+                        <StackPanel
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="10">
+                            <CheckBox
+                                Grid.Column="0"
+                                x:Name="CkBoxCacheImages"
+                                Margin="3, 3, 10, 3"
+                                Content="Cache Images"
+                                IsChecked="{Binding settings.CacheImages}"
+                                Checked="CkBoxCacheImages_OnChecked"
+                                Unchecked="CkBoxCacheImages_OnChecked"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14" />
+                            <local:SpinBox
+                                Grid.Column="1"
+                                x:Name="SpinBoxMaxRec"
+                                Margin="10, 3, 3, 3"
+                                FontSize="14"
+                                PrefixText="Max Records: "
+                                SpinnerMax="100000"
+                                Value="{Binding MaxDataCount}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                ValueChanged="SpinBoxMaxRec_OnValueChanged" />
+                        </StackPanel>
+                        <StackPanel
+                            Orientation="Horizontal"
+                            Margin="10, 3, 5, 3"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            <Button
+                                x:Name="BtnApplySettings"
+                                Grid.Row="2" Grid.Column="0"
+                                Width="Auto" Height="Auto"
+                                Padding="3, 3, 3, 3"
+                                HorizontalAlignment="Right"
+                                Content="Apply"
+                                Click="BtnApplySettings_OnClick"
+                                FontSize="18" />
+                            <!-- <Label -->
+                            <!--     Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" -->
+                            <!--     Content="Flow.Launcher to apply" -->
+                            <!--     HorizontalAlignment="Left" -->
+                            <!--     VerticalAlignment="Center" -->
+                            <!--     HorizontalContentAlignment="Center" -->
+                            <!--     VerticalContentAlignment="Center" -->
+                            <!--     Margin="5, 5, 5, 5" -->
+                            <!--     FontSize="18" /> -->
+                        </StackPanel>
+                    </StackPanel>
+                    <DockPanel
+                        Margin="10">
+                        <TextBlock 
+                            DockPanel.Dock="Left"
+                            Margin="3">
+                            Format: 
+                        </TextBlock>
+                        <TextBox
+                            x:Name="TextBoxImageFormat"
+                            DockPanel.Dock="Left"
+                            Margin="3"
+                            MinWidth="200"
+                            TextWrapping="NoWrap"
+                            AcceptsReturn="False"
+                            Text="{Binding ImageFormatString}"
+                            TextChanged="TextBoxImageFormat_OnTextChanged"/>
+                        <StackPanel
+                            Orientation="Horizontal">
+                            <Button
+                                x:Name="ButtonYear"
+                                Margin="3"
+                                MinWidth="30"
+                                Content="Year"
+                                 Click="ButtonYear_OnClick"/>
+                            <Button
+                                x:Name="ButtonMonth"
+                                Margin="3"
+                                MinWidth="30"
+                                Content="Month"
+                                Click="ButtonMonth_OnClick"/>
+                            <Button
+                                x:Name="ButtonDay"
+                                Margin="3"
+                                MinWidth="30"
+                                Content="Day"
+                                Click="ButtonDay_OnClick"/>
+                            <Button
+                                x:Name="ButtonHour"
+                                Margin="3"
+                                MinWidth="30"
+                                Content="Hour"
+                                Click="ButtonHour_OnClick"/>
+                            <Button
+                                x:Name="ButtonMinute"
+                                Margin="3"
+                                MinWidth="30"
+                                Content="Minute"
+                                Click="ButtonMinute_OnClick"/>
+                            <Button
+                                x:Name="ButtonSecond"
+                                Margin="3"
+                                MinWidth="30"
+                                Content="Second"
+                                Click="ButtonSecond_OnClick"/>
+                            <Button
+                                x:Name="ButtonAppName"
+                                Margin="3"
+                                MinWidth="30"
+                                Content="App"
+                                Click="ButtonAppName_OnClick"/>
+                        </StackPanel>
+                        
+                    </DockPanel>
+                    <DockPanel
+                        Margin="10">
+                        <TextBlock 
+                            DockPanel.Dock="Left"
+                            Margin="3">
+                            Preview: 
+                        </TextBlock>
+                        <TextBox
+                            x:Name="TextBlockImageFormatPreview"
+                            DockPanel.Dock="Right"
+                            Margin="3"
+                            TextWrapping="NoWrap"
+                            AcceptsReturn="False"
+                            Text="{Binding ImageFormatPreview}"
+                            IsEnabled="False">
+                            
+                        </TextBox>
+                    </DockPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="History">
+                <StackPanel
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                    <GroupBox
+                        Margin="5 0 5 0"
+                        Padding="3">
+                        <StackPanel
+                            Orientation="Vertical">
+                            <Label
+                                Content="Order by:" />
+                            <ComboBox
+                                x:Name="CmBoxOrderBy"
+                                SelectionChanged="CmBoxOrderBy_OnSelectionChanged"
+                                SelectedItem="{Binding settings.OrderBy}">
+                                <ComboBoxItem IsSelected="True" Tag="0">Score</ComboBoxItem>
+                                <ComboBoxItem Tag="1">Create Time</ComboBoxItem>
+                                <ComboBoxItem Tag="2">Source Application</ComboBoxItem>
+                                <ComboBoxItem Tag="3">Type</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+
+                    </GroupBox>
+                    <GroupBox
+                        Margin="5 0 5 0"
+                        Padding="3">
+                        <StackPanel
+                            Orientation="Vertical"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            <CheckBox
+                                x:Name="CkBoxKeepText"
+                                Grid.Row="0" Grid.Column="0"
+                                Content="Keep Text"
+                                IsChecked="{Binding settings.KeepText}"
+                                Checked="CkBoxKeepText_OnChecked"
+                                Unchecked="CkBoxKeepText_OnUnchecked"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontSize="14" />
+                            <ComboBox
+                                x:Name="CmBoxKeepText"
+                                IsEnabled="{Binding settings.KeepText}"
+                                SelectedIndex="{Binding KeepTextHours}"
+                                SelectionChanged="CmBoxKeepText_OnSelectionChanged">
+                                <ComboBoxItem Tag="0">Always</ComboBoxItem>
+                                <ComboBoxItem Tag="1">1 Hours</ComboBoxItem>
+                                <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
+                                <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
+                                <ComboBoxItem Tag="72">3 Days</ComboBoxItem>
+                                <ComboBoxItem Tag="168">7 Days</ComboBoxItem>
+                                <ComboBoxItem Tag="720">1 Month</ComboBoxItem>
+                                <ComboBoxItem Tag="4320">6 Months</ComboBoxItem>
+                                <ComboBoxItem Tag="8640">1 Year</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox
+                        Margin="5 0 5 0"
+                        Padding="3">
+                        <StackPanel
+                            Orientation="Vertical"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            <CheckBox
+                                x:Name="CkBoxKeepImages"
+                                Grid.Row="0" Grid.Column="1"
+                                Content="Keep Images"
+                                IsChecked="{Binding settings.KeepImage}"
+                                Checked="CkBoxKeepImages_OnChecked"
+                                Unchecked="CkBoxKeepImages_OnUnchecked"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontSize="14" />
+                            <ComboBox
+                                x:Name="CmBoxKeepImages"
+                                IsEnabled="{Binding settings.KeepImage}"
+                                SelectedItem="{Binding KeepImageHours}"
+                                SelectionChanged="CmBoxKeepImages_OnSelectionChanged">
+                                <ComboBoxItem Tag="0">Always</ComboBoxItem>
+                                <ComboBoxItem Tag="1">1 Hours</ComboBoxItem>
+                                <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
+                                <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
+                                <ComboBoxItem Tag="72">3 Days</ComboBoxItem>
+                                <ComboBoxItem Tag="168">7 Days</ComboBoxItem>
+                                <ComboBoxItem Tag="720">1 Month</ComboBoxItem>
+                                <ComboBoxItem Tag="4320">6 Months</ComboBoxItem>
+                                <ComboBoxItem Tag="8640">1 Year</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox
+                        Margin="5 0 5 0"
+                        Padding="3">
+                        <StackPanel
+                            Orientation="Vertical"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            <CheckBox
+                                x:Name="CkBoxKeepFiles"
+                                Grid.Row="0" Grid.Column="2"
+                                Content="Keep Files"
+                                IsChecked="{Binding settings.KeepFile}"
+                                Checked="CkBoxKeepFiles_OnChecked"
+                                Unchecked="CkBoxKeepFiles_OnUnchecked"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontSize="14" />
+                            <ComboBox
+                                x:Name="CmBoxKeepFiles"
+                                IsEnabled="{Binding settings.KeepFile}"
+                                SelectedItem="{Binding KeepFileHours}"
+                                SelectionChanged="CmBoxKeepFiles_OnSelectionChanged">
+                                <ComboBoxItem Tag="0">Always</ComboBoxItem>
+                                <ComboBoxItem Tag="1">1 Hours</ComboBoxItem>
+                                <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
+                                <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
+                                <ComboBoxItem Tag="72">3 Days</ComboBoxItem>
+                                <ComboBoxItem Tag="168">7 Days</ComboBoxItem>
+                                <ComboBoxItem Tag="720">1 Month</ComboBoxItem>
+                                <ComboBoxItem Tag="4320">6 Months</ComboBoxItem>
+                                <ComboBoxItem Tag="8640">1 Year</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                    </GroupBox>
+
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </StackPanel>
+</UserControl>

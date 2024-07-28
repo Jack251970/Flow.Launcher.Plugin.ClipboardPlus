@@ -6,7 +6,7 @@
 *.bak
 ConsoleApp*/
 Ignore*
-ClipboardR.db
+ClipboardPlus.db
 *.sqlite
 copy*.ps1
 QueryHandler.cs

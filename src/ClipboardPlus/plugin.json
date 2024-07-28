@@ -1,0 +1,12 @@
+{
+    "ID": "ac0201cb-6610-48dd-9c60-e292d5e3a3da",
+    "ActionKeyword": "ClipboardPlus",
+    "Name": "ClipboardPlus",
+    "Description": "A clipboard plugin for Flow.Launcher, support pictures!",
+    "Author": "Rainyl",
+    "Version": "0.3.1",
+    "Language": "csharp",
+    "Website": "https://github.com/rainyl/Flow.Launcher.Plugin.ClipboardPlus",
+    "IcoPath": "Images/clipboard.png",
+    "ExecuteFileName": "ClipboardPlus.dll"
+}

@@ -31,7 +31,7 @@ public static class Program
 public class BuildContext : FrostingContext
 {
     public string DotNetBuildConfig { get; set; }
-    public const string SlnFile = "../Flow.Launcher.Plugin.ClipboardR.sln";
+    public const string SlnFile = "../Flow.Launcher.Plugin.ClipboardPlus.sln";
     public Lazy<SolutionParserResult> DefaultSln { get; set; }
     public const string DeployFramework = "net7.0-windows";
     public string PublishDir = ".dist";
@@ -65,7 +65,7 @@ public sealed class BuildTask : FrostingTask<BuildContext>
 {
     public override void Run(BuildContext context)
     {
-        var projects = context.DefaultSln.Value.Projects.Where(p => p.Name.EndsWith("ClipboardR"));
+        var projects = context.DefaultSln.Value.Projects.Where(p => p.Name.EndsWith("ClipboardPlus"));
         var projectPath = projects.First().Path.FullPath;
         context.Information($"Building {projectPath}");
         context.DotNetBuild(
@@ -88,7 +88,7 @@ public class PublishTask : FrostingTask<BuildContext>
 {
     public override void Run(BuildContext context)
     {
-        var project = context.DefaultSln.Value.Projects.First(p => p.Name.EndsWith("ClipboardR"));
+        var project = context.DefaultSln.Value.Projects.First(p => p.Name.EndsWith("ClipboardPlus"));
         var srcDir = project.Path.GetDirectory().Combine(new DirectoryPath("bin/Publish"));
         var dstDir =
             $"{srcDir.GetParent().GetParent().GetParent().GetParent().FullPath}/{context.PublishDir}";
@@ -168,7 +168,7 @@ public class PublishTask : FrostingTask<BuildContext>
 
         context.ZipCompress(
             rootPath: srcDir,
-            outputPath: $"{dstDir}/ClipboardR-v{context.PublishVersion}.zip",
+            outputPath: $"{dstDir}/ClipboardPlus-v{context.PublishVersion}.zip",
             filePaths: files,
             level: 9
         );
@@ -206,7 +206,7 @@ public class DeployTask : FrostingTask<BuildContext>
             .GetDirectory()
             .GetParent()
             .Combine(new DirectoryPath(context.PublishDir));
-        var files = context.GetFiles($"{distDir}/ClipboardR*.zip");
+        var files = context.GetFiles($"{distDir}/ClipboardPlus*.zip");
 
         DateTime t = DateTime.FromFileTime(0);
         FilePath mostRecentFile = files.First();
