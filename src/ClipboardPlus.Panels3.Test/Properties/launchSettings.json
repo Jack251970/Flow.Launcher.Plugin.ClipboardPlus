@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ClipboardPlus.Panels3.Test (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "ClipboardPlus.Panels3.Test (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -6,6 +6,7 @@
         <Version>0.1.1</Version>
         <UseWindowsForms>true</UseWindowsForms>
         <TargetFramework>net7.0-windows</TargetFramework>
+        <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -18,12 +19,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Dapper" Version="2.0.151" />
-      <PackageReference Include="Flow.Launcher.Plugin" Version="4.1.1" />
-      <PackageReference Include="Material.Icons" Version="2.0.11" />
-      <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.10" />
-      <PackageReference Include="Svg" Version="3.4.4" />
+      <PackageReference Include="Dapper" Version="2.1.35" />
+      <PackageReference Include="Flow.Launcher.Plugin" Version="4.3.0" />
+      <PackageReference Include="Material.Icons" Version="2.1.10" />
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.7" />
+      <PackageReference Include="Svg" Version="3.4.7" />
     </ItemGroup>
-
 
 </Project>

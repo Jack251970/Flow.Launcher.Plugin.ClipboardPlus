@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>ClipboardPlus</PackageId>
     <Authors>Rainyl</Authors>
@@ -12,6 +12,7 @@
 	<TargetFramework>net7.0-windows</TargetFramework>
 	<Version>0.1.3</Version>
     <ReleaseOutputPath>./bin/Release</ReleaseOutputPath>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -37,10 +38,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Flow.Launcher.Plugin" Version="4.1.1" />
-    <PackageReference Include="H.InputSimulator" Version="1.4.0">
+    <PackageReference Include="Flow.Launcher.Plugin" Version="4.3.0" />
+    <PackageReference Include="H.InputSimulator" Version="1.4.2">
     </PackageReference>
-    <PackageReference Include="Material.Icons" Version="2.0.11" />
+    <PackageReference Include="Material.Icons" Version="2.1.10" />
   </ItemGroup>
 
   <ItemGroup>
