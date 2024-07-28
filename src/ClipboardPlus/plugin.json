@@ -1,12 +1,12 @@
 {
-    "ID": "ac0201cb-6610-48dd-9c60-e292d5e3a3da",
-    "ActionKeyword": "ClipboardPlus",
-    "Name": "ClipboardPlus",
-    "Description": "A clipboard plugin for Flow.Launcher, support pictures!",
-    "Author": "Rainyl",
-    "Version": "0.3.1",
-    "Language": "csharp",
-    "Website": "https://github.com/rainyl/Flow.Launcher.Plugin.ClipboardPlus",
-    "IcoPath": "Images/clipboard.png",
-    "ExecuteFileName": "ClipboardPlus.dll"
+  "ID": "ac0201cb-6610-48dd-9c60-e292d5e3a3da",
+  "ActionKeyword": "ClipboardPlus",
+  "Name": "ClipboardPlus",
+  "Description": "A Flow Launcher plugin for clipboard history management.",
+  "Author": "Jack251970",
+  "Version": "0.4.0",
+  "Language": "csharp",
+  "Website": "https://github.com/Jack251970/Flow.Launcher.Plugin.ClipboardPlus",
+  "IcoPath": "Images/clipboard.png",
+  "ExecuteFileName": "ClipboardPlus.dll"
 }

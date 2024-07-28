@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using Flow.Launcher.Plugin;
@@ -13,7 +11,8 @@ public partial class SettingsPanel
     public Settings settings { get; set; }
     private PluginInitContext? _context { get; set; }
     private bool Ready { get; set; } = false;
-    
+
+    #region Dependency Properties
 
     public static readonly DependencyProperty ImageFormatStringProperty = DependencyProperty.Register(
         nameof(ImageFormatString), typeof(string), typeof(SettingsPanel), new PropertyMetadata(default(string)));
@@ -118,6 +117,8 @@ public partial class SettingsPanel
         }
     }
 
+    #endregion
+
     public SettingsPanel(Settings settings, PluginInitContext ctx)
     {
         this.settings = settings;
@@ -138,7 +139,7 @@ public partial class SettingsPanel
     /// </summary>
     public SettingsPanel()
     {
-        this.settings = new Settings() { ConfigFile = "test.json" };
+        settings = new Settings() { ConfigFile = "test.json" };
         settings.Save();
         settings = Settings.Load("test.json");
         _context = null;
@@ -152,11 +153,21 @@ public partial class SettingsPanel
         Console.WriteLine(settings);
     }
 
+    #region Cache Image
+
     private void CkBoxCacheImages_OnChecked(object sender, RoutedEventArgs e)
     {
-        if (sender is CheckBox c)
-            settings.CacheImages = c.IsChecked ?? false;
+        settings.CacheImages = true;
     }
+
+    private void CkBoxCacheImages_OnUnchecked(object sender, RoutedEventArgs e)
+    {
+        settings.CacheImages = false;
+    }
+
+    #endregion
+
+    #region Apply Settings
 
     private void BtnApplySettings_OnClick(object sender, RoutedEventArgs e)
     {
@@ -165,82 +176,18 @@ public partial class SettingsPanel
         _context?.API.ReloadAllPluginData();
     }
 
+    #endregion
+
+    #region Max Records
+
     private void SpinBoxMaxRec_OnValueChanged(int v)
     {
         MaxDataCount = int.Max(v, 0);
     }
 
-    private void CkBoxKeepText_OnChecked(object sender, RoutedEventArgs e)
-    {
-        this.settings.KeepText = true;
-    }
+    #endregion
 
-    private void CkBoxKeepText_OnUnchecked(object sender, RoutedEventArgs e)
-    {
-        this.settings.KeepText = false;
-    }
-
-    private void CkBoxKeepImages_OnChecked(object sender, RoutedEventArgs e)
-    {
-        settings.KeepImage = true;
-    }
-
-    private void CkBoxKeepImages_OnUnchecked(object sender, RoutedEventArgs e)
-    {
-        settings.KeepImage = false;
-    }
-
-    private void CkBoxKeepFiles_OnChecked(object sender, RoutedEventArgs e)
-    {
-        settings.KeepFile = true;
-    }
-
-    private void CkBoxKeepFiles_OnUnchecked(object sender, RoutedEventArgs e)
-    {
-        settings.KeepFile = false;
-    }
-
-    private void CmBoxOrderBy_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (Ready)
-            settings.OrderBy = CmBoxOrderBy.SelectedIndex;
-    }
-
-    private void CmBoxKeepText_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (Ready)
-            settings.KeepTextHours = CmBoxKeepText.SelectedIndex;
-    }
-
-    private void CmBoxKeepImages_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (Ready)
-            settings.KeepImageHours = CmBoxKeepImages.SelectedIndex;
-    }
-
-    private void CmBoxKeepFiles_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (Ready)
-            settings.KeepFileHours = CmBoxKeepFiles.SelectedIndex;
-    }
-
-    private uint TryGetCBoxTag(object sender)
-    {
-        var item = (sender as ComboBox)?.SelectedItem as ComboBoxItem;
-        if (item?.Tag == null)
-            return uint.MaxValue;
-        var success = uint.TryParse(item.Tag as string, out var v);
-        if (!success)
-            return uint.MaxValue;
-        return v == 0 ? uint.MaxValue : v;
-    }
-
-    private void TextBoxImageFormat_OnTextChanged(object sender, TextChangedEventArgs e)
-    {
-        ImageFormatString = TextBoxImageFormat.Text;
-        settings.ImageFormat = ImageFormatString;
-        ImageFormatPreview = Utils.FormatImageName(ImageFormatString, DateTime.Now, "TestApp.exe");
-    }
+    #region Image Format
 
     private void ButtonYear_OnClick(object sender, RoutedEventArgs e)
     {
@@ -276,4 +223,87 @@ public partial class SettingsPanel
     {
         TextBoxImageFormat.Text += "{app}";
     }
+
+    #endregion
+
+    #region Preview Format
+
+    private void TextBoxImageFormat_OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        ImageFormatString = TextBoxImageFormat.Text;
+        settings.ImageFormat = ImageFormatString;
+        ImageFormatPreview = Utils.FormatImageName(ImageFormatString, DateTime.Now, "TestApp.exe");
+    }
+
+    #endregion
+
+    #region Order By
+
+    private void CmBoxOrderBy_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (Ready)
+        {
+            settings.OrderBy = CmBoxOrderBy.SelectedIndex;
+        }
+    }
+
+    #endregion
+
+    #region Keep Text & Image & Files
+
+    private void CkBoxKeepText_OnChecked(object sender, RoutedEventArgs e)
+    {
+        settings.KeepText = true;
+    }
+
+    private void CkBoxKeepText_OnUnchecked(object sender, RoutedEventArgs e)
+    {
+        settings.KeepText = false;
+    }
+
+    private void CmBoxKeepText_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (Ready)
+        {
+            settings.KeepTextHours = CmBoxKeepText.SelectedIndex;
+        }
+    }
+
+    private void CkBoxKeepImages_OnChecked(object sender, RoutedEventArgs e)
+    {
+        settings.KeepImage = true;
+    }
+
+    private void CkBoxKeepImages_OnUnchecked(object sender, RoutedEventArgs e)
+    {
+        settings.KeepImage = false;
+    }
+
+    private void CmBoxKeepImages_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (Ready)
+        {
+            settings.KeepImageHours = CmBoxKeepImages.SelectedIndex;
+        }
+    }
+
+    private void CkBoxKeepFiles_OnChecked(object sender, RoutedEventArgs e)
+    {
+        settings.KeepFile = true;
+    }
+
+    private void CkBoxKeepFiles_OnUnchecked(object sender, RoutedEventArgs e)
+    {
+        settings.KeepFile = false;
+    }
+
+    private void CmBoxKeepFiles_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (Ready)
+        {
+            settings.KeepFileHours = CmBoxKeepFiles.SelectedIndex;
+        }
+    }
+
+    #endregion
 }

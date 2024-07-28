@@ -4,14 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:ClipboardPlus.Panels"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}"
              mc:Ignorable="d"
-             d:DesignHeight="40" d:DesignWidth="200">
+             d:DesignHeight="40"
+             d:DesignWidth="200"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Label
             x:Name="Prefix"
@@ -19,8 +20,7 @@
             Grid.Column="0"
             Content="{Binding PrefixText}"
             HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
-            />
+            VerticalContentAlignment="Center"/>
         <TextBox
             x:Name="ValueBox"
             Grid.Row="0"
@@ -29,26 +29,25 @@
             VerticalContentAlignment="Center"
             Text="{Binding ElementName=SpinnerScr, Path=Value, StringFormat={}{0:####0}}"
             PreviewTextInput="ValueBox_OnPreviewTextInput"
-            TextChanged="ValueBox_OnTextChanged"
-            />
+            TextChanged="ValueBox_OnTextChanged"/>
         <ScrollBar
             Grid.Column="2"
             x:Name="SpinnerScr" 
             Background="Transparent" 
             Focusable="True" 
             Grid.Row="0"
+            Width="20"
             Minimum="1"
             Maximum="{Binding SpinnerMax}" 
             Orientation="Vertical" 
             SmallChange="1" 
             TabIndex="1" 
-            Visibility="Visible"
-            >
+            Visibility="Collapsed">
             <ScrollBar.RenderTransform>
                 <RotateTransform Angle="180"/>
             </ScrollBar.RenderTransform>
             <ScrollBar.RenderTransformOrigin>
-                <Point X="0.5" Y="0.5"></Point>
+                <Point X="0.5" Y="0.5"/>
             </ScrollBar.RenderTransformOrigin>
         </ScrollBar>
     </Grid>

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -8,7 +7,6 @@ namespace ClipboardPlus.Panels;
 
 public partial class SpinBox : UserControl
 {
-    private static readonly Regex NumRegex = new Regex("[^0-9]+");
     public static readonly DependencyProperty PrefixTextProperty = DependencyProperty.Register(
         nameof(PrefixText),
         typeof(string),
@@ -55,6 +53,19 @@ public partial class SpinBox : UserControl
     public delegate void OnValueChanged(int v);
     public event OnValueChanged? ValueChanged;
 
+    public static readonly DependencyProperty ShowSpinProperty = DependencyProperty.Register(
+        nameof(ShowSpin),
+        typeof(bool),
+        typeof(SpinBox),
+        new PropertyMetadata(default(bool))
+    );
+
+    public bool ShowSpin
+    {
+        get => (bool)GetValue(ShowSpinProperty);
+        set => SetValue(ShowSpinProperty, value);
+    }
+
     public SpinBox(string prefixText)
     {
         PrefixText = prefixText;
@@ -69,20 +80,34 @@ public partial class SpinBox : UserControl
 
     private void ValueBox_OnPreviewTextInput(object sender, TextCompositionEventArgs e)
     {
-        e.Handled = NumRegex.IsMatch(e.Text);
+        e.Handled = NumberRegex().IsMatch(e.Text);
         if (int.TryParse(e.Text, out int a))
+        {
             e.Handled = e.Handled && a <= SpinnerScr.Maximum;
+        }
     }
 
     private void ValueBox_OnTextChanged(object sender, TextChangedEventArgs e)
     {
         if (string.IsNullOrEmpty(ValueBox.Text))
+        {
             return;
+        }
+
         if (!int.TryParse(ValueBox.Text, out var v))
+        {
             return;
+        }
+
         if (v > SpinnerScr.Maximum)
+        {
             ValueBox.Text = $"{SpinnerScr.Maximum}";
+        }
+
         SpinnerScr.Value = v;
         ValueChanged?.Invoke((int)SpinnerScr.Value);
     }
+
+    [GeneratedRegex("[^0-9]+")]
+    private static partial Regex NumberRegex();
 }

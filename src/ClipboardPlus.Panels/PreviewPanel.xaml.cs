@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Flow.Launcher.Plugin;
 using ClipboardPlus.Core;
-using Material.Icons;
-using Image = System.Drawing.Image;
+using FluentIcons.WPF;
+using FluentIcons.Common;
 
 namespace ClipboardPlus.Panels;
 
@@ -18,27 +14,14 @@ public partial class PreviewPanel : UserControl
     private ClipboardData _clipboardData;
     private PluginInitContext _context;
     private DirectoryInfo CacheDir { get; set; }
-    private Action<ClipboardData> DeleteOneRecord { get; set; }
-    private Action<ClipboardData> CopyRecord { get; set; }
-    private Action<ClipboardData> PinRecord { get; set; }
+    private Action<ClipboardData>? DeleteOneRecord { get; set; }
+    private Action<ClipboardData>? CopyRecord { get; set; }
+    private Action<ClipboardData>? PinRecord { get; set; }
     private int OldScore { get; set; }
     private bool Ready { get; set; } = false;
     private const string WordsCountPrefix = "Words Count: ";
-    public string IconColor { get; set; } = CbColors.Blue500;
-    public string PathCopy { get; set; } =
-        MaterialIconDataProvider.GetData(MaterialIconKind.ContentCopy);
-    public string PathPin { get; set; } = MaterialIconDataProvider.GetData(MaterialIconKind.Pin);
-    public string PathPinOff { get; set; } =
-        MaterialIconDataProvider.GetData(MaterialIconKind.PinOff);
-    public string PathDelete { get; set; } =
-        MaterialIconDataProvider.GetData(MaterialIconKind.DeleteForever);
-    public string PathSave { get; set; } = MaterialIconDataProvider.GetData(MaterialIconKind.File);
-
-    public PreviewPanel()
-    {
-        InitializeComponent();
-        Ready = true;
-    }
+    private readonly SymbolIcon PinFluentIcon = new() { Symbol = Symbol.Pin };
+    private readonly SymbolIcon UnpinFluentIcon = new() { Symbol = Symbol.PinOff };
 
     public PreviewPanel(
         ClipboardData clipboardData,
@@ -46,8 +29,7 @@ public partial class PreviewPanel : UserControl
         DirectoryInfo cacheDir,
         Action<ClipboardData> delAction,
         Action<ClipboardData> copyAction,
-        Action<ClipboardData> pinAction,
-        string iconColor = CbColors.Blue500
+        Action<ClipboardData> pinAction
     )
     {
         _clipboardData = clipboardData;
@@ -57,12 +39,27 @@ public partial class PreviewPanel : UserControl
         CopyRecord = copyAction;
         PinRecord = pinAction;
         OldScore = clipboardData.Score;
-        IconColor = iconColor;
         InitializeComponent();
-
-        SetContent();
         SetBtnIcon();
+        SetContent();
         Ready = true;
+    }
+
+    /// <summary>
+    /// Note: For Test UI Only !!!
+    /// Any interaction with Flow.Launcher will cause exit
+    /// </summary>
+    public PreviewPanel()
+    {
+        _context = null!;
+        CacheDir = null!;
+        InitializeComponent();
+        Ready = true;
+    }
+
+    private void SetBtnIcon()
+    {
+        BtnPin.Content = _clipboardData.Pined ? UnpinFluentIcon : PinFluentIcon;
     }
 
     public void SetContent()
@@ -99,31 +96,25 @@ public partial class PreviewPanel : UserControl
 
     public void SetImage()
     {
-        if (_clipboardData.Data is not Image img)
-            return;
-        var im = img.ToBitmapImage();
-        PreImage.Source = im;
+        if (_clipboardData.Data is System.Drawing.Image img)
+        {
+            var im = img.ToBitmapImage();
+            PreImage.Source = im;
+        }
     }
 
-    private void BtnCopy_Click(object sender, System.Windows.RoutedEventArgs e)
+    #region Image Viewer
+
+    private void ImSaveAs_Click(object sender, RoutedEventArgs e)
     {
-        // if textbox is visible, it means the record is a text ot files, change the data to text
-        if (TxtBoxPre.IsVisible)
-            _clipboardData.Data = TxtBoxPre.Text;
-        CopyRecord?.Invoke(_clipboardData);
+        Utils.SaveImageCache(_clipboardData, CacheDir);
     }
 
-    private void BtnDelete_Click(object sender, System.Windows.RoutedEventArgs e)
-    {
-        DeleteOneRecord?.Invoke(_clipboardData);
-    }
+    #endregion
 
-    private void SetBtnIcon()
-    {
-        BtnPin.Content = FindResource(_clipboardData.Pined ? "PathPinOff" : "PathPin");
-    }
+    #region Text Viewer
 
-    private void TxtBoxPre_GotFocus(object sender, System.Windows.RoutedEventArgs e)
+    private void TxtBoxPre_GotFocus(object sender, RoutedEventArgs e)
     {
         TextBox tb = (TextBox)sender;
         tb.Dispatcher.BeginInvoke(new Action(() => tb.SelectAll()));
@@ -132,7 +123,21 @@ public partial class PreviewPanel : UserControl
     private void TxtBoxPre_TextChanged(object sender, TextChangedEventArgs e)
     {
         if (Ready)
+        {
             TextBlockWordCount.Text = WordsCountPrefix + TxtBoxPre.Text.Length;
+        }
+    }
+
+    #endregion
+
+    #region Buttons
+
+    private void BtnCopy_Click(object sender, RoutedEventArgs e)
+    {
+        // if textbox is visible, it means the record is a text ot files, change the data to text
+        if (TxtBoxPre.IsVisible)
+            _clipboardData.Data = TxtBoxPre.Text;
+        CopyRecord?.Invoke(_clipboardData);
     }
 
     private void BtnPin_Click(object sender, RoutedEventArgs e)
@@ -142,8 +147,10 @@ public partial class PreviewPanel : UserControl
         PinRecord?.Invoke(_clipboardData);
     }
 
-    private void ImSaveAs_Click(object sender, RoutedEventArgs e)
+    private void BtnDelete_Click(object sender, RoutedEventArgs e)
     {
-        Utils.SaveImageCache(_clipboardData, CacheDir);
+        DeleteOneRecord?.Invoke(_clipboardData);
     }
+
+    #endregion
 }
