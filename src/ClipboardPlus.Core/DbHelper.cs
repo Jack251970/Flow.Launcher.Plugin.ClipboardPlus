@@ -1,6 +1,4 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
-using System.Globalization;
 using Dapper;
 using Microsoft.Data.Sqlite;
 
@@ -44,7 +42,7 @@ public class DbHelper
 
     public DbHelper(SqliteConnection connection)
     {
-        this.Connection = connection;
+        Connection = connection;
     }
 
     public DbHelper(
@@ -61,8 +59,8 @@ public class DbHelper
             ForeignKeys = true,
             Cache = cache,
         }.ToString();
-        this.Connection = new SqliteConnection(connString);
-        this.KeepConnection = keepConnection;
+        Connection = new SqliteConnection(connString);
+        KeepConnection = keepConnection;
     }
 
     public void CreateDb()

@@ -38,6 +38,15 @@ public struct ClipboardData : IEquatable<ClipboardData>
 
     public static bool operator !=(ClipboardData a, ClipboardData b) => a.HashId != b.HashId;
 
+    public override bool Equals(object? obj)
+    {
+        if (obj is ClipboardData clipboardData)
+        {
+            return this == clipboardData;
+        }
+        return false;
+    }
+
     public string GetMd5()
     {
         return DataToString().GetMd5();

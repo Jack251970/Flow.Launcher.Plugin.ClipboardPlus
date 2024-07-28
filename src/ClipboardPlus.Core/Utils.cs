@@ -74,7 +74,7 @@ public static class Retry
             () =>
             {
                 action();
-                return null;
+                return null!;
             },
             retryInterval,
             maxAttemptCount
