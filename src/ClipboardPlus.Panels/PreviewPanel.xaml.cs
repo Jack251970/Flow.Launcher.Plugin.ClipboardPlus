@@ -12,7 +12,7 @@ namespace ClipboardPlus.Panels;
 public partial class PreviewPanel : UserControl
 {
     private ClipboardData _clipboardData;
-    private PluginInitContext _context;
+    private readonly PluginInitContext _context;
     private DirectoryInfo CacheDir { get; set; }
     private Action<ClipboardData>? DeleteOneRecord { get; set; }
     private Action<ClipboardData>? CopyRecord { get; set; }

@@ -36,7 +36,9 @@ public class Settings
     {
         var options = new JsonSerializerOptions() { WriteIndented = true };
         using var fs = File.OpenRead(filePath);
+#if DEBUG
         Console.WriteLine();
+#endif
         return JsonSerializer.Deserialize<Settings>(fs, options)
             ?? new Settings() { ConfigFile = filePath };
     }

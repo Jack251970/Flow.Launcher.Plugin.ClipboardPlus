@@ -126,21 +126,30 @@ public class PublishTask : FrostingTask<BuildContext>
             var fStr = f.ToString();
             var fName = f.GetFilename().ToString();
             if (fStr == null || fName == null)
+            {
                 continue;
+            }
+
             if (fStr.EndsWith("e_sqlite3.dll") && !fStr.EndsWith(".e_sqlite3.dll"))
             {
                 files.Remove(f);
                 continue;
             }
+
             if (fStr.EndsWith("plugin.json"))
+            {
                 versionFile = f;
+            }
+
             if (!Regex.IsMatch(fName, ptn))
             {
                 context.DeleteFile(f);
                 files.Remove(f);
             }
             else
+            {
                 context.Information($"Added: {f}");
+            }
         }
 
         var eSqlite3Path = srcDir
@@ -161,9 +170,13 @@ public class PublishTask : FrostingTask<BuildContext>
                 File.ReadAllText(versionFile.ToString()!)
             );
             if (versionInfoObj != null)
+            {
                 context.PublishVersion = versionInfoObj.Version ?? "0.0.0";
+            }
             else
+            {
                 Console.WriteLine("Get version info from plugin.json failed!");
+            }
         }
 
         context.ZipCompress(

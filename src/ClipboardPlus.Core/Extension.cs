@@ -70,6 +70,7 @@ public static class ClipImageExtension
         return img;
     }
 
+    // TODO: Remove this
     public static BitmapImage ToBitmapImage(
         this MaterialIconKind kind,
         string fillColor = CbColors.Blue500,
@@ -96,11 +97,11 @@ public static class ClipImageExtension
         return string.Join("", hex);
     }
 
-    // public static string ToBase64(object o)
-    // {
-    //     using var m = new MemoryStream();
-    //     var bf = new BinaryFormatter();
-    //     bf.Serialize();
-    //     return Convert.ToBase64String(m.ToArray());
-    // }
+    /*public static string ToBase64(object o)
+    {
+        using var m = new MemoryStream();
+        var bf = new BinaryFormatter();
+        bf.Serialize();
+        return Convert.ToBase64String(m.ToArray());
+    }*/
 }

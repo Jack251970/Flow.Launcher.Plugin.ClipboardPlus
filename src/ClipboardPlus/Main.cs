@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Flow.Launcher.Plugin;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using WindowsInput;
 using ClipboardPlus.Core;
@@ -17,10 +16,10 @@ using Material.Icons;
 
 namespace ClipboardPlus;
 
-public class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISavable, IReloadable
+public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISavable, IReloadable
 {
     // clipboard listener instance
-    private CbMonitor _clipboard = new() { ObserveLastEntry = false };
+    private readonly CbMonitor _clipboard = new() { ObserveLastEntry = false };
     private string ClassName => GetType().Name;
 
     // working directory
@@ -45,16 +44,16 @@ public class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISavable, I
 
     private PluginInitContext _context = null!;
     private LinkedList<ClipboardData> _dataList = new();
-    public string RequeryString { get; private set; }
+    public string RequeryString { get; private set; } = string.Empty;
 
-    public void Init(PluginInitContext ctx)
+    public void Init(PluginInitContext context)
     {
-        this._context = ctx;
+        _context = context;
         _context.API.LogDebug(ClassName, "Adding clipboard listener");
-        this._clipboard.ClipboardChanged += _OnClipboardChange;
+        _clipboard.ClipboardChanged += OnClipboardChange;
         RequeryString = _context.CurrentPluginMetadata.ActionKeyword;
 
-        ClipDir = new DirectoryInfo(ctx.CurrentPluginMetadata.PluginDirectory);
+        ClipDir = new DirectoryInfo(context.CurrentPluginMetadata.PluginDirectory);
         var imageCacheDirectoryPath = Path.Combine(ClipDir.FullName, "CachedImages");
         ClipCacheDir = !Directory.Exists(imageCacheDirectoryPath)
             ? Directory.CreateDirectory(imageCacheDirectoryPath)
@@ -70,7 +69,9 @@ public class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISavable, I
             _settings = JsonSerializer.Deserialize<Settings>(fs)!;
         }
         else
+        {
             _settings = new Settings();
+        }
 
         _settings.ConfigFile = _settingsPath;
         _settings.Save();
@@ -218,11 +219,13 @@ public class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISavable, I
         };
     }
 
-    private void _OnClipboardChange(object? sender, CbMonitor.ClipboardChangedEventArgs e)
+    private void OnClipboardChange(object? sender, CbMonitor.ClipboardChangedEventArgs e)
     {
         _context.API.LogDebug(ClassName, "Clipboard changed");
         if (e.Content is null)
+        {
             return;
+        }
 
         var now = DateTime.Now;
         var clipboardData = new ClipboardData
@@ -259,7 +262,9 @@ public class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISavable, I
                 }
                 var img = _clipboard.ClipboardImage;
                 if (img != null)
+                {
                     clipboardData.Icon = img.ToBitmapImage();
+                }
                 _context.API.LogDebug(ClassName, "Processed image change");
                 break;
             case CbContentType.Files:
@@ -277,22 +282,29 @@ public class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISavable, I
         }
 
         clipboardData.Icon = GetDefaultIcon(clipboardData);
-        clipboardData.DisplayTitle = Regex.Replace(clipboardData.Text.Trim(), @"(\r|\n|\t|\v)", "");
+        clipboardData.DisplayTitle = MyRegex().Replace(clipboardData.Text.Trim(), "");
 
         // make sure no repeat
         if (_dataList.Any(node => node.GetMd5() == clipboardData.GetMd5()))
+        {
             return;
+        }
         _context.API.LogDebug(ClassName, "Adding to dataList");
         _dataList.AddFirst(clipboardData);
         _context.API.LogDebug(ClassName, "Adding to database");
         var isAdd =
-            (_settings.KeepText && clipboardData.Type == CbContentType.Text)
-            || (_settings.KeepImage && clipboardData.Type == CbContentType.Image)
-            || (_settings.KeepFile && clipboardData.Type == CbContentType.Files);
+            _settings.KeepText && clipboardData.Type == CbContentType.Text
+            || _settings.KeepImage && clipboardData.Type == CbContentType.Image
+            || _settings.KeepFile && clipboardData.Type == CbContentType.Files;
         if (isAdd)
+        {
             _dbHelper.AddOneRecord(clipboardData);
+        }
         if (_dataList.Count > _maxDataCount)
+        {
             _dataList.RemoveLast();
+        }
+
         CurrentScore++;
         _context.API.LogDebug(ClassName, "Processing clipboard change finished");
     }
@@ -336,6 +348,7 @@ public class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISavable, I
     {
         _context.API.LogWarn(ClassName, $"enter dispose");
         ReloadData();
+        _clipboard.Dispose();
         _dbHelper?.Close();
     }
 
@@ -357,9 +370,12 @@ public class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISavable, I
     {
         _dataList.Remove(c);
         if (c.Type is CbContentType.Text or CbContentType.Files)
+        {
             c.Icon = c.Pined
                 ? new BitmapImage(new Uri(_defaultPinIconPath, UriKind.RelativeOrAbsolute))
                 : GetDefaultIcon(c);
+        }
+
         _dataList.AddLast(c);
         _dbHelper.PinOneRecord(c);
         _context.API.ChangeQuery(RequeryString, true);
@@ -381,7 +397,10 @@ public class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISavable, I
     public int GetNewScoreByOrderBy(ClipboardData clipboardData)
     {
         if (clipboardData.Pined)
+        {
             return int.MaxValue;
+        }
+
         var orderBy = (CbOrders)_settings.OrderBy;
         int score = 0;
         switch (orderBy)
@@ -411,4 +430,7 @@ public class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISavable, I
     {
         _settings.Save();
     }
+
+    [GeneratedRegex("(\\r|\\n|\\t|\\v)")]
+    private static partial Regex MyRegex();
 }

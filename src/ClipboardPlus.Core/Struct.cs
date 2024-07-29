@@ -19,12 +19,12 @@ public struct ClipboardData : IEquatable<ClipboardData>
     public required bool Pined;
     public required DateTime CreateTime;
 
-    public bool Equals(ClipboardData b)
+    public readonly bool Equals(ClipboardData b)
     {
         return HashId == b.HashId;
     }
 
-    public override int GetHashCode()
+    public override readonly int GetHashCode()
     {
         var hashcode =
             Text.GetHashCode()
@@ -38,7 +38,7 @@ public struct ClipboardData : IEquatable<ClipboardData>
 
     public static bool operator !=(ClipboardData a, ClipboardData b) => a.HashId != b.HashId;
 
-    public override bool Equals(object? obj)
+    public override readonly bool Equals(object? obj)
     {
         if (obj is ClipboardData clipboardData)
         {
@@ -47,36 +47,25 @@ public struct ClipboardData : IEquatable<ClipboardData>
         return false;
     }
 
-    public string GetMd5()
+    public readonly string GetMd5()
     {
         return DataToString().GetMd5();
     }
 
-    public string DataToString()
+    public readonly string DataToString()
     {
-        string? dataString;
-        switch (Type)
+        return Type switch
         {
-            case CbContentType.Text:
-                dataString = Data as string;
-                break;
-            case CbContentType.Image:
-                dataString = Data is not Image im ? Icon.ToBase64() : im.ToBase64();
-                break;
-            case CbContentType.Files:
-                dataString = Data is string[] t ? string.Join('\n', t) : Data as string;
-                break;
-            default:
-                // don't process others
-                throw new NotImplementedException(
-                    "Data to string for type not in Text, Image, Files are not implemented now."
-                );
-        }
-
-        return dataString ?? "";
+            CbContentType.Text => Data as string,
+            CbContentType.Image => Data is not Image im ? Icon.ToBase64() : im.ToBase64(),
+            CbContentType.Files => Data is string[] t ? string.Join('\n', t) : Data as string,
+            _ => throw new NotImplementedException(
+                "Data to string for type not in Text, Image, Files are not implemented now."
+            ),  // don't process others
+        } ?? string.Empty;
     }
 
-    public override string ToString()
+    public override readonly string ToString()
     {
         return $"ClipboardDate(type: {Type}, text: {Text}, ctime: {CreateTime})";
     }

@@ -1,6 +1,4 @@
-﻿using System.Text;
-using System.Text.Unicode;
-using Xunit.Abstractions;
+﻿using Xunit.Abstractions;
 
 namespace ClipboardPlus.Core.Test;
 

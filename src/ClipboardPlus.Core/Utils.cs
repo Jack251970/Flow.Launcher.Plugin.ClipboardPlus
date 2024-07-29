@@ -3,9 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace ClipboardPlus.Core;
 
-public static class Utils
+public static partial class Utils
 {
-    private static Random _random = new();
+    private static readonly Random _random = new();
 
     public static string RandomString(int length)
     {
@@ -29,9 +29,9 @@ public static class Utils
 
     public static int CountWordsEn(string s)
     {
-        // // TODO: count more reasonable
+        // TODO: count more reasonable
         s = string.Join("", s.Where(c => c < 0x4E00));
-        var collection = Regex.Matches(s, @"[\S]+");
+        var collection = MyRegex().Matches(s);
         return collection.Count;
     }
 
@@ -57,13 +57,19 @@ public static class Utils
     public static string? SaveImageCache(ClipboardData clipboardData, DirectoryInfo clipCacheDir, string? name=null)
     {
         if (clipboardData.Data is not Image img)
+        {
             return null;
+        }
+
         name = string.IsNullOrWhiteSpace(name) ? RandomString(10): name;
         var path = Path.Join(clipCacheDir.FullName, $"{name}.png");
 
         img.Save(path);
         return path;
     }
+
+    [GeneratedRegex("[\\S]+")]
+    private static partial Regex MyRegex();
 }
 
 public static class Retry

@@ -8,37 +8,38 @@ public class DbHelper
 {
     public SqliteConnection Connection { get; private set; }
     public bool KeepConnection { get; private set; }
-    private string SqlCheckTableRecord = "SELECT name from sqlite_master WHERE name='record'";
+    private readonly string SqlCheckTableRecord = "SELECT name from sqlite_master WHERE name='record'";
 
-    private string SqlCreateDb = """
-                                 CREATE TABLE assets (
-                                     id	INTEGER NOT NULL UNIQUE,
-                                     data_b64	TEXT,
-                                     md5 TEXT UNIQUE ,
-                                     PRIMARY KEY("id" AUTOINCREMENT)
-                                 );
+    private readonly string SqlCreateDb = 
+        """
+        CREATE TABLE assets (
+            id	INTEGER NOT NULL UNIQUE,
+            data_b64	TEXT,
+            md5 TEXT UNIQUE ,
+            PRIMARY KEY("id" AUTOINCREMENT)
+        );
 
-                                 CREATE TABLE "record" (
-                                     "id"	INTEGER NOT NULL UNIQUE,
-                                     "hash_id"	TEXT UNIQUE,
-                                     "data_md5"	TEXT,
-                                     "text"	TEXT,
-                                     "display_title"	TEXT,
-                                     "senderapp"	TEXT,
-                                     "icon_path"	TEXT,
-                                     "icon_md5"	TEXT,
-                                     "preview_image_path"	TEXT,
-                                     "content_type"	INTEGER,
-                                     "score"	INTEGER,
-                                     "init_score"	INTEGER,
-                                     "time"	TEXT,
-                                     "create_time"	TEXT,
-                                     "pined"	INTEGER,
-                                     PRIMARY KEY("id" AUTOINCREMENT),
-                                     FOREIGN KEY("icon_md5") REFERENCES "assets"("md5"),
-                                     FOREIGN KEY("data_md5") REFERENCES "assets"("md5") ON DELETE CASCADE
-                                 );
-                                 """;
+        CREATE TABLE "record" (
+            "id"	INTEGER NOT NULL UNIQUE,
+            "hash_id"	TEXT UNIQUE,
+            "data_md5"	TEXT,
+            "text"	TEXT,
+            "display_title"	TEXT,
+            "senderapp"	TEXT,
+            "icon_path"	TEXT,
+            "icon_md5"	TEXT,
+            "preview_image_path"	TEXT,
+            "content_type"	INTEGER,
+            "score"	INTEGER,
+            "init_score"	INTEGER,
+            "time"	TEXT,
+            "create_time"	TEXT,
+            "pined"	INTEGER,
+            PRIMARY KEY("id" AUTOINCREMENT),
+            FOREIGN KEY("icon_md5") REFERENCES "assets"("md5"),
+            FOREIGN KEY("data_md5") REFERENCES "assets"("md5") ON DELETE CASCADE
+        );
+        """;
 
     public DbHelper(SqliteConnection connection)
     {
@@ -67,10 +68,11 @@ public class DbHelper
     {
         Connection.Open();
         var name = Connection.QueryFirstOrDefault<string>(SqlCheckTableRecord);
-        if (name == "record")
-            return;
-        var r = Connection.Execute(SqlCreateDb);
-        CloseIfNotKeep();
+        if (name != "record")
+        {
+            Connection.Execute(SqlCreateDb);
+            CloseIfNotKeep();
+        }
     }
 
     public async void AddOneRecord(ClipboardData data)
@@ -83,7 +85,7 @@ public class DbHelper
         // insert data to table assets
         string dataB64 = data.DataToString();
         var dataMd5 = dataB64.GetMd5();
-        var rows = await Connection.ExecuteAsync(
+        await Connection.ExecuteAsync(
             sql,
             new List<Assets>
             {
@@ -103,7 +105,7 @@ public class DbHelper
                     @Score, @InitScore, @Time, @CreateTime, @Pined);";
         var record = Record.FromClipboardData(data);
 
-        var r = await Connection.ExecuteAsync(sql, record);
+        await Connection.ExecuteAsync(sql, record);
         CloseIfNotKeep();
     }
 
@@ -119,7 +121,10 @@ public class DbHelper
         if (count > 1)
             await Connection.ExecuteAsync(
                 sql,
-                new { HashId = clipboardData.HashId, DataMd5 = dataMd5 }
+                new { 
+                    clipboardData.HashId, 
+                    DataMd5 = dataMd5 
+                }
             );
         // otherwise, no record depends on assets, directly delete records
         // **both** in `record` and `assets` using foreign key constraint,
@@ -145,7 +150,7 @@ public class DbHelper
         var sql = "INSERT OR IGNORE INTO assets(data_b64, md5) VALUES (@DataB64, @Md5);";
         var iconB64 = data.Icon.ToBase64();
         var iconMd5 = iconB64.GetMd5();
-        var rows = await Connection.ExecuteAsync(
+        await Connection.ExecuteAsync(
             sql,
             new List<Assets>
             {
@@ -158,7 +163,7 @@ public class DbHelper
             new
             {
                 Pin = data.Pined,
-                HashId = data.HashId,
+                data.HashId,
                 IconMd5 = iconMd5
             }
         );
@@ -167,16 +172,17 @@ public class DbHelper
 
     public async Task<LinkedList<ClipboardData>> GetAllRecord()
     {
-        var sql = """
-                  SELECT r.id as Id, a.data_b64 as DataMd5, r.text as Text, r.display_title as DisplayTitle,
-                         r.senderapp as SenderApp, r.icon_path as IconPath, b.data_b64 as IconMd5,
-                         r.preview_image_path as PreviewImagePath, r.content_type as ContentType,
-                         r.score as Score, r.init_score as InitScore, r.time as Time,
-                         r.create_time as CreateTime, r.pined as Pined, r.hash_id as HashId
-                       FROM record r
-                       LEFT JOIN assets a ON r.data_md5=a.md5
-                       LEFT JOIN assets b ON r.icon_md5=b.md5;
-                  """;
+        var sql = 
+            """
+            SELECT r.id as Id, a.data_b64 as DataMd5, r.text as Text, r.display_title as DisplayTitle,
+                    r.senderapp as SenderApp, r.icon_path as IconPath, b.data_b64 as IconMd5,
+                    r.preview_image_path as PreviewImagePath, r.content_type as ContentType,
+                    r.score as Score, r.init_score as InitScore, r.time as Time,
+                    r.create_time as CreateTime, r.pined as Pined, r.hash_id as HashId
+                FROM record r
+                LEFT JOIN assets a ON r.data_md5=a.md5
+                LEFT JOIN assets b ON r.icon_md5=b.md5;
+            """;
         var results = await Connection.QueryAsync<Record>(sql);
         LinkedList<ClipboardData> allRecord = new(results.Select(Record.ToClipboardData));
         CloseIfNotKeep();
@@ -190,7 +196,7 @@ public class DbHelper
                       WHERE strftime('%s', 'now') - strftime('%s', create_time) > @KeepTime*3600
                       AND content_type=@ContentType;
                   """;
-        var r = await Connection.ExecuteAsync(
+        await Connection.ExecuteAsync(
             sql,
             new { KeepTime = keepTime, ContentType = contentType }
         );
@@ -200,19 +206,25 @@ public class DbHelper
     public void Close()
     {
         if (Connection.State == ConnectionState.Open)
+        {
             Connection.Close();
+        }
     }
 
     public void Open()
     {
         if (Connection.State == ConnectionState.Closed)
+        {
             Connection.Open();
+        }
     }
 
     private async void CloseIfNotKeep()
     {
         if (!KeepConnection)
+        {
             await Connection.CloseAsync();
+        }
     }
 }
 
@@ -229,14 +241,14 @@ public class Record
 {
     public int Id { get; set; }
 
-    public string HashId { get; set; }
-    public string DataMd5 { get; set; }
-    public string Text { get; set; }
-    public string DisplayTitle { get; set; }
-    public string SenderApp { get; set; }
-    public string IconPath { get; set; }
-    public string IconMd5 { get; set; }
-    public string PreviewImagePath { get; set; }
+    public string HashId { get; set; } = string.Empty;
+    public string DataMd5 { get; set; } = string.Empty;
+    public string Text { get; set; } = string.Empty;
+    public string DisplayTitle { get; set; } = string.Empty;
+    public string SenderApp { get; set; } = string.Empty;
+    public string IconPath { get; set; } = string.Empty;
+    public string IconMd5 { get; set; } = string.Empty;
+    public string PreviewImagePath { get; set; } = string.Empty;
     public int ContentType { get; set; }
     public int Score { get; set; }
     public int InitScore { get; set; }

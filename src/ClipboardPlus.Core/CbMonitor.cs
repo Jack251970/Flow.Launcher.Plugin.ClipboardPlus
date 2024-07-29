@@ -12,15 +12,15 @@ using Timer = System.Windows.Forms.Timer;
 
 namespace ClipboardPlus.Core;
 
-public class CbMonitor
+public class CbMonitor : IDisposable
 {
     #region Fields
 
     private bool _monitorClipboard;
     private bool _observeLastEntry;
 
-    private Timer _timer = new();
-    private CbHandle _handle = new();
+    private readonly Timer _timer = new();
+    private readonly CbHandle _handle = new();
     private ObservableDataFormats _observableFormats = new();
 
     #endregion
@@ -91,7 +91,9 @@ public class CbMonitor
     /// <summary>
     /// Gets the current foreground window's handle.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// Handle to the currently active window.
+    /// </returns>
     public IntPtr ForegroundWindowHandle()
     {
         return GetForegroundWindow();
@@ -113,6 +115,15 @@ public class CbMonitor
     public void StopMonitoring()
     {
         _handle.Close();
+    }
+
+    /// <summary>
+    /// Disposes of the clipboard-monitoring resources.
+    /// </summary>
+    public void Dispose()
+    {
+        _timer.Dispose();
+        _handle.Dispose();
     }
 
     #endregion

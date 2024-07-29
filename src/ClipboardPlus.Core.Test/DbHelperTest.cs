@@ -1,10 +1,8 @@
 using System.Windows.Media.Imaging;
 using Xunit.Abstractions;
 using System.Drawing;
-using ClipboardPlus.Core;
 using Dapper;
 using Microsoft.Data.Sqlite;
-using System;
 using System.Globalization;
 
 namespace ClipboardPlus.Core.Test;
@@ -86,7 +84,7 @@ public class DbHelperTest
     }
 
     [Fact]
-    public async void TestInsertRecord()
+    public async Task TestInsertRecord()
     {
         // test text
         var exampleTextRecord = GetRandomClipboardData();
@@ -108,7 +106,7 @@ public class DbHelperTest
     [InlineData(1, "2023-05-28 11:35:00.1+08:00", 24)]
     [InlineData(1, "2023-05-28 11:35:00.1+08:00", 3600)]
     [InlineData(2, "2023-05-28 11:35:00.1+08:00", 72)]
-    public async void TestDeleteRecordBefore(int type, string creatTime, int keepTime)
+    public async Task TestDeleteRecordBefore(int type, string creatTime, int keepTime)
     {
         var helper = new DbHelper(
             "TestDb",
