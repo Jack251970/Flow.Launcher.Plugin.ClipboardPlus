@@ -26,7 +26,7 @@
       <PackageReference Include="Flow.Launcher.Plugin" Version="4.3.0" />
       <PackageReference Include="FluentIcons.WPF" Version="1.1.249" />
       <PackageReference Include="Material.Icons" Version="2.1.10" />
-      <PackageReference Include="System.Drawing.Common" Version="8.0.7" />
+      <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     </ItemGroup>
 
 </Project>
