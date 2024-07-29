@@ -115,7 +115,10 @@ public class PublishTask : FrostingTask<BuildContext>
         var ptn =
             @"Clipboar.+\.dll|"
             + @".+\.png|"
-            + @"Dapper\.dll|Svg\.dll|Material\.Icons\.dll|"
+            + @"Dapper\.dll|"
+            + @"Svg\.dll|"
+            + @"Material\.Icons\.dll|"
+            + @"FluentIcons\.Common\.dll|FluentIcons\.WPF\.dll|"
             + @"ExCSS\.dll|"
             + @"plugin\.json|H\.InputSimulator\.dll|"
             + @"SQLitePCLRaw.+\.dll|Microsoft.+(S|s)qlite\.dll";
@@ -139,6 +142,11 @@ public class PublishTask : FrostingTask<BuildContext>
             if (fStr.EndsWith("plugin.json"))
             {
                 versionFile = f;
+            }
+
+            if (fName == "FluentIcons.WPF.dll")
+            {
+                var match = Regex.IsMatch(fName, ptn);
             }
 
             if (!Regex.IsMatch(fName, ptn))
@@ -226,7 +234,10 @@ public class DeployTask : FrostingTask<BuildContext>
         foreach (var f in files)
         {
             if (File.GetCreationTime(f.FullPath) <= t)
+            {
                 continue;
+            }
+
             t = File.GetCreationTime(f.FullPath);
             mostRecentFile = f;
         }
