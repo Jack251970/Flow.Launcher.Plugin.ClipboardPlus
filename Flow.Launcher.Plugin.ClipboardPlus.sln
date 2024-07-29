@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Build", "build\Build.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClipboardPlus.Panels.Test", "src\ClipboardPlus.Panels.Test\ClipboardPlus.Panels.Test.csproj", "{B5DC21C9-618A-48D1-969F-E8D5BF7FBFD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{3C9C90EC-A670-441E-81C6-B857DEF8374E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D51778AD-3C76-4C6F-AFA0-7D8BE32D9264}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
@@ -135,16 +133,6 @@ Global
 		{B5DC21C9-618A-48D1-969F-E8D5BF7FBFD6}.Release|x64.Build.0 = Release|Any CPU
 		{B5DC21C9-618A-48D1-969F-E8D5BF7FBFD6}.Release|x86.ActiveCfg = Release|Any CPU
 		{B5DC21C9-618A-48D1-969F-E8D5BF7FBFD6}.Release|x86.Build.0 = Release|Any CPU
-		{3C9C90EC-A670-441E-81C6-B857DEF8374E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3C9C90EC-A670-441E-81C6-B857DEF8374E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3C9C90EC-A670-441E-81C6-B857DEF8374E}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{3C9C90EC-A670-441E-81C6-B857DEF8374E}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{3C9C90EC-A670-441E-81C6-B857DEF8374E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3C9C90EC-A670-441E-81C6-B857DEF8374E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3C9C90EC-A670-441E-81C6-B857DEF8374E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3C9C90EC-A670-441E-81C6-B857DEF8374E}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{3C9C90EC-A670-441E-81C6-B857DEF8374E}.Release|x64.ActiveCfg = Release|Any CPU
-		{3C9C90EC-A670-441E-81C6-B857DEF8374E}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

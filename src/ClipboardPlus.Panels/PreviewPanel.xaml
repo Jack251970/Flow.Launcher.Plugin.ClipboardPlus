@@ -30,36 +30,40 @@
             MaxHeight="400">
             <Image.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Save in cache folder" Click="ImSaveAs_Click">
-                        <ic:SymbolIcon Symbol="Save" />
-                    </MenuItem>
+                    <MenuItem Header="Save in cache folder" Icon="{ic:SymbolIconExtension Symbol=Save}" Click="ImSaveAs_Click"/>
                 </ContextMenu>
             </Image.ContextMenu>
         </Image>
 
         <!-- Text Viewer -->
-        <TextBox
+        <ScrollViewer
             Grid.Row="0"
             Grid.Column="0"
-            x:Name="TxtBoxPre"
-            IsUndoEnabled="True"
             HorizontalAlignment="Center"
             HorizontalContentAlignment="Left"
-            MinWidth="320"
             MaxHeight="400"
             Panel.ZIndex="1"
-            Text=""
-            TextAlignment="Left"
-            FontSize="14"
-            IsReadOnly="False"
-            Margin="5"
-            Padding="5"
-            Focusable="True"
+            UseLayoutRounding="False"
             VerticalScrollBarVisibility="Auto"
-            HorizontalScrollBarVisibility="Auto"
-            GotFocus="TxtBoxPre_GotFocus"
-            TextChanged="TxtBoxPre_TextChanged"
-            UseLayoutRounding="False" />
+            HorizontalScrollBarVisibility="Auto">
+            <TextBox
+                x:Name="TxtBoxPre"
+                IsUndoEnabled="True"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                MinWidth="320"
+                Text=""
+                TextAlignment="Left"
+                IsReadOnly="False"
+                Margin="5"
+                Padding="5"
+                Focusable="True"
+                VerticalScrollBarVisibility="Disabled"
+                HorizontalScrollBarVisibility="Disabled"
+                GotFocus="TxtBoxPre_GotFocus"
+                TextChanged="TxtBoxPre_TextChanged"
+                UseLayoutRounding="False" />
+        </ScrollViewer>
 
         <!-- Status Bar & Buttons -->
         <DockPanel
