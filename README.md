@@ -46,7 +46,7 @@ Sorry, the plugin store is not available yet.
 
 ## Usage
 
-![settings](./images/settings.png)
+![settings](./images/plugin_settings.png)
 
 The default action keyword is `cbp`, you can change it in the FlowLauncher.
 
