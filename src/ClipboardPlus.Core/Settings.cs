@@ -25,7 +25,6 @@ public class Settings
 
     public CbOrders OrderBy { get; set; } = CbOrders.Score;
 
-    // TODO: add this in settings panel
     public string ClearKeyword { get; set; } = "clear";
 
     public void Save()

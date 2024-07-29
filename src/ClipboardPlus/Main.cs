@@ -283,7 +283,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
                 _context.API.LogDebug(ClassName, "Processed file change");
                 break;
             case CbContentType.Other:
-                // TODO: nothing to do now
+                // TODO: Handle other formats.
                 _context.API.LogDebug(ClassName, "Other change listened, skip");
                 return;
             default:
