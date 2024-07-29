@@ -9,8 +9,18 @@
              d:DesignWidth="800"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
+    <UserControl.Resources>
+        <!-- Light Theme -->
+        <SolidColorBrush x:Key="Color03B" Color="#e5e5e5" />
+        
+        <!-- Dark Theme -->
+        <!-- <SolidColorBrush x:Key="Color03B" Color="#1d1d1d" /> -->
+    </UserControl.Resources>
+
     <Grid Margin="60,15,0,15">
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -27,39 +37,33 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!-- Cache Image -->
-        <CheckBox
-            x:Name="CkBoxCacheImages"
+        <!-- Clear Keyword -->
+        <TextBlock
             Grid.Row="0"
             Grid.Column="0"
             Margin="10,5,5,5"
-            HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            Content="Cache images"
-            IsChecked="{Binding Settings.CacheImages}"
-            Checked="CkBoxCacheImages_OnChecked"
-            Unchecked="CkBoxCacheImages_OnUnchecked"/>
-        <Button
-            x:Name="CacheImageButton"
+            Text="Clear keyword:"/>
+        <TextBox
+            x:Name="TextBoxClearKeyword"
             Grid.Row="0"
             Grid.Column="1"
-            Grid.ColumnSpan="2"
             HorizontalAlignment="Left"
             Margin="10,5,0,5"
-            Content="Open cache folder"
-            Click="CacheImageButton_Click"/>
+            MinWidth="100"
+            TextWrapping="NoWrap"
+            AcceptsReturn="False"
+            Text="{Binding ClearKeywordString}"
+            TextChanged="TextBoxClearKeyword_OnTextChanged"/>
 
         <!-- Max Records -->
-        <Label
+        <TextBlock
             x:Name="Prefix"
             Grid.Row="1"
             Grid.Column="0"
             Margin="10,5,5,5"
-            HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            Content="Max records:"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"/>
+            Text="Max records:"/>
         <TextBox
             x:Name="MaxRecValueBox"
             Grid.Row="1"
@@ -72,16 +76,68 @@
             PreviewTextInput="MaxRecValueBox_OnPreviewTextInput"
             TextChanged="MaxRecValueBox_OnTextChanged"/>
 
-        <!-- Image Format -->
+        <!-- Order by -->
         <TextBlock
             Grid.Row="2"
+            Grid.Column="0"
+            Margin="10,5,5,5"
+            VerticalAlignment="Center"
+            Text="Order by:"/>
+        <ComboBox
+            x:Name="CmBoxOrderBy"
+            Grid.Row="2"
+            Grid.Column="1"
+            Margin="10,5,0,5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            SelectionChanged="CmBoxOrderBy_OnSelectionChanged">
+            <ComboBoxItem IsSelected="True" Tag="0">Score</ComboBoxItem>
+            <ComboBoxItem Tag="1">Create Time</ComboBoxItem>
+            <ComboBoxItem Tag="2">Source Application</ComboBoxItem>
+            <ComboBoxItem Tag="3">Type</ComboBoxItem>
+        </ComboBox>
+        
+        <!-- Seperator -->
+        <Separator
+            Grid.Row="3"
+            Grid.ColumnSpan="2"
+            Height="1"
+            Margin="-60,10,0,10"
+            BorderBrush="{DynamicResource Color03B}"
+            BorderThickness="1" />
+
+        <!-- Cache Image -->
+        <CheckBox
+            x:Name="CkBoxCacheImages"
+            Grid.Row="4"
+            Grid.Column="0"
+            Margin="10,5,5,5"
+            VerticalAlignment="Center"
+            Content="Cache images"
+            IsChecked="{Binding Settings.CacheImages}"
+            Checked="CkBoxCacheImages_OnChecked"
+            Unchecked="CkBoxCacheImages_OnUnchecked"/>
+        <Button
+            x:Name="CacheImageButton"
+            Grid.Row="4"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Margin="10,5,0,5"
+            Content="Open cache folder"
+            Click="CacheImageButton_Click"/>
+
+        <!-- Image Format -->
+        <TextBlock
+            Grid.Row="5"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Text="Format:"/>
         <TextBox
             x:Name="TextBoxImageFormat"
-            Grid.Row="2"
+            Grid.Row="5"
             Grid.Column="1"
             Margin="10,5,0,5"
             HorizontalAlignment="Left"
@@ -91,11 +147,14 @@
             AcceptsReturn="False"
             Text="{Binding ImageFormatString}"
             TextChanged="TextBoxImageFormat_OnTextChanged"/>
+        
         <StackPanel 
-            Grid.Row="3"
-            Grid.ColumnSpan="2"
+            Grid.Row="6"
+            Grid.Column="2"
             Orientation="Horizontal"
-            Margin="10,5,5,5">
+            Margin="10,5,0,5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center">
             <Button
                 x:Name="ButtonYear"
                 Margin="0,0,3,0"
@@ -142,14 +201,14 @@
 
         <!-- Preview Format -->
         <TextBlock
-            Grid.Row="4"
+            Grid.Row="7"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Text="Preview:"/>
         <TextBox
             x:Name="TextBlockImageFormatPreview"
-            Grid.Row="4"
+            Grid.Row="7"
             Grid.Column="1"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
@@ -161,31 +220,19 @@
             IsReadOnly="True"
             IsEnabled="False"/>
 
-        <!-- Order by -->
-        <TextBlock
-            Grid.Row="5"
-            Grid.Column="0"
-            Margin="10,5,5,5"
-            VerticalAlignment="Center"
-            Text="Order by:"/>
-        <ComboBox
-            x:Name="CmBoxOrderBy"
-            Grid.Row="5"
-            Grid.Column="1"
-            Margin="10,5,0,5"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            SelectionChanged="CmBoxOrderBy_OnSelectionChanged">
-            <ComboBoxItem IsSelected="True" Tag="0">Score</ComboBoxItem>
-            <ComboBoxItem Tag="1">Create Time</ComboBoxItem>
-            <ComboBoxItem Tag="2">Source Application</ComboBoxItem>
-            <ComboBoxItem Tag="3">Type</ComboBoxItem>
-        </ComboBox>
-        
+        <!-- Seperator -->
+        <Separator
+            Grid.Row="8"
+            Grid.ColumnSpan="2"
+            Height="1"
+            Margin="-60,10,0,10"
+            BorderBrush="{DynamicResource Color03B}"
+            BorderThickness="1" />
+
         <!-- Keep Text -->
         <CheckBox
             x:Name="CkBoxKeepText"
-            Grid.Row="6"
+            Grid.Row="9"
             Grid.Column="0"
             Content="Keep text"
             Margin="10,5,5,5"
@@ -195,7 +242,7 @@
             Unchecked="CkBoxKeepText_OnUnchecked"/>
         <ComboBox
             x:Name="CmBoxKeepText"
-            Grid.Row="6"
+            Grid.Row="9"
             Grid.Column="1"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
@@ -216,7 +263,7 @@
         <!-- Keep Images -->
         <CheckBox
             x:Name="CkBoxKeepImages"
-            Grid.Row="7"
+            Grid.Row="10"
             Grid.Column="0"
             Content="Keep images"
             Margin="10,5,5,5"
@@ -226,7 +273,7 @@
             Unchecked="CkBoxKeepImages_OnUnchecked"/>
         <ComboBox
             x:Name="CmBoxKeepImages"
-            Grid.Row="7"
+            Grid.Row="10"
             Grid.Column="1"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
@@ -247,7 +294,7 @@
         <!-- Keep Files -->
         <CheckBox
             x:Name="CkBoxKeepFiles"
-            Grid.Row="8"
+            Grid.Row="11"
             Grid.Column="0"
             Content="Keep files"
             Margin="10,5,5,5"
@@ -257,7 +304,7 @@
             Unchecked="CkBoxKeepFiles_OnUnchecked"/>
         <ComboBox
             x:Name="CmBoxKeepFiles"
-            Grid.Row="8"
+            Grid.Row="11"
             Grid.Column="1"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
@@ -274,24 +321,5 @@
             <ComboBoxItem Tag="4320">6 Months</ComboBoxItem>
             <ComboBoxItem Tag="8640">1 Year</ComboBoxItem>
         </ComboBox>
-
-        <!-- Clear Keyword -->
-        <TextBlock
-            Grid.Row="9"
-            Grid.Column="0"
-            Margin="10,5,5,5"
-            VerticalAlignment="Center"
-            Text="Clear keyword:"/>
-        <TextBox
-            x:Name="TextBoxClearKeyword"
-            Grid.Row="9"
-            Grid.Column="1"
-            HorizontalAlignment="Left"
-            Margin="10,5,0,5"
-            MinWidth="100"
-            TextWrapping="NoWrap"
-            AcceptsReturn="False"
-            Text="{Binding ClearKeywordString}"
-            TextChanged="TextBoxClearKeyword_OnTextChanged"/>
     </Grid>
 </UserControl>
