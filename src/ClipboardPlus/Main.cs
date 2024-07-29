@@ -1,7 +1,6 @@
 using ClipboardPlus.Core;
 using ClipboardPlus.Panels;
 using Flow.Launcher.Plugin;
-using Material.Icons;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -24,14 +23,24 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
 
     // working directory
     private DirectoryInfo ClipDir { get; set; } = null!;
-
     private DirectoryInfo ClipCacheDir { get; set; } = null!;
 
     // default icon path
-    private string _defaultIconPath = null!;
-    private string _defaultPinIconPath = null!;
+    private string _defaultIconPath = string.Empty;
+    private string _defaultPinIconPath = string.Empty;
 
-    private string _settingsPath = null!;
+    // icon path
+    private string _clearIconPath = string.Empty;
+
+    private string _listIconPath = string.Empty;
+    private string _databaseIconPath = string.Empty;
+
+    private string _textIconPath = string.Empty;
+    private string _imageIconPath = string.Empty;   
+    private string _fileIconPath = string.Empty;
+
+    // settings path
+    private string _settingsPath = string.Empty;
 
     // max data count, will be rewritten by settings
     private int _maxDataCount = 10000;
@@ -40,7 +49,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
     private int CurrentScore { get; set; } = 1;
 
     private DbHelper _dbHelper = null!;
-    private string _dbPath = null!;
+    private string _dbPath = string.Empty;
 
     private PluginInitContext _context = null!;
     private LinkedList<ClipboardData> _dataList = new();
@@ -60,7 +69,16 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
             : new DirectoryInfo(imageCacheDirectoryPath);
 
         _defaultIconPath = Path.Join(ClipDir.FullName, "Images/clipboard.png");
-        _defaultPinIconPath = Path.Join(ClipDir.FullName, "Images/clipboard_pined.png");
+        _defaultPinIconPath = Path.Join(ClipDir.FullName, "Images/pined.png");
+
+        _clearIconPath = Path.Join(ClipDir.FullName, "Images/clear.png");
+        
+        _listIconPath = Path.Join(ClipDir.FullName, "Images/list.png");
+        _databaseIconPath = Path.Join(ClipDir.FullName, "Images/database.png");
+
+        _textIconPath = Path.Join(ClipDir.FullName, "Images/text.png");
+        _imageIconPath = Path.Join(ClipDir.FullName, "Images/image.png");
+        _fileIconPath = Path.Join(ClipDir.FullName, "Images/file.png");
 
         _settingsPath = Path.Join(ClipDir.FullName, "settings.json");
         if (File.Exists(_settingsPath))
@@ -114,11 +132,9 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
                 {
                     new Result
                     {
-                        Title = "records",
-                        SubTitle = "clear records in memory only",
-                        // IcoPath = _defaultIconPath,
-                        Icon = () =>
-                            MaterialIconKind.Close.ToBitmapImage(fillColor: _settings.IconColor),
+                        Title = "Clear list",
+                        SubTitle = "Clear records in list",
+                        IcoPath = _listIconPath,
                         Score = 21,
                         Action = _ =>
                         {
@@ -128,12 +144,9 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
                     },
                     new Result
                     {
-                        Title = "database",
-                        SubTitle = "clear records in database too",
-                        Icon = () =>
-                            MaterialIconKind.DatabaseAlert.ToBitmapImage(
-                                fillColor: _settings.IconColor
-                            ),
+                        Title = "Clear all",
+                        SubTitle = "Clear records in both list and database",
+                        IcoPath = _databaseIconPath,
                         Score = 1,
                         Action = _ =>
                         {
@@ -167,7 +180,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
             {
                 Title = "Clear All Records",
                 SubTitle = "Click to clear all records",
-                IcoPath = _defaultIconPath,
+                IcoPath = _clearIconPath,
                 Score = 1,
                 Action = _ =>
                 {
@@ -386,10 +399,11 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
         return data.Type switch
         {
             CbContentType.Text
-                => MaterialIconKind.Text.ToBitmapImage(fillColor: _settings.IconColor),
+                => new BitmapImage(new Uri(_textIconPath, UriKind.RelativeOrAbsolute)),
             CbContentType.Files
-                => MaterialIconKind.FileMultiple.ToBitmapImage(fillColor: _settings.IconColor),
-            CbContentType.Image => data.Icon,
+                => new BitmapImage(new Uri(_fileIconPath, UriKind.RelativeOrAbsolute)),
+            CbContentType.Image
+                => new BitmapImage(new Uri(_imageIconPath, UriKind.RelativeOrAbsolute)),
             _ => throw new NotImplementedException()
         };
     }
@@ -401,7 +415,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
             return int.MaxValue;
         }
 
-        var orderBy = (CbOrders)_settings.OrderBy;
+        var orderBy = _settings.OrderBy;
         int score = 0;
         switch (orderBy)
         {

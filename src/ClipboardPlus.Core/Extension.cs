@@ -1,6 +1,4 @@
-﻿using Material.Icons;
-using Svg;
-using System.Drawing.Imaging;
+﻿using System.Drawing.Imaging;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Media.Imaging;
@@ -50,35 +48,6 @@ public static class ClipImageExtension
         byte[] bytes = Convert.FromBase64String(b64);
         using var stream = new MemoryStream(bytes);
         return new Bitmap(stream);
-    }
-
-    public static Image ToImage(
-        this MaterialIconKind kind,
-        string fillColor = CbColors.Blue500,
-        int width = 100,
-        int height = 100
-    )
-    {
-        var s = MaterialIconDataProvider.GetData(kind);
-        var ss = $"""
-             <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" version="1.1">
-                 <path d="{s}" fill="{fillColor}"/>
-             </svg>
-             """;
-        var svg = SvgDocument.FromSvg<SvgDocument>(ss);
-        var img = svg.Draw(width, height);
-        return img;
-    }
-
-    // TODO: Remove this
-    public static BitmapImage ToBitmapImage(
-        this MaterialIconKind kind,
-        string fillColor = CbColors.Blue500,
-        int width = 100,
-        int height = 100
-    )
-    {
-        return kind.ToImage(fillColor, width, height).ToBitmapImage();
     }
 
     public static string GetMd5(this string s)

@@ -27,8 +27,6 @@ public class Settings
 
     // TODO: add this in settings panel
     public string ClearKeyword { get; set; } = "clear";
-    // TODO: remove this
-    public string IconColor { get; set; } = CbColors.Blue500;
 
     public void Save()
     {
