@@ -1,5 +1,4 @@
 ﻿using Flow.Launcher.Plugin;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ClipboardPlus.Core;
@@ -23,16 +22,20 @@ public static partial class Utils
 
     public static int CountWordsCn(string s)
     {
-        var nCn = (Encoding.UTF8.GetByteCount(s) - s.Length) / 2;
-        // var nCn = s.ToCharArray().Count(c => c >= 0x4E00 && c <= 0x9FFF);
-        return nCn;
+        // Count Chinese characters in the string
+        int chineseCharCount = s.Count(c => c >= 0x4E00 && c <= 0x9FFF);
+        return chineseCharCount;
     }
 
     public static int CountWordsEn(string s)
     {
-        // TODO: count more reasonable
-        s = string.Join("", s.Where(c => c < 0x4E00));
-        var collection = MyRegex().Matches(s);
+        // Remove non-ASCII characters
+        s = new string(s.Where(c => c < 128).ToArray());
+
+        // Regex pattern to match words, including contractions
+        var wordPattern = @"\b[\w'-]+\b";
+        var collection = Regex.Matches(s, wordPattern);
+
         return collection.Count;
     }
 
@@ -79,9 +82,6 @@ public static partial class Utils
 
         return (clipDir, clipCacheDir);
     }
-
-    [GeneratedRegex("[\\S]+")]
-    private static partial Regex MyRegex();
 }
 
 public static class Retry
