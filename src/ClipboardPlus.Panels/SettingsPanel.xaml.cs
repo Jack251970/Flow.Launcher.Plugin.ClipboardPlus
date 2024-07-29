@@ -1,8 +1,12 @@
 using ClipboardPlus.Core;
 using Flow.Launcher.Plugin;
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace ClipboardPlus.Panels;
 
@@ -10,9 +14,29 @@ public partial class SettingsPanel
 {
     public Settings Settings { get; set; }
     private PluginInitContext? Context { get; set; }
+    private DirectoryInfo? ClipDir { get; set; }
+    private DirectoryInfo? ClipCacheDir { get; set; }
     private bool Ready { get; set; } = false;
 
     #region Dependency Properties
+
+    public static readonly DependencyProperty MaxDataCountProperty = DependencyProperty.Register(
+        nameof(MaxDataCount),
+        typeof(int),
+        typeof(SettingsPanel),
+        new PropertyMetadata(default(int))
+    );
+
+    public int MaxDataCount
+    {
+        get => Settings.MaxDataCount;
+        set
+        {
+            SetValue(MaxDataCountProperty, value);
+            Settings.MaxDataCount = value;
+            MaxRecValueBox.Text = value.ToString();
+        }
+    }
 
     public static readonly DependencyProperty ImageFormatStringProperty = DependencyProperty.Register(
         nameof(ImageFormatString), typeof(string), typeof(SettingsPanel), new PropertyMetadata(default(string)));
@@ -22,12 +46,6 @@ public partial class SettingsPanel
         get { return (string)GetValue(ImageFormatStringProperty); }
         set { SetValue(ImageFormatStringProperty, value); }
     }
-    public static readonly DependencyProperty MaxDataCountProperty = DependencyProperty.Register(
-        nameof(MaxDataCount),
-        typeof(int),
-        typeof(SettingsPanel),
-        new PropertyMetadata(default(int))
-    );
 
     public static readonly DependencyProperty ImageFormatPreviewProperty = DependencyProperty.Register(
         nameof(ImageFormatPreview), typeof(string), typeof(SettingsPanel), new PropertyMetadata(default(string)));
@@ -36,17 +54,6 @@ public partial class SettingsPanel
     {
         get { return (string)GetValue(ImageFormatPreviewProperty); }
         set { SetValue(ImageFormatPreviewProperty, value); }
-    }
-
-    public int MaxDataCount
-    {
-        get => Settings.MaxDataCount;
-        set
-        {
-            SetValue(MaxDataCountProperty, value);
-            Settings.MaxDataCount = value;
-            SpinBoxMaxRec.Value = Convert.ToInt32(value);
-        }
     }
 
     public static readonly DependencyProperty OrderByProperty = DependencyProperty.Register(
@@ -117,6 +124,15 @@ public partial class SettingsPanel
         }
     }
 
+    public static readonly DependencyProperty ClearKeywordStringProperty = DependencyProperty.Register(
+        nameof(ClearKeywordString), typeof(string), typeof(SettingsPanel), new PropertyMetadata(default(string)));
+
+    public string ClearKeywordString
+    {
+        get { return (string)GetValue(ClearKeywordStringProperty); }
+        set { SetValue(ClearKeywordStringProperty, value); }
+    }
+
     #endregion
 
     public SettingsPanel(Settings settings, PluginInitContext context)
@@ -124,6 +140,7 @@ public partial class SettingsPanel
         Settings = settings;
         Context = context;
         InitializeComponent();
+        (ClipDir, ClipCacheDir) = Utils.GetClipDirAndClipCacheDir(context);
         MaxDataCount = settings.MaxDataCount;
         OrderBy = settings.OrderBy;
         KeepTextHours = settings.KeepTextHours;
@@ -131,6 +148,7 @@ public partial class SettingsPanel
         KeepFileHours = settings.KeepFileHours;
         ImageFormatString = settings.ImageFormat;
         ImageFormatPreview = Utils.FormatImageName(ImageFormatString, DateTime.Now, "TestApp.exe");
+        ClearKeywordString = settings.ClearKeyword;
         Ready = true;
     }
 
@@ -152,6 +170,7 @@ public partial class SettingsPanel
         KeepFileHours = Settings.KeepFileHours;
         ImageFormatString = Settings.ImageFormat;
         ImageFormatPreview = Utils.FormatImageName(ImageFormatString, DateTime.Now, "TestApp.exe");
+        ClearKeywordString = Settings.ClearKeyword;
         Console.WriteLine(Settings);
         Ready = true;
     }
@@ -182,18 +201,53 @@ public partial class SettingsPanel
         }
     }
 
+    private void CacheImageButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ClipCacheDir is not null)
+        {
+            Process.Start(new ProcessStartInfo()
+            {
+                FileName = ClipCacheDir.FullName,
+                UseShellExecute = true,
+                Verb = "open"
+            });
+        }
+    }
+
     #endregion
 
     #region Max Records
 
-    private void SpinBoxMaxRec_OnValueChanged(int v)
+    private readonly int MaxRecMaximumValue = 100000;
+    private bool isUpdatingText = false;
+
+    private void MaxRecValueBox_OnPreviewTextInput(object sender, TextCompositionEventArgs e)
     {
-        if (Ready)
+        e.Handled = NumberRegex().IsMatch(e.Text);
+        if (int.TryParse(e.Text, out int a))
         {
-            MaxDataCount = int.Max(v, 0);
+            e.Handled = e.Handled && a <= MaxRecMaximumValue;
+        }
+    }
+
+    private void MaxRecValueBox_OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (isUpdatingText)
+        {
+            return;
+        }
+
+        if (Ready && (!string.IsNullOrEmpty(MaxRecValueBox.Text)) && int.TryParse(MaxRecValueBox.Text, out var v))
+        {
+            isUpdatingText = true;
+            MaxDataCount = (v > MaxRecMaximumValue) ? MaxRecMaximumValue : Math.Max(v, 0);
+            isUpdatingText = false;
             ApplySettings();
         }
     }
+
+    [GeneratedRegex("[^0-9]+")]
+    private static partial Regex NumberRegex();
 
     #endregion
 
@@ -351,6 +405,19 @@ public partial class SettingsPanel
         if (Ready)
         {
             Settings.KeepFileHours = (KeepTime)CmBoxKeepFiles.SelectedIndex;
+            ApplySettings();
+        }
+    }
+
+    #endregion
+
+    #region Clear Keyword
+
+    private void TextBoxClearKeyword_OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (Ready)
+        {
+            Settings.ClearKeyword = TextBoxClearKeyword.Text;
             ApplySettings();
         }
     }

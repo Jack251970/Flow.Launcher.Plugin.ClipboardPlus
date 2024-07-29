@@ -62,11 +62,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
         _clipboard.ClipboardChanged += OnClipboardChange;
         RequeryString = _context.CurrentPluginMetadata.ActionKeyword;
 
-        ClipDir = new DirectoryInfo(context.CurrentPluginMetadata.PluginDirectory);
-        var imageCacheDirectoryPath = Path.Combine(ClipDir.FullName, "CachedImages");
-        ClipCacheDir = !Directory.Exists(imageCacheDirectoryPath)
-            ? Directory.CreateDirectory(imageCacheDirectoryPath)
-            : new DirectoryInfo(imageCacheDirectoryPath);
+        (ClipDir, ClipCacheDir) = Utils.GetClipDirAndClipCacheDir(context);
 
         _defaultIconPath = Path.Join(ClipDir.FullName, "Images/clipboard.png");
         _defaultPinIconPath = Path.Join(ClipDir.FullName, "Images/pined.png");

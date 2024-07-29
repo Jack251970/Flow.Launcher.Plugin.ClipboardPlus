@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Flow.Launcher.Plugin;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ClipboardPlus.Core;
@@ -66,6 +67,17 @@ public static partial class Utils
 
         img.Save(path);
         return path;
+    }
+
+    public static (DirectoryInfo ClipDir, DirectoryInfo ClipCacheDir) GetClipDirAndClipCacheDir(PluginInitContext context)
+    {
+        var clipDir = new DirectoryInfo(context.CurrentPluginMetadata.PluginDirectory);
+        var imageCacheDirectoryPath = Path.Combine(clipDir.FullName, "CachedImages");
+        var clipCacheDir = !Directory.Exists(imageCacheDirectoryPath)
+            ? Directory.CreateDirectory(imageCacheDirectoryPath)
+            : new DirectoryInfo(imageCacheDirectoryPath);
+
+        return (clipDir, clipCacheDir);
     }
 
     [GeneratedRegex("[\\S]+")]
