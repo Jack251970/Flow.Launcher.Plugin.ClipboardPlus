@@ -1,15 +1,15 @@
+using ClipboardPlus.Core;
+using Flow.Launcher.Plugin;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using Flow.Launcher.Plugin;
-using ClipboardPlus.Core;
 
 namespace ClipboardPlus.Panels;
 
 public partial class SettingsPanel
 {
-    public Settings settings { get; set; }
-    private PluginInitContext? _context { get; set; }
+    public Settings Settings { get; set; }
+    private PluginInitContext? Context { get; set; }
     private bool Ready { get; set; } = false;
 
     #region Dependency Properties
@@ -40,11 +40,11 @@ public partial class SettingsPanel
 
     public int MaxDataCount
     {
-        get => settings.MaxDataCount;
+        get => Settings.MaxDataCount;
         set
         {
             SetValue(MaxDataCountProperty, value);
-            settings.MaxDataCount = value;
+            Settings.MaxDataCount = value;
             SpinBoxMaxRec.Value = Convert.ToInt32(value);
         }
     }
@@ -58,7 +58,7 @@ public partial class SettingsPanel
 
     public int OrderBy
     {
-        get => settings.OrderBy;
+        get => Settings.OrderBy;
         set
         {
             SetValue(OrderByProperty, value);
@@ -75,7 +75,7 @@ public partial class SettingsPanel
 
     public int KeepTextHours
     {
-        get => settings.KeepTextHours;
+        get => Settings.KeepTextHours;
         set
         {
             SetValue(KeepTextHoursProperty, value);
@@ -92,7 +92,7 @@ public partial class SettingsPanel
 
     public int KeepImageHours
     {
-        get => settings.KeepImageHours;
+        get => Settings.KeepImageHours;
         set
         {
             SetValue(KeepImageHoursProperty, value);
@@ -109,7 +109,7 @@ public partial class SettingsPanel
 
     public int KeepFileHours
     {
-        get => settings.KeepImageHours;
+        get => Settings.KeepImageHours;
         set
         {
             SetValue(KeepFileHoursProperty, value);
@@ -119,18 +119,18 @@ public partial class SettingsPanel
 
     #endregion
 
-    public SettingsPanel(Settings settings, PluginInitContext ctx)
+    public SettingsPanel(Settings settings, PluginInitContext context)
     {
-        this.settings = settings;
-        _context = ctx;
+        Settings = settings;
+        Context = context;
         InitializeComponent();
-        Ready = true;
         MaxDataCount = settings.MaxDataCount;
         KeepTextHours = settings.KeepTextHours;
         KeepImageHours = settings.KeepImageHours;
         KeepFileHours = settings.KeepFileHours;
         ImageFormatString = settings.ImageFormat;
         ImageFormatPreview = Utils.FormatImageName(ImageFormatString, DateTime.Now, "TestApp.exe");
+        Ready = true;
     }
 
     /// <summary>
@@ -139,41 +139,44 @@ public partial class SettingsPanel
     /// </summary>
     public SettingsPanel()
     {
-        settings = new Settings() { ConfigFile = "test.json" };
-        settings.Save();
-        settings = Settings.Load("test.json");
-        _context = null;
+        Settings = new Settings() { ConfigFile = "test.json" };
+        Settings.Save();
+        Settings = Settings.Load("test.json");
+        Context = null;
         InitializeComponent();
+        MaxDataCount = Settings.MaxDataCount;
+        KeepTextHours = Settings.KeepTextHours;
+        KeepImageHours = Settings.KeepImageHours;
+        KeepFileHours = Settings.KeepFileHours;
+        OrderBy = Settings.OrderBy;
+        Console.WriteLine(Settings);
         Ready = true;
-        MaxDataCount = settings.MaxDataCount;
-        KeepTextHours = settings.KeepTextHours;
-        KeepImageHours = settings.KeepImageHours;
-        KeepFileHours = settings.KeepFileHours;
-        OrderBy = settings.OrderBy;
-        Console.WriteLine(settings);
+    }
+
+    private void ApplySettings()
+    {
+        Context?.API.SavePluginSettings();
+        Context?.API.ReloadAllPluginData();
     }
 
     #region Cache Image
 
     private void CkBoxCacheImages_OnChecked(object sender, RoutedEventArgs e)
     {
-        settings.CacheImages = true;
+        if (Ready)
+        {
+            Settings.CacheImages = true;
+            ApplySettings();
+        }
     }
 
     private void CkBoxCacheImages_OnUnchecked(object sender, RoutedEventArgs e)
     {
-        settings.CacheImages = false;
-    }
-
-    #endregion
-
-    #region Apply Settings
-
-    private void BtnApplySettings_OnClick(object sender, RoutedEventArgs e)
-    {
-        // _context?.API.RestartApp();
-        _context?.API.SavePluginSettings();
-        _context?.API.ReloadAllPluginData();
+        if (Ready)
+        {
+            Settings.CacheImages = false;
+            ApplySettings();
+        }
     }
 
     #endregion
@@ -182,7 +185,11 @@ public partial class SettingsPanel
 
     private void SpinBoxMaxRec_OnValueChanged(int v)
     {
-        MaxDataCount = int.Max(v, 0);
+        if (Ready)
+        {
+            MaxDataCount = int.Max(v, 0);
+            ApplySettings();
+        }
     }
 
     #endregion
@@ -231,8 +238,12 @@ public partial class SettingsPanel
     private void TextBoxImageFormat_OnTextChanged(object sender, TextChangedEventArgs e)
     {
         ImageFormatString = TextBoxImageFormat.Text;
-        settings.ImageFormat = ImageFormatString;
+        Settings.ImageFormat = ImageFormatString;
         ImageFormatPreview = Utils.FormatImageName(ImageFormatString, DateTime.Now, "TestApp.exe");
+        if (Ready)
+        {
+            ApplySettings();
+        }
     }
 
     #endregion
@@ -243,65 +254,101 @@ public partial class SettingsPanel
     {
         if (Ready)
         {
-            settings.OrderBy = CmBoxOrderBy.SelectedIndex;
+            Settings.OrderBy = CmBoxOrderBy.SelectedIndex;
+            ApplySettings();
         }
     }
 
     #endregion
 
-    #region Keep Text & Image & Files
+    #region Keep Text
 
     private void CkBoxKeepText_OnChecked(object sender, RoutedEventArgs e)
     {
-        settings.KeepText = true;
+        if (Ready)
+        {
+            Settings.KeepText = true;
+            ApplySettings();
+        }
     }
 
     private void CkBoxKeepText_OnUnchecked(object sender, RoutedEventArgs e)
     {
-        settings.KeepText = false;
+        if (Ready)
+        {
+            Settings.KeepText = false;
+            ApplySettings();
+        }
     }
 
     private void CmBoxKeepText_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (Ready)
         {
-            settings.KeepTextHours = CmBoxKeepText.SelectedIndex;
+            Settings.KeepTextHours = CmBoxKeepText.SelectedIndex;
+            ApplySettings();
         }
     }
 
+    #endregion
+
+    #region Keep Images
+
     private void CkBoxKeepImages_OnChecked(object sender, RoutedEventArgs e)
     {
-        settings.KeepImage = true;
+        if (Ready)
+        {
+            Settings.KeepImage = true;
+            ApplySettings();
+        }
     }
 
     private void CkBoxKeepImages_OnUnchecked(object sender, RoutedEventArgs e)
     {
-        settings.KeepImage = false;
+        if (Ready)
+        {
+            Settings.KeepImage = false;
+            ApplySettings();
+        }
     }
 
     private void CmBoxKeepImages_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (Ready)
         {
-            settings.KeepImageHours = CmBoxKeepImages.SelectedIndex;
+            Settings.KeepImageHours = CmBoxKeepImages.SelectedIndex;
+            ApplySettings();
         }
     }
 
+    #endregion
+
+    #region Keep Files
+
     private void CkBoxKeepFiles_OnChecked(object sender, RoutedEventArgs e)
     {
-        settings.KeepFile = true;
+        if (Ready)
+        {
+            Settings.KeepFile = true;
+            ApplySettings();
+        }
     }
 
     private void CkBoxKeepFiles_OnUnchecked(object sender, RoutedEventArgs e)
     {
-        settings.KeepFile = false;
+        if (Ready)
+        {
+            Settings.KeepFile = false;
+            ApplySettings();
+        }
     }
 
     private void CmBoxKeepFiles_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (Ready)
         {
-            settings.KeepFileHours = CmBoxKeepFiles.SelectedIndex;
+            Settings.KeepFileHours = CmBoxKeepFiles.SelectedIndex;
+            ApplySettings();
         }
     }
 

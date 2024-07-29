@@ -5,265 +5,250 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:ClipboardPlus.Panels"
              mc:Ignorable="d"
-             d:DesignHeight="270"
-             d:DesignWidth="600"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
-    <StackPanel Orientation="Vertical">
+    <Grid Margin="70,15,18,15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
 
-        <Grid Margin="10, 0, 0, 0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="auto"/>
-            </Grid.ColumnDefinitions>
+        <!-- Cache Image -->
+        <CheckBox
+            x:Name="CkBoxCacheImages"
+            Grid.Row="0"
+            Grid.ColumnSpan="2"
+            Margin="10,5,5,5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Content="Cache Images"
+            IsChecked="{Binding Settings.CacheImages}"
+            Checked="CkBoxCacheImages_OnChecked"
+            Unchecked="CkBoxCacheImages_OnUnchecked"/>
 
-            <!-- Cache Image -->
-            <CheckBox
-                Grid.Column="0"
-                x:Name="CkBoxCacheImages"
-                Margin="3, 3, 10, 3"
-                Content="Cache Images"
-                IsChecked="{Binding settings.CacheImages}"
-                Checked="CkBoxCacheImages_OnChecked"
-                Unchecked="CkBoxCacheImages_OnUnchecked"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center" />
+        <!-- Max Records -->
+        <local:SpinBox
+            x:Name="SpinBoxMaxRec"
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            Margin="10,5,5,5"
+            HorizontalAlignment="Left"
+            PrefixText="Max Records: "
+            SpinnerMax="100000"
+            Value="{Binding MaxDataCount}"
+            ValueChanged="SpinBoxMaxRec_OnValueChanged" />
 
-            <!-- Max Records -->
-            <local:SpinBox
-                Grid.Column="1"
-                x:Name="SpinBoxMaxRec"
-                Margin="10, 3, 3, 3"
-                PrefixText="Max Records: "
-                SpinnerMax="100000"
-                Value="{Binding MaxDataCount}"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                VerticalContentAlignment="Center"
-                ValueChanged="SpinBoxMaxRec_OnValueChanged" />
-            
-            <!-- Save Button -->
-            <Button
-                Grid.Column="3"
-                x:Name="BtnApplySettings"
-                Width="Auto"
-                Height="Auto"
-                Margin="10, 3, 3, 3"
-                Padding="3"
-                Content="Apply"
-                Click="BtnApplySettings_OnClick" />
-        </Grid>
-        
         <!-- Image Format -->
-        <DockPanel
-            Margin="10">
-            <TextBlock 
-                DockPanel.Dock="Left"
-                Margin="3"
-                Text="Format: "/>
-            <TextBox
-                x:Name="TextBoxImageFormat"
-                DockPanel.Dock="Left"
-                Margin="3"
-                MinWidth="200"
-                TextWrapping="NoWrap"
-                AcceptsReturn="False"
-                Text="{Binding ImageFormatString}"
-                TextChanged="TextBoxImageFormat_OnTextChanged"/>
-            <StackPanel
-                Orientation="Horizontal">
-                <Button
-                    x:Name="ButtonYear"
-                    Margin="3"
-                    MinWidth="30"
-                    Content="Year"
-                    Click="ButtonYear_OnClick"/>
-                <Button
-                    x:Name="ButtonMonth"
-                    Margin="3"
-                    MinWidth="30"
-                    Content="Month"
-                    Click="ButtonMonth_OnClick"/>
-                <Button
-                    x:Name="ButtonDay"
-                    Margin="3"
-                    MinWidth="30"
-                    Content="Day"
-                    Click="ButtonDay_OnClick"/>
-                <Button
-                    x:Name="ButtonHour"
-                    Margin="3"
-                    MinWidth="30"
-                    Content="Hour"
-                    Click="ButtonHour_OnClick"/>
-                <Button
-                    x:Name="ButtonMinute"
-                    Margin="3"
-                    MinWidth="30"
-                    Content="Minute"
-                    Click="ButtonMinute_OnClick"/>
-                <Button
-                    x:Name="ButtonSecond"
-                    Margin="3"
-                    MinWidth="30"
-                    Content="Second"
-                    Click="ButtonSecond_OnClick"/>
-                <Button
-                    x:Name="ButtonAppName"
-                    Margin="3"
-                    MinWidth="30"
-                    Content="App"
-                    Click="ButtonAppName_OnClick"/>
-            </StackPanel>
-        </DockPanel>
+        <TextBlock
+            Grid.Row="2"
+            Grid.Column="0"
+            Margin="10,5,5,5"
+            VerticalAlignment="Center"
+            Text="Format:"/>
+        <TextBox
+            x:Name="TextBoxImageFormat"
+            Grid.Row="2"
+            Grid.Column="1"
+            HorizontalAlignment="Left"
+            Margin="10,5,0,5"
+            MinWidth="200"
+            TextWrapping="NoWrap"
+            AcceptsReturn="False"
+            Text="{Binding ImageFormatString}"
+            TextChanged="TextBoxImageFormat_OnTextChanged"/>
+        <StackPanel 
+            Grid.Row="3"
+            Grid.ColumnSpan="2"
+            Orientation="Horizontal"
+            Margin="10,5,5,5">
+            <Button
+                x:Name="ButtonYear"
+                Margin="0,0,3,0"
+                MinWidth="30"
+                Content="Year"
+                Click="ButtonYear_OnClick"/>
+            <Button
+                x:Name="ButtonMonth"
+                Margin="0,0,3,0"
+                MinWidth="30"
+                Content="Month"
+                Click="ButtonMonth_OnClick"/>
+            <Button
+                x:Name="ButtonDay"
+                Margin="0,0,3,0"
+                MinWidth="30"
+                Content="Day"
+                Click="ButtonDay_OnClick"/>
+            <Button
+                x:Name="ButtonHour"
+                Margin="0,0,3,0"
+                MinWidth="30"
+                Content="Hour"
+                Click="ButtonHour_OnClick"/>
+            <Button
+                x:Name="ButtonMinute"
+                Margin="0,0,3,0"
+                MinWidth="30"
+                Content="Minute"
+                Click="ButtonMinute_OnClick"/>
+            <Button
+                x:Name="ButtonSecond"
+                Margin="0,0,3,0"
+                MinWidth="30"
+                Content="Second"
+                Click="ButtonSecond_OnClick"/>
+            <Button
+                x:Name="ButtonAppName"
+                Margin="0,0,0,0"
+                MinWidth="30"
+                Content="App"
+                Click="ButtonAppName_OnClick"/>
+        </StackPanel>
 
         <!-- Preview Format -->
-        <DockPanel
-            Margin="10">
-            <TextBlock 
-                DockPanel.Dock="Left"
-                Margin="3"
-                Text="Preview:"/>
-            <TextBox
-                x:Name="TextBlockImageFormatPreview"
-                DockPanel.Dock="Right"
-                Margin="3"
-                TextWrapping="NoWrap"
-                AcceptsReturn="False"
-                Text="{Binding ImageFormatPreview}"
-                IsReadOnly="True"
-                IsEnabled="False"/>
-        </DockPanel>
-
-        <StackPanel
-            Margin="3"
-            Orientation="Horizontal"
+        <TextBlock
+            Grid.Row="4"
+            Grid.Column="0"
+            Margin="10,5,5,5"
+            VerticalAlignment="Center"
+            Text="Preview:"/>
+        <TextBox
+            x:Name="TextBlockImageFormatPreview"
+            Grid.Row="4"
+            Grid.Column="1"
             HorizontalAlignment="Left"
-            VerticalAlignment="Center">
-            
-            <!-- Order by -->
-            <GroupBox
-                Margin="5 0 5 0"
-                Padding="3">
-                <StackPanel
-                    Orientation="Vertical">
-                    <Label
-                         Content="Order by:" />
-                    <ComboBox
-                        x:Name="CmBoxOrderBy"
-                        SelectionChanged="CmBoxOrderBy_OnSelectionChanged"
-                        SelectedItem="{Binding settings.OrderBy}">
-                        <ComboBoxItem IsSelected="True" Tag="0">Score</ComboBoxItem>
-                        <ComboBoxItem Tag="1">Create Time</ComboBoxItem>
-                        <ComboBoxItem Tag="2">Source Application</ComboBoxItem>
-                        <ComboBoxItem Tag="3">Type</ComboBoxItem>
-                    </ComboBox>
-                </StackPanel>
-            </GroupBox>
-            
-            <!-- Keep Text & Image & Files -->
-            <GroupBox
-                Margin="5 0 5 0"
-                Padding="3">
-                <StackPanel
-                    Orientation="Vertical"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-                    <CheckBox
-                        x:Name="CkBoxKeepText"
-                        Content="Keep Text"
-                        Margin="0,6,0,6"
-                        IsChecked="{Binding settings.KeepText}"
-                        Checked="CkBoxKeepText_OnChecked"
-                        Unchecked="CkBoxKeepText_OnUnchecked"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center" />
-                    <ComboBox
-                        x:Name="CmBoxKeepText"
-                        IsEnabled="{Binding settings.KeepText}"
-                        SelectedIndex="{Binding KeepTextHours}"
-                        SelectionChanged="CmBoxKeepText_OnSelectionChanged">
-                        <ComboBoxItem Tag="0">Always</ComboBoxItem>
-                        <ComboBoxItem Tag="1">1 Hours</ComboBoxItem>
-                        <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
-                        <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
-                        <ComboBoxItem Tag="72">3 Days</ComboBoxItem>
-                        <ComboBoxItem Tag="168">7 Days</ComboBoxItem>
-                        <ComboBoxItem Tag="720">1 Month</ComboBoxItem>
-                        <ComboBoxItem Tag="4320">6 Months</ComboBoxItem>
-                        <ComboBoxItem Tag="8640">1 Year</ComboBoxItem>
-                    </ComboBox>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox
-                Margin="5 0 5 0"
-                Padding="3">
-                <StackPanel
-                    Orientation="Vertical"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-                    <CheckBox
-                        x:Name="CkBoxKeepImages"
-                        Content="Keep Images"
-                        Margin="0,6,0,6"
-                        IsChecked="{Binding settings.KeepImage}"
-                        Checked="CkBoxKeepImages_OnChecked"
-                        Unchecked="CkBoxKeepImages_OnUnchecked"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center" />
-                    <ComboBox
-                        x:Name="CmBoxKeepImages"
-                        IsEnabled="{Binding settings.KeepImage}"
-                        SelectedItem="{Binding KeepImageHours}"
-                        SelectionChanged="CmBoxKeepImages_OnSelectionChanged">
-                        <ComboBoxItem Tag="0">Always</ComboBoxItem>
-                        <ComboBoxItem Tag="1">1 Hours</ComboBoxItem>
-                        <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
-                        <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
-                        <ComboBoxItem Tag="72">3 Days</ComboBoxItem>
-                        <ComboBoxItem Tag="168">7 Days</ComboBoxItem>
-                        <ComboBoxItem Tag="720">1 Month</ComboBoxItem>
-                        <ComboBoxItem Tag="4320">6 Months</ComboBoxItem>
-                        <ComboBoxItem Tag="8640">1 Year</ComboBoxItem>
-                    </ComboBox>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox
-                Margin="5 0 5 0"
-                Padding="3">
-                <StackPanel
-                    Orientation="Vertical"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-                    <CheckBox
-                        x:Name="CkBoxKeepFiles"
-                        Content="Keep Files"
-                        Margin="0,6,0,6"
-                        IsChecked="{Binding settings.KeepFile}"
-                        Checked="CkBoxKeepFiles_OnChecked"
-                        Unchecked="CkBoxKeepFiles_OnUnchecked"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center" />
-                    <ComboBox
-                        x:Name="CmBoxKeepFiles"
-                        IsEnabled="{Binding settings.KeepFile}"
-                        SelectedItem="{Binding KeepFileHours}"
-                        SelectionChanged="CmBoxKeepFiles_OnSelectionChanged">
-                        <ComboBoxItem Tag="0">Always</ComboBoxItem>
-                        <ComboBoxItem Tag="1">1 Hours</ComboBoxItem>
-                        <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
-                        <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
-                        <ComboBoxItem Tag="72">3 Days</ComboBoxItem>
-                        <ComboBoxItem Tag="168">7 Days</ComboBoxItem>
-                        <ComboBoxItem Tag="720">1 Month</ComboBoxItem>
-                        <ComboBoxItem Tag="4320">6 Months</ComboBoxItem>
-                        <ComboBoxItem Tag="8640">1 Year</ComboBoxItem>
-                    </ComboBox>
-                </StackPanel>
-            </GroupBox>
+            Margin="10,5,0,5"
+            MinWidth="200"
+            TextWrapping="NoWrap"
+            AcceptsReturn="False"
+            Text="{Binding ImageFormatPreview}"
+            IsReadOnly="True"
+            IsEnabled="False"/>
+
+        <!-- Order by -->
+        <TextBlock
+            Grid.Row="5"
+            Grid.Column="0"
+            Margin="10,5,5,5"
+            VerticalAlignment="Center"
+            Text="Order by:"/>
+        <ComboBox
+            x:Name="CmBoxOrderBy"
+            Grid.Row="5"
+            Grid.Column="1"
+            MaxWidth="300"
+            Margin="10,5,0,5"
+            HorizontalAlignment="Left"
+            SelectedItem="{Binding Settings.OrderBy}"
+            SelectionChanged="CmBoxOrderBy_OnSelectionChanged">
+            <ComboBoxItem IsSelected="True" Tag="0">Score</ComboBoxItem>
+            <ComboBoxItem Tag="1">Create Time</ComboBoxItem>
+            <ComboBoxItem Tag="2">Source Application</ComboBoxItem>
+            <ComboBoxItem Tag="3">Type</ComboBoxItem>
+        </ComboBox>
+        
+        <!-- Keep Text -->
+        <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <CheckBox
+                x:Name="CkBoxKeepText"
+                Content="Keep Text"
+                Margin="10,5,5,5"
+                VerticalAlignment="Center"
+                IsChecked="{Binding Settings.KeepText}"
+                Checked="CkBoxKeepText_OnChecked"
+                Unchecked="CkBoxKeepText_OnUnchecked"/>
+            <ComboBox
+                x:Name="CmBoxKeepText"
+                Margin="10,5,5,5"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                IsEnabled="{Binding Settings.KeepText}"
+                SelectedIndex="{Binding KeepTextHours}"
+                SelectionChanged="CmBoxKeepText_OnSelectionChanged">
+                <ComboBoxItem Tag="0">Always</ComboBoxItem>
+                <ComboBoxItem Tag="1">1 Hours</ComboBoxItem>
+                <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
+                <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
+                <ComboBoxItem Tag="72">3 Days</ComboBoxItem>
+                <ComboBoxItem Tag="168">7 Days</ComboBoxItem>
+                <ComboBoxItem Tag="720">1 Month</ComboBoxItem>
+                <ComboBoxItem Tag="4320">6 Months</ComboBoxItem>
+                <ComboBoxItem Tag="8640">1 Year</ComboBoxItem>
+            </ComboBox>
+        </StackPanel>
+
+        <!-- Keep Images -->
+        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <CheckBox
+                x:Name="CkBoxKeepImages"
+                Content="Keep Images"
+                Margin="10,5,5,5"
+                VerticalAlignment="Center"
+                IsChecked="{Binding Settings.KeepImage}"
+                Checked="CkBoxKeepImages_OnChecked"
+                Unchecked="CkBoxKeepImages_OnUnchecked"/>
+            <ComboBox
+                x:Name="CmBoxKeepImages"
+                Margin="10,5,5,5"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                IsEnabled="{Binding Settings.KeepImage}"
+                SelectedItem="{Binding KeepImageHours}"
+                SelectionChanged="CmBoxKeepImages_OnSelectionChanged">
+                <ComboBoxItem Tag="0">Always</ComboBoxItem>
+                <ComboBoxItem Tag="1">1 Hours</ComboBoxItem>
+                <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
+                <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
+                <ComboBoxItem Tag="72">3 Days</ComboBoxItem>
+                <ComboBoxItem Tag="168">7 Days</ComboBoxItem>
+                <ComboBoxItem Tag="720">1 Month</ComboBoxItem>
+                <ComboBoxItem Tag="4320">6 Months</ComboBoxItem>
+                <ComboBoxItem Tag="8640">1 Year</ComboBoxItem>
+            </ComboBox>
+        </StackPanel>
+
+        <!-- Keep Files -->
+        <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <CheckBox
+                x:Name="CkBoxKeepFiles"
+                Content="Keep Files"
+                Margin="10,5,5,5"
+                VerticalAlignment="Center"
+                IsChecked="{Binding Settings.KeepFile}"
+                Checked="CkBoxKeepFiles_OnChecked"
+                Unchecked="CkBoxKeepFiles_OnUnchecked"/>
+            <ComboBox
+                x:Name="CmBoxKeepFiles"
+                Margin="10,5,5,5"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                IsEnabled="{Binding Settings.KeepFile}"
+                SelectedItem="{Binding KeepFileHours}"
+                SelectionChanged="CmBoxKeepFiles_OnSelectionChanged">
+                <ComboBoxItem Tag="0">Always</ComboBoxItem>
+                <ComboBoxItem Tag="1">1 Hours</ComboBoxItem>
+                <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
+                <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
+                <ComboBoxItem Tag="72">3 Days</ComboBoxItem>
+                <ComboBoxItem Tag="168">7 Days</ComboBoxItem>
+                <ComboBoxItem Tag="720">1 Month</ComboBoxItem>
+                <ComboBoxItem Tag="4320">6 Months</ComboBoxItem>
+                <ComboBoxItem Tag="8640">1 Year</ComboBoxItem>
+            </ComboBox>
 
         </StackPanel>
-    </StackPanel>
+    </Grid>
 </UserControl>

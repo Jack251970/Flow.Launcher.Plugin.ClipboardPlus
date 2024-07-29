@@ -6,7 +6,6 @@
         <UseWPF>true</UseWPF>
         <Version>0.1.1</Version>
         <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
-        <UseWinUI>true</UseWinUI>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

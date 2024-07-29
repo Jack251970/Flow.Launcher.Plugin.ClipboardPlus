@@ -1,9 +1,9 @@
-﻿using System.Drawing.Imaging;
+﻿using Material.Icons;
+using Svg;
+using System.Drawing.Imaging;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Media.Imaging;
-using Material.Icons;
-using Svg;
 
 namespace ClipboardPlus.Core;
 
