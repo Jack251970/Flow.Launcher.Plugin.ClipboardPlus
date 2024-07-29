@@ -51,69 +51,69 @@ public partial class SettingsPanel
 
     public static readonly DependencyProperty OrderByProperty = DependencyProperty.Register(
         nameof(OrderBy),
-        typeof(int),
+        typeof(CbOrders),
         typeof(SettingsPanel),
-        new PropertyMetadata(default(int))
+        new PropertyMetadata(default(CbOrders))
     );
 
-    public int OrderBy
+    public CbOrders OrderBy
     {
         get => Settings.OrderBy;
         set
         {
             SetValue(OrderByProperty, value);
-            CmBoxOrderBy.SelectedIndex = value;
+            CmBoxOrderBy.SelectedIndex = (int)value;
         }
     }
 
     public static readonly DependencyProperty KeepTextHoursProperty = DependencyProperty.Register(
         nameof(KeepTextHours),
-        typeof(int),
+        typeof(KeepTime),
         typeof(SettingsPanel),
-        new PropertyMetadata(default(int))
+        new PropertyMetadata(default(KeepTime))
     );
 
-    public int KeepTextHours
+    public KeepTime KeepTextHours
     {
         get => Settings.KeepTextHours;
         set
         {
             SetValue(KeepTextHoursProperty, value);
-            CmBoxKeepText.SelectedIndex = value;
+            CmBoxKeepText.SelectedIndex = (int)value;
         }
     }
 
     public static readonly DependencyProperty KeepImageHoursProperty = DependencyProperty.Register(
         nameof(KeepImageHours),
-        typeof(int),
+        typeof(KeepTime),
         typeof(SettingsPanel),
-        new PropertyMetadata(default(int))
+        new PropertyMetadata(default(KeepTime))
     );
 
-    public int KeepImageHours
+    public KeepTime KeepImageHours
     {
         get => Settings.KeepImageHours;
         set
         {
             SetValue(KeepImageHoursProperty, value);
-            CmBoxKeepImages.SelectedIndex = value;
+            CmBoxKeepImages.SelectedIndex = (int)value;
         }
     }
 
     public static readonly DependencyProperty KeepFileHoursProperty = DependencyProperty.Register(
         nameof(KeepFileHours),
-        typeof(int),
+        typeof(KeepTime),
         typeof(SettingsPanel),
-        new PropertyMetadata(default(int))
+        new PropertyMetadata(default(KeepTime))
     );
 
-    public int KeepFileHours
+    public KeepTime KeepFileHours
     {
         get => Settings.KeepImageHours;
         set
         {
             SetValue(KeepFileHoursProperty, value);
-            CmBoxKeepFiles.SelectedIndex = value;
+            CmBoxKeepFiles.SelectedIndex = (int)value;
         }
     }
 
@@ -125,6 +125,7 @@ public partial class SettingsPanel
         Context = context;
         InitializeComponent();
         MaxDataCount = settings.MaxDataCount;
+        OrderBy = settings.OrderBy;
         KeepTextHours = settings.KeepTextHours;
         KeepImageHours = settings.KeepImageHours;
         KeepFileHours = settings.KeepFileHours;
@@ -145,10 +146,12 @@ public partial class SettingsPanel
         Context = null;
         InitializeComponent();
         MaxDataCount = Settings.MaxDataCount;
+        OrderBy = Settings.OrderBy;
         KeepTextHours = Settings.KeepTextHours;
         KeepImageHours = Settings.KeepImageHours;
         KeepFileHours = Settings.KeepFileHours;
-        OrderBy = Settings.OrderBy;
+        ImageFormatString = Settings.ImageFormat;
+        ImageFormatPreview = Utils.FormatImageName(ImageFormatString, DateTime.Now, "TestApp.exe");
         Console.WriteLine(Settings);
         Ready = true;
     }
@@ -254,7 +257,7 @@ public partial class SettingsPanel
     {
         if (Ready)
         {
-            Settings.OrderBy = CmBoxOrderBy.SelectedIndex;
+            Settings.OrderBy = (CbOrders)CmBoxOrderBy.SelectedIndex;
             ApplySettings();
         }
     }
@@ -285,7 +288,7 @@ public partial class SettingsPanel
     {
         if (Ready)
         {
-            Settings.KeepTextHours = CmBoxKeepText.SelectedIndex;
+            Settings.KeepTextHours = (KeepTime)CmBoxKeepText.SelectedIndex;
             ApplySettings();
         }
     }
@@ -316,7 +319,7 @@ public partial class SettingsPanel
     {
         if (Ready)
         {
-            Settings.KeepImageHours = CmBoxKeepImages.SelectedIndex;
+            Settings.KeepImageHours = (KeepTime)CmBoxKeepImages.SelectedIndex;
             ApplySettings();
         }
     }
@@ -347,7 +350,7 @@ public partial class SettingsPanel
     {
         if (Ready)
         {
-            Settings.KeepFileHours = CmBoxKeepFiles.SelectedIndex;
+            Settings.KeepFileHours = (KeepTime)CmBoxKeepFiles.SelectedIndex;
             ApplySettings();
         }
     }

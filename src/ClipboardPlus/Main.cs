@@ -321,7 +321,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
         try
         {
             // Delete expired records
-            var kv = new List<Tuple<CbContentType, int>>
+            var kv = new List<Tuple<CbContentType, KeepTime>>
             {
                 new(CbContentType.Text, _settings.KeepTextHours),
                 new(CbContentType.Image, _settings.KeepImageHours),

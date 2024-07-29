@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using ClipboardPlus.Core;
+using System.Windows;
 
 namespace ClipboardPlus.Panels.Test
 {
@@ -10,18 +11,10 @@ namespace ClipboardPlus.Panels.Test
         public MainWindow()
         {
             InitializeComponent();
-            // var settings = new Settings();
-            // settings.MaxDataCount = 300;
-            // settings.KeepText = true;
-            // settings.KeepImage = true;
-            // settings.KeepFile = true;
-            // settings.KeepTextHours = 3;
-            // settings.KeepImageHours = 2;
-            // settings.KeepFileHours = 2;
-            // SettingsPanel.settings = settings;
-            // SettingsPanel.MaxDataCount = settings.MaxDataCount;
-            //
-            SettingsPanel.KeepTextHours = 1;
+            SettingsPanel.MaxDataCount = 300;
+            SettingsPanel.KeepTextHours = KeepTime.Hours24;
+            SettingsPanel.KeepImageHours = KeepTime.Year1;
+            SettingsPanel.KeepFileHours = KeepTime.Month1;
         }
     }
 }

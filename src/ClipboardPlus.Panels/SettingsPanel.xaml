@@ -48,7 +48,6 @@
             HorizontalAlignment="Left"
             PrefixText="Max Records: "
             SpinnerMax="100000"
-            Value="{Binding MaxDataCount}"
             ValueChanged="SpinBoxMaxRec_OnValueChanged" />
 
         <!-- Image Format -->
@@ -152,7 +151,6 @@
             MaxWidth="300"
             Margin="10,5,0,5"
             HorizontalAlignment="Left"
-            SelectedItem="{Binding Settings.OrderBy}"
             SelectionChanged="CmBoxOrderBy_OnSelectionChanged">
             <ComboBoxItem IsSelected="True" Tag="0">Score</ComboBoxItem>
             <ComboBoxItem Tag="1">Create Time</ComboBoxItem>
@@ -176,10 +174,9 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 IsEnabled="{Binding Settings.KeepText}"
-                SelectedIndex="{Binding KeepTextHours}"
                 SelectionChanged="CmBoxKeepText_OnSelectionChanged">
-                <ComboBoxItem Tag="0">Always</ComboBoxItem>
-                <ComboBoxItem Tag="1">1 Hours</ComboBoxItem>
+                <ComboBoxItem IsSelected="True" Tag="0">Always</ComboBoxItem>
+                <ComboBoxItem Tag="1">1 Hour</ComboBoxItem>
                 <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
                 <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
                 <ComboBoxItem Tag="72">3 Days</ComboBoxItem>
@@ -206,10 +203,9 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 IsEnabled="{Binding Settings.KeepImage}"
-                SelectedItem="{Binding KeepImageHours}"
                 SelectionChanged="CmBoxKeepImages_OnSelectionChanged">
-                <ComboBoxItem Tag="0">Always</ComboBoxItem>
-                <ComboBoxItem Tag="1">1 Hours</ComboBoxItem>
+                <ComboBoxItem IsSelected="True" Tag="0">Always</ComboBoxItem>
+                <ComboBoxItem Tag="1">1 Hour</ComboBoxItem>
                 <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
                 <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
                 <ComboBoxItem Tag="72">3 Days</ComboBoxItem>
@@ -236,10 +232,9 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 IsEnabled="{Binding Settings.KeepFile}"
-                SelectedItem="{Binding KeepFileHours}"
                 SelectionChanged="CmBoxKeepFiles_OnSelectionChanged">
-                <ComboBoxItem Tag="0">Always</ComboBoxItem>
-                <ComboBoxItem Tag="1">1 Hours</ComboBoxItem>
+                <ComboBoxItem IsSelected="True" Tag="0">Always</ComboBoxItem>
+                <ComboBoxItem Tag="1">1 Hour</ComboBoxItem>
                 <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
                 <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
                 <ComboBoxItem Tag="72">3 Days</ComboBoxItem>

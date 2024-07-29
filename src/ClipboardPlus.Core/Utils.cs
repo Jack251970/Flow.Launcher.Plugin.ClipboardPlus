@@ -112,42 +112,25 @@ public static class Retry
 public static class CmBoxIndexMapper
 {
     // ComBox index to keep time mapper 
-    private static readonly Dictionary<int, int> KeepTimeDict =
+    private static readonly Dictionary<KeepTime, int> KeepTimeDict =
         new(
-            new List<KeyValuePair<int, int>>()
+            new List<KeyValuePair<KeepTime, int>>()
             {
-                new(0, int.MaxValue),
-                new(1, 1),
-                new(2, 12),
-                new(3, 24),
-                new(4, 72),
-                new(5, 168),
-                new(6, 720),
-                new(7, 4320),
-                new(8, 8640),
+                new(KeepTime.Always, int.MaxValue),
+                new(KeepTime.Hour1, 1),
+                new(KeepTime.Hours12, 12),
+                new(KeepTime.Hours24, 24),
+                new(KeepTime.Days3, 72),
+                new(KeepTime.Days7, 168),
+                new(KeepTime.Month1, 720),
+                new(KeepTime.Months6, 4320),
+                new(KeepTime.Year1, 8640),
             }
         );
 
-    private static readonly Dictionary<int, CbOrders> OrderByDict =
-        new(
-            new List<KeyValuePair<int, CbOrders>>
-            {
-                new(0, CbOrders.Score),
-                new(1, CbOrders.CreateTime),
-                new(2, CbOrders.SourceApplication),
-                new(3, CbOrders.Type),
-            }
-        );
-
-    public static int ToKeepTime(int idx)
+    public static int ToKeepTime(KeepTime idx)
     {
         var k = KeepTimeDict.ContainsKey(idx) ? idx : 0;
         return KeepTimeDict[k];
-    }
-
-    public static CbOrders ToOrderBy(int idx)
-    {
-        var k = OrderByDict.ContainsKey(idx) ? idx : 0;
-        return OrderByDict[k];
     }
 }

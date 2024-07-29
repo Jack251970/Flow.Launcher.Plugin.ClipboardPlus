@@ -2,24 +2,37 @@
 
 public enum CbContentType
 {
-    Text = 0,
-    Image = 1,
-    Files = 2,
-    Other = 3,
+    Text,
+    Image,
+    Files,
+    Other,
 }
 
 public enum CbOrders
 {
-    Score = 0,
-    CreateTime = 1,
-    SourceApplication = 2,
-    Type = 3,
+    Score,
+    CreateTime,
+    SourceApplication,
+    Type,
 }
 
 public enum CbResultType
 {
     Record,
     Clear,
+}
+
+public enum KeepTime
+{
+    Always,
+    Hour1,
+    Hours12,
+    Hours24,
+    Days3,
+    Days7,
+    Month1,
+    Months6,
+    Year1
 }
 
 public class CbColors
