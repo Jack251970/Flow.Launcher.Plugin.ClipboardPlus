@@ -76,7 +76,7 @@
             <TextBlock
                 x:Name="TextBlockWordCount"
                 DockPanel.Dock="Left"
-                Margin="0,5,10,5"
+                Margin="5,5,10,5"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
             </TextBlock>
@@ -93,8 +93,8 @@
                 <Button
                     x:Name="BtnCopy"
                     ToolTip="Copy to clipboard"
-                    Width="36"
-                    Height="36"
+                    Width="30"
+                    Height="30"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom"
                     Margin="5"
@@ -106,8 +106,8 @@
                 <Button
                     x:Name="BtnPin"
                     ToolTip="Pin on top"
-                    Width="36"
-                    Height="36"
+                    Width="30"
+                    Height="30"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom"
                     Margin="5"
@@ -119,8 +119,8 @@
                 <Button
                     x:Name="BtnDelete"
                     ToolTip="Delete this record"
-                    Width="36"
-                    Height="36"
+                    Width="30"
+                    Height="30"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom"
                     Margin="5,5,0,5"

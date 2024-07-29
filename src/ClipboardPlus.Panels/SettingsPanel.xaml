@@ -9,7 +9,7 @@
              d:DesignWidth="800"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
-    <Grid Margin="70,15,18,15">
+    <Grid Margin="60,15,60,15">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
