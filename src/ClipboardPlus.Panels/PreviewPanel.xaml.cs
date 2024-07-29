@@ -120,11 +120,39 @@ public partial class PreviewPanel : UserControl
         tb.Dispatcher.BeginInvoke(new Action(() => tb.SelectAll()));
     }
 
+    #endregion
+
+    #region Dockpanel
+
+    private bool needRefreshWidth = true;
+    private double totalRequiredWidth = 0;
+
+    private void DockPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        // If the DockPanel's width is less than the total required width, hide the TextBlock so that we can use the buttons
+        if (needRefreshWidth)
+        {
+            if (TextBlockWordCount.Visibility == Visibility.Visible)
+            {
+                totalRequiredWidth = TextBlockWordCount.ActualWidth + TextBlockWordCount.Margin.Left + TextBlockWordCount.Margin.Right +
+                    ButtonsStackPanel.ActualWidth + ButtonsStackPanel.Margin.Left + ButtonsStackPanel.Margin.Right;
+                needRefreshWidth = false;
+            }
+        }
+
+        TextBlockWordCount.Visibility = e.NewSize.Width < totalRequiredWidth ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    #endregion
+
+    #region Word Count Textblock
+
     private void TxtBoxPre_TextChanged(object sender, TextChangedEventArgs e)
     {
         if (Ready)
         {
             TextBlockWordCount.Text = WordsCountPrefix + TxtBoxPre.Text.Length;
+            needRefreshWidth = true;
         }
     }
 

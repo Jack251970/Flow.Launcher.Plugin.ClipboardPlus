@@ -16,73 +16,74 @@
             <RowDefinition Height="90*" />
             <RowDefinition Height="20*" />
         </Grid.RowDefinitions>
-
-        <!-- Image Viewer -->
-        <Image
-            Grid.Row="0"
-            Grid.Column="0"
-            Panel.ZIndex="0"
-            x:Name="PreImage" Margin="3"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Visibility="Hidden"
-            MaxWidth="320"
-            MaxHeight="400">
-            <Image.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Save in cache folder" Icon="{ic:SymbolIconExtension Symbol=Save}" Click="ImSaveAs_Click"/>
-                </ContextMenu>
-            </Image.ContextMenu>
-        </Image>
-
-        <!-- Text Viewer -->
+        
         <ScrollViewer
             Grid.Row="0"
             Grid.Column="0"
             HorizontalAlignment="Center"
             HorizontalContentAlignment="Left"
             MaxHeight="400"
-            Panel.ZIndex="1"
             UseLayoutRounding="False"
             VerticalScrollBarVisibility="Auto"
             HorizontalScrollBarVisibility="Auto">
-            <TextBox
-                x:Name="TxtBoxPre"
-                IsUndoEnabled="True"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch"
-                MinWidth="320"
-                Text=""
-                TextAlignment="Left"
-                IsReadOnly="False"
-                Margin="5"
-                Padding="5"
-                Focusable="True"
-                VerticalScrollBarVisibility="Disabled"
-                HorizontalScrollBarVisibility="Disabled"
-                GotFocus="TxtBoxPre_GotFocus"
-                TextChanged="TxtBoxPre_TextChanged"
-                UseLayoutRounding="False" />
+            <Grid>
+                <!-- Image Viewer -->
+                <Image
+                    Panel.ZIndex="0"
+                    x:Name="PreImage"
+                    Margin="5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Visibility="Hidden"
+                    MaxWidth="320"
+                    MaxHeight="400">
+                    <Image.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Save in cache folder" Icon="{ic:SymbolIconExtension Symbol=Save}" Click="ImSaveAs_Click"/>
+                        </ContextMenu>
+                    </Image.ContextMenu>
+                </Image>
+
+                <!-- Text Viewer -->
+                <TextBox
+                    Panel.ZIndex="1"
+                    x:Name="TxtBoxPre"
+                    IsUndoEnabled="True"
+                    MinWidth="320"
+                    Text=""
+                    TextAlignment="Left"
+                    IsReadOnly="False"
+                    Margin="5"
+                    Padding="5"
+                    Focusable="True"
+                    VerticalScrollBarVisibility="Disabled"
+                    HorizontalScrollBarVisibility="Disabled"
+                    GotFocus="TxtBoxPre_GotFocus"
+                    TextChanged="TxtBoxPre_TextChanged"
+                    UseLayoutRounding="False" />
+            </Grid>
         </ScrollViewer>
 
-        <!-- Status Bar & Buttons -->
+        <!-- Word Count Textblock & Buttons -->
         <DockPanel
             Grid.Row="1"
             Grid.Column="0"
-            Margin="10,5,5,5"
-            HorizontalAlignment="Stretch">
+            Margin="5"
+            HorizontalAlignment="Stretch"
+            SizeChanged="DockPanel_SizeChanged">
 
-            <!-- Word Count Text -->
+            <!-- Word Count Textblock -->
             <TextBlock
                 x:Name="TextBlockWordCount"
                 DockPanel.Dock="Left"
-                Margin="10,5,10,5"
+                Margin="0,5,10,5"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
             </TextBlock>
 
             <!-- Buttons -->
             <StackPanel
+                x:Name="ButtonsStackPanel"
                 Orientation="Horizontal"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
@@ -92,11 +93,10 @@
                 <Button
                     x:Name="BtnCopy"
                     ToolTip="Copy to clipboard"
-                    Width="33"
-                    Height="33"
+                    Width="36"
+                    Height="36"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom"
-                    Padding="3"
                     Margin="5"
                     Click="BtnCopy_Click">
                     <ic:SymbolIcon Symbol="Copy" />
@@ -106,11 +106,10 @@
                 <Button
                     x:Name="BtnPin"
                     ToolTip="Pin on top"
-                    Width="33"
-                    Height="33"
+                    Width="36"
+                    Height="36"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom"
-                    Padding="3"
                     Margin="5"
                     Click="BtnPin_Click">
                     <ic:SymbolIcon Symbol="Pin" />
@@ -120,12 +119,11 @@
                 <Button
                     x:Name="BtnDelete"
                     ToolTip="Delete this record"
-                    Width="33"
-                    Height="33"
+                    Width="36"
+                    Height="36"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Bottom"
-                    Padding="3"
-                    Margin="5"
+                    Margin="5,5,0,5"
                     Click="BtnDelete_Click">
                     <ic:SymbolIcon Symbol="Delete" />
                 </Button>
