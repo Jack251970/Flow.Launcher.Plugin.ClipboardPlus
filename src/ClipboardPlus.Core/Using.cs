@@ -1,4 +1,4 @@
-global using Flow.Launcher.Plugin;
+﻿global using Flow.Launcher.Plugin;
 
 global using ClipboardPlus.Core.Data.Models;
 global using ClipboardPlus.Core.Data.Enums;

@@ -1,6 +1,4 @@
-﻿using ClipboardPlus.Core;
-using Flow.Launcher.Plugin;
-using FluentIcons.WPF;
+﻿using FluentIcons.WPF;
 using FluentIcons.Common;
 using System;
 using System.IO;
@@ -93,7 +91,7 @@ public partial class PreviewPanel : UserControl
     {
         TxtBoxPre.Clear();
         TxtBoxPre.Text = string.IsNullOrWhiteSpace(s) ? ClipboardData.Text : s;
-        TextBlockWordCount.Text = WordsCountPrefix + Utils.CountWords(TxtBoxPre.Text);
+        TextBlockWordCount.Text = WordsCountPrefix + StringUtils.CountWords(TxtBoxPre.Text);
     }
 
     public void SetImage()
@@ -111,7 +109,7 @@ public partial class PreviewPanel : UserControl
 
     private void ImSaveAs_Click(object sender, RoutedEventArgs e)
     {
-        Utils.SaveImageCache(ClipboardData, CacheDir);
+        FileUtils.SaveImageCache(ClipboardData, CacheDir);
     }
 
     #endregion

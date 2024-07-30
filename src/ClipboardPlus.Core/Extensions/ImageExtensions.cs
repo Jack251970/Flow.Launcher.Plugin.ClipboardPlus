@@ -1,11 +1,9 @@
 ﻿using System.Drawing.Imaging;
-using System.Security.Cryptography;
-using System.Text;
 using System.Windows.Media.Imaging;
 
-namespace ClipboardPlus.Core;
+namespace ClipboardPlus.Core.Extensions;
 
-public static class ClipImageExtension
+public static class ImageExtensions
 {
     public static BitmapImage ToBitmapImage(this Image img)
     {
@@ -49,28 +47,4 @@ public static class ClipImageExtension
         using var stream = new MemoryStream(bytes);
         return new Bitmap(stream);
     }
-
-    public static string GetMd5(this string s)
-    {
-        byte[] inputBytes = Encoding.UTF8.GetBytes(s);
-        byte[] hash = MD5.HashData(inputBytes);
-        var hex = hash.Select(i => i.ToString("X2"));
-        return string.Join("", hex);
-    }
-
-    public static string GetSha256(this string s)
-    {
-        byte[] inputBytes = Encoding.UTF8.GetBytes(s);
-        var hash = SHA256.HashData(inputBytes);
-        var hex = hash.Select(i => i.ToString("X2"));
-        return string.Join("", hex);
-    }
-
-    /*public static string ToBase64(object o)
-    {
-        using var m = new MemoryStream();
-        var bf = new BinaryFormatter();
-        bf.Serialize();
-        return Convert.ToBase64String(m.ToArray());
-    }*/
 }

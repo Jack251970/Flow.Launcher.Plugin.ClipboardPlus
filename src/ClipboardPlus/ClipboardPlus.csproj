@@ -1,16 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  
   <PropertyGroup>
     <PackageId>ClipboardPlus</PackageId>
-    <Authors>Rainyl</Authors>
-    <PackageProjectUrl>https://github.com/rainyl/Flow.Launcher.Plugin.ClipboardPlus</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/rainyl/Flow.Launcher.Plugin.ClipboardPlus</RepositoryUrl>
+    <Authors>Jack251970</Authors>
+    <PackageProjectUrl>https://github.com/Jack251970/Flow.Launcher.Plugin.ClipboardPlus</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Jack251970/Flow.Launcher.Plugin.ClipboardPlus</RepositoryUrl>
     <PackageTags>flow-launcher flow-plugin</PackageTags>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	<UseWindowsForms>true</UseWindowsForms>
-	<LangVersion>11</LangVersion>
-	<Nullable>enable</Nullable>
-	<TargetFramework>net7.0-windows</TargetFramework>
-	<Version>1.0.1</Version>
+	  <UseWindowsForms>true</UseWindowsForms>
+	  <LangVersion>11</LangVersion>
+	  <Nullable>enable</Nullable>
+	  <TargetFramework>net7.0-windows</TargetFramework>
+	  <Version>1.0.1</Version>
     <ReleaseOutputPath>./bin/Release</ReleaseOutputPath>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
@@ -39,22 +40,12 @@
 
   <ItemGroup>
     <PackageReference Include="Flow.Launcher.Plugin" Version="4.3.0" />
-    <PackageReference Include="H.InputSimulator" Version="1.4.2">
-    </PackageReference>
+    <PackageReference Include="H.InputSimulator" Version="1.4.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ClipboardPlus.Core\ClipboardPlus.Core.csproj" />
     <ProjectReference Include="..\ClipboardPlus.Panels\ClipboardPlus.Panels.csproj" />
   </ItemGroup>
-
-<!--  <Target Name="CreateReleaseZip" AfterTargets="Publish">-->
-<!--    <PropertyGroup>-->
-<!--      <ZipOutputPath>$(ReleaseOutputPath)/../ZipFiles</ZipOutputPath>-->
-<!--      <PublishDir>$(ReleaseOutputPath)/net7.0-windows/publish/</PublishDir>-->
-<!--    </PropertyGroup>-->
-<!--    <MakeDir Directories="$(ZipOutputPath)" />-->
-<!--    <ZipDirectory DestinationFile="$(ZipOutputPath)\$(PackageId)-v$(Version).zip" SourceDirectory="$(PublishDir)" Overwrite="true" />-->
-<!--  </Target>-->
 
 </Project>

@@ -1,6 +1,5 @@
 using ClipboardPlus.Core;
 using ClipboardPlus.Panels;
-using Flow.Launcher.Plugin;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -48,7 +47,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
     private Settings _settings = null!;
     private int CurrentScore { get; set; } = 1;
 
-    private DbHelper _dbHelper = null!;
+    private DbHelpers _dbHelper = null!;
     private string _dbPath = string.Empty;
 
     private PluginInitContext _context = null!;
@@ -62,7 +61,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
         _clipboard.ClipboardChanged += OnClipboardChange;
         RequeryString = _context.CurrentPluginMetadata.ActionKeyword;
 
-        (ClipDir, ClipCacheDir) = Utils.GetClipDirAndClipCacheDir(context);
+        (ClipDir, ClipCacheDir) = FileUtils.GetClipDirAndClipCacheDir(context);
 
         _defaultIconPath = Path.Join(ClipDir.FullName, "Images/clipboard.png");
         _defaultPinIconPath = Path.Join(ClipDir.FullName, "Images/pined.png");
@@ -96,7 +95,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
         _context.API.LogInfo(ClassName, $"{_settings}");
         _dbPath = Path.Join(ClipDir.FullName, _settings.DbPath);
         _context.API.LogDebug(ClassName, $"Using database at: {_dbPath}");
-        _dbHelper = new DbHelper(_dbPath);
+        _dbHelper = new DbHelpers(_dbPath);
         RestoreRecordsFromDb();
     }
 
@@ -104,11 +103,11 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
     {
         if (!File.Exists(_dbPath))
         {
-            _dbHelper.CreateDb();
+            await _dbHelper.CreateDbAsync();
             return;
         }
 
-        var records = await _dbHelper.GetAllRecord();
+        var records = await _dbHelper.GetAllRecordAsync();
         if (records.Count > 0)
         {
             _dataList = records;
@@ -144,13 +143,13 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
                         SubTitle = "Clear records in both list and database",
                         IcoPath = _databaseIconPath,
                         Score = 1,
-                        Action = _ =>
+                        AsyncAction = async _ =>
                         {
                             _dataList.Clear();
-                            _dbHelper.DeleteAllRecords();
+                            await _dbHelper.DeleteAllRecordsAsync();
                             CurrentScore = 1;
                             return true;
-                        },
+                        }
                     }
                 }
             );
@@ -228,7 +227,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
         };
     }
 
-    private void OnClipboardChange(object? sender, CbMonitor.ClipboardChangedEventArgs e)
+    private async void OnClipboardChange(object? sender, CbMonitor.ClipboardChangedEventArgs e)
     {
         _context.API.LogDebug(ClassName, "Clipboard changed");
         if (e.Content is null)
@@ -239,7 +238,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
         var now = DateTime.Now;
         var clipboardData = new ClipboardData
         {
-            HashId = Utils.GetGuid(),
+            HashId = StringUtils.GetGuid(),
             Text = "",
             DisplayTitle = "",
             Type = e.ContentType,
@@ -265,9 +264,9 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
                 clipboardData.Text = $"Image:{clipboardData.Time:yy-MM-dd-HH:mm:ss}";
                 if (_settings.CacheImages)
                 {
-                    var imageName = Utils.FormatImageName(_settings.ImageFormat, clipboardData.CreateTime,
+                    var imageName = StringUtils.FormatImageName(_settings.ImageFormat, clipboardData.CreateTime,
                         clipboardData.SenderApp ?? "");
-                    Utils.SaveImageCache(clipboardData, ClipCacheDir, imageName);
+                    FileUtils.SaveImageCache(clipboardData, ClipCacheDir, imageName);
                 }
                 var img = _clipboard.ClipboardImage;
                 if (img != null)
@@ -307,7 +306,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
             || _settings.KeepFile && clipboardData.Type == CbContentType.Files;
         if (isAdd)
         {
-            _dbHelper.AddOneRecord(clipboardData);
+            await _dbHelper.AddOneRecordAsync(clipboardData);
         }
         if (_dataList.Count > _maxDataCount)
         {
@@ -330,7 +329,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
         try
         {
             // Delete expired records
-            var kv = new List<Tuple<CbContentType, KeepTime>>
+            var kv = new List<Tuple<CbContentType, RecordKeepTime>>
             {
                 new(CbContentType.Text, _settings.KeepTextHours),
                 new(CbContentType.Image, _settings.KeepImageHours),
@@ -338,10 +337,10 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
             };
             foreach (var pair in kv)
             {
-                _context.API.LogInfo(ClassName, $"{pair.Item1}, {pair.Item2}, {CmBoxIndexMapper.ToKeepTime(pair.Item2)}");
-                _dbHelper?.DeleteRecordByKeepTime(
+                _context.API.LogInfo(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
+                _dbHelper?.DeleteRecordByKeepTimeAsync(
                     (int)pair.Item1,
-                    CmBoxIndexMapper.ToKeepTime(pair.Item2)
+                    pair.Item2.ToKeepTime()
                 );
             }
         }
@@ -358,7 +357,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
         _context.API.LogWarn(ClassName, $"enter dispose");
         ReloadData();
         _clipboard.Dispose();
-        _dbHelper?.Close();
+        _dbHelper?.Dispose();
     }
 
     public void CopyToClipboard(ClipboardData clipboardData)
@@ -368,14 +367,14 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
         _context.API.ChangeQuery(RequeryString, true);
     }
 
-    public void RemoveFromDatalist(ClipboardData clipboardData)
+    public async void RemoveFromDatalist(ClipboardData clipboardData)
     {
         _dataList.Remove(clipboardData);
-        _dbHelper.DeleteOneRecord(clipboardData);
+        await _dbHelper.DeleteOneRecordAsync(clipboardData);
         _context.API.ChangeQuery(RequeryString, true);
     }
 
-    public void PinOneRecord(ClipboardData c)
+    public async void PinOneRecord(ClipboardData c)
     {
         _dataList.Remove(c);
         if (c.Type is CbContentType.Text or CbContentType.Files)
@@ -386,7 +385,7 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
         }
 
         _dataList.AddLast(c);
-        _dbHelper.PinOneRecord(c);
+        await _dbHelper.PinOneRecordAsync(c);
         _context.API.ChangeQuery(RequeryString, true);
     }
 

@@ -1,31 +1,23 @@
 ﻿using System.Text.Json;
 
-namespace ClipboardPlus.Core;
+namespace ClipboardPlus.Core.Data.Models;
 
 public class Settings
 {
     public readonly string DbPath = "ClipboardPlus.db";
-
-    public string ConfigFile = null!;
-
-    public bool CacheImages { get; set; } = false;
-
-    public int MaxDataCount { get; set; } = 10000;
-
-    public string ImageFormat { get; set; } = "yyyy-MM-dd-hhmmss-{app}";
-
-    public bool KeepText { get; set; } = false;
-    public KeepTime KeepTextHours { get; set; } = 0;
-
-    public bool KeepImage { get; set; } = false;
-    public KeepTime KeepImageHours { get; set; } = 0;
-
-    public bool KeepFile { get; set; } = false;
-    public KeepTime KeepFileHours { get; set; } = 0;
-
-    public CbOrders OrderBy { get; set; } = CbOrders.Score;
+    public string ConfigFile = string.Empty;
 
     public string ClearKeyword { get; set; } = "clear";
+    public int MaxDataCount { get; set; } = 10000;
+    public CbOrders OrderBy { get; set; } = CbOrders.Score;
+    public bool CacheImages { get; set; } = false;
+    public string ImageFormat { get; set; } = "yyyy-MM-dd-hhmmss-{app}";
+    public bool KeepText { get; set; } = false;
+    public RecordKeepTime KeepTextHours { get; set; } = 0;
+    public bool KeepImage { get; set; } = false;
+    public RecordKeepTime KeepImageHours { get; set; } = 0;
+    public bool KeepFile { get; set; } = false;
+    public RecordKeepTime KeepFileHours { get; set; } = 0;
 
     public void Save()
     {
@@ -37,9 +29,6 @@ public class Settings
     {
         var options = new JsonSerializerOptions() { WriteIndented = true };
         using var fs = File.OpenRead(filePath);
-#if DEBUG
-        Console.WriteLine();
-#endif
         return JsonSerializer.Deserialize<Settings>(fs, options)
             ?? new Settings() { ConfigFile = filePath };
     }

@@ -1,10 +1,9 @@
-using System.Windows.Media.Imaging;
-using Xunit.Abstractions;
 using System.Drawing;
+using System.Windows.Media.Imaging;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace ClipboardPlus.Core.Test;
-
-using ClipboardPlus.Core;
 
 public class ExtensionTest
 {
@@ -22,7 +21,9 @@ public class ExtensionTest
         var img = new Bitmap(filename);
         _testOutputHelper.WriteLine(img.RawFormat.ToString());
         var im = img.ToBitmapImage();
-        BitmapImage bm = new BitmapImage(new Uri(filename, UriKind.RelativeOrAbsolute));
+        _testOutputHelper.WriteLine(im.Format.ToString());
+        var bm = new BitmapImage(new Uri(filename, UriKind.RelativeOrAbsolute));
+        _testOutputHelper.WriteLine(bm.Format.ToString());
     }
 
     [Fact]

@@ -1,22 +1,23 @@
-using System.Windows.Media.Imaging;
-using Xunit.Abstractions;
-using System.Drawing;
 using Dapper;
 using Microsoft.Data.Sqlite;
+using System.Drawing;
 using System.Globalization;
+using System.Windows.Media.Imaging;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace ClipboardPlus.Core.Test;
 
 public class DbHelperTest
 {
-    private static string _defaultIconPath = "Images/clipboard.png";
+    private readonly static string _defaultIconPath = "Images/clipboard.png";
 
     private readonly Image _defaultImage = new Bitmap(_defaultIconPath);
 
     private readonly ClipboardData TestRecord =
         new()
         {
-            HashId = Utils.GetGuid(),
+            HashId = StringUtils.GetGuid(),
             Text = "Text",
             Type = CbContentType.Text,
             Data = "Test Data",
@@ -44,12 +45,12 @@ public class DbHelperTest
         var rand = new Random();
         var data = new ClipboardData()
         {
-            HashId = Utils.GetGuid(),
-            Text = Utils.RandomString(10),
+            HashId = StringUtils.GetGuid(),
+            Text = StringUtils.RandomString(10),
             Type = (CbContentType)rand.Next(3),
-            Data = Utils.RandomString(10),
-            SenderApp = Utils.RandomString(5) + ".exe",
-            DisplayTitle = Utils.RandomString(10),
+            Data = StringUtils.RandomString(10),
+            SenderApp = StringUtils.RandomString(5) + ".exe",
+            DisplayTitle = StringUtils.RandomString(10),
             IconPath = _defaultIconPath,
             Icon = new BitmapImage(new Uri(_defaultIconPath, UriKind.RelativeOrAbsolute)),
             PreviewImagePath = _defaultIconPath,
@@ -60,27 +61,30 @@ public class DbHelperTest
             CreateTime = DateTime.Now,
         };
         if (data.Type == CbContentType.Image)
+        {
             data.Data = _defaultImage;
+        }
         else if (data.Type == CbContentType.Files)
-            data.Data = new string[] { Utils.RandomString(10), Utils.RandomString(10) };
+        {
+            data.Data = new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10) };
+        }
         return data;
     }
 
     [Fact]
-    public void TestCreateDb()
+    public async Task TestCreateDb()
     {
-        var helper = new DbHelper(
+        var helper = new DbHelpers(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Shared
         );
         _testOutputHelper.WriteLine(helper.Connection.ConnectionString);
-        helper.CreateDb();
-        var sql =
-            @"SELECT name from sqlite_master WHERE name IN ('record', 'assets') ORDER BY name ASC;";
+        await helper.CreateDbAsync();
+        var sql = @"SELECT name from sqlite_master WHERE name IN ('record', 'assets') ORDER BY name ASC;";
         var r = helper.Connection.Query(sql).AsList();
         Assert.True(r.Count == 2 && r[0].name == "assets" && r[1].name == "record");
-        helper.Close();
+        await helper.CloseAsync();
     }
 
     [Fact]
@@ -88,15 +92,15 @@ public class DbHelperTest
     {
         // test text
         var exampleTextRecord = GetRandomClipboardData();
-        var helper = new DbHelper(
+        var helper = new DbHelpers(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Shared
         );
-        helper.CreateDb();
-        helper.AddOneRecord(exampleTextRecord);
-        var c = (await helper.GetAllRecord()).First();
-        helper.Close();
+        await helper.CreateDbAsync();
+        await helper.AddOneRecordAsync(exampleTextRecord);
+        var c = (await helper.GetAllRecordAsync()).First();
+        await helper.CloseAsync();
         Assert.True(c == exampleTextRecord);
     }
 
@@ -108,12 +112,12 @@ public class DbHelperTest
     [InlineData(2, "2023-05-28 11:35:00.1+08:00", 72)]
     public async Task TestDeleteRecordBefore(int type, string creatTime, int keepTime)
     {
-        var helper = new DbHelper(
+        var helper = new DbHelpers(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Shared
         );
-        helper.CreateDb();
+        await helper.CreateDbAsync();
         var now = DateTime.Now;
         var ctime = DateTime.ParseExact(
             creatTime,
@@ -125,20 +129,22 @@ public class DbHelperTest
         {
             var tmpRecord = GetRandomClipboardData();
             tmpRecord.CreateTime = ctime + s;
-            helper.AddOneRecord(tmpRecord);
+            await helper.AddOneRecordAsync(tmpRecord);
         }
         // helper.Connection.BackupDatabase(new SqliteConnection("Data Source=a.db"));
 
-        helper.DeleteRecordByKeepTime(type, keepTime);
+        await helper.DeleteRecordByKeepTimeAsync(type, keepTime);
 
-        var recordsAfterDelete = await helper.GetAllRecord();
+        var recordsAfterDelete = await helper.GetAllRecordAsync();
         foreach (var record in recordsAfterDelete.Where(r => r.Type == (CbContentType)type))
         {
             var expTime = record.CreateTime + TimeSpan.FromHours(keepTime);
             if (expTime < now)
+            {
                 _testOutputHelper.WriteLine($"{record}");
+            }
             Assert.True(expTime >= now);
         }
-        helper.Close();
+        await helper.CloseAsync();
     }
 }

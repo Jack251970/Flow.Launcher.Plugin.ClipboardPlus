@@ -1,5 +1,3 @@
-using ClipboardPlus.Core;
-using Flow.Launcher.Plugin;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -10,15 +8,23 @@ using System.Windows.Input;
 
 namespace ClipboardPlus.Panels;
 
-public partial class SettingsPanel
+public partial class SettingsPanel : UserControl
 {
     public Settings Settings { get; set; }
     private PluginInitContext? Context { get; set; }
-    private DirectoryInfo? ClipDir { get; set; }
     private DirectoryInfo? ClipCacheDir { get; set; }
     private bool Ready { get; set; } = false;
 
     #region Dependency Properties
+
+    public static readonly DependencyProperty ClearKeywordStringProperty = DependencyProperty.Register(
+        nameof(ClearKeywordString), typeof(string), typeof(SettingsPanel), new PropertyMetadata(default(string)));
+
+    public string ClearKeywordString
+    {
+        get { return (string)GetValue(ClearKeywordStringProperty); }
+        set { SetValue(ClearKeywordStringProperty, value); }
+    }
 
     public static readonly DependencyProperty MaxDataCountProperty = DependencyProperty.Register(
         nameof(MaxDataCount),
@@ -35,6 +41,23 @@ public partial class SettingsPanel
             SetValue(MaxDataCountProperty, value);
             Settings.MaxDataCount = value;
             MaxRecValueBox.Text = value.ToString();
+        }
+    }
+
+    public static readonly DependencyProperty OrderByProperty = DependencyProperty.Register(
+        nameof(OrderBy),
+        typeof(CbOrders),
+        typeof(SettingsPanel),
+        new PropertyMetadata(default(CbOrders))
+    );
+
+    public CbOrders OrderBy
+    {
+        get => Settings.OrderBy;
+        set
+        {
+            SetValue(OrderByProperty, value);
+            CmBoxOrderBy.SelectedIndex = (int)value;
         }
     }
 
@@ -56,31 +79,14 @@ public partial class SettingsPanel
         set { SetValue(ImageFormatPreviewProperty, value); }
     }
 
-    public static readonly DependencyProperty OrderByProperty = DependencyProperty.Register(
-        nameof(OrderBy),
-        typeof(CbOrders),
-        typeof(SettingsPanel),
-        new PropertyMetadata(default(CbOrders))
-    );
-
-    public CbOrders OrderBy
-    {
-        get => Settings.OrderBy;
-        set
-        {
-            SetValue(OrderByProperty, value);
-            CmBoxOrderBy.SelectedIndex = (int)value;
-        }
-    }
-
     public static readonly DependencyProperty KeepTextHoursProperty = DependencyProperty.Register(
         nameof(KeepTextHours),
-        typeof(KeepTime),
+        typeof(RecordKeepTime),
         typeof(SettingsPanel),
-        new PropertyMetadata(default(KeepTime))
+        new PropertyMetadata(default(RecordKeepTime))
     );
 
-    public KeepTime KeepTextHours
+    public RecordKeepTime KeepTextHours
     {
         get => Settings.KeepTextHours;
         set
@@ -92,12 +98,12 @@ public partial class SettingsPanel
 
     public static readonly DependencyProperty KeepImageHoursProperty = DependencyProperty.Register(
         nameof(KeepImageHours),
-        typeof(KeepTime),
+        typeof(RecordKeepTime),
         typeof(SettingsPanel),
-        new PropertyMetadata(default(KeepTime))
+        new PropertyMetadata(default(RecordKeepTime))
     );
 
-    public KeepTime KeepImageHours
+    public RecordKeepTime KeepImageHours
     {
         get => Settings.KeepImageHours;
         set
@@ -109,12 +115,12 @@ public partial class SettingsPanel
 
     public static readonly DependencyProperty KeepFileHoursProperty = DependencyProperty.Register(
         nameof(KeepFileHours),
-        typeof(KeepTime),
+        typeof(RecordKeepTime),
         typeof(SettingsPanel),
-        new PropertyMetadata(default(KeepTime))
+        new PropertyMetadata(default(RecordKeepTime))
     );
 
-    public KeepTime KeepFileHours
+    public RecordKeepTime KeepFileHours
     {
         get => Settings.KeepImageHours;
         set
@@ -124,15 +130,6 @@ public partial class SettingsPanel
         }
     }
 
-    public static readonly DependencyProperty ClearKeywordStringProperty = DependencyProperty.Register(
-        nameof(ClearKeywordString), typeof(string), typeof(SettingsPanel), new PropertyMetadata(default(string)));
-
-    public string ClearKeywordString
-    {
-        get { return (string)GetValue(ClearKeywordStringProperty); }
-        set { SetValue(ClearKeywordStringProperty, value); }
-    }
-
     #endregion
 
     public SettingsPanel(Settings settings, PluginInitContext context)
@@ -140,15 +137,15 @@ public partial class SettingsPanel
         Settings = settings;
         Context = context;
         InitializeComponent();
-        (ClipDir, ClipCacheDir) = Utils.GetClipDirAndClipCacheDir(context);
+        (_, ClipCacheDir) = FileUtils.GetClipDirAndClipCacheDir(context);
+        ClearKeywordString = settings.ClearKeyword;
         MaxDataCount = settings.MaxDataCount;
         OrderBy = settings.OrderBy;
+        ImageFormatString = settings.ImageFormat;
+        ImageFormatPreview = GetImageFormatPreview();
         KeepTextHours = settings.KeepTextHours;
         KeepImageHours = settings.KeepImageHours;
         KeepFileHours = settings.KeepFileHours;
-        ImageFormatString = settings.ImageFormat;
-        ImageFormatPreview = Utils.FormatImageName(ImageFormatString, DateTime.Now, "TestApp.exe");
-        ClearKeywordString = settings.ClearKeyword;
         Ready = true;
     }
 
@@ -158,59 +155,38 @@ public partial class SettingsPanel
     /// </summary>
     public SettingsPanel()
     {
-        Settings = new Settings() { ConfigFile = "test.json" };
-        Settings.Save();
+        var settings = new Settings() { ConfigFile = "test.json" };
+        settings.Save();
         Settings = Settings.Load("test.json");
         Context = null;
         InitializeComponent();
-        MaxDataCount = Settings.MaxDataCount;
-        OrderBy = Settings.OrderBy;
-        KeepTextHours = Settings.KeepTextHours;
-        KeepImageHours = Settings.KeepImageHours;
-        KeepFileHours = Settings.KeepFileHours;
-        ImageFormatString = Settings.ImageFormat;
-        ImageFormatPreview = Utils.FormatImageName(ImageFormatString, DateTime.Now, "TestApp.exe");
-        ClearKeywordString = Settings.ClearKeyword;
-        Console.WriteLine(Settings);
+        ClearKeywordString = settings.ClearKeyword;
+        MaxDataCount = settings.MaxDataCount;
+        OrderBy = settings.OrderBy;
+        ImageFormatString = settings.ImageFormat;
+        ImageFormatPreview = GetImageFormatPreview();
+        KeepTextHours = settings.KeepTextHours;
+        KeepImageHours = settings.KeepImageHours;
+        KeepFileHours = settings.KeepFileHours;
+        Console.WriteLine(settings);
         Ready = true;
     }
 
+    // TODO: Fix fast-multi-time saving clash.
     private void ApplySettings()
     {
         Context?.API.SavePluginSettings();
         Context?.API.ReloadAllPluginData();
     }
 
-    #region Cache Image
+    #region Clear Keyword
 
-    private void CkBoxCacheImages_OnChecked(object sender, RoutedEventArgs e)
+    private void TextBoxClearKeyword_OnTextChanged(object sender, TextChangedEventArgs e)
     {
         if (Ready)
         {
-            Settings.CacheImages = true;
+            Settings.ClearKeyword = TextBoxClearKeyword.Text;
             ApplySettings();
-        }
-    }
-
-    private void CkBoxCacheImages_OnUnchecked(object sender, RoutedEventArgs e)
-    {
-        if (Ready)
-        {
-            Settings.CacheImages = false;
-            ApplySettings();
-        }
-    }
-
-    private void CacheImageButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (ClipCacheDir is not null)
-        {
-            Process.Start(new ProcessStartInfo()
-            {
-                FileName = ClipCacheDir.FullName,
-                UseShellExecute = true,
-                Verb = "open"
-            });
         }
     }
 
@@ -248,6 +224,54 @@ public partial class SettingsPanel
 
     [GeneratedRegex("[^0-9]+")]
     private static partial Regex NumberRegex();
+
+    #endregion
+
+    #region Order By
+
+    private void CmBoxOrderBy_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (Ready)
+        {
+            Settings.OrderBy = (CbOrders)CmBoxOrderBy.SelectedIndex;
+            ApplySettings();
+        }
+    }
+
+    #endregion
+
+    #region Cache Image
+
+    private void CkBoxCacheImages_OnChecked(object sender, RoutedEventArgs e)
+    {
+        if (Ready)
+        {
+            Settings.CacheImages = true;
+            ApplySettings();
+        }
+    }
+
+    private void CkBoxCacheImages_OnUnchecked(object sender, RoutedEventArgs e)
+    {
+        if (Ready)
+        {
+            Settings.CacheImages = false;
+            ApplySettings();
+        }
+    }
+
+    private void CacheImageButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ClipCacheDir is not null)
+        {
+            Process.Start(new ProcessStartInfo()
+            {
+                FileName = ClipCacheDir.FullName,
+                UseShellExecute = true,
+                Verb = "open"
+            });
+        }
+    }
 
     #endregion
 
@@ -292,26 +316,18 @@ public partial class SettingsPanel
 
     #region Preview Format
 
+    private string GetImageFormatPreview()
+    {
+        return StringUtils.FormatImageName(ImageFormatString, DateTime.Now, "TestApp.exe");
+    }
+
     private void TextBoxImageFormat_OnTextChanged(object sender, TextChangedEventArgs e)
     {
         ImageFormatString = TextBoxImageFormat.Text;
         Settings.ImageFormat = ImageFormatString;
-        ImageFormatPreview = Utils.FormatImageName(ImageFormatString, DateTime.Now, "TestApp.exe");
+        ImageFormatPreview = GetImageFormatPreview();
         if (Ready)
         {
-            ApplySettings();
-        }
-    }
-
-    #endregion
-
-    #region Order By
-
-    private void CmBoxOrderBy_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (Ready)
-        {
-            Settings.OrderBy = (CbOrders)CmBoxOrderBy.SelectedIndex;
             ApplySettings();
         }
     }
@@ -342,7 +358,7 @@ public partial class SettingsPanel
     {
         if (Ready)
         {
-            Settings.KeepTextHours = (KeepTime)CmBoxKeepText.SelectedIndex;
+            Settings.KeepTextHours = (RecordKeepTime)CmBoxKeepText.SelectedIndex;
             ApplySettings();
         }
     }
@@ -373,7 +389,7 @@ public partial class SettingsPanel
     {
         if (Ready)
         {
-            Settings.KeepImageHours = (KeepTime)CmBoxKeepImages.SelectedIndex;
+            Settings.KeepImageHours = (RecordKeepTime)CmBoxKeepImages.SelectedIndex;
             ApplySettings();
         }
     }
@@ -404,20 +420,7 @@ public partial class SettingsPanel
     {
         if (Ready)
         {
-            Settings.KeepFileHours = (KeepTime)CmBoxKeepFiles.SelectedIndex;
-            ApplySettings();
-        }
-    }
-
-    #endregion
-
-    #region Clear Keyword
-
-    private void TextBoxClearKeyword_OnTextChanged(object sender, TextChangedEventArgs e)
-    {
-        if (Ready)
-        {
-            Settings.ClearKeyword = TextBoxClearKeyword.Text;
+            Settings.KeepFileHours = (RecordKeepTime)CmBoxKeepFiles.SelectedIndex;
             ApplySettings();
         }
     }

@@ -1,4 +1,4 @@
-﻿using ClipboardPlus.Core;
+﻿using ClipboardPlus.Core.Data.Enums;
 using System.Windows;
 
 namespace ClipboardPlus.Panels.Test
@@ -12,9 +12,9 @@ namespace ClipboardPlus.Panels.Test
         {
             InitializeComponent();
             SettingsPanel.MaxDataCount = 300;
-            SettingsPanel.KeepTextHours = KeepTime.Hours24;
-            SettingsPanel.KeepImageHours = KeepTime.Year1;
-            SettingsPanel.KeepFileHours = KeepTime.Month1;
+            SettingsPanel.KeepTextHours = RecordKeepTime.Hours24;
+            SettingsPanel.KeepImageHours = RecordKeepTime.Year1;
+            SettingsPanel.KeepFileHours = RecordKeepTime.Month1;
         }
     }
 }

@@ -3,8 +3,6 @@
  * with some modification, the original source code doesn't provide a
  * license, but MIT shown in nuget package so I copied them here.
  * Thanks for Willy-Kimura (https://github.com/Willy-Kimura/SharpClipboard)
- * Modified by Rainyl
- * 2023.08.25
  */
 
 using System.Runtime.InteropServices;
@@ -16,12 +14,12 @@ public class CbMonitor : IDisposable
 {
     #region Fields
 
-    private bool _monitorClipboard;
-    private bool _observeLastEntry;
-
     private readonly Timer _timer = new();
     private readonly CbHandle _handle = new();
     private ObservableDataFormats _observableFormats = new();
+
+    private bool _monitorClipboard;
+    private bool _observeLastEntry;
 
     #endregion
 
@@ -124,6 +122,7 @@ public class CbMonitor : IDisposable
     {
         _timer.Dispose();
         _handle.Dispose();
+        _observableFormats = null!;
     }
 
     #endregion
@@ -237,7 +236,6 @@ public class CbMonitor : IDisposable
     {
         _timer.Stop();
         _timer.Enabled = false;
-
         StartMonitoring();
     }
 

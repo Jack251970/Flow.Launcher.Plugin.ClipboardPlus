@@ -15,12 +15,12 @@ public partial class CbHandle : Form
 
         // [optional] Applies the default window title.
         // This may only be necessary for forensic purposes.
-        this.ShowInTaskbar = false;
-        this.FormBorderStyle = FormBorderStyle.None;
-        this.Visible = false;
-        this.Opacity = 0d;
-        this.Size = new Size(1, 1);
-        this.Location = new Point(-10000, -10000);
+        ShowInTaskbar = false;
+        FormBorderStyle = FormBorderStyle.None;
+        Visible = false;
+        Opacity = 0d;
+        Size = new Size(1, 1);
+        Location = new Point(-10000, -10000);
     }
 
     #endregion
@@ -69,7 +69,7 @@ public partial class CbHandle : Form
 
     [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    static extern bool AddClipboardFormatListener(IntPtr hwnd);
+    private static extern bool AddClipboardFormatListener(IntPtr hwnd);
 
     [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -118,10 +118,14 @@ public partial class CbHandle : Form
     {
         // If clipboard-monitoring is enabled, proceed to listening.
         if (!Ready || !CbMonitorInstance.MonitorClipboard)
+        {
             return;
-        var dataObj = Retry.Do(Clipboard.GetDataObject, 100, 5);
+        }
+        var dataObj = TaskUtils.Do(Clipboard.GetDataObject, 100, 5);
         if (dataObj is null)
+        {
             return;
+        }
         try
         {
             // Determines whether a file/files have been cut/copied.
@@ -250,12 +254,12 @@ public partial class CbHandle : Form
 
     public void StartMonitoring()
     {
-        this.Show();
+        Show();
     }
 
     public void StopMonitoring()
     {
-        this.Close();
+        Close();
     }
 
     #endregion
@@ -267,13 +271,13 @@ public partial class CbHandle : Form
     #region Win32 Externals
 
     [DllImport("user32.dll")]
-    static extern int GetForegroundWindow();
+    private static extern int GetForegroundWindow();
 
     [DllImport("user32.dll")]
-    static extern IntPtr GetForegroundWindowPtr();
+    private static extern IntPtr GetForegroundWindowPtr();
 
     [DllImport("user32.dll")]
-    static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+    private static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
 
     [DllImport("user32")]
     private static extern UInt32 GetWindowThreadProcessId(Int32 hWnd, out Int32 lpdwProcessId);
@@ -296,7 +300,9 @@ public partial class CbHandle : Form
             _processName = Process.GetProcessById(GetProcessId(hwnd)).ProcessName;
             var processModule = Process.GetProcessById(GetProcessId(hwnd)).MainModule;
             if (processModule != null)
+            {
                 _executablePath = processModule.FileName;
+            }
             _executableName = _executablePath.Substring(
                 _executablePath.LastIndexOf(@"\", StringComparison.Ordinal) + 1
             );
@@ -343,14 +349,14 @@ public partial class CbHandle : Form
     protected override void OnHandleCreated(EventArgs e)
     {
         // Start listening for clipboard changes.
-        Retry.Do(() => AddClipboardFormatListener(this.Handle), 100, 5);
+        TaskUtils.Do(() => AddClipboardFormatListener(Handle), 100, 5);
         Ready = true;
     }
 
     protected override void OnHandleDestroyed(EventArgs e)
     {
         // Stop listening to clipboard changes.
-        Retry.Do(() => RemoveClipboardFormatListener(this.Handle), 100, 5);
+        TaskUtils.Do(() => RemoveClipboardFormatListener(Handle), 100, 5);
         base.OnHandleDestroyed(e);
     }
 

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media.Imaging;
 
-namespace ClipboardPlus.Core;
+namespace ClipboardPlus.Core.Data.Models;
 
 public struct ClipboardData : IEquatable<ClipboardData>
 {

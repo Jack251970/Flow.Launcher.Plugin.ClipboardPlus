@@ -1,4 +1,5 @@
-﻿using Xunit.Abstractions;
+﻿using Xunit;
+using Xunit.Abstractions;
 
 namespace ClipboardPlus.Core.Test;
 
@@ -24,8 +25,8 @@ public class UtilsTest
     [InlineData("你好，Hello啊.\nabc‘ def(), qwe'", 9)]
     public void TestWordsCount(string s, int n)
     {
-        var nw = Utils.CountWordsEn(s) + Utils.CountWordsCn(s);
-        _testOutputHelper.WriteLine($"En：{Utils.CountWordsEn(s)}, Cn: {Utils.CountWordsCn(s)}");
+        var nw = StringUtils.CountWordsEn(s) + StringUtils.CountWordsCn(s);
+        _testOutputHelper.WriteLine($"En：{StringUtils.CountWordsEn(s)}, Cn: {StringUtils.CountWordsCn(s)}");
         _testOutputHelper.WriteLine($"{n}:{nw}");
         Assert.True(n == nw);
     }
