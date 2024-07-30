@@ -48,12 +48,11 @@ public class DbHelpers : IDisposable
         @"INSERT OR IGNORE INTO record(
             hash_id, data_md5, text, display_title, senderapp, 
             icon_path, icon_md5, preview_image_path, content_type,
-            score, init_score, 'time', create_time, pined
-        ) VALUES (
+            score, init_score, 'time', create_time, pined) 
+        VALUES (
             @HashId, @DataMd5, @Text, @DisplayTitle, @SenderApp, 
             @IconPath, @IconMd5, @PreviewImagePath, @ContentType,
-            @Score, @InitScore, @Time, @CreateTime, @Pined
-        );";
+            @Score, @InitScore, @Time, @CreateTime, @Pined);";
 
     private readonly string SqlSelectRecordCountByMd5 =
         "SELECT COUNT() FROM record WHERE data_md5=@DataMd5;";
@@ -135,9 +134,6 @@ public class DbHelpers : IDisposable
     public async Task AddOneRecordAsync(ClipboardData data)
     {
         Connection.Open();
-        // insert record
-        var record = Record.FromClipboardData(data);
-        await Connection.ExecuteAsync(SqlInsertRecord, record);
         // insert assets
         var iconB64 = data.Icon.ToBase64();
         var iconMd5 = iconB64.GetMd5();
@@ -149,6 +145,10 @@ public class DbHelpers : IDisposable
             new() { DataB64 = dataB64, Md5 = dataMd5 },
         };
         await Connection.ExecuteAsync(SqlInsertAssets, assets);
+        // insert record
+        // note: you must insert record after assets, because record depends on assets
+        var record = Record.FromClipboardData(data);
+        await Connection.ExecuteAsync(SqlInsertRecord, record);
         await CloseIfNotKeepAsync();
     }
 
