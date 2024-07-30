@@ -12,9 +12,4 @@
       <ProjectReference Include="..\ClipboardPlus.Panels\ClipboardPlus.Panels.csproj" />
     </ItemGroup>
 
-
-    <ItemGroup>
-      <PackageReference Include="Material.Icons" Version="2.1.10" />
-    </ItemGroup>
-
 </Project>

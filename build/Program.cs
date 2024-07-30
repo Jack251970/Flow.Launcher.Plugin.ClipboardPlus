@@ -113,14 +113,16 @@ public class PublishTask : FrostingTask<BuildContext>
         // context.CopyDirectory(srcDir, midDir);
 
         var ptn =
-            @"Clipboar.+\.dll|"
+            // Core
+            @"ClipboardPlus\.dll|ClipboardPlus.+\.dll|"
+            // Image
             + @".+\.png|"
+            // Manifest
+            + @"plugin\.json|"
+            // Nuget
             + @"Dapper\.dll|"
-            + @"Svg\.dll|"
-            + @"Material\.Icons\.dll|"
+            + @"H\.InputSimulator\.dll|"
             + @"FluentIcons\.Common\.dll|FluentIcons\.WPF\.dll|"
-            + @"ExCSS\.dll|"
-            + @"plugin\.json|H\.InputSimulator\.dll|"
             + @"SQLitePCLRaw.+\.dll|Microsoft.+(S|s)qlite\.dll";
         var files = context.GetFiles($"{srcDir}/**/*");
         FilePath? versionFile = null;
