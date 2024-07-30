@@ -1,8 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ClipboardPlus.Core.Utils;
 
-public static class StringUtils
+public static partial class StringUtils
 {
     private static readonly Random _random = new();
 
@@ -14,27 +15,16 @@ public static class StringUtils
         );
     }
 
-    public static int CountWords(string s)
-    {
-        return CountWordsCn(s) + CountWordsEn(s);
-    }
-
     public static int CountWordsCn(string s)
     {
-        // Count Chinese characters in the string
-        int chineseCharCount = s.Count(c => c >= 0x4E00 && c <= 0x9FFF);
-        return chineseCharCount;
+        var nCn = (Encoding.UTF8.GetByteCount(s) - s.Length) / 2;
+        return nCn;
     }
 
     public static int CountWordsEn(string s)
     {
-        // Remove non-ASCII characters
-        s = new string(s.Where(c => c < 128).ToArray());
-
-        // Regex pattern to match words, including contractions
-        var wordPattern = @"\b[\w'-]+\b";
-        var collection = Regex.Matches(s, wordPattern);
-
+        s = string.Join("", s.Where(c => c < 0x4E00));
+        var collection = EnRegex().Matches(s);
         return collection.Count;
     }
 
@@ -56,4 +46,7 @@ public static class StringUtils
         var imageName = dateTime.ToString(format) + appname;
         return imageName;
     }
+
+    [GeneratedRegex("[\\S]+")]
+    private static partial Regex EnRegex();
 }
