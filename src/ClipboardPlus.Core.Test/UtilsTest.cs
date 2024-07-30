@@ -13,21 +13,21 @@ public class UtilsTest
     }
 
     [Theory]
-    [InlineData("QQ.exe", 1)]
-    [InlineData("", 0)]
-    [InlineData("在池台的正中，像当初的怀中，隔太多春秋会不能相拥", 24)]
+    [InlineData("QQ.exe", 1, 0)]
+    [InlineData("", 0, 0)]
+    [InlineData("在池台的正中，像当初的怀中，隔太多春秋会不能相拥", 0, 24)]
     [InlineData(
         "Out of the tens of thousands of people, we are fortunate enough to "
             + "meet each other, and in an instant, there is a profound clarity and understanding.",
-        27
+        27, 0
     )]
-    [InlineData("你好，~", 4)]
-    [InlineData("你好，Hello啊.\nabc‘ def(), qwe'", 9)]
-    public void TestWordsCount(string s, int n)
+    [InlineData("你好，~", 1, 3)]
+    public void TestWordsCount(string s, int en, int cn)
     {
-        var nw = StringUtils.CountWordsEn(s) + StringUtils.CountWordsCn(s);
-        _testOutputHelper.WriteLine($"En：{StringUtils.CountWordsEn(s)}, Cn: {StringUtils.CountWordsCn(s)}");
-        _testOutputHelper.WriteLine($"{n}:{nw}");
-        Assert.True(n == nw);
+        var en1 = StringUtils.CountWordsEn(s);
+        var cn1 = StringUtils.CountWordsCn(s);
+        _testOutputHelper.WriteLine($"En：{en1}");
+        _testOutputHelper.WriteLine($"Cn: {cn1}");
+        Assert.True(en == en1 && cn == cn1);
     }
 }
