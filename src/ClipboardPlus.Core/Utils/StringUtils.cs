@@ -15,10 +15,9 @@ public static partial class StringUtils
         );
     }
 
-    public static int CountWordsCn(string s)
+    public static int CountWords(string s)
     {
-        var nCn = (Encoding.UTF8.GetByteCount(s) - s.Length) / 2;
-        return nCn;
+        return CountWordsEn(s) + CountWordsCn(s);
     }
 
     public static int CountWordsEn(string s)
@@ -26,6 +25,12 @@ public static partial class StringUtils
         s = string.Join("", s.Where(c => c < 0x4E00));
         var collection = EnRegex().Matches(s);
         return collection.Count;
+    }
+
+    public static int CountWordsCn(string s)
+    {
+        var nCn = (Encoding.UTF8.GetByteCount(s) - s.Length) / 2;
+        return nCn;
     }
 
     public static string GetGuid()
