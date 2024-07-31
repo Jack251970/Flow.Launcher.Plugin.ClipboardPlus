@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,7 +11,6 @@ public partial class SettingsPanel : UserControl
 {
     public Settings Settings { get; set; }
     private PluginInitContext? Context { get; set; }
-    private DirectoryInfo? ClipCacheDir { get; set; }
     private bool Ready { get; set; } = false;
 
     #region Dependency Properties
@@ -137,7 +135,7 @@ public partial class SettingsPanel : UserControl
         Settings = settings;
         Context = context;
         InitializeComponent();
-        (_, ClipCacheDir) = FileUtils.GetClipDirAndClipCacheDir(context);
+        PathHelpers.Init(context);
         ClearKeywordString = settings.ClearKeyword;
         MaxDataCount = settings.MaxDataCount;
         OrderBy = settings.OrderBy;
@@ -155,9 +153,8 @@ public partial class SettingsPanel : UserControl
     /// </summary>
     public SettingsPanel()
     {
-        var settings = new Settings() { ConfigFile = "test.json" };
-        settings.Save();
-        Settings = Settings.Load("test.json");
+        var settings = new Settings();
+        Settings = settings;
         Context = null;
         InitializeComponent();
         ClearKeywordString = settings.ClearKeyword;
@@ -262,15 +259,12 @@ public partial class SettingsPanel : UserControl
 
     private void CacheImageButton_Click(object sender, RoutedEventArgs e)
     {
-        if (ClipCacheDir is not null)
+        Process.Start(new ProcessStartInfo()
         {
-            Process.Start(new ProcessStartInfo()
-            {
-                FileName = ClipCacheDir.FullName,
-                UseShellExecute = true,
-                Verb = "open"
-            });
-        }
+            FileName = PathHelpers.ImageCachePath,
+            UseShellExecute = true,
+            Verb = "open"
+        });
     }
 
     #endregion

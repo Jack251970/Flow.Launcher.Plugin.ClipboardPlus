@@ -24,6 +24,19 @@ public struct ClipboardData : IEquatable<ClipboardData>
         return HashId == b.HashId;
     }
 
+    public override readonly bool Equals(object? obj)
+    {
+        if (obj is ClipboardData clipboardData)
+        {
+            return this == clipboardData;
+        }
+        return false;
+    }
+
+    public static bool operator ==(ClipboardData a, ClipboardData b) => a.HashId == b.HashId;
+
+    public static bool operator !=(ClipboardData a, ClipboardData b) => a.HashId != b.HashId;
+
     public override readonly int GetHashCode()
     {
         var hashcode =
@@ -32,19 +45,6 @@ public struct ClipboardData : IEquatable<ClipboardData>
             ^ SenderApp.GetHashCode()
             ^ Type.GetHashCode();
         return hashcode;
-    }
-
-    public static bool operator ==(ClipboardData a, ClipboardData b) => a.HashId == b.HashId;
-
-    public static bool operator !=(ClipboardData a, ClipboardData b) => a.HashId != b.HashId;
-
-    public override readonly bool Equals(object? obj)
-    {
-        if (obj is ClipboardData clipboardData)
-        {
-            return this == clipboardData;
-        }
-        return false;
     }
 
     public readonly string GetMd5()

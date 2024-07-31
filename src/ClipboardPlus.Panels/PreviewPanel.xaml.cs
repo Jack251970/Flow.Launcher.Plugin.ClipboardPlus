@@ -1,7 +1,6 @@
 ﻿using FluentIcons.WPF;
 using FluentIcons.Common;
 using System;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,7 +10,6 @@ public partial class PreviewPanel : UserControl
 {
     private ClipboardData ClipboardData;
     private readonly PluginInitContext Context;
-    private DirectoryInfo CacheDir { get; set; }
     private Action<ClipboardData>? DeleteOneRecord { get; set; }
     private Action<ClipboardData>? CopyRecord { get; set; }
     private Action<ClipboardData>? PinRecord { get; set; }
@@ -24,7 +22,6 @@ public partial class PreviewPanel : UserControl
     public PreviewPanel(
         ClipboardData clipboardData,
         PluginInitContext context,
-        DirectoryInfo cacheDir,
         Action<ClipboardData> delAction,
         Action<ClipboardData> copyAction,
         Action<ClipboardData> pinAction
@@ -32,7 +29,6 @@ public partial class PreviewPanel : UserControl
     {
         ClipboardData = clipboardData;
         Context = context;
-        CacheDir = cacheDir;
         DeleteOneRecord = delAction;
         CopyRecord = copyAction;
         PinRecord = pinAction;
@@ -50,7 +46,6 @@ public partial class PreviewPanel : UserControl
     public PreviewPanel()
     {
         Context = null!;
-        CacheDir = null!;
         InitializeComponent();
         Ready = true;
     }
@@ -109,7 +104,7 @@ public partial class PreviewPanel : UserControl
 
     private void ImSaveAs_Click(object sender, RoutedEventArgs e)
     {
-        FileUtils.SaveImageCache(ClipboardData, CacheDir);
+        FileUtils.SaveImageCache(ClipboardData, PathHelpers.ImageCachePath);
     }
 
     #endregion
