@@ -37,7 +37,7 @@ public static class PathHelpers
             {
                 Directory.CreateDirectory(ImageCachePath);
             }
-            IconPath = Path.Combine(IconPath);
+            IconPath = Path.Combine(PluginPath, "Images");
 
             // data paths
             SettingsPath = Path.Combine(PluginPath, SettingsFile);

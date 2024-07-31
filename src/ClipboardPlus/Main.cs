@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -14,114 +15,51 @@ using WindowsInput;
 
 namespace ClipboardPlus;
 
-public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISavable, IReloadable
+public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, IAsyncReloadable, IDisposable
 {
-    // clipboard listener instance
-    private readonly CbMonitor _clipboard = new() { ObserveLastEntry = false };
+    #region Properties
+
+    // plugin context
+    private PluginInitContext _context = null!;
+
+    // class name for logging
     private string ClassName => GetType().Name;
 
-    // working directory
-    private DirectoryInfo ClipDir { get; set; } = null!;
-    private DirectoryInfo ClipCacheDir { get; set; } = null!;
+    // action keyword
+    private string ActionKeyword => _context.CurrentPluginMetadata.ActionKeyword ?? "cbp";
 
-    // default icon path
-    private string _defaultIconPath = string.Empty;
-    private string _defaultPinIconPath = string.Empty;
-
-    // icon path
-    private string _clearIconPath = string.Empty;
-
-    private string _listIconPath = string.Empty;
-    private string _databaseIconPath = string.Empty;
-
-    private string _textIconPath = string.Empty;
-    private string _imageIconPath = string.Empty;   
-    private string _fileIconPath = string.Empty;
-
-    // settings path
-    private string _settingsPath = string.Empty;
-
-    // max data count, will be rewritten by settings
-    private int _maxDataCount = 10000;
+    // pinned symbol
     private const string PinUnicode = "📌";
+
+    // settings
     private Settings _settings = null!;
-    private int CurrentScore { get; set; } = 1;
 
+    // database helper
     private DbHelpers _dbHelper = null!;
-    private string _dbPath = string.Empty;
 
-    private PluginInitContext _context = null!;
-    private LinkedList<ClipboardData> _dataList = new();
-    public string RequeryString { get; private set; } = string.Empty;
+    // clipboard listener instance
+    private readonly CbMonitor _clipboard = new() { ObserveLastEntry = false };
 
-    public void Init(PluginInitContext context)
+    // records list
+    private LinkedList<ClipboardData> _recordsList = new();
+    private int CurrentScore = 1;
+
+    #endregion
+
+    #region IAsyncPlugin interface
+
+    public Task<List<Result>> QueryAsync(Query query, CancellationToken token)
     {
-        _context = context;
-        _context.API.LogDebug(ClassName, "Adding clipboard listener");
-        _clipboard.ClipboardChanged += OnClipboardChange;
-        RequeryString = _context.CurrentPluginMetadata.ActionKeyword;
-
-        (ClipDir, ClipCacheDir) = FileUtils.GetClipDirAndClipCacheDir(context);
-
-        _defaultIconPath = Path.Join(ClipDir.FullName, "Images/clipboard.png");
-        _defaultPinIconPath = Path.Join(ClipDir.FullName, "Images/pined.png");
-
-        _clearIconPath = Path.Join(ClipDir.FullName, "Images/clear.png");
-        
-        _listIconPath = Path.Join(ClipDir.FullName, "Images/list.png");
-        _databaseIconPath = Path.Join(ClipDir.FullName, "Images/database.png");
-
-        _textIconPath = Path.Join(ClipDir.FullName, "Images/text.png");
-        _imageIconPath = Path.Join(ClipDir.FullName, "Images/image.png");
-        _fileIconPath = Path.Join(ClipDir.FullName, "Images/file.png");
-
-        _settingsPath = Path.Join(ClipDir.FullName, "settings.json");
-        if (File.Exists(_settingsPath))
-        {
-            using var fs = File.OpenRead(_settingsPath);
-            _settings = JsonSerializer.Deserialize<Settings>(fs)!;
-        }
-        else
-        {
-            _settings = new Settings();
-        }
-
-        _settings.ConfigFile = _settingsPath;
-        _settings.Save();
-        _context.API.LogDebug(ClassName, "Created settings successfully");
-
-        _maxDataCount = _settings.MaxDataCount;
-        // restore records
-        _context.API.LogInfo(ClassName, $"{_settings}");
-        _dbPath = Path.Join(ClipDir.FullName, _settings.DbPath);
-        _context.API.LogDebug(ClassName, $"Using database at: {_dbPath}");
-        _dbHelper = new DbHelpers(_dbPath);
-        RestoreRecordsFromDb();
+        return Task.Run(() => Query(query));
     }
 
-    private async void RestoreRecordsFromDb()
-    {
-        if (!File.Exists(_dbPath))
-        {
-            await _dbHelper.CreateDbAsync();
-            return;
-        }
-
-        var records = await _dbHelper.GetAllRecordAsync();
-        if (records.Count > 0)
-        {
-            _dataList = records;
-            CurrentScore = records.Max(r => r.Score);
-        }
-
-        _context.API.LogWarn(ClassName, "Restore records successfully");
-    }
-
+    // TODO: Support Glphy in the result.
     public List<Result> Query(Query query)
     {
         var results = new List<Result>();
         if (query.FirstSearch == _settings.ClearKeyword)
         {
+            // clear actions results
             results.AddRange(
                 new[]
                 {
@@ -129,11 +67,11 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
                     {
                         Title = "Clear list",
                         SubTitle = "Clear records in list",
-                        IcoPath = _listIconPath,
-                        Score = 21,
+                        IcoPath = PathHelpers.ListIconPath,
+                        Score = 2,
                         Action = _ =>
                         {
-                            _dataList.Clear();
+                            _recordsList.Clear();
                             return true;
                         },
                     },
@@ -141,11 +79,11 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
                     {
                         Title = "Clear all",
                         SubTitle = "Clear records in both list and database",
-                        IcoPath = _databaseIconPath,
+                        IcoPath = PathHelpers.DatabaseIconPath,
                         Score = 1,
                         AsyncAction = async _ =>
                         {
-                            _dataList.Clear();
+                            _recordsList.Clear();
                             await _dbHelper.DeleteAllRecordsAsync();
                             CurrentScore = 1;
                             return true;
@@ -153,88 +91,147 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
                     }
                 }
             );
-
-            return results;
         }
-
-        var displayData =
+        else
+        {
+            // records results
+            var displayData =
             query.Search.Trim().Length == 0
-                ? _dataList.ToArray()
-                : _dataList
+                ? _recordsList.ToArray()
+                : _recordsList
                     .Where(
                         i =>
                             !string.IsNullOrEmpty(i.Text)
                             && i.Text.ToLower().Contains(query.Search.Trim().ToLower())
                     )
                     .ToArray();
-
-        results.AddRange(displayData.Select(ClipDataToResult));
-        _context.API.LogDebug(ClassName, "Added to result");
-        results.Add(
-            new Result
-            {
-                Title = "Clear All Records",
-                SubTitle = "Click to clear all records",
-                IcoPath = _clearIconPath,
-                Score = 1,
-                Action = _ =>
+            results.AddRange(displayData.Select(ClipDataToResult));
+            _context.API.LogDebug(ClassName, "Added records successfully");
+            // clear results
+            results.Add(
+                new Result
                 {
-                    _context.API.ChangeQuery(RequeryString + " clear ", true);
-                    return false;
-                },
-            }
-        );
+                    Title = "Clear All Records",
+                    SubTitle = "Click to clear all records",
+                    IcoPath = PathHelpers.ClearIconPath,
+                    Score = _settings.MaxDataCount + 1,
+                    Action = _ =>
+                    {
+                        _context.API.ChangeQuery(ActionKeyword + " clear ", true);
+                        return false;
+                    },
+                }
+            );
+        }
         return results;
     }
 
-    private Result ClipDataToResult(ClipboardData o)
+    public async Task InitAsync(PluginInitContext context)
     {
-        var dispSubTitle = $"{o.CreateTime:yyyy-MM-dd-hh-mm-ss}: {o.SenderApp}";
-        dispSubTitle = o.Pined ? $"{PinUnicode}{dispSubTitle}" : dispSubTitle;
-        return new Result
+        _context = context;
+
+        // init path helpers
+        PathHelpers.Init(context);
+
+        // init settings
+        if (File.Exists(PathHelpers.SettingsPath))
         {
-            Title = o.DisplayTitle,
-            SubTitle = dispSubTitle,
-            Icon = () => o.Icon,
-            CopyText = o.Text,
-            Score = GetNewScoreByOrderBy(o),
-            TitleToolTip = o.Text,
-            SubTitleToolTip = dispSubTitle,
-            PreviewPanel = new Lazy<UserControl>(
-                () =>
-                    new PreviewPanel(
-                        o,
-                        _context,
-                        ClipCacheDir,
-                        delAction: RemoveFromDatalist,
-                        copyAction: CopyToClipboard,
-                        pinAction: PinOneRecord
-                    )
-            ),
-            AsyncAction = async _ =>
-            {
-                CopyToClipboard(o);
-                _context.API.HideMainWindow();
-                while (_context.API.IsMainWindowVisible())
-                    await Task.Delay(100);
-                new InputSimulator().Keyboard.ModifiedKeyStroke(
-                    VirtualKeyCode.CONTROL,
-                    VirtualKeyCode.VK_V
-                );
-                _context.API.ChangeQuery(RequeryString, true);
-                return true;
-            },
-        };
+            using var fs = File.OpenRead(PathHelpers.SettingsPath);
+            _settings = JsonSerializer.Deserialize<Settings>(fs)!;
+        }
+        else
+        {
+            _settings = new Settings();
+        }
+        _settings.Save();
+        _context.API.LogDebug(ClassName, "Init settings successfully");
+        _context.API.LogInfo(ClassName, $"{_settings}");
+
+        // init database
+        _dbHelper = new DbHelpers(PathHelpers.DatabasePath);
+        if (!File.Exists(PathHelpers.DatabasePath))
+        {
+            await _dbHelper.CreateDbAsync();
+            return;
+        }
+        _context.API.LogDebug(ClassName, "Init database successfully");
+
+        // init clipboard listener
+        _clipboard.ClipboardChanged += OnClipboardChange;
+        _context.API.LogDebug(ClassName, "Init clipboard listener");
+
+        // restore records
+        await RestoreRecordsFromDb();
     }
+
+    #endregion
+
+    #region ISettingProvider interface
+
+    public Control CreateSettingPanel()
+    {
+        _context.API.LogWarn(ClassName, $"{_settings}");
+        return new SettingsPanel(_settings, _context);
+    }
+
+    #endregion
+
+    #region ISavable interface
+
+    public void Save()
+    {
+        _settings.Save();
+    }
+
+    #endregion
+
+    #region IAsyncReloadable interface
+
+    public async Task ReloadDataAsync()
+    {
+        // save settings
+        Save();
+
+        // clear expired records
+        try
+        {
+            var kv = new List<Tuple<CbContentType, RecordKeepTime>>
+            {
+                new(CbContentType.Text, _settings.KeepTextHours),
+                new(CbContentType.Image, _settings.KeepImageHours),
+                new(CbContentType.Files, _settings.KeepFileHours),
+            };
+            foreach (var pair in kv)
+            {
+                _context.API.LogInfo(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
+                await _dbHelper.DeleteRecordByKeepTimeAsync(
+                    (int)pair.Item1,
+                    pair.Item2.ToKeepTime()
+                );
+            }
+        }
+        catch (Exception e)
+        {
+            _context.API.LogWarn(ClassName, $"Clear expired records failed\n{e}");
+        }
+
+        // restore records
+        await RestoreRecordsFromDb();
+    }
+
+    #endregion
+
+    #region Clipboard Monitor
 
     private async void OnClipboardChange(object? sender, CbMonitor.ClipboardChangedEventArgs e)
     {
         _context.API.LogDebug(ClassName, "Clipboard changed");
-        if (e.Content is null)
+        if (e.Content is null || _recordsList.Count >= _settings.MaxDataCount)
         {
             return;
         }
 
+        // init clipboard data
         var now = DateTime.Now;
         var clipboardData = new ClipboardData
         {
@@ -244,16 +241,18 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
             Type = e.ContentType,
             Data = e.Content,
             SenderApp = e.SourceApplication.Name,
-            IconPath = _defaultIconPath,
-            Icon = new BitmapImage(new Uri(_defaultIconPath, UriKind.RelativeOrAbsolute)),
-            PreviewImagePath = _defaultIconPath,
+            IconPath = PathHelpers.AppIconPath,
+            Icon = AppIcon,
+            PreviewImagePath = PathHelpers.AppIconPath,
             Score = CurrentScore + 1,
             InitScore = CurrentScore + 1,
             Time = now,
             Pined = false,
             CreateTime = now,
         };
+        CurrentScore++;
 
+        // process clipboard data
         switch (e.ContentType)
         {
             case CbContentType.Text:
@@ -266,9 +265,10 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
                 {
                     var imageName = StringUtils.FormatImageName(_settings.ImageFormat, clipboardData.CreateTime,
                         clipboardData.SenderApp ?? "");
-                    FileUtils.SaveImageCache(clipboardData, ClipCacheDir, imageName);
+                    FileUtils.SaveImageCache(clipboardData, PathHelpers.ImageCachePath, imageName);
                 }
                 var img = _clipboard.ClipboardImage;
+                // TODO: Optimize?
                 if (img != null)
                 {
                     clipboardData.Icon = img.ToBitmapImage();
@@ -288,122 +288,121 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
             default:
                 break;
         }
-
         clipboardData.Icon = GetDefaultIcon(clipboardData);
         clipboardData.DisplayTitle = MyRegex().Replace(clipboardData.Text.Trim(), "");
 
-        // make sure no repeat
-        if (_dataList.Any(node => node.GetMd5() == clipboardData.GetMd5()))
+        // add to list and database if no repeat 
+        if (_recordsList.Any(node => node.GetMd5() == clipboardData.GetMd5()))
         {
             return;
         }
-        _context.API.LogDebug(ClassName, "Adding to dataList");
-        _dataList.AddFirst(clipboardData);
-        _context.API.LogDebug(ClassName, "Adding to database");
-        var isAdd =
+        _recordsList.AddFirst(clipboardData);
+        _context.API.LogDebug(ClassName, "Added to list");
+
+        // add to database if needed
+        var needAddDatabase = 
             _settings.KeepText && clipboardData.Type == CbContentType.Text
             || _settings.KeepImage && clipboardData.Type == CbContentType.Image
             || _settings.KeepFile && clipboardData.Type == CbContentType.Files;
-        if (isAdd)
+        if (needAddDatabase)
         {
             await _dbHelper.AddOneRecordAsync(clipboardData);
         }
-        if (_dataList.Count > _maxDataCount)
-        {
-            _dataList.RemoveLast();
-        }
-
-        CurrentScore++;
+        _context.API.LogDebug(ClassName, "Added to database");
         _context.API.LogDebug(ClassName, "Processing clipboard change finished");
     }
 
-    public Control CreateSettingPanel()
+    [GeneratedRegex("(\\r|\\n|\\t|\\v)")]
+    private static partial Regex MyRegex();
+
+    #endregion
+
+    #region Database
+
+    public async Task RestoreRecordsFromDb()
     {
-        _context.API.LogWarn(ClassName, $"{_settings}");
-        return new SettingsPanel(_settings, _context);
+        var records = await _dbHelper.GetAllRecordAsync();
+        if (records.Count > 0)
+        {
+            _recordsList = records;
+            CurrentScore = records.Max(r => r.Score);
+        }
+        _context.API.LogWarn(ClassName, "Restore records successfully");
     }
 
-    public void ReloadData()
+    #endregion
+
+    #region Clipboard Actions
+
+    private Result ClipDataToResult(ClipboardData o)
     {
-        Save();
-        try
+        var dispSubTitle = $"{o.CreateTime:yyyy-MM-dd-hh-mm-ss}: {o.SenderApp}";
+        dispSubTitle = o.Pined ? $"{PinUnicode}{dispSubTitle}" : dispSubTitle;
+        return new Result
         {
-            // Delete expired records
-            var kv = new List<Tuple<CbContentType, RecordKeepTime>>
+            Title = o.DisplayTitle,
+            SubTitle = dispSubTitle,
+            Icon = () => o.Icon,
+            CopyText = o.Text,
+            Score = GetNewScoreByOrderBy(o),
+            TitleToolTip = o.Text,
+            SubTitleToolTip = dispSubTitle,
+            PreviewPanel = new Lazy<UserControl>(
+                () =>
+                    new PreviewPanel(
+                        o,
+                        _context,
+                        delAction: RemoveFromDatalist,
+                        copyAction: CopyToClipboard,
+                        pinAction: PinOneRecord
+                    )
+            ),
+            AsyncAction = async _ =>
             {
-                new(CbContentType.Text, _settings.KeepTextHours),
-                new(CbContentType.Image, _settings.KeepImageHours),
-                new(CbContentType.Files, _settings.KeepFileHours),
-            };
-            foreach (var pair in kv)
-            {
-                _context.API.LogInfo(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
-                _dbHelper?.DeleteRecordByKeepTimeAsync(
-                    (int)pair.Item1,
-                    pair.Item2.ToKeepTime()
+                CopyToClipboard(o);
+                _context.API.HideMainWindow();
+                while (_context.API.IsMainWindowVisible())
+                {
+                    await Task.Delay(100);
+                }
+                new InputSimulator().Keyboard.ModifiedKeyStroke(
+                    VirtualKeyCode.CONTROL,
+                    VirtualKeyCode.VK_V
                 );
-            }
-        }
-        catch (Exception e)
-        {
-            _context.API.LogWarn(ClassName, $"Clear expired data failed!\n{e}");
-        }
-        
-        RestoreRecordsFromDb();
-    }
-    
-    public void Dispose()
-    {
-        _context.API.LogWarn(ClassName, $"enter dispose");
-        ReloadData();
-        _clipboard.Dispose();
-        _dbHelper?.Dispose();
-    }
-
-    public void CopyToClipboard(ClipboardData clipboardData)
-    {
-        _dataList.Remove(clipboardData);
-        System.Windows.Forms.Clipboard.SetDataObject(clipboardData.Data);
-        _context.API.ChangeQuery(RequeryString, true);
-    }
-
-    public async void RemoveFromDatalist(ClipboardData clipboardData)
-    {
-        _dataList.Remove(clipboardData);
-        await _dbHelper.DeleteOneRecordAsync(clipboardData);
-        _context.API.ChangeQuery(RequeryString, true);
-    }
-
-    public async void PinOneRecord(ClipboardData c)
-    {
-        _dataList.Remove(c);
-        if (c.Type is CbContentType.Text or CbContentType.Files)
-        {
-            c.Icon = c.Pined
-                ? new BitmapImage(new Uri(_defaultPinIconPath, UriKind.RelativeOrAbsolute))
-                : GetDefaultIcon(c);
-        }
-
-        _dataList.AddLast(c);
-        await _dbHelper.PinOneRecordAsync(c);
-        _context.API.ChangeQuery(RequeryString, true);
-    }
-
-    public BitmapImage GetDefaultIcon(ClipboardData data)
-    {
-        return data.Type switch
-        {
-            CbContentType.Text
-                => new BitmapImage(new Uri(_textIconPath, UriKind.RelativeOrAbsolute)),
-            CbContentType.Files
-                => new BitmapImage(new Uri(_fileIconPath, UriKind.RelativeOrAbsolute)),
-            CbContentType.Image
-                => new BitmapImage(new Uri(_imageIconPath, UriKind.RelativeOrAbsolute)),
-            _ => throw new NotImplementedException()
+                _context.API.ChangeQuery(ActionKeyword, true);
+                return true;
+            },
         };
     }
 
-    public int GetNewScoreByOrderBy(ClipboardData clipboardData)
+    private void CopyToClipboard(ClipboardData clipboardData)
+    {
+        _recordsList.Remove(clipboardData);
+        System.Windows.Forms.Clipboard.SetDataObject(clipboardData.Data);
+        _context.API.ChangeQuery(ActionKeyword, true);
+    }
+
+    private async void RemoveFromDatalist(ClipboardData clipboardData)
+    {
+        _recordsList.Remove(clipboardData);
+        await _dbHelper.DeleteOneRecordAsync(clipboardData);
+        _context.API.ChangeQuery(ActionKeyword, true);
+    }
+
+    private async void PinOneRecord(ClipboardData c)
+    {
+        _recordsList.Remove(c);
+        if (c.Type is CbContentType.Text or CbContentType.Files)
+        {
+            c.Icon = c.Pined ? PinnedIcon : GetDefaultIcon(c);
+        }
+
+        _recordsList.AddLast(c);
+        await _dbHelper.PinOneRecordAsync(c);
+        _context.API.ChangeQuery(ActionKeyword, true);
+    }
+
+    private int GetNewScoreByOrderBy(ClipboardData clipboardData)
     {
         if (clipboardData.Pined)
         {
@@ -435,11 +434,38 @@ public partial class ClipboardPlus : IPlugin, IDisposable, ISettingProvider, ISa
         return score;
     }
 
-    public void Save()
+    #endregion
+
+    #region Icons
+
+    private static readonly BitmapImage AppIcon = new(new Uri(PathHelpers.AppIconPath, UriKind.RelativeOrAbsolute));
+    private static readonly BitmapImage PinnedIcon = new(new Uri(PathHelpers.PinnedIconPath, UriKind.RelativeOrAbsolute));
+    private static readonly BitmapImage TextIcon = new(new Uri(PathHelpers.TextIconPath, UriKind.RelativeOrAbsolute));
+    private static readonly BitmapImage FilesIcon = new(new Uri(PathHelpers.FileIconPath, UriKind.RelativeOrAbsolute));
+    private static readonly BitmapImage ImageIcon = new(new Uri(PathHelpers.ImageIconPath, UriKind.RelativeOrAbsolute));
+
+    private static BitmapImage GetDefaultIcon(ClipboardData data)
     {
-        _settings.Save();
+        return data.Type switch
+        {
+            CbContentType.Text => TextIcon,
+            CbContentType.Files => FilesIcon,
+            CbContentType.Image => ImageIcon,
+            _ => AppIcon
+        };
     }
 
-    [GeneratedRegex("(\\r|\\n|\\t|\\v)")]
-    private static partial Regex MyRegex();
+    #endregion
+
+    #region IDisposable interface
+
+    public async void Dispose()
+    {
+        _context.API.LogWarn(ClassName, $"enter dispose");
+        await ReloadDataAsync();
+        _clipboard.Dispose();
+        _dbHelper.Dispose();
+    }
+
+    #endregion
 }
