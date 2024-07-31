@@ -226,7 +226,7 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
     private async void OnClipboardChange(object? sender, CbMonitor.ClipboardChangedEventArgs e)
     {
         _context.API.LogDebug(ClassName, "Clipboard changed");
-        if (e.Content is null || _recordsList.Count >= _settings.MaxDataCount)
+        if (e.Content is null)
         {
             return;
         }
@@ -309,6 +309,12 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
             await _dbHelper.AddOneRecordAsync(clipboardData);
         }
         _context.API.LogDebug(ClassName, "Added to database");
+
+        // remove last record if needed
+        if (_recordsList.Count >= _settings.MaxDataCount)
+        {
+            _recordsList.RemoveLast();
+        }
         _context.API.LogDebug(ClassName, "Processing clipboard change finished");
     }
 
