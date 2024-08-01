@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ClipboardPlus.Core.Data.Models;
 
@@ -16,6 +17,7 @@ public class Settings
     public bool KeepFile { get; set; } = false;
     public RecordKeepTime KeepFileHours { get; set; } = 0;
 
+    [JsonIgnore]
     public List<Tuple<CbContentType, RecordKeepTime>> KeepTimePairs => 
         new ()
         {
@@ -43,7 +45,14 @@ public class Settings
         var props = type.GetProperties();
         var s = props.Aggregate(
             "Settings(\n",
-            (current, prop) => current + $"\t{prop.Name}: {prop.GetValue(this)}\n"
+            (current, prop) =>
+            {
+                if (prop.Name == nameof(KeepTimePairs))
+                {
+                    return current;
+                }
+                return current + $"\t{prop.Name}: {prop.GetValue(this)}\n";
+            }
         );
         s += ")";
         return s;
