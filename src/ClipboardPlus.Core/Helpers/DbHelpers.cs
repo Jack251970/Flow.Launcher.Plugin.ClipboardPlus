@@ -6,10 +6,14 @@ namespace ClipboardPlus.Core.Helpers;
 
 public class DbHelpers : IDisposable
 {
-    public SqliteConnection Connection { get; init; }
-    public bool KeepConnection { get; init; }
+    #region Fields
 
-    #region Command Strings
+    public SqliteConnection Connection;
+    public bool KeepConnection;
+
+    #endregion
+
+    #region Commands Strings
 
     private readonly string SqlCheckTableRecord = "SELECT name from sqlite_master WHERE name='record';";
     private readonly string SqlCreateDatabase =
@@ -156,7 +160,7 @@ public class DbHelpers : IDisposable
     {
         var dataMd5 = clipboardData.DataToString().GetMd5();
         var count = await Connection.QueryFirstAsync<int>(
-            SqlSelectRecordCountByMd5, 
+            SqlSelectRecordCountByMd5,
             new { DataMd5 = dataMd5 }
         );
         // count > 1  means there are more than one record in table `record`
@@ -173,7 +177,7 @@ public class DbHelpers : IDisposable
         else
         {
             await Connection.ExecuteAsync(
-                SqlDeleteRecordAssets2, 
+                SqlDeleteRecordAssets2,
                 new { DataMd5 = dataMd5 }
             );
         }
@@ -219,11 +223,21 @@ public class DbHelpers : IDisposable
         await CloseIfNotKeepAsync();
     }
 
+    #region Open & Close
+
     public async Task OpenAsync()
     {
         if (Connection.State == ConnectionState.Closed)
         {
             await Connection.OpenAsync();
+        }
+    }
+
+    public void Open()
+    {
+        if (Connection.State == ConnectionState.Closed)
+        {
+            Connection.Open();
         }
     }
 
@@ -235,12 +249,38 @@ public class DbHelpers : IDisposable
         }
     }
 
-    public void Dispose()
+    public void Close()
     {
-        Connection.Dispose();
+        if (Connection.State == ConnectionState.Open)
+        {
+            Connection.Close();
+        }
     }
 
     #endregion
+
+    #region IDisposable Interface
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            Connection.Dispose();
+            Connection = null!;
+        }
+    }
+
+    #endregion
+
+    #endregion
+
+    #region Private Methods
 
     private async Task CloseIfNotKeepAsync()
     {
@@ -249,4 +289,6 @@ public class DbHelpers : IDisposable
             await Connection.CloseAsync();
         }
     }
+
+    #endregion
 }

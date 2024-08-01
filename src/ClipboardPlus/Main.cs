@@ -39,7 +39,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
     private DbHelpers _dbHelper = null!;
 
     // clipboard listener instance
-    private readonly CbMonitor _clipboard = new() { ObserveLastEntry = false };
+    private CbMonitor _clipboard = null!;
 
     // records list
     private LinkedList<ClipboardData> _recordsList = new();
@@ -158,6 +158,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
         _context.API.LogDebug(ClassName, "Init database successfully");
 
         // init clipboard listener
+        _clipboard = new() { ObserveLastEntry = false };
         _clipboard.ClipboardChanged += OnClipboardChange;
         _context.API.LogDebug(ClassName, "Init clipboard listener");
 
@@ -214,9 +215,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
 
     #region ISavable interface
 
+    // Warning: This method will be called after dispose.
     public void Save()
     {
-        _settings.Save();
+        _settings?.Save();
     }
 
     #endregion
@@ -310,7 +312,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
         _context.API.LogDebug(ClassName, "Added to list");
 
         // add to database if needed
-        var needAddDatabase = 
+        var needAddDatabase =
             _settings.KeepText && clipboardData.Type == CbContentType.Text
             || _settings.KeepImage && clipboardData.Type == CbContentType.Image
             || _settings.KeepFile && clipboardData.Type == CbContentType.Files;
@@ -492,14 +494,35 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
 
     #endregion
 
-    #region IDisposable interface
+    #region IDisposable Interface
 
-    public async void Dispose()
+    public void Dispose()
     {
-        _context.API.LogWarn(ClassName, $"enter dispose");
-        await ReloadDataAsync();
-        _clipboard.Dispose();
-        _dbHelper.Dispose();
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _context.API.LogWarn(ClassName, $"Enter dispose");
+            if (_clipboard != null)
+            {
+                _clipboard.ClipboardChanged -= OnClipboardChange;
+                _clipboard.Dispose();
+                _clipboard = null!;
+                _context.API.LogWarn(ClassName, $"Disposed ClipboardMonitor");
+            }
+            if (_dbHelper != null)
+            {
+                _dbHelper?.Dispose();
+                _dbHelper = null!;
+                _context.API.LogWarn(ClassName, $"Disposed DbHelpers");
+            }
+            _settings = null!;
+            _recordsList = null!;
+        }
     }
 
     #endregion

@@ -14,8 +14,8 @@ public class CbMonitor : IDisposable
 {
     #region Fields
 
-    private readonly Timer _timer = new();
-    private readonly CbHandle _handle = new();
+    private Timer _timer = new();
+    private CbHandle _handle = new();
     private ObservableDataFormats _observableFormats = new();
 
     private bool _monitorClipboard;
@@ -115,15 +115,36 @@ public class CbMonitor : IDisposable
         _handle.Close();
     }
 
+    #region IDisposable Interface
+
     /// <summary>
     /// Disposes of the clipboard-monitoring resources.
     /// </summary>
     public void Dispose()
     {
-        _timer.Dispose();
-        _handle.Dispose();
-        _observableFormats = null!;
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
+
+    // <summary>
+    /// Disposes all the resources associated with this component.
+    /// </summary>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _timer.Dispose();
+            _timer = null!;
+            _handle.Dispose();
+            _handle = null!;
+            _observableFormats = null!;
+            ClipboardFiles = null!;
+            ClipboardImage?.Dispose();
+            ClipboardImage = null!;
+        }
+    }
+
+    #endregion
 
     #endregion
 
