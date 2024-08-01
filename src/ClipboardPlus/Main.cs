@@ -21,28 +21,28 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
     #region Properties
 
     // plugin context
-    private PluginInitContext _context = null!;
+    private PluginInitContext Context = null!;
 
     // class name for logging
     private string ClassName => GetType().Name;
 
     // action keyword
-    private string ActionKeyword => _context.CurrentPluginMetadata.ActionKeyword ?? "cbp";
+    private string ActionKeyword => Context.CurrentPluginMetadata.ActionKeyword ?? "cbp";
 
     // pinned symbol
     private const string PinUnicode = "📌";
 
     // settings
-    private Settings _settings = null!;
+    private Settings Settings = null!;
 
     // database helper
-    private DbHelpers _dbHelper = null!;
+    private DbHelpers DbHelpers = null!;
 
     // clipboard listener instance
-    private CbMonitor _clipboard = null!;
+    private CbMonitor ClipboardMonitor = null!;
 
     // records list
-    private LinkedList<ClipboardData> _recordsList = new();
+    private LinkedList<ClipboardData> RecordsList = new();
     private int CurrentScore = 1;
 
     #endregion
@@ -58,7 +58,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
     public List<Result> Query(Query query)
     {
         var results = new List<Result>();
-        if (query.FirstSearch == _settings.ClearKeyword)
+        if (query.FirstSearch == Settings.ClearKeyword)
         {
             // clear actions results
             results.AddRange(
@@ -72,7 +72,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
                         Score = 2,
                         Action = _ =>
                         {
-                            _recordsList.Clear();
+                            RecordsList.Clear();
                             return true;
                         },
                     },
@@ -84,8 +84,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
                         Score = 1,
                         AsyncAction = async _ =>
                         {
-                            _recordsList.Clear();
-                            await _dbHelper.DeleteAllRecordsAsync();
+                            RecordsList.Clear();
+                            await DbHelpers.DeleteAllRecordsAsync();
                             CurrentScore = 1;
                             return true;
                         }
@@ -98,8 +98,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
             // records results
             var displayData =
             query.Search.Trim().Length == 0
-                ? _recordsList.ToArray()
-                : _recordsList
+                ? RecordsList.ToArray()
+                : RecordsList
                     .Where(
                         i =>
                             !string.IsNullOrEmpty(i.Text)
@@ -107,7 +107,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
                     )
                     .ToArray();
             results.AddRange(displayData.Select(ClipDataToResult));
-            _context.API.LogDebug(ClassName, "Added records successfully");
+            Context.API.LogDebug(ClassName, "Added records successfully");
             // clear results
             results.Add(
                 new Result
@@ -115,10 +115,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
                     Title = "Clear All Records",
                     SubTitle = "Click to clear all records",
                     IcoPath = PathHelpers.ClearIconPath,
-                    Score = _settings.MaxDataCount + 1,
+                    Score = Settings.MaxDataCount + 1,
                     Action = _ =>
                     {
-                        _context.API.ChangeQuery(ActionKeyword + " clear ", true);
+                        Context.API.ChangeQuery(ActionKeyword + " clear ", true);
                         return false;
                     },
                 }
@@ -129,7 +129,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
 
     public async Task InitAsync(PluginInitContext context)
     {
-        _context = context;
+        Context = context;
 
         // init path helpers
         PathHelpers.Init(context);
@@ -138,29 +138,29 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
         if (File.Exists(PathHelpers.SettingsPath))
         {
             using var fs = File.OpenRead(PathHelpers.SettingsPath);
-            _settings = JsonSerializer.Deserialize<Settings>(fs)!;
+            Settings = JsonSerializer.Deserialize<Settings>(fs)!;
         }
         else
         {
-            _settings = new Settings();
+            Settings = new Settings();
         }
-        _settings.Save();
-        _context.API.LogDebug(ClassName, "Init settings successfully");
-        _context.API.LogInfo(ClassName, $"{_settings}");
+        Settings.Save();
+        Context.API.LogDebug(ClassName, "Init settings successfully");
+        Context.API.LogInfo(ClassName, $"{Settings}");
 
         // init database
-        _dbHelper = new DbHelpers(PathHelpers.DatabasePath);
+        DbHelpers = new DbHelpers(PathHelpers.DatabasePath);
         if (!File.Exists(PathHelpers.DatabasePath))
         {
-            await _dbHelper.CreateDbAsync();
+            await DbHelpers.CreateDbAsync();
             return;
         }
-        _context.API.LogDebug(ClassName, "Init database successfully");
+        Context.API.LogDebug(ClassName, "Init database successfully");
 
         // init clipboard listener
-        _clipboard = new() { ObserveLastEntry = false };
-        _clipboard.ClipboardChanged += OnClipboardChange;
-        _context.API.LogDebug(ClassName, "Init clipboard listener");
+        ClipboardMonitor = new() { ObserveLastEntry = false };
+        ClipboardMonitor.ClipboardChanged += OnClipboardChange;
+        Context.API.LogDebug(ClassName, "Init clipboard listener");
 
         // init records
         await InitRecordsFromDb();
@@ -218,7 +218,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
     // Warning: This method will be called after dispose.
     public void Save()
     {
-        _settings?.Save();
+        Settings?.Save();
     }
 
     #endregion
@@ -227,8 +227,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
 
     public Control CreateSettingPanel()
     {
-        _context.API.LogWarn(ClassName, $"{_settings}");
-        return new SettingsPanel(_settings, _context);
+        Context.API.LogWarn(ClassName, $"{Settings}");
+        return new SettingsPanel(Settings, Context);
     }
 
     #endregion
@@ -237,7 +237,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
 
     private async void OnClipboardChange(object? sender, CbMonitor.ClipboardChangedEventArgs e)
     {
-        _context.API.LogDebug(ClassName, "Clipboard changed");
+        Context.API.LogDebug(ClassName, "Clipboard changed");
         if (e.Content is null)
         {
             return;
@@ -268,34 +268,34 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
         switch (e.ContentType)
         {
             case CbContentType.Text:
-                clipboardData.Text = _clipboard.ClipboardText;
-                _context.API.LogDebug(ClassName, "Processed text change");
+                clipboardData.Text = ClipboardMonitor.ClipboardText;
+                Context.API.LogDebug(ClassName, "Processed text change");
                 break;
             case CbContentType.Image:
                 clipboardData.Text = $"Image:{clipboardData.Time:yy-MM-dd-HH:mm:ss}";
-                if (_settings.CacheImages)
+                if (Settings.CacheImages)
                 {
-                    var imageName = StringUtils.FormatImageName(_settings.ImageFormat, clipboardData.CreateTime,
+                    var imageName = StringUtils.FormatImageName(Settings.ImageFormat, clipboardData.CreateTime,
                         clipboardData.SenderApp ?? "");
                     FileUtils.SaveImageCache(clipboardData, PathHelpers.ImageCachePath, imageName);
                 }
-                var img = _clipboard.ClipboardImage;
+                var img = ClipboardMonitor.ClipboardImage;
                 // TODO: Optimize?
                 if (img != null)
                 {
                     clipboardData.Icon = img.ToBitmapImage();
                 }
-                _context.API.LogDebug(ClassName, "Processed image change");
+                Context.API.LogDebug(ClassName, "Processed image change");
                 break;
             case CbContentType.Files:
-                var t = _clipboard.ClipboardFiles.ToArray();
+                var t = ClipboardMonitor.ClipboardFiles.ToArray();
                 clipboardData.Data = t;
                 clipboardData.Text = string.Join("\n", t.Take(2)) + "\n...";
-                _context.API.LogDebug(ClassName, "Processed file change");
+                Context.API.LogDebug(ClassName, "Processed file change");
                 break;
             case CbContentType.Other:
                 // TODO: Handle other formats.
-                _context.API.LogDebug(ClassName, "Other change listened, skip");
+                Context.API.LogDebug(ClassName, "Other change listened, skip");
                 return;
             default:
                 break;
@@ -304,30 +304,30 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
         clipboardData.DisplayTitle = MyRegex().Replace(clipboardData.Text.Trim(), "");
 
         // add to list and database if no repeat 
-        if (_recordsList.Any(node => node.GetMd5() == clipboardData.GetMd5()))
+        if (RecordsList.Any(node => node.GetMd5() == clipboardData.GetMd5()))
         {
             return;
         }
-        _recordsList.AddFirst(clipboardData);
-        _context.API.LogDebug(ClassName, "Added to list");
+        RecordsList.AddFirst(clipboardData);
+        Context.API.LogDebug(ClassName, "Added to list");
 
         // add to database if needed
         var needAddDatabase =
-            _settings.KeepText && clipboardData.Type == CbContentType.Text
-            || _settings.KeepImage && clipboardData.Type == CbContentType.Image
-            || _settings.KeepFile && clipboardData.Type == CbContentType.Files;
+            Settings.KeepText && clipboardData.Type == CbContentType.Text
+            || Settings.KeepImage && clipboardData.Type == CbContentType.Image
+            || Settings.KeepFile && clipboardData.Type == CbContentType.Files;
         if (needAddDatabase)
         {
-            await _dbHelper.AddOneRecordAsync(clipboardData);
+            await DbHelpers.AddOneRecordAsync(clipboardData);
         }
-        _context.API.LogDebug(ClassName, "Added to database");
+        Context.API.LogDebug(ClassName, "Added to database");
 
         // remove last record if needed
-        if (_recordsList.Count >= _settings.MaxDataCount)
+        if (RecordsList.Count >= Settings.MaxDataCount)
         {
-            _recordsList.RemoveLast();
+            RecordsList.RemoveLast();
         }
-        _context.API.LogDebug(ClassName, "Processing clipboard change finished");
+        Context.API.LogDebug(ClassName, "Processing clipboard change finished");
     }
 
     [GeneratedRegex("(\\r|\\n|\\t|\\v)")]
@@ -342,29 +342,29 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
         // clear expired records
         try
         {
-            foreach (var pair in _settings.KeepTimePairs)
+            foreach (var pair in Settings.KeepTimePairs)
             {
-                _context.API.LogInfo(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
-                await _dbHelper.DeleteRecordByKeepTimeAsync(
+                Context.API.LogInfo(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
+                await DbHelpers.DeleteRecordByKeepTimeAsync(
                     (int)pair.Item1,
                     pair.Item2.ToKeepTime()
                 );
             }
-            _context.API.LogWarn(ClassName, $"Cleared expired records successfully");
+            Context.API.LogWarn(ClassName, $"Cleared expired records successfully");
         }
         catch (Exception e)
         {
-            _context.API.LogWarn(ClassName, $"Cleared expired records failed\n{e}");
+            Context.API.LogWarn(ClassName, $"Cleared expired records failed\n{e}");
         }
 
         // restore records
-        var records = await _dbHelper.GetAllRecordAsync();
+        var records = await DbHelpers.GetAllRecordAsync();
         if (records.Count > 0)
         {
-            _recordsList = records;
+            RecordsList = records;
             CurrentScore = records.Max(r => r.Score);
         }
-        _context.API.LogWarn(ClassName, "Restored records successfully");
+        Context.API.LogWarn(ClassName, "Restored records successfully");
     }
 
     #endregion
@@ -388,7 +388,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
                 () =>
                     new PreviewPanel(
                         clipboardData,
-                        _context,
+                        Context,
                         delAction: RemoveFromDatalist,
                         copyAction: CopyToClipboard,
                         pinAction: PinOneRecord
@@ -397,12 +397,12 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
             AsyncAction = async _ =>
             {
                 CopyToClipboard(clipboardData);
-                _context.API.HideMainWindow();
-                while (_context.API.IsMainWindowVisible())
+                Context.API.HideMainWindow();
+                while (Context.API.IsMainWindowVisible())
                 {
                     await Task.Delay(100);
                 }
-                _context.API.ChangeQuery(ActionKeyword, true);
+                Context.API.ChangeQuery(ActionKeyword, true);
                 return true;
             },
         };
@@ -414,29 +414,29 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
 
     private void CopyToClipboard(ClipboardData clipboardData)
     {
-        _recordsList.Remove(clipboardData);
+        RecordsList.Remove(clipboardData);
         System.Windows.Forms.Clipboard.SetDataObject(clipboardData.Data);
-        _context.API.ChangeQuery(ActionKeyword, true);
+        Context.API.ChangeQuery(ActionKeyword, true);
     }
 
     private async void RemoveFromDatalist(ClipboardData clipboardData)
     {
-        _recordsList.Remove(clipboardData);
-        await _dbHelper.DeleteOneRecordAsync(clipboardData);
-        _context.API.ChangeQuery(ActionKeyword, true);
+        RecordsList.Remove(clipboardData);
+        await DbHelpers.DeleteOneRecordAsync(clipboardData);
+        Context.API.ChangeQuery(ActionKeyword, true);
     }
 
     private async void PinOneRecord(ClipboardData clipboardData)
     {
-        _recordsList.Remove(clipboardData);
+        RecordsList.Remove(clipboardData);
         if (clipboardData.Type is CbContentType.Text or CbContentType.Files)
         {
             clipboardData.Icon = clipboardData.Pinned ? PinnedIcon : GetDefaultIcon(clipboardData);
         }
 
-        _recordsList.AddLast(clipboardData);
-        await _dbHelper.PinOneRecordAsync(clipboardData);
-        _context.API.ChangeQuery(ActionKeyword, true);
+        RecordsList.AddLast(clipboardData);
+        await DbHelpers.PinOneRecordAsync(clipboardData);
+        Context.API.ChangeQuery(ActionKeyword, true);
     }
 
     private int GetNewScoreByOrderBy(ClipboardData clipboardData)
@@ -446,7 +446,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
             return int.MaxValue;
         }
 
-        var orderBy = _settings.OrderBy;
+        var orderBy = Settings.OrderBy;
         int score = 0;
         switch (orderBy)
         {
@@ -506,22 +506,22 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
     {
         if (disposing)
         {
-            _context.API.LogWarn(ClassName, $"Enter dispose");
-            if (_clipboard != null)
+            Context.API.LogWarn(ClassName, $"Enter dispose");
+            if (ClipboardMonitor != null)
             {
-                _clipboard.ClipboardChanged -= OnClipboardChange;
-                _clipboard.Dispose();
-                _clipboard = null!;
-                _context.API.LogWarn(ClassName, $"Disposed ClipboardMonitor");
+                ClipboardMonitor.ClipboardChanged -= OnClipboardChange;
+                ClipboardMonitor.Dispose();
+                ClipboardMonitor = null!;
+                Context.API.LogWarn(ClassName, $"Disposed ClipboardMonitor");
             }
-            if (_dbHelper != null)
+            if (DbHelpers != null)
             {
-                _dbHelper?.Dispose();
-                _dbHelper = null!;
-                _context.API.LogWarn(ClassName, $"Disposed DbHelpers");
+                DbHelpers?.Dispose();
+                DbHelpers = null!;
+                Context.API.LogWarn(ClassName, $"Disposed DbHelpers");
             }
-            _settings = null!;
-            _recordsList = null!;
+            Settings = null!;
+            RecordsList = null!;
         }
     }
 
