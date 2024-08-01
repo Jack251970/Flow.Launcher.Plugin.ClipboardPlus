@@ -11,10 +11,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Globalization;
 
 namespace ClipboardPlus;
 
-public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, IAsyncReloadable, IDisposable
+public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextMenu, IPluginI18n*/,
+    ISavable, ISettingProvider, IDisposable
 {
     #region Properties
 
@@ -165,12 +167,47 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
 
     #endregion
 
-    #region ISettingProvider interface
+    #region IAsyncReloadable interface
 
-    public Control CreateSettingPanel()
+    public async Task ReloadDataAsync()
     {
-        _context.API.LogWarn(ClassName, $"{_settings}");
-        return new SettingsPanel(_settings, _context);
+        // save settings
+        Save();
+
+        // init records
+        await InitRecordsFromDb();
+    }
+
+    #endregion
+
+    #region IContextMenu interface
+
+    // TODO
+
+    public List<Result> LoadContextMenus(Result selectedResult)
+    {
+        return new List<Result>();
+    }
+
+    #endregion
+
+    #region IPluginI18n interface
+
+    // TODO
+
+    public string GetTranslatedPluginTitle()
+    {
+        return string.Empty;
+    }
+
+    public string GetTranslatedPluginDescription()
+    {
+        return string.Empty;
+    }
+
+    public void OnCultureInfoChanged(CultureInfo newCulture)
+    {
+
     }
 
     #endregion
@@ -184,15 +221,12 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
 
     #endregion
 
-    #region IAsyncReloadable interface
+    #region ISettingProvider interface
 
-    public async Task ReloadDataAsync()
+    public Control CreateSettingPanel()
     {
-        // save settings
-        Save();
-
-        // init records
-        await InitRecordsFromDb();
+        _context.API.LogWarn(ClassName, $"{_settings}");
+        return new SettingsPanel(_settings, _context);
     }
 
     #endregion
@@ -333,7 +367,7 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
 
     #endregion
 
-    #region Clipboard Result
+    #region Query Result
 
     private Result ClipDataToResult(ClipboardData clipboardData)
     {
