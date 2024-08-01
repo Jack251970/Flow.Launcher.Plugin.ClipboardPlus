@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Globalization;
+using WindowsInput;
 
 namespace ClipboardPlus;
 
@@ -396,13 +397,41 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
             ),
             AsyncAction = async _ =>
             {
-                CopyToClipboard(clipboardData);
-                Context.API.HideMainWindow();
-                while (Context.API.IsMainWindowVisible())
+                switch (Settings.ClickAction)
                 {
-                    await Task.Delay(100);
+                    case ClickAction.CopyPaste:
+                        CopyToClipboard(clipboardData);
+                        Context.API.HideMainWindow();
+                        while (Context.API.IsMainWindowVisible())
+                        {
+                            await Task.Delay(100);
+                        }
+                        new InputSimulator().Keyboard.ModifiedKeyStroke(
+                            VirtualKeyCode.CONTROL,
+                            VirtualKeyCode.VK_V
+                        );
+                        break;
+                    case ClickAction.CopyDelete:
+                        CopyToClipboard(clipboardData);
+                        RemoveFromDatalist(clipboardData);
+                        break;
+                    case ClickAction.CopyPasteDelete:
+                        CopyToClipboard(clipboardData);
+                        Context.API.HideMainWindow();
+                        while (Context.API.IsMainWindowVisible())
+                        {
+                            await Task.Delay(100);
+                        }
+                        new InputSimulator().Keyboard.ModifiedKeyStroke(
+                            VirtualKeyCode.CONTROL,
+                            VirtualKeyCode.VK_V
+                        );
+                        RemoveFromDatalist(clipboardData);
+                        break;
+                    default:
+                        CopyToClipboard(clipboardData);
+                        break;
                 }
-                Context.API.ChangeQuery(ActionKeyword, true);
                 return true;
             },
         };
@@ -416,7 +445,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
     {
         RecordsList.Remove(clipboardData);
         System.Windows.Forms.Clipboard.SetDataObject(clipboardData.Data);
-        Context.API.ChangeQuery(ActionKeyword, true);
     }
 
     private async void RemoveFromDatalist(ClipboardData clipboardData)
@@ -450,9 +478,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
         int score = 0;
         switch (orderBy)
         {
-            case CbOrders.Score:
-                score = clipboardData.Score;
-                break;
             case CbOrders.CreateTime:
                 var ctime = new DateTimeOffset(clipboardData.CreateTime);
                 score = Convert.ToInt32(ctime.ToUnixTimeSeconds().ToString()[^9..]);
@@ -465,6 +490,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
                 score = Encoding.UTF8.GetBytes(clipboardData.SenderApp[..last]).Sum(i => i);
                 break;
             default:
+                score = clipboardData.Score;
                 break;
         }
 

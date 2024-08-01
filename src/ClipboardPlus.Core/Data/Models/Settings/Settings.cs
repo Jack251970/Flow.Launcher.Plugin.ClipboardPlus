@@ -8,6 +8,7 @@ public class Settings
     public string ClearKeyword { get; set; } = "clear";
     public int MaxDataCount { get; set; } = 10000;
     public CbOrders OrderBy { get; set; } = CbOrders.Score;
+    public ClickAction ClickAction { get; set; } = ClickAction.Copy;
     public bool CacheImages { get; set; } = false;
     public string ImageFormat { get; set; } = "yyyy-MM-dd-hhmmss-{app}";
     public bool KeepText { get; set; } = false;
