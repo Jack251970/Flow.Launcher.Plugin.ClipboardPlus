@@ -121,7 +121,6 @@ public class PublishTask : FrostingTask<BuildContext>
             + @"plugin\.json|"
             // Nuget
             + @"Dapper\.dll|"
-            + @"H\.InputSimulator\.dll|"
             + @"FluentIcons\.Common\.dll|FluentIcons\.WPF\.dll|"
             + @"SQLitePCLRaw.+\.dll|Microsoft.+(S|s)qlite\.dll";
         var files = context.GetFiles($"{srcDir}/**/*");

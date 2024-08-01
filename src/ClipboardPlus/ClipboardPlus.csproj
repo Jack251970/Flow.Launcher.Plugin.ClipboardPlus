@@ -40,7 +40,6 @@
 
   <ItemGroup>
     <PackageReference Include="Flow.Launcher.Plugin" Version="4.3.0" />
-    <PackageReference Include="H.InputSimulator" Version="1.4.2" />
   </ItemGroup>
 
   <ItemGroup>

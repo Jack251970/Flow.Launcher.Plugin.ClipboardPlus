@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using WindowsInput;
 
 namespace ClipboardPlus;
 
@@ -367,10 +366,6 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
                 {
                     await Task.Delay(100);
                 }
-                new InputSimulator().Keyboard.ModifiedKeyStroke(
-                    VirtualKeyCode.CONTROL,
-                    VirtualKeyCode.VK_V
-                );
                 _context.API.ChangeQuery(ActionKeyword, true);
                 return true;
             },
