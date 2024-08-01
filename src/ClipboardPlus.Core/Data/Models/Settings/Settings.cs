@@ -16,6 +16,14 @@ public class Settings
     public bool KeepFile { get; set; } = false;
     public RecordKeepTime KeepFileHours { get; set; } = 0;
 
+    public List<Tuple<CbContentType, RecordKeepTime>> KeepTimePairs => 
+        new ()
+        {
+            new(CbContentType.Text, KeepTextHours),
+            new(CbContentType.Image, KeepImageHours),
+            new(CbContentType.Files, KeepFileHours),
+        };
+
     public void Save()
     {
         var options = new JsonSerializerOptions { WriteIndented = true };

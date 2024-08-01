@@ -160,8 +160,8 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
         _clipboard.ClipboardChanged += OnClipboardChange;
         _context.API.LogDebug(ClassName, "Init clipboard listener");
 
-        // restore records
-        await RestoreRecordsFromDb();
+        // init records
+        await InitRecordsFromDb();
     }
 
     #endregion
@@ -192,31 +192,8 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
         // save settings
         Save();
 
-        // clear expired records
-        try
-        {
-            var kv = new List<Tuple<CbContentType, RecordKeepTime>>
-            {
-                new(CbContentType.Text, _settings.KeepTextHours),
-                new(CbContentType.Image, _settings.KeepImageHours),
-                new(CbContentType.Files, _settings.KeepFileHours),
-            };
-            foreach (var pair in kv)
-            {
-                _context.API.LogInfo(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
-                await _dbHelper.DeleteRecordByKeepTimeAsync(
-                    (int)pair.Item1,
-                    pair.Item2.ToKeepTime()
-                );
-            }
-        }
-        catch (Exception e)
-        {
-            _context.API.LogWarn(ClassName, $"Clear expired records failed\n{e}");
-        }
-
-        // restore records
-        await RestoreRecordsFromDb();
+        // init records
+        await InitRecordsFromDb();
     }
 
     #endregion
@@ -323,17 +300,36 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
 
     #endregion
 
-    #region Database
+    #region Database Functions
 
-    public async Task RestoreRecordsFromDb()
+    private async Task InitRecordsFromDb()
     {
+        // clear expired records
+        try
+        {
+            foreach (var pair in _settings.KeepTimePairs)
+            {
+                _context.API.LogInfo(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
+                await _dbHelper.DeleteRecordByKeepTimeAsync(
+                    (int)pair.Item1,
+                    pair.Item2.ToKeepTime()
+                );
+            }
+            _context.API.LogWarn(ClassName, $"Cleared expired records successfully");
+        }
+        catch (Exception e)
+        {
+            _context.API.LogWarn(ClassName, $"Cleared expired records failed\n{e}");
+        }
+
+        // restore records
         var records = await _dbHelper.GetAllRecordAsync();
         if (records.Count > 0)
         {
             _recordsList = records;
             CurrentScore = records.Max(r => r.Score);
         }
-        _context.API.LogWarn(ClassName, "Restore records successfully");
+        _context.API.LogWarn(ClassName, "Restored records successfully");
     }
 
     #endregion
@@ -442,7 +438,7 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
 
     #endregion
 
-    #region Icons
+    #region Icons Recources
 
     private static readonly BitmapImage AppIcon = new(new Uri(PathHelpers.AppIconPath, UriKind.RelativeOrAbsolute));
     private static readonly BitmapImage PinnedIcon = new(new Uri(PathHelpers.PinnedIconPath, UriKind.RelativeOrAbsolute));
