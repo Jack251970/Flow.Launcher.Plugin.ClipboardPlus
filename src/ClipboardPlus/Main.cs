@@ -224,7 +224,7 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
             Score = CurrentScore + 1,
             InitScore = CurrentScore + 1,
             Time = now,
-            Pined = false,
+            Pinned = false,
             CreateTime = now,
         };
         CurrentScore++;
@@ -334,25 +334,25 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
 
     #endregion
 
-    #region Clipboard Actions
+    #region Clipboard Result
 
-    private Result ClipDataToResult(ClipboardData o)
+    private Result ClipDataToResult(ClipboardData clipboardData)
     {
-        var dispSubTitle = $"{o.CreateTime:yyyy-MM-dd-hh-mm-ss}: {o.SenderApp}";
-        dispSubTitle = o.Pined ? $"{PinUnicode}{dispSubTitle}" : dispSubTitle;
+        var dispSubTitle = $"{clipboardData.CreateTime:yyyy-MM-dd-hh-mm-ss}: {clipboardData.SenderApp}";
+        dispSubTitle = clipboardData.Pinned ? $"{PinUnicode}{dispSubTitle}" : dispSubTitle;
         return new Result
         {
-            Title = o.DisplayTitle,
+            Title = clipboardData.DisplayTitle,
             SubTitle = dispSubTitle,
-            Icon = () => o.Icon,
-            CopyText = o.Text,
-            Score = GetNewScoreByOrderBy(o),
-            TitleToolTip = o.Text,
+            Icon = () => clipboardData.Icon,
+            CopyText = clipboardData.Text,
+            Score = GetNewScoreByOrderBy(clipboardData),
+            TitleToolTip = clipboardData.Text,
             SubTitleToolTip = dispSubTitle,
             PreviewPanel = new Lazy<UserControl>(
                 () =>
                     new PreviewPanel(
-                        o,
+                        clipboardData,
                         _context,
                         delAction: RemoveFromDatalist,
                         copyAction: CopyToClipboard,
@@ -361,7 +361,7 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
             ),
             AsyncAction = async _ =>
             {
-                CopyToClipboard(o);
+                CopyToClipboard(clipboardData);
                 _context.API.HideMainWindow();
                 while (_context.API.IsMainWindowVisible())
                 {
@@ -377,6 +377,10 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
         };
     }
 
+    #endregion
+
+    #region Clipboard Actions
+
     private void CopyToClipboard(ClipboardData clipboardData)
     {
         _recordsList.Remove(clipboardData);
@@ -391,22 +395,22 @@ public partial class ClipboardPlus : IAsyncPlugin, ISettingProvider, ISavable, I
         _context.API.ChangeQuery(ActionKeyword, true);
     }
 
-    private async void PinOneRecord(ClipboardData c)
+    private async void PinOneRecord(ClipboardData clipboardData)
     {
-        _recordsList.Remove(c);
-        if (c.Type is CbContentType.Text or CbContentType.Files)
+        _recordsList.Remove(clipboardData);
+        if (clipboardData.Type is CbContentType.Text or CbContentType.Files)
         {
-            c.Icon = c.Pined ? PinnedIcon : GetDefaultIcon(c);
+            clipboardData.Icon = clipboardData.Pinned ? PinnedIcon : GetDefaultIcon(clipboardData);
         }
 
-        _recordsList.AddLast(c);
-        await _dbHelper.PinOneRecordAsync(c);
+        _recordsList.AddLast(clipboardData);
+        await _dbHelper.PinOneRecordAsync(clipboardData);
         _context.API.ChangeQuery(ActionKeyword, true);
     }
 
     private int GetNewScoreByOrderBy(ClipboardData clipboardData)
     {
-        if (clipboardData.Pined)
+        if (clipboardData.Pinned)
         {
             return int.MaxValue;
         }

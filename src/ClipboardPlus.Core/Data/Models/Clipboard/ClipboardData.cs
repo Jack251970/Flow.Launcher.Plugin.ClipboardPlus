@@ -16,7 +16,7 @@ public struct ClipboardData : IEquatable<ClipboardData>
     public required int Score;
     public required int InitScore;
     public required DateTime Time;
-    public required bool Pined;
+    public required bool Pinned;
     public required DateTime CreateTime;
 
     public readonly bool Equals(ClipboardData b)

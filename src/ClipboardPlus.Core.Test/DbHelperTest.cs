@@ -29,7 +29,7 @@ public class DbHelperTest
             Score = 241,
             InitScore = 1,
             Time = DateTime.Now,
-            Pined = false,
+            Pinned = false,
             CreateTime = DateTime.Now,
         };
 
@@ -57,7 +57,7 @@ public class DbHelperTest
             Score = rand.Next(1000),
             InitScore = rand.Next(1000),
             Time = DateTime.Now,
-            Pined = false,
+            Pinned = false,
             CreateTime = DateTime.Now,
         };
         if (data.Type == CbContentType.Image)

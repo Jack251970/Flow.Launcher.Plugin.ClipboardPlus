@@ -54,7 +54,7 @@ public partial class PreviewPanel : UserControl
 
     private void SetBtnIcon()
     {
-        BtnPin.Content = ClipboardData.Pined ? UnpinFluentIcon : PinFluentIcon;
+        BtnPin.Content = ClipboardData.Pinned ? UnpinFluentIcon : PinFluentIcon;
     }
 
     public void SetContent()
@@ -174,8 +174,8 @@ public partial class PreviewPanel : UserControl
 
     private void BtnPin_Click(object sender, RoutedEventArgs e)
     {
-        ClipboardData.Pined = !ClipboardData.Pined;
-        ClipboardData.Score = ClipboardData.Pined ? int.MaxValue : ClipboardData.InitScore;
+        ClipboardData.Pinned = !ClipboardData.Pinned;
+        ClipboardData.Score = ClipboardData.Pinned ? int.MaxValue : ClipboardData.InitScore;
         PinRecord?.Invoke(ClipboardData);
     }
 

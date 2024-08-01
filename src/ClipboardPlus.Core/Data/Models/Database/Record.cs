@@ -30,7 +30,7 @@ public class Record
         set => _create_time = DateTime.Parse(value);
     }
 
-    public bool Pined { get; set; }
+    public bool Pinned { get; set; }
 
     public static Record FromClipboardData(ClipboardData data)
     {
@@ -53,7 +53,7 @@ public class Record
             InitScore = data.InitScore,
             Time = data.Time.ToString("O"),
             CreateTime = data.CreateTime.ToString("O"),
-            Pined = data.Pined,
+            Pinned = data.Pinned,
         };
         return record;
     }
@@ -76,7 +76,7 @@ public class Record
             InitScore = record.InitScore,
             Time = record._time,
             CreateTime = record._create_time,
-            Pined = record.Pined,
+            Pinned = record.Pinned,
         };
         switch (type)
         {

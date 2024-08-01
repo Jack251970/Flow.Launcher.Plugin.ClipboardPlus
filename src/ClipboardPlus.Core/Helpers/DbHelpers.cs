@@ -35,7 +35,7 @@ public class DbHelpers : IDisposable
             "init_score"	        INTEGER,
             "time"	                TEXT,
             "create_time"	        TEXT,
-            "pined"	                INTEGER,
+            "pinned"	            INTEGER,
             PRIMARY KEY("id" AUTOINCREMENT),
             FOREIGN KEY("icon_md5") REFERENCES "assets"("md5"),
             FOREIGN KEY("data_md5") REFERENCES "assets"("md5") ON DELETE CASCADE
@@ -48,11 +48,11 @@ public class DbHelpers : IDisposable
         @"INSERT OR IGNORE INTO record(
             hash_id, data_md5, text, display_title, senderapp, 
             icon_path, icon_md5, preview_image_path, content_type,
-            score, init_score, 'time', create_time, pined) 
+            score, init_score, 'time', create_time, pinned) 
         VALUES (
             @HashId, @DataMd5, @Text, @DisplayTitle, @SenderApp, 
             @IconPath, @IconMd5, @PreviewImagePath, @ContentType,
-            @Score, @InitScore, @Time, @CreateTime, @Pined);";
+            @Score, @InitScore, @Time, @CreateTime, @Pinned);";
 
     private readonly string SqlSelectRecordCountByMd5 =
         "SELECT COUNT() FROM record WHERE data_md5=@DataMd5;";
@@ -64,8 +64,8 @@ public class DbHelpers : IDisposable
     private readonly string SqlDeleteAllRecords =
         "DROP TABLE IF EXISTS record; DROP TABLE IF EXISTS assets; VACUUM;";
 
-    private readonly string SqlUpdateRecordPined =
-        "UPDATE record SET pined=@Pin, icon_md5=@IconMd5 WHERE hash_id=@HashId;";
+    private readonly string SqlUpdateRecordPinned =
+        "UPDATE record SET pinned=@Pin, icon_md5=@IconMd5 WHERE hash_id=@HashId;";
 
     private readonly string SqlSelectAllRecord =
         """
@@ -73,7 +73,7 @@ public class DbHelpers : IDisposable
             r.senderapp as SenderApp, r.icon_path as IconPath, b.data_b64 as IconMd5,
             r.preview_image_path as PreviewImagePath, r.content_type as ContentType,
             r.score as Score, r.init_score as InitScore, r.time as Time,
-            r.create_time as CreateTime, r.pined as Pined, r.hash_id as HashId
+            r.create_time as CreateTime, r.pinned as Pinned, r.hash_id as HashId
         FROM record r
         LEFT JOIN assets a ON r.data_md5=a.md5
         LEFT JOIN assets b ON r.icon_md5=b.md5;
@@ -197,8 +197,8 @@ public class DbHelpers : IDisposable
         };
         await Connection.ExecuteAsync(SqlInsertAssets, assets);
         // update record
-        var record = new { Pin = data.Pined, data.HashId, IconMd5 = iconMd5 };
-        await Connection.ExecuteAsync(SqlUpdateRecordPined, record);
+        var record = new { Pin = data.Pinned, data.HashId, IconMd5 = iconMd5 };
+        await Connection.ExecuteAsync(SqlUpdateRecordPinned, record);
         await CloseIfNotKeepAsync();
     }
 
