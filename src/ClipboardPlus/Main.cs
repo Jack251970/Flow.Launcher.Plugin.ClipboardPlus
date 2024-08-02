@@ -209,16 +209,28 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 },
                 new Result
                 {
-                    Title = "Delete",
+                    Title = "Delete in list",
+                    SubTitle = "Delete this record in list",
+                    IcoPath = PathHelpers.DeleteIconPath,
+                    Score = 2,
+                    Action = _ =>
+                    {
+                        RemoveFromList(clipboardData);
+                        return false;
+                    }
+                },
+                new Result
+                {
+                    Title = "Delete in list and database",
                     SubTitle = "Delete this record in both list and database",
                     IcoPath = PathHelpers.DeleteIconPath,
                     Score = 1,
                     Action = _ =>
                     {
-                        RemoveFromDatalist(clipboardData);
+                        RemoveFromListDatabase(clipboardData);
                         return false;
                     }
-                }
+                },
             }
         );
         if (clipboardData.Pinned)
@@ -232,8 +244,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Score = 3,
                     Action = _ =>
                     {
-                        clipboardData.Pinned = false;
-                        clipboardData.Score = clipboardData.InitScore;
                         PinOneRecord(clipboardData);
                         return false;
                     }
@@ -251,8 +261,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Score = 3,
                     Action = _ =>
                     {
-                        clipboardData.Pinned = true;
-                        clipboardData.Score = int.MaxValue;
                         PinOneRecord(clipboardData);
                         return false;
                     }
@@ -462,7 +470,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     new PreviewPanel(
                         clipboardData,
                         Context,
-                        delAction: RemoveFromDatalist,
+                        delAction: RemoveFromListDatabase,
                         copyAction: CopyToClipboard,
                         pinAction: PinOneRecord
                     )
@@ -483,11 +491,15 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                             VirtualKeyCode.VK_V
                         );
                         break;
-                    case ClickAction.CopyDelete:
+                    case ClickAction.CopyDeleteList:
                         CopyToClipboard(clipboardData);
-                        RemoveFromDatalist(clipboardData);
+                        RemoveFromList(clipboardData);
                         break;
-                    case ClickAction.CopyPasteDelete:
+                    case ClickAction.CopyDeleteListDatabase:
+                        CopyToClipboard(clipboardData);
+                        RemoveFromListDatabase(clipboardData);
+                        break;
+                    case ClickAction.CopyPasteDeleteList:
                         CopyToClipboard(clipboardData);
                         Context.API.HideMainWindow();
                         while (Context.API.IsMainWindowVisible())
@@ -498,7 +510,20 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                             VirtualKeyCode.CONTROL,
                             VirtualKeyCode.VK_V
                         );
-                        RemoveFromDatalist(clipboardData);
+                        RemoveFromList(clipboardData);
+                        break;
+                    case ClickAction.CopyPasteDeleteListDatabase:
+                        CopyToClipboard(clipboardData);
+                        Context.API.HideMainWindow();
+                        while (Context.API.IsMainWindowVisible())
+                        {
+                            await Task.Delay(100);
+                        }
+                        new InputSimulator().Keyboard.ModifiedKeyStroke(
+                            VirtualKeyCode.CONTROL,
+                            VirtualKeyCode.VK_V
+                        );
+                        RemoveFromListDatabase(clipboardData);
                         break;
                     default:
                         CopyToClipboard(clipboardData);
@@ -507,30 +532,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 return true;
             },
         };
-    }
-
-    #endregion
-
-    #region Clipboard Actions
-
-    private void CopyToClipboard(ClipboardData clipboardData)
-    {
-        System.Windows.Forms.Clipboard.SetDataObject(clipboardData.Data);
-    }
-
-    private async void RemoveFromDatalist(ClipboardData clipboardData)
-    {
-        RecordsList.Remove(clipboardData);
-        await DbHelpers.DeleteOneRecordAsync(clipboardData);
-        Context.API.ChangeQuery(ActionKeyword, true);
-    }
-
-    private async void PinOneRecord(ClipboardData clipboardData)
-    {
-        RecordsList.Remove(clipboardData);
-        RecordsList.AddLast(clipboardData);
-        await DbHelpers.PinOneRecordAsync(clipboardData);
-        Context.API.ChangeQuery(ActionKeyword, true);
     }
 
     private int GetNewScoreByOrderBy(ClipboardData clipboardData)
@@ -561,6 +562,38 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
 
         return score;
+    }
+
+    #endregion
+
+    #region Clipboard Actions
+
+    private void CopyToClipboard(ClipboardData clipboardData)
+    {
+        System.Windows.Forms.Clipboard.SetDataObject(clipboardData.Data);
+    }
+
+    private void RemoveFromList(ClipboardData clipboardData)
+    {
+        RecordsList.Remove(clipboardData);
+        Context.API.ChangeQuery(ActionKeyword, true);
+    }
+
+    private async void RemoveFromListDatabase(ClipboardData clipboardData)
+    {
+        RecordsList.Remove(clipboardData);
+        await DbHelpers.DeleteOneRecordAsync(clipboardData);
+        Context.API.ChangeQuery(ActionKeyword, true);
+    }
+
+    private async void PinOneRecord(ClipboardData clipboardData)
+    {
+        clipboardData.Pinned = !clipboardData.Pinned;
+        clipboardData.Score = clipboardData.Pinned ? int.MaxValue : clipboardData.InitScore;
+        RecordsList.Remove(clipboardData);
+        RecordsList.AddLast(clipboardData);
+        await DbHelpers.PinOneRecordAsync(clipboardData);
+        Context.API.ChangeQuery(ActionKeyword, true);
     }
 
     #endregion
