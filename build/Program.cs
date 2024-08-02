@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Cake.Common;
 using Cake.Common.Diagnostics;
 using Cake.Common.IO;
@@ -220,10 +221,12 @@ public sealed class CleanTask : FrostingTask<BuildContext>
 public class DefaultTask : FrostingTask { }
 
 [TaskName("Deploy")]
+[IsDependentOn(typeof(DefaultTask))]
 public class DeployTask : FrostingTask<BuildContext>
 {
-    public override void Run(BuildContext context)
+    public override async void Run(BuildContext context)
     {
+        // get most recent file
         var builder = context.DefaultSln.Value.Projects.First(p => p.Name.EndsWith("Build"));
         var distDir = builder.Path
             .GetDirectory()
@@ -244,12 +247,35 @@ public class DeployTask : FrostingTask<BuildContext>
             mostRecentFile = f;
         }
 
+        // kill process
+        var processes = System.Diagnostics.Process.GetProcessesByName("Flow.Launcher");
+        foreach (var p in processes)
+        {
+            p.Kill();
+        }
+        Task.Delay(1000).Wait();
+
+        // delete old files
+        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        var pluginsDir = System.IO.Path.Combine(appData, "FlowLauncher", "Plugins");
+        var oldFiles = context.GetFiles($"{pluginsDir}/ClipboardPlus*");
+        foreach (var f in oldFiles)
+        {
+            context.DeleteFile(f);
+        }
+
+        // copy file
         context.Unzip(
             mostRecentFile,
             new DirectoryPath(
-                @"%APPDATA%/FlowLauncher/Plugins" + mostRecentFile.GetFilenameWithoutExtension()
+                pluginsDir + mostRecentFile.GetFilenameWithoutExtension()
             )
         );
+
+        // start process
+        var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        var exePath = System.IO.Path.Combine(localAppData, "FlowLauncher", "Flow.Launcher.exe");
+        System.Diagnostics.Process.Start(exePath);
     }
 }
 
