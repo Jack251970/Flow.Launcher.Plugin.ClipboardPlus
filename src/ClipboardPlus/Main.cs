@@ -28,6 +28,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private string ClassName => GetType().Name;
 
     // action keyword
+    // TODO: Change it but clear action won't change.
     private string ActionKeyword => Context.CurrentPluginMetadata.ActionKeyword ?? "cbp";
 
     // pinned symbol
