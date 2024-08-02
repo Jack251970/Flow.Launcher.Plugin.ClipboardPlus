@@ -515,7 +515,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     private void CopyToClipboard(ClipboardData clipboardData)
     {
-        RecordsList.Remove(clipboardData);
         System.Windows.Forms.Clipboard.SetDataObject(clipboardData.Data);
     }
 
