@@ -174,8 +174,6 @@ public partial class PreviewPanel : UserControl
 
     private void BtnPin_Click(object sender, RoutedEventArgs e)
     {
-        ClipboardData.Pinned = !ClipboardData.Pinned;
-        ClipboardData.Score = ClipboardData.Pinned ? int.MaxValue : ClipboardData.InitScore;
         PinRecord?.Invoke(ClipboardData);
     }
 
