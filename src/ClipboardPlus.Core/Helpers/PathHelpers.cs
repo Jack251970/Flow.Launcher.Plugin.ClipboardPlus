@@ -16,13 +16,16 @@ public static class PathHelpers
 
     // icons paths
     public static string AppIconPath { get; private set; } = string.Empty;
-    public static string PinnedIconPath { get; private set; } = string.Empty;
     public static string ClearIconPath { get; private set; } = string.Empty;
     public static string ListIconPath { get; private set; } = string.Empty;
     public static string DatabaseIconPath { get; private set; } = string.Empty;
     public static string TextIconPath { get; private set; } = string.Empty;
     public static string ImageIconPath { get; private set; } = string.Empty;
     public static string FileIconPath { get; private set; } = string.Empty;
+    public static string CopyIconPath { get; private set; } = string.Empty;
+    public static string PinIconPath { get; private set; } = string.Empty;
+    public static string UnpinIconPath { get; private set; } = string.Empty;
+    public static string DeleteIconPath { get; private set; } = string.Empty;
 
     private static bool IsInitialized = false;
 
@@ -45,13 +48,16 @@ public static class PathHelpers
 
             // icons paths
             AppIconPath = Path.Combine(IconPath, "clipboard.png");
-            PinnedIconPath = Path.Combine(IconPath, "pinned.png");
             ClearIconPath = Path.Combine(IconPath, "clear.png");
             ListIconPath = Path.Combine(IconPath, "list.png");
             DatabaseIconPath = Path.Combine(IconPath, "database.png");
             TextIconPath = Path.Combine(IconPath, "text.png");
             ImageIconPath = Path.Combine(IconPath, "image.png");
             FileIconPath = Path.Combine(IconPath, "file.png");
+            CopyIconPath = Path.Combine(IconPath, "copy.png");
+            PinIconPath = Path.Combine(IconPath, "pin.png");
+            UnpinIconPath = Path.Combine(IconPath, "unpin.png");
+            DeleteIconPath = Path.Combine(IconPath, "delete.png");
             IsInitialized = true;
         }
     }

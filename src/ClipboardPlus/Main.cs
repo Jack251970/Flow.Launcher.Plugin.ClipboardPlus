@@ -16,7 +16,7 @@ using WindowsInput;
 
 namespace ClipboardPlus;
 
-public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextMenu, IPluginI18n*/,
+public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu/*, IPluginI18n*/,
     ISavable, ISettingProvider, IDisposable
 {
     #region Properties
@@ -107,7 +107,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
                             && i.Text.ToLower().Contains(query.Search.Trim().ToLower())
                     )
                     .ToArray();
-            results.AddRange(displayData.Select(ClipDataToResult));
+            results.AddRange(displayData.Select(GetResultFromClipboardData));
             Context.API.LogDebug(ClassName, "Added records successfully");
             // clear results
             results.Add(
@@ -184,11 +184,82 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
 
     #region IContextMenu interface
 
-    // TODO
-
-    public List<Result> LoadContextMenus(Result selectedResult)
+    public List<Result> LoadContextMenus(Result result)
     {
-        return new List<Result>();
+        var results = new List<Result>();
+        if (result.ContextData is not ClipboardData clipboardData)
+        {
+            return results;
+        }
+
+        results.AddRange(
+            new[]
+            {
+                new Result
+                {
+                    Title = "Copy",
+                    SubTitle = "Copy this record to clipboard",
+                    IcoPath = PathHelpers.CopyIconPath,
+                    Score = 4,
+                    Action = _ =>
+                    {
+                        CopyToClipboard(clipboardData);
+                        return true;
+                    }
+                },
+                new Result
+                {
+                    Title = "Delete",
+                    SubTitle = "Delete this record in both list and database",
+                    IcoPath = PathHelpers.DeleteIconPath,
+                    Score = 1,
+                    Action = _ =>
+                    {
+                        RemoveFromDatalist(clipboardData);
+                        return false;
+                    }
+                }
+            }
+        );
+        if (clipboardData.Pinned)
+        {
+            results.Add(
+                new Result
+                {
+                    Title = "Unpin",
+                    SubTitle = "Unpin this record",
+                    IcoPath = PathHelpers.PinIconPath,
+                    Score = 3,
+                    Action = _ =>
+                    {
+                        clipboardData.Pinned = false;
+                        clipboardData.Score = clipboardData.InitScore;
+                        PinOneRecord(clipboardData);
+                        return false;
+                    }
+                }
+            );
+        }
+        else
+        {
+            results.Add(
+                new Result
+                {
+                    Title = "Pin",
+                    SubTitle = "Pin this record",
+                    IcoPath = PathHelpers.PinIconPath,
+                    Score = 3,
+                    Action = _ =>
+                    {
+                        clipboardData.Pinned = true;
+                        clipboardData.Score = int.MaxValue;
+                        PinOneRecord(clipboardData);
+                        return false;
+                    }
+                }
+            );
+        }
+        return results;
     }
 
     #endregion
@@ -372,7 +443,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
 
     #region Query Result
 
-    private Result ClipDataToResult(ClipboardData clipboardData)
+    private Result GetResultFromClipboardData(ClipboardData clipboardData)
     {
         var dispSubTitle = $"{clipboardData.CreateTime:yyyy-MM-dd-hh-mm-ss}: {clipboardData.SenderApp}";
         dispSubTitle = clipboardData.Pinned ? $"{PinUnicode}{dispSubTitle}" : dispSubTitle;
@@ -385,6 +456,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
             Score = GetNewScoreByOrderBy(clipboardData),
             TitleToolTip = clipboardData.Text,
             SubTitleToolTip = dispSubTitle,
+            ContextData = clipboardData,
             PreviewPanel = new Lazy<UserControl>(
                 () =>
                     new PreviewPanel(
@@ -457,11 +529,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
     private async void PinOneRecord(ClipboardData clipboardData)
     {
         RecordsList.Remove(clipboardData);
-        if (clipboardData.Type is CbContentType.Text or CbContentType.Files)
-        {
-            clipboardData.Icon = clipboardData.Pinned ? PinnedIcon : GetDefaultIcon(clipboardData);
-        }
-
         RecordsList.AddLast(clipboardData);
         await DbHelpers.PinOneRecordAsync(clipboardData);
         Context.API.ChangeQuery(ActionKeyword, true);
@@ -502,7 +569,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable/*, IContextM
     #region Icons Recources
 
     private static readonly BitmapImage AppIcon = new(new Uri(PathHelpers.AppIconPath, UriKind.RelativeOrAbsolute));
-    private static readonly BitmapImage PinnedIcon = new(new Uri(PathHelpers.PinnedIconPath, UriKind.RelativeOrAbsolute));
     private static readonly BitmapImage TextIcon = new(new Uri(PathHelpers.TextIconPath, UriKind.RelativeOrAbsolute));
     private static readonly BitmapImage FilesIcon = new(new Uri(PathHelpers.FileIconPath, UriKind.RelativeOrAbsolute));
     private static readonly BitmapImage ImageIcon = new(new Uri(PathHelpers.ImageIconPath, UriKind.RelativeOrAbsolute));
