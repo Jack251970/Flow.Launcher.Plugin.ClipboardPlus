@@ -240,7 +240,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 {
                     Title = "Unpin",
                     SubTitle = "Unpin this record",
-                    IcoPath = PathHelpers.PinIconPath,
+                    IcoPath = PathHelpers.UnpinIconPath,
                     Score = 3,
                     Action = _ =>
                     {
