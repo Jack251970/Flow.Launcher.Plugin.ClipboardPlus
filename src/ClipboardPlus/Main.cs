@@ -119,7 +119,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Score = Settings.MaxDataCount + 1,
                     Action = _ =>
                     {
-                        Context.API.ChangeQuery(ActionKeyword + " clear ", true);
+                        Context.API.ChangeQuery($"{ActionKeyword} {Settings.ClearKeyword} ", true);
                         return false;
                     },
                 }
@@ -215,7 +215,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Score = 2,
                     Action = _ =>
                     {
-                        RemoveFromList(clipboardData);
+                        RemoveFromList(clipboardData, true);
                         return false;
                     }
                 },
@@ -227,7 +227,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Score = 1,
                     Action = _ =>
                     {
-                        RemoveFromListDatabase(clipboardData);
+                        RemoveFromListDatabase(clipboardData, true);
                         return false;
                     }
                 },
@@ -244,7 +244,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Score = 3,
                     Action = _ =>
                     {
-                        PinOneRecord(clipboardData);
+                        PinOneRecord(clipboardData, true);
                         return false;
                     }
                 }
@@ -261,7 +261,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Score = 3,
                     Action = _ =>
                     {
-                        PinOneRecord(clipboardData);
+                        PinOneRecord(clipboardData, true);
                         return false;
                     }
                 }
@@ -470,9 +470,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     new PreviewPanel(
                         clipboardData,
                         Context,
-                        delAction: RemoveFromListDatabase,
                         copyAction: CopyToClipboard,
-                        pinAction: PinOneRecord
+                        pinAction: (d) => PinOneRecord(d, false),
+                        delAction: (d) => RemoveFromListDatabase(d, false)
                     )
             ),
             AsyncAction = async _ =>
@@ -493,11 +493,11 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                         break;
                     case ClickAction.CopyDeleteList:
                         CopyToClipboard(clipboardData);
-                        RemoveFromList(clipboardData);
+                        RemoveFromList(clipboardData, false);
                         break;
                     case ClickAction.CopyDeleteListDatabase:
                         CopyToClipboard(clipboardData);
-                        RemoveFromListDatabase(clipboardData);
+                        RemoveFromListDatabase(clipboardData, false);
                         break;
                     case ClickAction.CopyPasteDeleteList:
                         CopyToClipboard(clipboardData);
@@ -510,7 +510,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                             VirtualKeyCode.CONTROL,
                             VirtualKeyCode.VK_V
                         );
-                        RemoveFromList(clipboardData);
+                        RemoveFromList(clipboardData, false);
                         break;
                     case ClickAction.CopyPasteDeleteListDatabase:
                         CopyToClipboard(clipboardData);
@@ -523,7 +523,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                             VirtualKeyCode.CONTROL,
                             VirtualKeyCode.VK_V
                         );
-                        RemoveFromListDatabase(clipboardData);
+                        RemoveFromListDatabase(clipboardData, false);
                         break;
                     default:
                         CopyToClipboard(clipboardData);
@@ -573,27 +573,40 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         System.Windows.Forms.Clipboard.SetDataObject(clipboardData.Data);
     }
 
-    private void RemoveFromList(ClipboardData clipboardData)
+    private void RemoveFromList(ClipboardData clipboardData, bool needEsc = false)
     {
         RecordsList.Remove(clipboardData);
-        Context.API.ChangeQuery(ActionKeyword, true);
+        if (needEsc)
+        {
+            new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
+        }
+        Context.API.ReQuery(false);
     }
 
-    private async void RemoveFromListDatabase(ClipboardData clipboardData)
+    private async void RemoveFromListDatabase(ClipboardData clipboardData, bool needEsc = false)
     {
         RecordsList.Remove(clipboardData);
         await DbHelpers.DeleteOneRecordAsync(clipboardData);
-        Context.API.ChangeQuery(ActionKeyword, true);
+        if (needEsc)
+        {
+            new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
+        }
+        Context.API.ReQuery(false);
     }
 
-    private async void PinOneRecord(ClipboardData clipboardData)
+    private async void PinOneRecord(ClipboardData clipboardData, bool needEsc = false)
     {
         clipboardData.Pinned = !clipboardData.Pinned;
         clipboardData.Score = clipboardData.Pinned ? int.MaxValue : clipboardData.InitScore;
         RecordsList.Remove(clipboardData);
         RecordsList.AddLast(clipboardData);
         await DbHelpers.PinOneRecordAsync(clipboardData);
-        Context.API.ChangeQuery(ActionKeyword, true);
+        // TODO: Ask Flow-Launcher for a better way to refresh the query.
+        if (needEsc)
+        {
+            new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
+        }
+        Context.API.ReQuery(false);
     }
 
     #endregion
