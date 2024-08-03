@@ -34,6 +34,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     // Pinned symbol
     private const string PinUnicode = "📌";
 
+    // Words count prefix
+    private const string WordsCountPrefix = "Words Count: ";
+
     // Settings
     private Settings Settings = null!;
 
@@ -466,16 +469,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             TitleToolTip = clipboardData.Text,
             SubTitleToolTip = dispSubTitle,
             ContextData = clipboardData,
-            PreviewPanel = new Lazy<UserControl>(
-                () =>
-                    new PreviewPanel(
-                        clipboardData,
-                        Context,
-                        copyAction: CopyToClipboard,
-                        pinAction: (d) => PinOneRecord(d, false),
-                        delAction: (d) => RemoveFromListDatabase(d, false)
-                    )
-            ),
+            PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(clipboardData, WordsCountPrefix)),
             AsyncAction = async _ =>
             {
                 switch (Settings.ClickAction)

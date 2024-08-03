@@ -1,6 +1,4 @@
-﻿using FluentIcons.WPF;
-using FluentIcons.Common;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -9,32 +7,17 @@ namespace ClipboardPlus.Panels;
 public partial class PreviewPanel : UserControl
 {
     private ClipboardData ClipboardData;
-    private readonly PluginInitContext Context;
-    private Action<ClipboardData>? DeleteOneRecord { get; set; }
-    private Action<ClipboardData>? CopyRecord { get; set; }
-    private Action<ClipboardData>? PinRecord { get; set; }
-    private int OldScore { get; set; }
     private bool Ready { get; set; } = false;
-    private const string WordsCountPrefix = "Words Count: ";
-    private readonly SymbolIcon PinFluentIcon = new() { Symbol = Symbol.Pin };
-    private readonly SymbolIcon UnpinFluentIcon = new() { Symbol = Symbol.PinOff };
+    private readonly string WordsCountPrefix = string.Empty;
 
     public PreviewPanel(
         ClipboardData clipboardData,
-        PluginInitContext context,
-        Action<ClipboardData> delAction,
-        Action<ClipboardData> copyAction,
-        Action<ClipboardData> pinAction
+        string wordsCountPrefix = "Words Count: "
     )
     {
         ClipboardData = clipboardData;
-        Context = context;
-        DeleteOneRecord = delAction;
-        CopyRecord = copyAction;
-        PinRecord = pinAction;
-        OldScore = clipboardData.Score;
+        WordsCountPrefix = wordsCountPrefix;
         InitializeComponent();
-        SetBtnIcon();
         SetContent();
         Ready = true;
     }
@@ -45,17 +28,12 @@ public partial class PreviewPanel : UserControl
     /// </summary>
     public PreviewPanel()
     {
-        Context = null!;
+        WordsCountPrefix = "Words Count: ";
         InitializeComponent();
         Ready = true;
     }
 
     #region Setters
-
-    private void SetBtnIcon()
-    {
-        BtnPin.Content = ClipboardData.Pinned ? UnpinFluentIcon : PinFluentIcon;
-    }
 
     public void SetContent()
     {
@@ -86,7 +64,7 @@ public partial class PreviewPanel : UserControl
     {
         TxtBoxPre.Clear();
         TxtBoxPre.Text = string.IsNullOrWhiteSpace(s) ? ClipboardData.Text : s;
-        TextBlockWordCount.Text = WordsCountPrefix + StringUtils.CountWords(TxtBoxPre.Text);
+        StatusBar.Text = WordsCountPrefix + StringUtils.CountWords(TxtBoxPre.Text);
     }
 
     public void SetImage()
@@ -119,67 +97,14 @@ public partial class PreviewPanel : UserControl
 
     #endregion
 
-    #region Dockpanel
-
-    private bool needRefreshWidth = true;
-    private double totalRequiredWidth = 0;
-
-    private void DockPanel_SizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        if (!Ready)
-        {
-            return;
-        }
-
-        // If the DockPanel's width is less than the total required width, hide the TextBlock so that we can use the buttons
-        if (needRefreshWidth)
-        {
-            if (TextBlockWordCount.Visibility == Visibility.Visible)
-            {
-                totalRequiredWidth = TextBlockWordCount.ActualWidth + TextBlockWordCount.Margin.Left + TextBlockWordCount.Margin.Right +
-                    ButtonsStackPanel.ActualWidth + ButtonsStackPanel.Margin.Left + ButtonsStackPanel.Margin.Right;
-                needRefreshWidth = false;
-            }
-        }
-
-        TextBlockWordCount.Visibility = e.NewSize.Width < totalRequiredWidth ? Visibility.Collapsed : Visibility.Visible;
-    }
-
-    #endregion
-
-    #region Word Count Textblock
+    #region Status Bar
 
     private void TxtBoxPre_TextChanged(object sender, TextChangedEventArgs e)
     {
         if (Ready)
         {
-            TextBlockWordCount.Text = WordsCountPrefix + TxtBoxPre.Text.Length;
-            needRefreshWidth = true;
+            StatusBar.Text = WordsCountPrefix + TxtBoxPre.Text.Length;
         }
-    }
-
-    #endregion
-
-    #region Buttons
-
-    private void BtnCopy_Click(object sender, RoutedEventArgs e)
-    {
-        // if textbox is visible, it means the record is a text ot files, change the data to text
-        if (TxtBoxPre.IsVisible)
-        {
-            ClipboardData.Data = TxtBoxPre.Text;
-        }
-        CopyRecord?.Invoke(ClipboardData);
-    }
-
-    private void BtnPin_Click(object sender, RoutedEventArgs e)
-    {
-        PinRecord?.Invoke(ClipboardData);
-    }
-
-    private void BtnDelete_Click(object sender, RoutedEventArgs e)
-    {
-        DeleteOneRecord?.Invoke(ClipboardData);
     }
 
     #endregion
