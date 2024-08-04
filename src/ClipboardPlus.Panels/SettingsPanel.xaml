@@ -24,6 +24,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -84,15 +85,38 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             SelectionChanged="CmBoxOrderBy_OnSelectionChanged">
-            <ComboBoxItem IsSelected="True" Tag="0">Score</ComboBoxItem>
-            <ComboBoxItem Tag="1">Create Time</ComboBoxItem>
-            <ComboBoxItem Tag="2">Source Application</ComboBoxItem>
-            <ComboBoxItem Tag="3">Type</ComboBoxItem>
+            <ComboBoxItem IsSelected="True">Score</ComboBoxItem>
+            <ComboBoxItem>Create time</ComboBoxItem>
+            <ComboBoxItem>Source application</ComboBoxItem>
+            <ComboBoxItem>Type</ComboBoxItem>
+        </ComboBox>
+
+        <!--  Click Action  -->
+        <TextBlock
+            Grid.Row="3"
+            Grid.Column="0"
+            Margin="10,5,5,5"
+            VerticalAlignment="Center"
+            Text="Click action:" />
+        <ComboBox
+            x:Name="CmBoxClickAction"
+            Grid.Row="3"
+            Grid.Column="1"
+            Margin="10,5,0,5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            SelectionChanged="CmBoxClickAction_OnSelectionChanged">
+            <ComboBoxItem IsSelected="True">Copy</ComboBoxItem>
+            <ComboBoxItem>Copy and paste</ComboBoxItem>
+            <ComboBoxItem>Copy and delete in list</ComboBoxItem>
+            <ComboBoxItem>Copy and delete in both list and database</ComboBoxItem>
+            <ComboBoxItem>Copy, paste and delete in list</ComboBoxItem>
+            <ComboBoxItem>Copy, paste and delete in both list and database</ComboBoxItem>
         </ComboBox>
 
         <!--  Seperator  -->
         <Separator
-            Grid.Row="3"
+            Grid.Row="4"
             Grid.ColumnSpan="2"
             Height="1"
             Margin="-60,10,0,10"
@@ -102,7 +126,7 @@
         <!--  Cache Image  -->
         <CheckBox
             x:Name="CkBoxCacheImages"
-            Grid.Row="4"
+            Grid.Row="5"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
@@ -112,7 +136,7 @@
             Unchecked="CkBoxCacheImages_OnUnchecked" />
         <Button
             x:Name="CacheImageButton"
-            Grid.Row="4"
+            Grid.Row="5"
             Grid.Column="1"
             Grid.ColumnSpan="2"
             Margin="10,5,0,5"
@@ -123,14 +147,14 @@
 
         <!--  Image Format  -->
         <TextBlock
-            Grid.Row="5"
+            Grid.Row="6"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Text="Format:" />
         <TextBox
             x:Name="TextBoxImageFormat"
-            Grid.Row="5"
+            Grid.Row="6"
             Grid.Column="1"
             MinWidth="200"
             Margin="10,5,0,5"
@@ -142,7 +166,7 @@
             TextWrapping="NoWrap" />
 
         <StackPanel
-            Grid.Row="6"
+            Grid.Row="7"
             Grid.Column="2"
             Margin="10,5,0,5"
             HorizontalAlignment="Left"
@@ -194,14 +218,14 @@
 
         <!--  Preview Format  -->
         <TextBlock
-            Grid.Row="7"
+            Grid.Row="8"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Text="Preview:" />
         <TextBox
             x:Name="TextBlockImageFormatPreview"
-            Grid.Row="7"
+            Grid.Row="8"
             Grid.Column="1"
             MinWidth="200"
             Margin="10,5,0,5"
@@ -215,7 +239,7 @@
 
         <!--  Seperator  -->
         <Separator
-            Grid.Row="8"
+            Grid.Row="9"
             Grid.ColumnSpan="2"
             Height="1"
             Margin="-60,10,0,10"
@@ -225,7 +249,7 @@
         <!--  Keep Text  -->
         <CheckBox
             x:Name="CkBoxKeepText"
-            Grid.Row="9"
+            Grid.Row="10"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
@@ -235,28 +259,28 @@
             Unchecked="CkBoxKeepText_OnUnchecked" />
         <ComboBox
             x:Name="CmBoxKeepText"
-            Grid.Row="9"
+            Grid.Row="10"
             Grid.Column="1"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             IsEnabled="{Binding Settings.KeepText}"
             SelectionChanged="CmBoxKeepText_OnSelectionChanged">
-            <ComboBoxItem IsSelected="True" Tag="0">Always</ComboBoxItem>
-            <ComboBoxItem Tag="1">1 Hour</ComboBoxItem>
-            <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
-            <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
-            <ComboBoxItem Tag="72">3 Days</ComboBoxItem>
-            <ComboBoxItem Tag="168">7 Days</ComboBoxItem>
-            <ComboBoxItem Tag="720">1 Month</ComboBoxItem>
-            <ComboBoxItem Tag="4320">6 Months</ComboBoxItem>
-            <ComboBoxItem Tag="8640">1 Year</ComboBoxItem>
+            <ComboBoxItem IsSelected="True">Always</ComboBoxItem>
+            <ComboBoxItem>1 hour</ComboBoxItem>
+            <ComboBoxItem>12 hours</ComboBoxItem>
+            <ComboBoxItem>24 hours</ComboBoxItem>
+            <ComboBoxItem>3 days</ComboBoxItem>
+            <ComboBoxItem>7 days</ComboBoxItem>
+            <ComboBoxItem>1 month</ComboBoxItem>
+            <ComboBoxItem>6 months</ComboBoxItem>
+            <ComboBoxItem>1 year</ComboBoxItem>
         </ComboBox>
 
         <!--  Keep Images  -->
         <CheckBox
             x:Name="CkBoxKeepImages"
-            Grid.Row="10"
+            Grid.Row="11"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
@@ -266,28 +290,28 @@
             Unchecked="CkBoxKeepImages_OnUnchecked" />
         <ComboBox
             x:Name="CmBoxKeepImages"
-            Grid.Row="10"
+            Grid.Row="11"
             Grid.Column="1"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             IsEnabled="{Binding Settings.KeepImage}"
             SelectionChanged="CmBoxKeepImages_OnSelectionChanged">
-            <ComboBoxItem IsSelected="True" Tag="0">Always</ComboBoxItem>
-            <ComboBoxItem Tag="1">1 Hour</ComboBoxItem>
-            <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
-            <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
-            <ComboBoxItem Tag="72">3 Days</ComboBoxItem>
-            <ComboBoxItem Tag="168">7 Days</ComboBoxItem>
-            <ComboBoxItem Tag="720">1 Month</ComboBoxItem>
-            <ComboBoxItem Tag="4320">6 Months</ComboBoxItem>
-            <ComboBoxItem Tag="8640">1 Year</ComboBoxItem>
+            <ComboBoxItem IsSelected="True">Always</ComboBoxItem>
+            <ComboBoxItem>1 hour</ComboBoxItem>
+            <ComboBoxItem>12 hours</ComboBoxItem>
+            <ComboBoxItem>24 hours</ComboBoxItem>
+            <ComboBoxItem>3 days</ComboBoxItem>
+            <ComboBoxItem>7 days</ComboBoxItem>
+            <ComboBoxItem>1 month</ComboBoxItem>
+            <ComboBoxItem>6 months</ComboBoxItem>
+            <ComboBoxItem>1 year</ComboBoxItem>
         </ComboBox>
 
         <!--  Keep Files  -->
         <CheckBox
             x:Name="CkBoxKeepFiles"
-            Grid.Row="11"
+            Grid.Row="12"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
@@ -297,22 +321,22 @@
             Unchecked="CkBoxKeepFiles_OnUnchecked" />
         <ComboBox
             x:Name="CmBoxKeepFiles"
-            Grid.Row="11"
+            Grid.Row="12"
             Grid.Column="1"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             IsEnabled="{Binding Settings.KeepFile}"
             SelectionChanged="CmBoxKeepFiles_OnSelectionChanged">
-            <ComboBoxItem IsSelected="True" Tag="0">Always</ComboBoxItem>
-            <ComboBoxItem Tag="1">1 Hour</ComboBoxItem>
-            <ComboBoxItem Tag="12">12 Hours</ComboBoxItem>
-            <ComboBoxItem Tag="24">24 Hours</ComboBoxItem>
-            <ComboBoxItem Tag="72">3 Days</ComboBoxItem>
-            <ComboBoxItem Tag="168">7 Days</ComboBoxItem>
-            <ComboBoxItem Tag="720">1 Month</ComboBoxItem>
-            <ComboBoxItem Tag="4320">6 Months</ComboBoxItem>
-            <ComboBoxItem Tag="8640">1 Year</ComboBoxItem>
+            <ComboBoxItem IsSelected="True">Always</ComboBoxItem>
+            <ComboBoxItem>1 hour</ComboBoxItem>
+            <ComboBoxItem>12 hours</ComboBoxItem>
+            <ComboBoxItem>24 hours</ComboBoxItem>
+            <ComboBoxItem>3 days</ComboBoxItem>
+            <ComboBoxItem>7 days</ComboBoxItem>
+            <ComboBoxItem>1 month</ComboBoxItem>
+            <ComboBoxItem>6 months</ComboBoxItem>
+            <ComboBoxItem>1 year</ComboBoxItem>
         </ComboBox>
     </Grid>
 </UserControl>

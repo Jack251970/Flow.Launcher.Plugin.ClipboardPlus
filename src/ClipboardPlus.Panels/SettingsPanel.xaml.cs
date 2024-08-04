@@ -237,6 +237,19 @@ public partial class SettingsPanel : UserControl
 
     #endregion
 
+    #region Click Action
+
+    private void CmBoxClickAction_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (Ready)
+        {
+            Settings.ClickAction = (ClickAction)CmBoxClickAction.SelectedIndex;
+            ApplySettings();
+        }
+    }
+
+    #endregion
+
     #region Cache Image
 
     private void CkBoxCacheImages_OnChecked(object sender, RoutedEventArgs e)
@@ -312,7 +325,7 @@ public partial class SettingsPanel : UserControl
 
     private string GetImageFormatPreview()
     {
-        return StringUtils.FormatImageName(ImageFormatString, DateTime.Now, "TestApp.exe");
+        return StringUtils.FormatImageName(ImageFormatString, DateTime.Now, "Flow.Launcher.exe");
     }
 
     private void TextBoxImageFormat_OnTextChanged(object sender, TextChangedEventArgs e)
