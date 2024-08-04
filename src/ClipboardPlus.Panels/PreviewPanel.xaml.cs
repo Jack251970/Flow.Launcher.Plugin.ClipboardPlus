@@ -37,8 +37,6 @@ public partial class PreviewPanel : UserControl
 
     public void SetContent()
     {
-        TxtBoxPre.Visibility = Visibility.Visible;
-        PreImage.Visibility = Visibility.Hidden;
         switch (ClipboardData.Type)
         {
             case CbContentType.Text:
@@ -50,11 +48,8 @@ public partial class PreviewPanel : UserControl
                 SetText(s);
                 break;
             case CbContentType.Image:
-                TxtBoxPre.Visibility = Visibility.Hidden;
-                PreImage.Visibility = Visibility.Visible;
                 SetImage();
                 break;
-            case CbContentType.Other:
             default:
                 break;
         }
@@ -62,13 +57,16 @@ public partial class PreviewPanel : UserControl
 
     public void SetText(string s = "")
     {
-        TxtBoxPre.Clear();
-        TxtBoxPre.Text = string.IsNullOrWhiteSpace(s) ? ClipboardData.Text : s;
-        StatusBar.Text = WordsCountPrefix + StringUtils.CountWords(TxtBoxPre.Text);
+        PreTxtBox.Clear();
+        PreTxtBox.Text = string.IsNullOrWhiteSpace(s) ? ClipboardData.Text : s;
+        PreSubTitle.Text = WordsCountPrefix + StringUtils.CountWords(PreTxtBox.Text);
     }
 
     public void SetImage()
     {
+        PreImage.Visibility = Visibility.Visible;
+        PreTxtBoxSv.Visibility = Visibility.Collapsed;
+        PreSubTitle.Visibility = Visibility.Collapsed;
         if (ClipboardData.Data is System.Drawing.Image img)
         {
             var im = img.ToBitmapImage();
@@ -78,18 +76,9 @@ public partial class PreviewPanel : UserControl
 
     #endregion
 
-    #region Image Viewer
-
-    private void ImSaveAs_Click(object sender, RoutedEventArgs e)
-    {
-        FileUtils.SaveImageCache(ClipboardData, PathHelpers.ImageCachePath);
-    }
-
-    #endregion
-
     #region Text Viewer
 
-    private void TxtBoxPre_GotFocus(object sender, RoutedEventArgs e)
+    private void PreTxtBox_GotFocus(object sender, RoutedEventArgs e)
     {
         TextBox tb = (TextBox)sender;
         tb.Dispatcher.BeginInvoke(new Action(tb.SelectAll));
@@ -97,13 +86,13 @@ public partial class PreviewPanel : UserControl
 
     #endregion
 
-    #region Status Bar
+    #region Preview Subtitle
 
-    private void TxtBoxPre_TextChanged(object sender, TextChangedEventArgs e)
+    private void PreTxtBox_TextChanged(object sender, TextChangedEventArgs e)
     {
         if (Ready)
         {
-            StatusBar.Text = WordsCountPrefix + TxtBoxPre.Text.Length;
+            PreSubTitle.Text = WordsCountPrefix + PreTxtBox.Text.Length;
         }
     }
 

@@ -9,69 +9,62 @@
     mc:Ignorable="d">
 
     <Grid
-        Width="Auto"
-        Height="Auto"
+        x:Name="Preview"
+        MinHeight="380"
         HorizontalAlignment="Center">
         <Grid.RowDefinitions>
-            <RowDefinition Height="90*" />
-            <RowDefinition Height="20*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <!--  Image Viewer  -->
+        <Image
+            x:Name="PreImage"
+            Grid.Row="0"
+            Grid.Column="0"
+            MaxWidth="320"
+            MaxHeight="320"
+            Margin="10"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Panel.ZIndex="0"
+            Visibility="Hidden" />
+
+        <!--  Text Viewer  -->
         <ScrollViewer
+            x:Name="PreTxtBoxSv"
             Grid.Row="0"
             Grid.Column="0"
             MaxHeight="400"
+            Padding="5"
             HorizontalAlignment="Center"
             HorizontalContentAlignment="Left"
+            Panel.ZIndex="1"
             HorizontalScrollBarVisibility="Auto"
-            UseLayoutRounding="False"
             VerticalScrollBarVisibility="Auto">
-            <Grid>
-                <!--  Image Viewer  -->
-                <Image
-                    x:Name="PreImage"
-                    MaxWidth="320"
-                    MaxHeight="400"
-                    Margin="5"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Panel.ZIndex="0"
-                    Visibility="Hidden">
-                    <Image.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Click="ImSaveAs_Click" Header="Save in cache folder" />
-                        </ContextMenu>
-                    </Image.ContextMenu>
-                </Image>
-
-                <!--  Text Viewer  -->
-                <TextBox
-                    x:Name="TxtBoxPre"
-                    MinWidth="320"
-                    Margin="5"
-                    Padding="5"
-                    Panel.ZIndex="1"
-                    Focusable="True"
-                    GotFocus="TxtBoxPre_GotFocus"
-                    HorizontalScrollBarVisibility="Disabled"
-                    IsReadOnly="False"
-                    IsUndoEnabled="True"
-                    Text=""
-                    TextAlignment="Left"
-                    TextChanged="TxtBoxPre_TextChanged"
-                    UseLayoutRounding="False"
-                    VerticalScrollBarVisibility="Disabled" />
-            </Grid>
+            <TextBox
+                x:Name="PreTxtBox"
+                MinWidth="320"
+                Margin="5"
+                Padding="5"
+                Focusable="True"
+                GotFocus="PreTxtBox_GotFocus"
+                HorizontalScrollBarVisibility="Disabled"
+                IsReadOnly="False"
+                IsUndoEnabled="True"
+                Text=""
+                TextAlignment="Left"
+                TextChanged="PreTxtBox_TextChanged"
+                UseLayoutRounding="False"
+                VerticalScrollBarVisibility="Disabled" />
         </ScrollViewer>
 
-        <!--  Status Bar  -->
+        <!--  Preview Sub Title  -->
         <TextBlock
-            x:Name="StatusBar"
+            x:Name="PreSubTitle"
             Grid.Row="1"
-            Grid.Column="0"
-            Margin="5"
+            Margin="10,5,10,5"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            DockPanel.Dock="Left" />
+            VerticalAlignment="Center" />
     </Grid>
 </UserControl>
