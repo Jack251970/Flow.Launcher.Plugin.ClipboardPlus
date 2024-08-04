@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,7 +11,8 @@ namespace ClipboardPlus.Panels;
 public partial class SettingsPanel : UserControl
 {
     public Settings Settings { get; set; }
-    private PluginInitContext? Context { get; set; }
+    private Func<Task>? ReloadDataAsync { get; set; }
+    private Action? Save { get; set; }
     private bool Ready { get; set; } = false;
 
     #region Dependency Properties
@@ -130,10 +132,11 @@ public partial class SettingsPanel : UserControl
 
     #endregion
 
-    public SettingsPanel(Settings settings, PluginInitContext context)
+    public SettingsPanel(Settings settings, PluginInitContext context, Func<Task>? reloadDataAsync, Action? save)
     {
         Settings = settings;
-        Context = context;
+        ReloadDataAsync = reloadDataAsync;
+        Save = save;
         InitializeComponent();
         PathHelpers.Init(context);
         ClearKeywordString = settings.ClearKeyword;
@@ -155,7 +158,6 @@ public partial class SettingsPanel : UserControl
     {
         var settings = new Settings();
         Settings = settings;
-        Context = null;
         InitializeComponent();
         ClearKeywordString = settings.ClearKeyword;
         MaxDataCount = settings.MaxDataCount;
@@ -169,11 +171,13 @@ public partial class SettingsPanel : UserControl
         Ready = true;
     }
 
-    // TODO: Fix fast-multi-time saving clash.
-    private void ApplySettings()
+    private void ApplySettings(bool reload = false)
     {
-        Context?.API.SavePluginSettings();
-        Context?.API.ReloadAllPluginData();
+        Save?.Invoke();
+        if (reload)
+        {
+            ReloadDataAsync?.Invoke();
+        }
     }
 
     #region Clear Keyword
@@ -357,7 +361,7 @@ public partial class SettingsPanel : UserControl
         if (Ready)
         {
             Settings.KeepText = false;
-            ApplySettings();
+            ApplySettings(true);
         }
     }
 
@@ -366,7 +370,7 @@ public partial class SettingsPanel : UserControl
         if (Ready)
         {
             Settings.KeepTextHours = (RecordKeepTime)CmBoxKeepText.SelectedIndex;
-            ApplySettings();
+            ApplySettings(true);
         }
     }
 
@@ -388,7 +392,7 @@ public partial class SettingsPanel : UserControl
         if (Ready)
         {
             Settings.KeepImage = false;
-            ApplySettings();
+            ApplySettings(true);
         }
     }
 
@@ -397,7 +401,7 @@ public partial class SettingsPanel : UserControl
         if (Ready)
         {
             Settings.KeepImageHours = (RecordKeepTime)CmBoxKeepImages.SelectedIndex;
-            ApplySettings();
+            ApplySettings(true);
         }
     }
 
@@ -419,7 +423,7 @@ public partial class SettingsPanel : UserControl
         if (Ready)
         {
             Settings.KeepFile = false;
-            ApplySettings();
+            ApplySettings(true);
         }
     }
 
@@ -428,7 +432,7 @@ public partial class SettingsPanel : UserControl
         if (Ready)
         {
             Settings.KeepFileHours = (RecordKeepTime)CmBoxKeepFiles.SelectedIndex;
-            ApplySettings();
+            ApplySettings(true);
         }
     }
 

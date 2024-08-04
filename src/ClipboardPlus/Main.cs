@@ -177,10 +177,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     public async Task ReloadDataAsync()
     {
-        // save settings
-        Save();
-
-        // init records
+        // reload records
         await InitRecordsFromDb();
     }
 
@@ -312,7 +309,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     public Control CreateSettingPanel()
     {
         Context.API.LogWarn(ClassName, $"{Settings}");
-        return new SettingsPanel(Settings, Context);
+        return new SettingsPanel(Settings, Context, ReloadDataAsync, Save);
     }
 
     #endregion
