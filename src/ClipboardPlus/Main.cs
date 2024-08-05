@@ -75,6 +75,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                         SubTitle = "Clear records in list",
                         IcoPath = PathHelpers.ListIconPath,
                         Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uEA37"),
+                        // TODO: Fix the position bug.
                         Score = 2,
                         Action = _ =>
                         {
@@ -470,6 +471,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             Title = clipboardData.DisplayTitle,
             SubTitle = dispSubTitle,
             Icon = () => clipboardData.Icon,
+            Glyph = clipboardData.Glyph,
             CopyText = clipboardData.Text,
             Score = GetNewScoreByOrderBy(clipboardData),
             TitleToolTip = clipboardData.Text,
@@ -540,6 +542,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     {
         if (clipboardData.Pinned)
         {
+            // TODO: Change this under the clear action.
             return int.MaxValue;
         }
 
