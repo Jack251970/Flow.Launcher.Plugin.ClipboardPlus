@@ -478,6 +478,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(clipboardData, WordsCountPrefix)),
             AsyncAction = async _ =>
             {
+                // TODO: Fix bug here.
                 switch (Settings.ClickAction)
                 {
                     case ClickAction.CopyPaste:
