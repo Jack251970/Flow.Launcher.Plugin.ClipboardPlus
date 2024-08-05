@@ -11,6 +11,7 @@ public struct ClipboardData : IEquatable<ClipboardData>
     public required string SenderApp;
     public required string IconPath;
     public required BitmapImage Icon;
+    public required GlyphInfo Glyph;
     public required string PreviewImagePath; // actually not used for now
     public required CbContentType Type;
     public required int Score;

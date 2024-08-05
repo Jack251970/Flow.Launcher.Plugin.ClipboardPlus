@@ -75,6 +75,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                         Title = "Clear list",
                         SubTitle = "Clear records in list",
                         IcoPath = PathHelpers.ListIconPath,
+                        Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uEA37"),
                         Score = 2,
                         Action = _ =>
                         {
@@ -87,6 +88,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                         Title = "Clear all",
                         SubTitle = "Clear records in both list and database",
                         IcoPath = PathHelpers.DatabaseIconPath,
+                        Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uEE94"),
                         Score = 1,
                         AsyncAction = async _ =>
                         {
@@ -121,6 +123,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Title = "Clear All Records",
                     SubTitle = "Click to clear all records",
                     IcoPath = PathHelpers.ClearIconPath,
+                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE894"),
                     Score = Settings.MaxDataCount + 1,
                     Action = _ =>
                     {
@@ -201,6 +204,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Title = "Copy",
                     SubTitle = "Copy this record to clipboard",
                     IcoPath = PathHelpers.CopyIconPath,
+                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE8C8"),
                     Score = 4,
                     Action = _ =>
                     {
@@ -213,6 +217,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Title = "Delete in list",
                     SubTitle = "Delete this record in list",
                     IcoPath = PathHelpers.DeleteIconPath,
+                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE74D"),
                     Score = 2,
                     Action = _ =>
                     {
@@ -225,6 +230,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Title = "Delete in list and database",
                     SubTitle = "Delete this record in both list and database",
                     IcoPath = PathHelpers.DeleteIconPath,
+                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE74D"),
                     Score = 1,
                     Action = _ =>
                     {
@@ -242,6 +248,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Title = "Unpin",
                     SubTitle = "Unpin this record",
                     IcoPath = PathHelpers.UnpinIconPath,
+                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE77A"),
                     Score = 3,
                     Action = _ =>
                     {
@@ -259,6 +266,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Title = "Pin",
                     SubTitle = "Pin this record",
                     IcoPath = PathHelpers.PinIconPath,
+                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE718"),
                     Score = 3,
                     Action = _ =>
                     {
@@ -335,7 +343,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             Data = e.Content,
             SenderApp = e.SourceApplication.Name,
             IconPath = PathHelpers.AppIconPath,
-            Icon = AppIcon,
+            Icon = null!,
+            Glyph = null!,
             PreviewImagePath = PathHelpers.AppIconPath,
             Score = CurrentScore + 1,
             InitScore = CurrentScore + 1,
@@ -382,6 +391,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 break;
         }
         clipboardData.Icon = GetDefaultIcon(clipboardData);
+        clipboardData.Glyph = GetDefaultGlyph(clipboardData);
         clipboardData.DisplayTitle = MyRegex().Replace(clipboardData.Text.Trim(), "");
 
         // add to list and database if no repeat 
@@ -560,7 +570,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     #region Clipboard Actions
 
-    private void CopyToClipboard(ClipboardData clipboardData)
+    private static void CopyToClipboard(ClipboardData clipboardData)
     {
         System.Windows.Forms.Clipboard.SetDataObject(clipboardData.Data);
     }
@@ -603,12 +613,17 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     #endregion
 
-    #region Icons Recources
+    #region Icons & Glyphs
 
-    private static readonly BitmapImage AppIcon = new(new Uri(PathHelpers.AppIconPath, UriKind.RelativeOrAbsolute));
-    private static readonly BitmapImage TextIcon = new(new Uri(PathHelpers.TextIconPath, UriKind.RelativeOrAbsolute));
-    private static readonly BitmapImage FilesIcon = new(new Uri(PathHelpers.FileIconPath, UriKind.RelativeOrAbsolute));
-    private static readonly BitmapImage ImageIcon = new(new Uri(PathHelpers.ImageIconPath, UriKind.RelativeOrAbsolute));
+    private static BitmapImage AppIcon = new(new Uri(PathHelpers.AppIconPath, UriKind.RelativeOrAbsolute));
+    private static BitmapImage TextIcon = new(new Uri(PathHelpers.TextIconPath, UriKind.RelativeOrAbsolute));
+    private static BitmapImage FilesIcon = new(new Uri(PathHelpers.FileIconPath, UriKind.RelativeOrAbsolute));
+    private static BitmapImage ImageIcon = new(new Uri(PathHelpers.ImageIconPath, UriKind.RelativeOrAbsolute));
+
+    private static GlyphInfo UnknownGlyph = new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE9CE");
+    private static GlyphInfo TextGlyph = new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE8C1");
+    private static GlyphInfo FilesGlyph = new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE7C3");
+    private static GlyphInfo ImageGlyph = new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE91B");
 
     private static BitmapImage GetDefaultIcon(ClipboardData data)
     {
@@ -618,6 +633,17 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             CbContentType.Files => FilesIcon,
             CbContentType.Image => ImageIcon,
             _ => AppIcon
+        };
+    }
+
+    private static GlyphInfo GetDefaultGlyph(ClipboardData data)
+    {
+        return data.Type switch
+        {
+            CbContentType.Text => TextGlyph,
+            CbContentType.Files => FilesGlyph,
+            CbContentType.Image => ImageGlyph,
+            _ => UnknownGlyph
         };
     }
 
@@ -648,6 +674,15 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
             Settings = null!;
             RecordsList = null!;
+            AppIcon = null!;
+            TextIcon = null!;
+            FilesIcon = null!;
+            ImageIcon = null!;
+            UnknownGlyph = null!;
+            TextGlyph = null!;
+            FilesGlyph = null!;
+            ImageGlyph = null!;
+            Context.API.LogDebug(ClassName, $"Disposed Other Components");
         }
     }
 
