@@ -4,7 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
+    <!--  General  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_name">剪切板+</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">轻松管理你的剪切板历史，支持文字、图像和文件</system:String>
+
+    <!--  Preview  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_words_count_prefix">词数：</system:String>
 
 </ResourceDictionary>

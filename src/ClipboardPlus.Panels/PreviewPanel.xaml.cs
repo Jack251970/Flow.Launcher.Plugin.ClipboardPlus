@@ -6,17 +6,28 @@ namespace ClipboardPlus.Panels;
 
 public partial class PreviewPanel : UserControl
 {
-    private ClipboardData ClipboardData;
-    private bool Ready { get; set; } = false;
-    private readonly string WordsCountPrefix = string.Empty;
+    #region Properties
 
-    public PreviewPanel(
-        ClipboardData clipboardData,
-        string wordsCountPrefix = "Words Count: "
-    )
+    // Plugin context
+    private readonly PluginInitContext Context = null!;
+
+    // Clipboard data
+    private ClipboardData ClipboardData;
+
+    // Initial state
+    private bool Ready { get; set; } = false;
+
+    // Words count prefix
+    private string WordsCountPrefix => Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_words_count_prefix") ?? "Words count: ";
+
+    #endregion
+
+    #region Constructors
+
+    public PreviewPanel(PluginInitContext context, ClipboardData clipboardData)
     {
+        Context = context;
         ClipboardData = clipboardData;
-        WordsCountPrefix = wordsCountPrefix;
         InitializeComponent();
         SetContent();
         Ready = true;
@@ -28,10 +39,11 @@ public partial class PreviewPanel : UserControl
     /// </summary>
     public PreviewPanel()
     {
-        WordsCountPrefix = "Words Count: ";
         InitializeComponent();
         Ready = true;
     }
+
+    #endregion
 
     #region Setters
 

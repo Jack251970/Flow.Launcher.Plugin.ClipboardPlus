@@ -23,7 +23,6 @@
 
     <ItemGroup>
       <PackageReference Include="Flow.Launcher.Plugin" Version="4.3.0" />
-      <!-- Don't update System.Drawing.Common -->
     </ItemGroup>
 
 </Project>

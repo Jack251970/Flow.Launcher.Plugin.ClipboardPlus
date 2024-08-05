@@ -4,7 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_name">Clipboard Plus</system:String>
+    <!--  General  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_name">Clipboard+</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">Easily manage your clipboard history with support for text, images, and files</system:String>
+
+    <!--  Preview  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_words_count_prefix">Words count:&#x20;</system:String>
 
 </ResourceDictionary>
