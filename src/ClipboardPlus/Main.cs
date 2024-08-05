@@ -10,12 +10,11 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Globalization;
 using WindowsInput;
 
 namespace ClipboardPlus;
 
-public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu/*, IPluginI18n*/,
+public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPluginI18n,
     ISavable, ISettingProvider, IDisposable
 {
     #region Properties
@@ -283,21 +282,14 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     #region IPluginI18n Interface
 
-    // TODO
-
     public string GetTranslatedPluginTitle()
     {
-        return string.Empty;
+        return Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_plugin_name");
     }
 
     public string GetTranslatedPluginDescription()
     {
-        return string.Empty;
-    }
-
-    public void OnCultureInfoChanged(CultureInfo newCulture)
-    {
-
+        return Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_plugin_description");
     }
 
     #endregion

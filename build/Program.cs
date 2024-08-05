@@ -15,6 +15,7 @@ using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 using Newtonsoft.Json;
+using static NuGet.Packaging.PackagingConstants;
 
 namespace Build;
 
@@ -116,10 +117,6 @@ public class PublishTask : FrostingTask<BuildContext>
         var ptn =
             // Core
             @"ClipboardPlus\.dll|ClipboardPlus.+\.dll|"
-            // Image
-            + @".+\.png|"
-            // Manifest
-            + @"plugin\.json|"
             // Nuget
             + @"Dapper\.dll|"
             + @"H\.InputSimulator\.dll|"
@@ -131,6 +128,7 @@ public class PublishTask : FrostingTask<BuildContext>
         {
             var fStr = f.ToString();
             var fName = f.GetFilename().ToString();
+            var fFolder = GetLastFolder(fStr);
             if (fStr == null || fName == null)
             {
                 continue;
@@ -144,12 +142,21 @@ public class PublishTask : FrostingTask<BuildContext>
 
             if (fStr.EndsWith("plugin.json"))
             {
+                context.Information($"Added: {f} - {fFolder}");
                 versionFile = f;
+                continue;
             }
 
-            if (fName == "FluentIcons.WPF.dll")
+            if (GetLastFolder(fStr) == "Images")
             {
-                var match = Regex.IsMatch(fName, ptn);
+                context.Information($"Added: {f} - {fFolder}");
+                continue;
+            }
+
+            if (GetLastFolder(fStr) == "Languages")
+            {
+                context.Information($"Added: {f} - {fFolder}");
+                continue;
             }
 
             if (!Regex.IsMatch(fName, ptn))
@@ -159,7 +166,7 @@ public class PublishTask : FrostingTask<BuildContext>
             }
             else
             {
-                context.Information($"Added: {f}");
+                context.Information($"Added: {f} - {fFolder}");
             }
         }
 
@@ -196,6 +203,37 @@ public class PublishTask : FrostingTask<BuildContext>
             filePaths: files,
             level: 9
         );
+    }
+
+    private static string GetLastFolder(string path)
+    {
+        // Get the directory part of the path
+        var directoryPath = System.IO.Path.GetDirectoryName(path);
+
+        // Create a DirectoryInfo object for the directory path
+        DirectoryInfo directoryInfo = new(directoryPath!);
+
+        // Split the full path into parts
+        string[] parts = directoryInfo.FullName.Split(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+
+        // Reverse the parts
+        Array.Reverse(parts);
+
+        // Check if there are parts available
+        if (parts.Length > 0)
+        {
+            // Return the last non-empty part
+            foreach (string part in parts)
+            {
+                if (!string.IsNullOrEmpty(part))
+                {
+                    return part;
+                }
+            }
+        }
+
+        // If no valid folder is found, return an empty string
+        return string.Empty;
     }
 }
 

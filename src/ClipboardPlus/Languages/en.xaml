@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_name">Clipboard Plus</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">Easily manage your clipboard history with support for text, images, and files</system:String>
+
+</ResourceDictionary>
