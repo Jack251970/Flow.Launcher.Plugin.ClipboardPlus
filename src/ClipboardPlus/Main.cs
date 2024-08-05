@@ -10,7 +10,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 using System.Globalization;
 using WindowsInput;
 
@@ -390,8 +389,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             default:
                 break;
         }
-        clipboardData.Icon = GetDefaultIcon(clipboardData);
-        clipboardData.Glyph = GetDefaultGlyph(clipboardData);
+        clipboardData.Icon = ResourceHelper.GetIcon(clipboardData.Type);
+        clipboardData.Glyph = ResourceHelper.GetGlyph(clipboardData.Type);
         clipboardData.DisplayTitle = MyRegex().Replace(clipboardData.Text.Trim(), "");
 
         // add to list and database if no repeat 
@@ -613,42 +612,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     #endregion
 
-    #region Icons & Glyphs
-
-    private static BitmapImage AppIcon = new(new Uri(PathHelpers.AppIconPath, UriKind.RelativeOrAbsolute));
-    private static BitmapImage TextIcon = new(new Uri(PathHelpers.TextIconPath, UriKind.RelativeOrAbsolute));
-    private static BitmapImage FilesIcon = new(new Uri(PathHelpers.FileIconPath, UriKind.RelativeOrAbsolute));
-    private static BitmapImage ImageIcon = new(new Uri(PathHelpers.ImageIconPath, UriKind.RelativeOrAbsolute));
-
-    private static GlyphInfo UnknownGlyph = new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE9CE");
-    private static GlyphInfo TextGlyph = new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE8C1");
-    private static GlyphInfo FilesGlyph = new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE7C3");
-    private static GlyphInfo ImageGlyph = new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE91B");
-
-    private static BitmapImage GetDefaultIcon(ClipboardData data)
-    {
-        return data.Type switch
-        {
-            CbContentType.Text => TextIcon,
-            CbContentType.Files => FilesIcon,
-            CbContentType.Image => ImageIcon,
-            _ => AppIcon
-        };
-    }
-
-    private static GlyphInfo GetDefaultGlyph(ClipboardData data)
-    {
-        return data.Type switch
-        {
-            CbContentType.Text => TextGlyph,
-            CbContentType.Files => FilesGlyph,
-            CbContentType.Image => ImageGlyph,
-            _ => UnknownGlyph
-        };
-    }
-
-    #endregion
-
     #region IDisposable Interface
 
     public void Dispose()
@@ -674,14 +637,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
             Settings = null!;
             RecordsList = null!;
-            AppIcon = null!;
-            TextIcon = null!;
-            FilesIcon = null!;
-            ImageIcon = null!;
-            UnknownGlyph = null!;
-            TextGlyph = null!;
-            FilesGlyph = null!;
-            ImageGlyph = null!;
             Context.API.LogDebug(ClassName, $"Disposed Other Components");
         }
     }

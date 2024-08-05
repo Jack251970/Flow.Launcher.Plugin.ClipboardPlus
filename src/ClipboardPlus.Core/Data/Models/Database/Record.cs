@@ -68,8 +68,10 @@ public class Record
             Text = record.Text,
             DisplayTitle = record.DisplayTitle,
             SenderApp = record.SenderApp,
+            // TODO: Check need save data.
             IconPath = record.IconPath,
             Icon = record.IconMd5.ToBitmapImage(),
+            Glyph = ResourceHelper.GetGlyph(type),
             PreviewImagePath = record.PreviewImagePath,
             Type = type,
             Score = record.Score,

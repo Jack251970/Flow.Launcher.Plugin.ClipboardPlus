@@ -25,6 +25,7 @@ public class DbHelperTest
             DisplayTitle = "Test Display Title",
             IconPath = _defaultIconPath,
             Icon = new BitmapImage(new Uri(_defaultIconPath, UriKind.RelativeOrAbsolute)),
+            Glyph = ResourceHelper.GetGlyph(CbContentType.Text),
             PreviewImagePath = _defaultIconPath,
             Score = 241,
             InitScore = 1,
@@ -43,16 +44,18 @@ public class DbHelperTest
     public ClipboardData GetRandomClipboardData()
     {
         var rand = new Random();
+        var type = (CbContentType)rand.Next(3);
         var data = new ClipboardData()
         {
             HashId = StringUtils.GetGuid(),
             Text = StringUtils.RandomString(10),
-            Type = (CbContentType)rand.Next(3),
+            Type = type,
             Data = StringUtils.RandomString(10),
             SenderApp = StringUtils.RandomString(5) + ".exe",
             DisplayTitle = StringUtils.RandomString(10),
             IconPath = _defaultIconPath,
             Icon = new BitmapImage(new Uri(_defaultIconPath, UriKind.RelativeOrAbsolute)),
+            Glyph = ResourceHelper.GetGlyph(type),
             PreviewImagePath = _defaultIconPath,
             Score = rand.Next(1000),
             InitScore = rand.Next(1000),
