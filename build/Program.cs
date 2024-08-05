@@ -253,7 +253,7 @@ public class DeployTask : FrostingTask<BuildContext>
         {
             p.Kill();
         }
-        Task.Delay(1000).Wait();
+        await Task.Delay(1000);
 
         // delete old files
         var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
