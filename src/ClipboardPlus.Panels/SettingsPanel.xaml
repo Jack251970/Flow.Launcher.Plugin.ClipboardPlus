@@ -37,7 +37,7 @@
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
-            Text="Clear keyword:" />
+            Text="{DynamicResource flowlauncher_plugin_clipboardplus_clear_keyword}" />
         <TextBox
             x:Name="TextBoxClearKeyword"
             Grid.Row="0"
@@ -57,7 +57,7 @@
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
-            Text="Max records:" />
+            Text="{DynamicResource flowlauncher_plugin_clipboardplus_max_records}" />
         <TextBox
             x:Name="MaxRecValueBox"
             Grid.Row="1"
@@ -76,7 +76,7 @@
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
-            Text="Order by:" />
+            Text="{DynamicResource flowlauncher_plugin_clipboardplus_order_by}" />
         <ComboBox
             x:Name="CmBoxOrderBy"
             Grid.Row="2"
@@ -97,7 +97,7 @@
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
-            Text="Click action:" />
+            Text="{DynamicResource flowlauncher_plugin_clipboardplus_click_action}" />
         <ComboBox
             x:Name="CmBoxClickAction"
             Grid.Row="3"
@@ -131,7 +131,7 @@
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Checked="CkBoxCacheImages_OnChecked"
-            Content="Cache images"
+            Content="{DynamicResource flowlauncher_plugin_clipboardplus_cache_images}"
             IsChecked="{Binding Settings.CacheImages}"
             Unchecked="CkBoxCacheImages_OnUnchecked" />
         <Button
@@ -143,17 +143,17 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             Click="CacheImageButton_Click"
-            Content="Open cache folder" />
+            Content="{DynamicResource flowlauncher_plugin_clipboardplus_open_cache_folder}" />
 
-        <!--  Image Format  -->
+        <!--  Cache Format  -->
         <TextBlock
             Grid.Row="6"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
-            Text="Format:" />
+            Text="{DynamicResource flowlauncher_plugin_clipboardplus_cache_format}" />
         <TextBox
-            x:Name="TextBoxImageFormat"
+            x:Name="TextBoxCacheFormat"
             Grid.Row="6"
             Grid.Column="1"
             MinWidth="200"
@@ -161,8 +161,8 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             AcceptsReturn="False"
-            Text="{Binding ImageFormatString}"
-            TextChanged="TextBoxImageFormat_OnTextChanged"
+            Text="{Binding CacheFormatString}"
+            TextChanged="TextBoxCacheFormat_OnTextChanged"
             TextWrapping="NoWrap" />
 
         <StackPanel
@@ -177,54 +177,53 @@
                 MinWidth="30"
                 Margin="0,0,3,0"
                 Click="ButtonYear_OnClick"
-                Content="Year" />
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_year}" />
             <Button
                 x:Name="ButtonMonth"
                 MinWidth="30"
                 Margin="0,0,3,0"
                 Click="ButtonMonth_OnClick"
-                Content="Month" />
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_month}" />
             <Button
                 x:Name="ButtonDay"
                 MinWidth="30"
                 Margin="0,0,3,0"
                 Click="ButtonDay_OnClick"
-                Content="Day" />
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_day}" />
             <Button
                 x:Name="ButtonHour"
                 MinWidth="30"
                 Margin="0,0,3,0"
                 Click="ButtonHour_OnClick"
-                Content="Hour" />
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_hour}" />
             <Button
                 x:Name="ButtonMinute"
                 MinWidth="30"
                 Margin="0,0,3,0"
                 Click="ButtonMinute_OnClick"
-                Content="Minute" />
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_minute}" />
             <Button
                 x:Name="ButtonSecond"
                 MinWidth="30"
                 Margin="0,0,3,0"
                 Click="ButtonSecond_OnClick"
-                Content="Second" />
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_second}" />
             <Button
-                x:Name="ButtonAppName"
+                x:Name="ButtonApp"
                 MinWidth="30"
                 Margin="0,0,0,0"
-                Click="ButtonAppName_OnClick"
-                Content="App" />
+                Click="ButtonApp_OnClick"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_app}" />
         </StackPanel>
 
-        <!--  Preview Format  -->
+        <!--  Cache Format Preview  -->
         <TextBlock
             Grid.Row="8"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
-            Text="Preview:" />
+            Text="{DynamicResource flowlauncher_plugin_clipboardplus_cache_format_preview}" />
         <TextBox
-            x:Name="TextBlockImageFormatPreview"
             Grid.Row="8"
             Grid.Column="1"
             MinWidth="200"
@@ -234,7 +233,7 @@
             AcceptsReturn="False"
             IsEnabled="False"
             IsReadOnly="True"
-            Text="{Binding ImageFormatPreview}"
+            Text="{Binding CacheFormatPreview}"
             TextWrapping="NoWrap" />
 
         <!--  Seperator  -->
@@ -254,7 +253,7 @@
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Checked="CkBoxKeepText_OnChecked"
-            Content="Keep text"
+            Content="{DynamicResource flowlauncher_plugin_clipboardplus_keep_text}"
             IsChecked="{Binding Settings.KeepText}"
             Unchecked="CkBoxKeepText_OnUnchecked" />
         <ComboBox
@@ -285,7 +284,7 @@
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Checked="CkBoxKeepImages_OnChecked"
-            Content="Keep images"
+            Content="{DynamicResource flowlauncher_plugin_clipboardplus_keep_images}"
             IsChecked="{Binding Settings.KeepImage}"
             Unchecked="CkBoxKeepImages_OnUnchecked" />
         <ComboBox
@@ -316,7 +315,7 @@
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Checked="CkBoxKeepFiles_OnChecked"
-            Content="Keep files"
+            Content="{DynamicResource flowlauncher_plugin_clipboardplus_keep_files}"
             IsChecked="{Binding Settings.KeepFile}"
             Unchecked="CkBoxKeepFiles_OnUnchecked" />
         <ComboBox

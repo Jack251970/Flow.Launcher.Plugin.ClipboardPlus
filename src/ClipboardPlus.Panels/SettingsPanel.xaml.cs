@@ -70,22 +70,22 @@ public partial class SettingsPanel : UserControl
         }
     }
 
-    public static readonly DependencyProperty ImageFormatStringProperty = DependencyProperty.Register(
-        nameof(ImageFormatString), typeof(string), typeof(SettingsPanel), new PropertyMetadata(default(string)));
+    public static readonly DependencyProperty CacheFormatStringProperty = DependencyProperty.Register(
+        nameof(CacheFormatString), typeof(string), typeof(SettingsPanel), new PropertyMetadata(default(string)));
 
-    public string ImageFormatString
+    public string CacheFormatString
     {
-        get { return (string)GetValue(ImageFormatStringProperty); }
-        set { SetValue(ImageFormatStringProperty, value); }
+        get { return (string)GetValue(CacheFormatStringProperty); }
+        set { SetValue(CacheFormatStringProperty, value); }
     }
 
-    public static readonly DependencyProperty ImageFormatPreviewProperty = DependencyProperty.Register(
-        nameof(ImageFormatPreview), typeof(string), typeof(SettingsPanel), new PropertyMetadata(default(string)));
+    public static readonly DependencyProperty CacheFormatPreviewProperty = DependencyProperty.Register(
+        nameof(CacheFormatPreview), typeof(string), typeof(SettingsPanel), new PropertyMetadata(default(string)));
 
-    public string ImageFormatPreview
+    public string CacheFormatPreview
     {
-        get { return (string)GetValue(ImageFormatPreviewProperty); }
-        set { SetValue(ImageFormatPreviewProperty, value); }
+        get { return (string)GetValue(CacheFormatPreviewProperty); }
+        set { SetValue(CacheFormatPreviewProperty, value); }
     }
 
     public static readonly DependencyProperty KeepTextHoursProperty = DependencyProperty.Register(
@@ -153,8 +153,8 @@ public partial class SettingsPanel : UserControl
         ClearKeywordString = settings.ClearKeyword;
         MaxDataCount = settings.MaxDataCount;
         OrderBy = settings.OrderBy;
-        ImageFormatString = settings.ImageFormat;
-        ImageFormatPreview = GetImageFormatPreview();
+        CacheFormatString = settings.CacheFormat;
+        CacheFormatPreview = GetCacheFormatPreview();
         KeepTextHours = settings.KeepTextHours;
         KeepImageHours = settings.KeepImageHours;
         KeepFileHours = settings.KeepFileHours;
@@ -173,8 +173,8 @@ public partial class SettingsPanel : UserControl
         ClearKeywordString = settings.ClearKeyword;
         MaxDataCount = settings.MaxDataCount;
         OrderBy = settings.OrderBy;
-        ImageFormatString = settings.ImageFormat;
-        ImageFormatPreview = GetImageFormatPreview();
+        CacheFormatString = settings.CacheFormat;
+        CacheFormatPreview = GetCacheFormatPreview();
         KeepTextHours = settings.KeepTextHours;
         KeepImageHours = settings.KeepImageHours;
         KeepFileHours = settings.KeepFileHours;
@@ -303,57 +303,57 @@ public partial class SettingsPanel : UserControl
 
     #endregion
 
-    #region Image Format
+    #region Cache Format
 
     private void ButtonYear_OnClick(object sender, RoutedEventArgs e)
     {
-        TextBoxImageFormat.Text += "yyyy";
+        TextBoxCacheFormat.Text += "yyyy";
     }
 
     private void ButtonMonth_OnClick(object sender, RoutedEventArgs e)
     {
-        TextBoxImageFormat.Text += "MM";
+        TextBoxCacheFormat.Text += "MM";
     }
 
     private void ButtonDay_OnClick(object sender, RoutedEventArgs e)
     {
-        TextBoxImageFormat.Text += "dd";
+        TextBoxCacheFormat.Text += "dd";
     }
 
     private void ButtonHour_OnClick(object sender, RoutedEventArgs e)
     {
-        TextBoxImageFormat.Text += "hh";
+        TextBoxCacheFormat.Text += "hh";
     }
 
     private void ButtonMinute_OnClick(object sender, RoutedEventArgs e)
     {
-        TextBoxImageFormat.Text += "mm";
+        TextBoxCacheFormat.Text += "mm";
     }
 
     private void ButtonSecond_OnClick(object sender, RoutedEventArgs e)
     {
-        TextBoxImageFormat.Text += "ss";
+        TextBoxCacheFormat.Text += "ss";
     }
 
-    private void ButtonAppName_OnClick(object sender, RoutedEventArgs e)
+    private void ButtonApp_OnClick(object sender, RoutedEventArgs e)
     {
-        TextBoxImageFormat.Text += "{app}";
+        TextBoxCacheFormat.Text += "{app}";
     }
 
     #endregion
 
-    #region Preview Format
+    #region Cache Format Preview
 
-    private string GetImageFormatPreview()
+    private string GetCacheFormatPreview()
     {
-        return StringUtils.FormatImageName(ImageFormatString, DateTime.Now, "Flow.Launcher.exe");
+        return StringUtils.FormatImageName(CacheFormatString, DateTime.Now, "Flow.Launcher.exe");
     }
 
-    private void TextBoxImageFormat_OnTextChanged(object sender, TextChangedEventArgs e)
+    private void TextBoxCacheFormat_OnTextChanged(object sender, TextChangedEventArgs e)
     {
-        ImageFormatString = TextBoxImageFormat.Text;
-        Settings.ImageFormat = ImageFormatString;
-        ImageFormatPreview = GetImageFormatPreview();
+        CacheFormatString = TextBoxCacheFormat.Text;
+        Settings.CacheFormat = CacheFormatString;
+        CacheFormatPreview = GetCacheFormatPreview();
         if (Ready)
         {
             ApplySettings();

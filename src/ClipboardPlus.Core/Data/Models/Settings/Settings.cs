@@ -10,7 +10,7 @@ public class Settings
     public CbOrders OrderBy { get; set; } = CbOrders.Score;
     public ClickAction ClickAction { get; set; } = ClickAction.Copy;
     public bool CacheImages { get; set; } = false;
-    public string ImageFormat { get; set; } = "yyyy-MM-dd-hhmmss-{app}";
+    public string CacheFormat { get; set; } = "yyyy-MM-dd-hhmmss-{app}";
     public bool KeepText { get; set; } = false;
     public RecordKeepTime KeepTextHours { get; set; } = 0;
     public bool KeepImage { get; set; } = false;

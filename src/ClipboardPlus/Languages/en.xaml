@@ -11,4 +11,26 @@
     <!--  Preview  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_words_count_prefix">Words count:&#x20;</system:String>
 
+    <!--  Settings  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword">Clear keyword:</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_max_records">Max records:</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">Order by:</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">Click action:</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">Cache images:</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_open_cache_folder">Open cache folder</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format">Format:</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_format_year">Year</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_format_month">Month</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_format_day">Day</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_format_hour">Hour</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_format_minute">Minute</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_format_second">Second</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_format_app">App</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format_preview">Preview:</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_text">Keep text:</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_images">Keep images:</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_files">Keep files:</system:String>
+
 </ResourceDictionary>

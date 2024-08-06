@@ -354,7 +354,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 clipboardData.Text = $"Image:{clipboardData.Time:yy-MM-dd-HH:mm:ss}";
                 if (Settings.CacheImages)
                 {
-                    var imageName = StringUtils.FormatImageName(Settings.ImageFormat, clipboardData.CreateTime,
+                    var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
                         clipboardData.SenderApp ?? "");
                     FileUtils.SaveImageCache(clipboardData, PathHelpers.ImageCachePath, imageName);
                 }
