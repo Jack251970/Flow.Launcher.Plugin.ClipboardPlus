@@ -10,10 +10,19 @@ namespace ClipboardPlus.Panels;
 
 public partial class SettingsPanel : UserControl
 {
+    #region Properties
+
+    // Settings
     public Settings Settings { get; set; }
+
+    // Callbacks
     private Func<Task>? ReloadDataAsync { get; set; }
     private Action? Save { get; set; }
+
+    // Initial state
     private bool Ready { get; set; } = false;
+
+    #endregion
 
     #region Dependency Properties
 
@@ -132,6 +141,8 @@ public partial class SettingsPanel : UserControl
 
     #endregion
 
+    #region Constructors
+
     public SettingsPanel(Settings settings, PluginInitContext context, Func<Task>? reloadDataAsync, Action? save)
     {
         Settings = settings;
@@ -171,6 +182,10 @@ public partial class SettingsPanel : UserControl
         Ready = true;
     }
 
+    #endregion
+
+    #region Settings
+
     private void ApplySettings(bool reload = false)
     {
         Save?.Invoke();
@@ -179,6 +194,8 @@ public partial class SettingsPanel : UserControl
             ReloadDataAsync?.Invoke();
         }
     }
+
+    #endregion
 
     #region Clear Keyword
 
