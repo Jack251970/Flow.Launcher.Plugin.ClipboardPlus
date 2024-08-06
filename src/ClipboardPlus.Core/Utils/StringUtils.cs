@@ -38,17 +38,16 @@ public static partial class StringUtils
         return Guid.NewGuid().ToString("D");
     }
 
-    public static string FormatImageName(string format, DateTime dateTime, string appname = "")
+    public static string FormatImageName(string format, DateTime dateTime, string appname = "unknown")
     {
-        if (format.Contains("{app}"))
-        {
-            format = format.Replace("{app}", "");
-        }
-        else
-        {
-            appname = "";
-        }
-        var imageName = dateTime.ToString(format) + appname;
+        var imageName = format
+            .Replace("yyyy", dateTime.ToString("yyyy"))
+            .Replace("MM", dateTime.ToString("MM"))
+            .Replace("dd", dateTime.ToString("dd"))
+            .Replace("hh", dateTime.ToString("hh"))
+            .Replace("mm", dateTime.ToString("mm"))
+            .Replace("ss", dateTime.ToString("ss"))
+            .Replace("app", appname);
         return imageName;
     }
 

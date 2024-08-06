@@ -165,6 +165,7 @@
             TextChanged="TextBoxCacheFormat_OnTextChanged"
             TextWrapping="NoWrap" />
 
+        <!--  Button Format  -->
         <StackPanel
             Grid.Row="7"
             Grid.Column="2"
@@ -173,47 +174,47 @@
             VerticalAlignment="Center"
             Orientation="Horizontal">
             <Button
-                x:Name="ButtonYear"
                 MinWidth="30"
                 Margin="0,0,3,0"
-                Click="ButtonYear_OnClick"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_year}" />
+                Click="FormatButton_OnClick"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_year}"
+                Tag="yyyy" />
             <Button
-                x:Name="ButtonMonth"
                 MinWidth="30"
                 Margin="0,0,3,0"
-                Click="ButtonMonth_OnClick"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_month}" />
+                Click="FormatButton_OnClick"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_month}"
+                Tag="MM" />
             <Button
-                x:Name="ButtonDay"
                 MinWidth="30"
                 Margin="0,0,3,0"
-                Click="ButtonDay_OnClick"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_day}" />
+                Click="FormatButton_OnClick"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_day}"
+                Tag="dd" />
             <Button
-                x:Name="ButtonHour"
                 MinWidth="30"
                 Margin="0,0,3,0"
-                Click="ButtonHour_OnClick"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_hour}" />
+                Click="FormatButton_OnClick"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_hour}"
+                Tag="hh" />
             <Button
-                x:Name="ButtonMinute"
                 MinWidth="30"
                 Margin="0,0,3,0"
-                Click="ButtonMinute_OnClick"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_minute}" />
+                Click="FormatButton_OnClick"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_minute}"
+                Tag="mm" />
             <Button
-                x:Name="ButtonSecond"
                 MinWidth="30"
                 Margin="0,0,3,0"
-                Click="ButtonSecond_OnClick"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_second}" />
+                Click="FormatButton_OnClick"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_second}"
+                Tag="ss" />
             <Button
-                x:Name="ButtonApp"
                 MinWidth="30"
                 Margin="0,0,0,0"
-                Click="ButtonApp_OnClick"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_app}" />
+                Click="FormatButton_OnClick"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_app}"
+                Tag="app" />
         </StackPanel>
 
         <!--  Cache Format Preview  -->

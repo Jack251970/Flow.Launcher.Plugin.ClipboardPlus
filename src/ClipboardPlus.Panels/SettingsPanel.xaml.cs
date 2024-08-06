@@ -303,41 +303,13 @@ public partial class SettingsPanel : UserControl
 
     #endregion
 
-    #region Cache Format
+    #region Format Buttons
 
-    private void ButtonYear_OnClick(object sender, RoutedEventArgs e)
+    private void FormatButton_OnClick(object sender, RoutedEventArgs e)
     {
-        TextBoxCacheFormat.Text += "yyyy";
-    }
-
-    private void ButtonMonth_OnClick(object sender, RoutedEventArgs e)
-    {
-        TextBoxCacheFormat.Text += "MM";
-    }
-
-    private void ButtonDay_OnClick(object sender, RoutedEventArgs e)
-    {
-        TextBoxCacheFormat.Text += "dd";
-    }
-
-    private void ButtonHour_OnClick(object sender, RoutedEventArgs e)
-    {
-        TextBoxCacheFormat.Text += "hh";
-    }
-
-    private void ButtonMinute_OnClick(object sender, RoutedEventArgs e)
-    {
-        TextBoxCacheFormat.Text += "mm";
-    }
-
-    private void ButtonSecond_OnClick(object sender, RoutedEventArgs e)
-    {
-        TextBoxCacheFormat.Text += "ss";
-    }
-
-    private void ButtonApp_OnClick(object sender, RoutedEventArgs e)
-    {
-        TextBoxCacheFormat.Text += "{app}";
+        var customString = ((Button)sender).Tag.ToString();
+        var cursorIndex = TextBoxCacheFormat.CaretIndex;
+        TextBoxCacheFormat.Text = TextBoxCacheFormat.Text.Insert(cursorIndex, customString ?? string.Empty);
     }
 
     #endregion

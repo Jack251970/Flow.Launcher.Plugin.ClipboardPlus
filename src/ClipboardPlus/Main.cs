@@ -355,7 +355,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 if (Settings.CacheImages)
                 {
                     var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
-                        clipboardData.SenderApp ?? "");
+                        clipboardData.SenderApp ?? "unknown");
                     FileUtils.SaveImageCache(clipboardData, PathHelpers.ImageCachePath, imageName);
                 }
                 var img = ClipboardMonitor.ClipboardImage;

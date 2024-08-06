@@ -56,4 +56,15 @@ public class ExtensionTest
         _testOutputHelper.WriteLine(s.GetMd5());
         Assert.True(s.GetMd5() == md5);
     }
+    
+    private static readonly DateTime _testDateTime = new(2021, 1, 1, 12, 34, 56);   
+
+    [Theory]
+    [InlineData("yyyy-MM-dd-hhmmss-app", "app", "2021-01-01-123456-app")]
+    [InlineData("app-yyyy-MM-dd", "app", "app-2021-01-01")]
+    public void TestFormatString(string format, string appname, string result)
+    {
+        var s = StringUtils.FormatImageName(format, _testDateTime, appname);
+        Assert.True(s == result);
+    }
 }
