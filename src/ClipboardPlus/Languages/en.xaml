@@ -8,6 +8,25 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_name">Clipboard+</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">Easily manage your clipboard history with support for text, images, and files</system:String>
 
+    <!--  Main  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_title">Clear all records</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_subtitle">Click to clear all records</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_title">Clear in list</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_subtitle">Clear all records in list</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_title">Clear in both list and database</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_subtitle">Clear all records in both list and database</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_title">Copy</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">Copy this record to clipboard</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_title">Pin</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_subtitle">Pin this record in list</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_title">Unpin</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_subtitle">Unpin this record in list</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_title">Delete</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_subtitle">Delete this record in both list and database</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_unknown_app">unknown</system:String>
+
     <!--  Preview  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_words_count_prefix">Words count:&#x20;</system:String>
 
@@ -17,7 +36,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">Order by:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">Click action:</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">Cache images:</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">Cache images</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_open_cache_folder">Open cache folder</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format">Format:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_format_year">Year</system:String>

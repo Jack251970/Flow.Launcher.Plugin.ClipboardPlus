@@ -8,6 +8,25 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_name">剪切板+</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">轻松管理你的剪切板历史，支持文字、图像和文件</system:String>
 
+    <!--  Main  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_title">清除所有记录</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_subtitle">点击以清除所有记录</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_title">清除列表</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_subtitle">清除列表中的所有记录</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_title">清除列表与数据库</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_subtitle">清除列表与数据库的所有记录</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_title">复制</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">复制记录至剪切板</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_title">固定</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_subtitle">固定记录至列表</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_title">取消固定</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_subtitle">从列表中取消固定</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_title">删除</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_subtitle">从列表和数据库删除记录</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_unknown_app">unknown</system:String>
+
     <!--  Preview  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_words_count_prefix">词数：</system:String>
 
@@ -17,7 +36,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">排序方式：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">点击动作：</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">缓存图片：</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">缓存图片</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_open_cache_folder">打开缓存文件夹</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format">格式：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_format_year">年</system:String>

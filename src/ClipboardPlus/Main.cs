@@ -67,10 +67,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 {
                     new Result
                     {
-                        Title = "Clear list",
-                        SubTitle = "Clear records in list",
+                        Title = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_title"),
+                        SubTitle = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_subtitle"),
                         IcoPath = PathHelpers.ListIconPath,
-                        Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uEA37"),
+                        Glyph = ResourceHelper.ListGlyph,
                         // TODO: Fix the position bug.
                         Score = 2,
                         Action = _ =>
@@ -81,10 +81,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     },
                     new Result
                     {
-                        Title = "Clear all",
-                        SubTitle = "Clear records in both list and database",
+                        Title = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_title"),
+                        SubTitle = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_subtitle"),
                         IcoPath = PathHelpers.DatabaseIconPath,
-                        Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uEE94"),
+                        Glyph = ResourceHelper.DatabaseGlyph,
                         Score = 1,
                         AsyncAction = async _ =>
                         {
@@ -116,10 +116,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             results.Add(
                 new Result
                 {
-                    Title = "Clear All Records",
-                    SubTitle = "Click to clear all records",
+                    Title = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_title"),
+                    SubTitle = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_subtitle"),
                     IcoPath = PathHelpers.ClearIconPath,
-                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE894"),
+                    Glyph = ResourceHelper.ClearGlyph,
                     Score = Settings.MaxDataCount + 1,
                     Action = _ =>
                     {
@@ -136,8 +136,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     {
         Context = context;
 
-        // init path helpers
+        // init path helpers & resource helper
         PathHelpers.Init(context);
+        ResourceHelper.Init(context);
 
         // init settings
         if (File.Exists(PathHelpers.SettingsPath))
@@ -197,11 +198,11 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             {
                 new Result
                 {
-                    Title = "Copy",
-                    SubTitle = "Copy this record to clipboard",
+                    Title = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_copy_title"),
+                    SubTitle = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_copy_subtitle"),
                     IcoPath = PathHelpers.CopyIconPath,
-                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE8C8"),
-                    Score = 4,
+                    Glyph = ResourceHelper.CopyGlyph,
+                    Score = 3,
                     Action = _ =>
                     {
                         CopyToClipboard(clipboardData);
@@ -210,23 +211,23 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 },
                 new Result
                 {
-                    Title = "Delete in list",
-                    SubTitle = "Delete this record in list",
-                    IcoPath = PathHelpers.DeleteIconPath,
-                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE74D"),
+                    Title = ResourceHelper.GetPinTitleTranslation(clipboardData.Pinned),
+                    SubTitle = ResourceHelper.GetPinSubtitleTranslation(clipboardData.Pinned),
+                    IcoPath = clipboardData.Pinned ? PathHelpers.UnpinIconPath : PathHelpers.PinIconPath,
+                    Glyph = ResourceHelper.GetPinGlyph(clipboardData.Pinned),
                     Score = 2,
                     Action = _ =>
                     {
-                        RemoveFromList(clipboardData, true);
+                        PinOneRecord(clipboardData, true);
                         return false;
                     }
                 },
                 new Result
                 {
-                    Title = "Delete in list and database",
-                    SubTitle = "Delete this record in both list and database",
+                    Title = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_delete_title"),
+                    SubTitle = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_delete_subtitle"),
                     IcoPath = PathHelpers.DeleteIconPath,
-                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE74D"),
+                    Glyph = ResourceHelper.DeleteGlyph,
                     Score = 1,
                     Action = _ =>
                     {
@@ -236,42 +237,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 },
             }
         );
-        if (clipboardData.Pinned)
-        {
-            results.Add(
-                new Result
-                {
-                    Title = "Unpin",
-                    SubTitle = "Unpin this record",
-                    IcoPath = PathHelpers.UnpinIconPath,
-                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE77A"),
-                    Score = 3,
-                    Action = _ =>
-                    {
-                        PinOneRecord(clipboardData, true);
-                        return false;
-                    }
-                }
-            );
-        }
-        else
-        {
-            results.Add(
-                new Result
-                {
-                    Title = "Pin",
-                    SubTitle = "Pin this record",
-                    IcoPath = PathHelpers.PinIconPath,
-                    Glyph = new GlyphInfo(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE718"),
-                    Score = 3,
-                    Action = _ =>
-                    {
-                        PinOneRecord(clipboardData, true);
-                        return false;
-                    }
-                }
-            );
-        }
         return results;
     }
 
@@ -279,15 +244,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     #region IPluginI18n Interface
 
-    public string GetTranslatedPluginTitle()
-    {
-        return Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_plugin_name");
-    }
+    public string GetTranslatedPluginTitle() => ResourceHelper.PluginTitle;
 
-    public string GetTranslatedPluginDescription()
-    {
-        return Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_plugin_description");
-    }
+    public string GetTranslatedPluginDescription() => ResourceHelper.PluginDescription;
 
     #endregion
 
@@ -355,7 +314,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 if (Settings.CacheImages)
                 {
                     var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
-                        clipboardData.SenderApp ?? "unknown");
+                        clipboardData.SenderApp ?? Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app"));
                     FileUtils.SaveImageCache(clipboardData, PathHelpers.ImageCachePath, imageName);
                 }
                 var img = ClipboardMonitor.ClipboardImage;
@@ -453,6 +412,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     private Result GetResultFromClipboardData(ClipboardData clipboardData)
     {
+        // TODO: Add CultureInfo support.
         var dispSubTitle = $"{clipboardData.CreateTime:yyyy-MM-dd-hh-mm-ss}: {clipboardData.SenderApp}";
         dispSubTitle = clipboardData.Pinned ? $"{PinUnicode}{dispSubTitle}" : dispSubTitle;
         return new Result
