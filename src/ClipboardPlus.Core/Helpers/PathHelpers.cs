@@ -2,30 +2,14 @@
 
 public static class PathHelpers
 {
+    #region Constants
+
     private const string SettingsFile = "settings.json";
     private const string DatabaseFile = "ClipboardPlus.db";
 
-    // plugin paths
-    public static string PluginPath { get; private set; } = string.Empty;
-    public static string ImageCachePath { get; private set; } = string.Empty;
-    public static string IconPath { get; private set; } = string.Empty;
+    #endregion
 
-    // data paths
-    public static string SettingsPath { get; private set; } = string.Empty;
-    public static string DatabasePath { get; private set; } = string.Empty;
-
-    // icons paths
-    public static string AppIconPath { get; private set; } = string.Empty;
-    public static string ClearIconPath { get; private set; } = string.Empty;
-    public static string ListIconPath { get; private set; } = string.Empty;
-    public static string DatabaseIconPath { get; private set; } = string.Empty;
-    public static string TextIconPath { get; private set; } = string.Empty;
-    public static string ImageIconPath { get; private set; } = string.Empty;
-    public static string FileIconPath { get; private set; } = string.Empty;
-    public static string CopyIconPath { get; private set; } = string.Empty;
-    public static string PinIconPath { get; private set; } = string.Empty;
-    public static string UnpinIconPath { get; private set; } = string.Empty;
-    public static string DeleteIconPath { get; private set; } = string.Empty;
+    #region Initialization
 
     private static bool IsInitialized = false;
 
@@ -61,4 +45,41 @@ public static class PathHelpers
             IsInitialized = true;
         }
     }
+
+    #endregion
+
+    #region Properties
+
+    // plugin paths
+    public static string PluginPath { get; private set; } = string.Empty;
+    public static string ImageCachePath { get; private set; } = string.Empty;
+    public static string IconPath { get; private set; } = string.Empty;
+
+    // data paths
+    public static string SettingsPath { get; private set; } = string.Empty;
+    public static string DatabasePath { get; private set; } = string.Empty;
+
+    // icons paths
+    public static string AppIconPath { get; private set; } = string.Empty;
+    public static string ClearIconPath { get; private set; } = string.Empty;
+    public static string ListIconPath { get; private set; } = string.Empty;
+    public static string DatabaseIconPath { get; private set; } = string.Empty;
+    public static string TextIconPath { get; private set; } = string.Empty;
+    public static string ImageIconPath { get; private set; } = string.Empty;
+    public static string FileIconPath { get; private set; } = string.Empty;
+    public static string CopyIconPath { get; private set; } = string.Empty;
+    public static string PinIconPath { get; private set; } = string.Empty;
+    public static string UnpinIconPath { get; private set; } = string.Empty;
+    public static string DeleteIconPath { get; private set; } = string.Empty;
+
+    #endregion
+
+    #region Methods
+
+    public static string GetPinIconPath(bool pinned)
+    {
+        return pinned ? UnpinIconPath : PinIconPath;
+    }
+
+    #endregion
 }

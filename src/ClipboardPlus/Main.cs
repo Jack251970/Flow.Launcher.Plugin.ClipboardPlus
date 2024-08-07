@@ -136,9 +136,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     {
         Context = context;
 
-        // init path helpers & resource helper
+        // init path helpers
         PathHelpers.Init(context);
-        ResourceHelper.Init(context);
 
         // init settings
         if (File.Exists(PathHelpers.SettingsPath))
@@ -193,6 +192,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             return results;
         }
 
+        var pinned = clipboardData.Pinned;
+        var pinStr = pinned ? "unpin" : "pin";
         results.AddRange(
             new[]
             {
@@ -211,10 +212,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 },
                 new Result
                 {
-                    Title = ResourceHelper.GetPinTitleTranslation(clipboardData.Pinned),
-                    SubTitle = ResourceHelper.GetPinSubtitleTranslation(clipboardData.Pinned),
-                    IcoPath = clipboardData.Pinned ? PathHelpers.UnpinIconPath : PathHelpers.PinIconPath,
-                    Glyph = ResourceHelper.GetPinGlyph(clipboardData.Pinned),
+                    Title = Context.API.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_title"),
+                    SubTitle = Context.API.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_subtitle"),
+                    IcoPath = PathHelpers.GetPinIconPath(pinned),
+                    Glyph = ResourceHelper.GetPinGlyph(pinned),
                     Score = 2,
                     Action = _ =>
                     {
@@ -244,9 +245,15 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     #region IPluginI18n Interface
 
-    public string GetTranslatedPluginTitle() => ResourceHelper.PluginTitle;
+    public string GetTranslatedPluginTitle()
+    {
+        return Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_plugin_name");
+    }
 
-    public string GetTranslatedPluginDescription() => ResourceHelper.PluginDescription;
+    public string GetTranslatedPluginDescription()
+    {
+        return Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_plugin_description");
+    }
 
     #endregion
 
