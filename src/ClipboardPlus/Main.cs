@@ -71,7 +71,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                         SubTitle = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_subtitle"),
                         IcoPath = PathHelpers.ListIconPath,
                         Glyph = ResourceHelper.ListGlyph,
-                        // TODO: Fix the position bug.
                         Score = 2,
                         Action = _ =>
                         {

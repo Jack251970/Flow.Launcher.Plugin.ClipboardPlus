@@ -16,6 +16,7 @@ public partial class SettingsPanel : UserControl
     public Settings Settings { get; set; }
 
     // Callbacks
+    // TODO: Use Context.API instead.
     private Func<Task>? ReloadDataAsync { get; set; }
     private Action? Save { get; set; }
 
