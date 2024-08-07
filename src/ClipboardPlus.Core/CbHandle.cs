@@ -121,7 +121,7 @@ public partial class CbHandle : Form
         {
             return;
         }
-        var dataObj = TaskUtils.Do(Clipboard.GetDataObject, 100, 5);
+        var dataObj = TaskUtils.SafeDo(Clipboard.GetDataObject, 100, 5);
         if (dataObj is null)
         {
             return;
@@ -349,14 +349,14 @@ public partial class CbHandle : Form
     protected override void OnHandleCreated(EventArgs e)
     {
         // Start listening for clipboard changes.
-        TaskUtils.Do(() => AddClipboardFormatListener(Handle), 100, 5);
+        TaskUtils.SafeDo(() => AddClipboardFormatListener(Handle), 100, 5);
         Ready = true;
     }
 
     protected override void OnHandleDestroyed(EventArgs e)
     {
         // Stop listening to clipboard changes.
-        TaskUtils.Do(() => RemoveClipboardFormatListener(Handle), 100, 5);
+        TaskUtils.SafeDo(() => RemoveClipboardFormatListener(Handle), 100, 5);
         base.OnHandleDestroyed(e);
     }
 

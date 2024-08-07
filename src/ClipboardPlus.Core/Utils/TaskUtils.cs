@@ -15,6 +15,18 @@ public static class TaskUtils
         );
     }
 
+    public static void SafeDo(Action action, int retryInterval, int maxAttemptCount = 3, PluginInitContext? context = null, string className = "")
+    {
+        try
+        {
+            Do(action, retryInterval, maxAttemptCount);
+        }
+        catch (Exception ex)
+        {
+            context?.API.LogException(className, "Failed to execute action", ex);
+        }
+    }
+
     public static T Do<T>(Func<T> action, int retryInterval, int maxAttemptCount = 3)
     {
         var exceptions = new List<Exception>();
@@ -36,5 +48,18 @@ public static class TaskUtils
         }
 
         throw new AggregateException(exceptions);
+    }
+
+    public static T SafeDo<T>(Func<T> action, int retryInterval, int maxAttemptCount = 3, PluginInitContext? context = null, string className = "")
+    {
+        try
+        {
+            return Do(action, retryInterval, maxAttemptCount);
+        }
+        catch (Exception ex)
+        {
+            context?.API.LogException(className, "Failed to execute action", ex);
+            return default!;
+        }
     }
 }
