@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using WindowsInput;
+using System.Globalization;
 
 namespace ClipboardPlus;
 
@@ -35,7 +36,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private Settings Settings = null!;
 
     // Settings view model
-    private SettingsViewModel ViewModel = null!;
+    private SettingsViewModel SettingsViewModel = null!;
 
     // Database helper
     private DbHelpers DbHelper = null!;
@@ -155,7 +156,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         Context.API.LogInfo(ClassName, $"{Settings}");
 
         // init settings viewmodel
-        ViewModel = new SettingsViewModel(context, Settings, ReloadDataAsync, Save);
+        SettingsViewModel = new SettingsViewModel(context, Settings, ReloadDataAsync, Save);
 
         // init database & records
         DbHelper = new DbHelpers(PathHelpers.DatabasePath);
@@ -259,6 +260,11 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         return Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_plugin_description");
     }
 
+    public void OnCultureInfoChanged(CultureInfo newCulture)
+    {
+        SettingsViewModel.OnCultureInfoChanged(newCulture);
+    }
+
     #endregion
 
     #region ISavable Interface
@@ -276,7 +282,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     public Control CreateSettingPanel()
     {
         Context.API.LogWarn(ClassName, $"{Settings}");
-        return new SettingsPanel(ViewModel);
+        return new SettingsPanel(SettingsViewModel);
     }
 
     #endregion
@@ -599,6 +605,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             ClipboardMonitor.Dispose();
             ClipboardMonitor = null!;
             Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
+            SettingsViewModel.Dispose();
+            SettingsViewModel = null!;
+            Context.API.LogDebug(ClassName, $"Disposed SettingsViewModel");
             Settings = null!;
             RecordsList = null!;
             Context.API.LogDebug(ClassName, $"Disposed Other Components");

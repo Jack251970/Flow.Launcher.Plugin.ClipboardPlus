@@ -4,10 +4,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using System;
 using System.Runtime.CompilerServices;
+using System.Globalization;
 
 namespace ClipboardPlus.Panels.ViewModels;
 
-public class SettingsViewModel : BaseModel
+public class SettingsViewModel : BaseModel, IDisposable
 {
     public Settings Settings { get; set; }
 
@@ -34,6 +35,11 @@ public class SettingsViewModel : BaseModel
         InitializeClickActionSelection();
         InitializeCacheFormatPreview();
         InitializeKeepTimeSelection();
+    }
+
+    public void OnCultureInfoChanged(CultureInfo newCulture)
+    {
+
     }
 
     protected void OnPropertyChanged(bool reload, [CallerMemberName] string propertyName = "")
@@ -259,6 +265,32 @@ public class SettingsViewModel : BaseModel
         _selectedTextKeepTime = TextKeepTimes.First(x => x.Value == Settings.TextKeepTime);
         _selectedImagesKeepTime = ImagesKeepTimes.First(x => x.Value == Settings.ImagesKeepTime);
         _selectedFilesKeepTime = FilesKeepTimes.First(x => x.Value == Settings.FilesKeepTime);
+    }
+
+    #endregion
+
+    #region IDisposable Interface
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            Settings = null!;
+            Context = null!;
+            ReloadDataAsync = null!;
+            SaveSettings = null!;
+            RecordOrders = null!;
+            ClickActions = null!;
+            TextKeepTimes = null!;
+            ImagesKeepTimes = null!;
+            FilesKeepTimes = null!;
+        }
     }
 
     #endregion

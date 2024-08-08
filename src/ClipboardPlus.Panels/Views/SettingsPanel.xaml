@@ -67,7 +67,7 @@
             Minimum="100"
             Value="{Binding MaxRecords, Mode=TwoWay}" />
 
-        <!--  Order by  -->
+        <!--  Record Order  -->
         <TextBlock
             Grid.Row="2"
             Grid.Column="0"
