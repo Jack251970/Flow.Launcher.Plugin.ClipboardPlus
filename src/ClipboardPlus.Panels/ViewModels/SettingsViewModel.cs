@@ -17,7 +17,7 @@ public class SettingsViewModel : BaseModel, IDisposable
     private Func<Task>? ReloadDataAsync { get; set; }
     private Action? SaveSettings { get; set; }
 
-    public SettingsViewModel(PluginInitContext context, Settings settings, Func<Task> func, Action action)
+    public SettingsViewModel(PluginInitContext? context, Settings settings, Func<Task>? func, Action? action)
     {
         Context = context;
         Settings = settings;
@@ -114,11 +114,11 @@ public class SettingsViewModel : BaseModel, IDisposable
 
     private void ReloadRecordOrders()
     {
-        var selectedValue = SelectedRecordOrder.Value;
+        _recordOrders = EnumBindingModel<RecordOrder>.CreateList(Context);
 
-        RecordOrders = EnumBindingModel<RecordOrder>.CreateList(Context);
+        SelectedRecordOrder = RecordOrders.First(x => x.Value == Settings.RecordOrder);
 
-        SelectedRecordOrder = RecordOrders.First(x => x.Value == selectedValue);
+        OnPropertyChanged(nameof(RecordOrders));
     }
 
     #endregion
@@ -159,11 +159,11 @@ public class SettingsViewModel : BaseModel, IDisposable
 
     private void ReloadClickActions()
     {
-        var selectedValue = SelectedClickAction.Value;
+        _clickActions = EnumBindingModel<ClickAction>.CreateList(Context);
 
-        ClickActions = EnumBindingModel<ClickAction>.CreateList(Context);
+        SelectedClickAction = ClickActions.First(x => x.Value == Settings.ClickAction);
 
-        SelectedClickAction = ClickActions.First(x => x.Value == selectedValue);
+        OnPropertyChanged(nameof(ClickActions));
     }
 
     #endregion
@@ -350,17 +350,17 @@ public class SettingsViewModel : BaseModel, IDisposable
 
     private void ReloadKeepTimes()
     {
-        var selectedTextKeepTime = SelectedTextKeepTime.Value;
-        var selectedImagesKeepTime = SelectedImagesKeepTime.Value;
-        var selectedFilesKeepTime = SelectedFilesKeepTime.Value;
+        _textKeepTimes = EnumBindingModel<RecordKeepTime>.CreateList(Context);
+        _imagesKeepTimes = EnumBindingModel<RecordKeepTime>.CreateList(Context);
+        _filesKeepTimes = EnumBindingModel<RecordKeepTime>.CreateList(Context);
 
-        TextKeepTimes = EnumBindingModel<RecordKeepTime>.CreateList(Context);
-        ImagesKeepTimes = EnumBindingModel<RecordKeepTime>.CreateList(Context);
-        FilesKeepTimes = EnumBindingModel<RecordKeepTime>.CreateList(Context);
+        SelectedTextKeepTime = TextKeepTimes.First(x => x.Value == Settings.TextKeepTime);
+        SelectedImagesKeepTime = ImagesKeepTimes.First(x => x.Value == Settings.ImagesKeepTime);
+        SelectedFilesKeepTime = FilesKeepTimes.First(x => x.Value == Settings.FilesKeepTime);
 
-        SelectedTextKeepTime = TextKeepTimes.First(x => x.Value == selectedTextKeepTime);
-        SelectedImagesKeepTime = ImagesKeepTimes.First(x => x.Value == selectedImagesKeepTime);
-        SelectedFilesKeepTime = FilesKeepTimes.First(x => x.Value == selectedFilesKeepTime);
+        OnPropertyChanged(nameof(TextKeepTimes));
+        OnPropertyChanged(nameof(ImagesKeepTimes));
+        OnPropertyChanged(nameof(FilesKeepTimes));
     }
 
     #endregion

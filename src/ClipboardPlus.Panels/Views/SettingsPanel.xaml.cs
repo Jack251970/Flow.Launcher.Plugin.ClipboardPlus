@@ -9,7 +9,7 @@ public partial class SettingsPanel : UserControl
     #region Properties
 
     // View model
-    private readonly SettingsViewModel ViewModel;
+    public readonly SettingsViewModel ViewModel;
 
     #endregion
 

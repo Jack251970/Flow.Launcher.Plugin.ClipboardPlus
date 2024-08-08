@@ -8,15 +8,22 @@
     xmlns:panels="clr-namespace:ClipboardPlus.Panels.Views;assembly=ClipboardPlus.Panels"
     Title="MainWindow"
     Width="800"
-    Height="450"
+    Height="500"
     mc:Ignorable="d">
     <Grid>
         <TabControl SelectedIndex="1">
             <TabItem Header="Settings">
-                <panels:SettingsPanel x:Name="SettingsPanel" />
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Button Click="Button_Click" Content="Click to envoke OnCultureInfoChanged event" />
+                    <panels:SettingsPanel x:Name="SettingsPanel" Grid.Row="1" />
+                </Grid>
             </TabItem>
             <TabItem Header="Preview">
-                <panels:PreviewPanel />
+                <panels:PreviewPanel x:Name="PreviewPanel" />
             </TabItem>
         </TabControl>
     </Grid>
