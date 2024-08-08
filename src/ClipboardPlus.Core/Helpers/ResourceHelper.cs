@@ -12,10 +12,10 @@ public static class ResourceHelper
 
     #region Methods
 
-    private static BitmapImage AppIcon => new(new Uri(PathHelpers.AppIconPath, UriKind.RelativeOrAbsolute));
-    private static BitmapImage TextIcon => new(new Uri(PathHelpers.TextIconPath, UriKind.RelativeOrAbsolute));
-    private static BitmapImage FilesIcon => new(new Uri(PathHelpers.FileIconPath, UriKind.RelativeOrAbsolute));
-    private static BitmapImage ImageIcon => new(new Uri(PathHelpers.ImageIconPath, UriKind.RelativeOrAbsolute));
+    private static BitmapImage AppIcon => new(new Uri(PathHelper.AppIconPath, UriKind.RelativeOrAbsolute));
+    private static BitmapImage TextIcon => new(new Uri(PathHelper.TextIconPath, UriKind.RelativeOrAbsolute));
+    private static BitmapImage FilesIcon => new(new Uri(PathHelper.FileIconPath, UriKind.RelativeOrAbsolute));
+    private static BitmapImage ImageIcon => new(new Uri(PathHelper.ImageIconPath, UriKind.RelativeOrAbsolute));
 
     public static BitmapImage GetIcon(DataType type)
     {

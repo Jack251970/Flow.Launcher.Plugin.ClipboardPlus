@@ -4,7 +4,7 @@ using System.Data;
 
 namespace ClipboardPlus.Core.Helpers;
 
-public class DbHelpers : IDisposable
+public class DbHelper : IDisposable
 {
     #region Fields
 
@@ -94,12 +94,12 @@ public class DbHelpers : IDisposable
 
     #region Constructors
 
-    public DbHelpers(SqliteConnection connection)
+    public DbHelper(SqliteConnection connection)
     {
         Connection = connection;
     }
 
-    public DbHelpers(
+    public DbHelper(
         string dbPath,
         SqliteCacheMode cache = SqliteCacheMode.Shared,
         SqliteOpenMode mode = SqliteOpenMode.ReadWriteCreate,

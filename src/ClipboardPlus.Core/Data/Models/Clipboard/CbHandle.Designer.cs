@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace ClipboardPlus.Core;
+namespace ClipboardPlus.Core.Data.Models;
 
-partial class CbHandle
+public partial class CbHandle
 {
     /// <summary>
     /// Required designer variable.

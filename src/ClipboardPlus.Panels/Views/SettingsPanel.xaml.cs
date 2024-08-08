@@ -46,7 +46,7 @@ public partial class SettingsPanel : UserControl
     {
         Process.Start(new ProcessStartInfo()
         {
-            FileName = PathHelpers.ImageCachePath,
+            FileName = PathHelper.ImageCachePath,
             UseShellExecute = true,
             Verb = "open"
         });

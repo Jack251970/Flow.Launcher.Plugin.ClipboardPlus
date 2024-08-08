@@ -8,7 +8,7 @@
 using System.Runtime.InteropServices;
 using Timer = System.Windows.Forms.Timer;
 
-namespace ClipboardPlus.Core;
+namespace ClipboardPlus.Core.Data.Models;
 
 public class CbMonitor : IDisposable
 {

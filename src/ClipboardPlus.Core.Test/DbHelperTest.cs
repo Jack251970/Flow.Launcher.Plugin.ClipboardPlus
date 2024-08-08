@@ -77,7 +77,7 @@ public class DbHelperTest
     [Fact]
     public async Task TestCreateDb()
     {
-        var helper = new DbHelpers(
+        var helper = new DbHelper(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Shared
@@ -95,7 +95,7 @@ public class DbHelperTest
     {
         // test text
         var exampleTextRecord = GetRandomClipboardData();
-        var helper = new DbHelpers(
+        var helper = new DbHelper(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Shared
@@ -115,7 +115,7 @@ public class DbHelperTest
     [InlineData(2, "2023-05-28 11:35:00.1+08:00", 72)]
     public async Task TestDeleteRecordBefore(int type, string creatTime, int keepTime)
     {
-        var helper = new DbHelpers(
+        var helper = new DbHelper(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Shared

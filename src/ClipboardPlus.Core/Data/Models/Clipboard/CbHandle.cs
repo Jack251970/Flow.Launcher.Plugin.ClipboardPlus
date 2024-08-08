@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace ClipboardPlus.Core;
+namespace ClipboardPlus.Core.Data.Models;
 
 public partial class CbHandle : Form
 {

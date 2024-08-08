@@ -30,7 +30,7 @@ public class Settings
     public void Save()
     {
         var options = new JsonSerializerOptions { WriteIndented = true };
-        File.WriteAllText(PathHelpers.SettingsPath, JsonSerializer.Serialize(this, options));
+        File.WriteAllText(PathHelper.SettingsPath, JsonSerializer.Serialize(this, options));
     }
 
     public static Settings Load(string filePath)

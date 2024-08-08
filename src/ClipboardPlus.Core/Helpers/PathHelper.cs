@@ -1,6 +1,6 @@
 ﻿namespace ClipboardPlus.Core.Helpers;
 
-public static class PathHelpers
+public static class PathHelper
 {
     #region Constants
 
