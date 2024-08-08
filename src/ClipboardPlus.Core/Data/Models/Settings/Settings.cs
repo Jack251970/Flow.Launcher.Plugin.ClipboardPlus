@@ -12,19 +12,19 @@ public class Settings
     public bool CacheImages { get; set; } = false;
     public string CacheFormat { get; set; } = "yyyy-MM-dd-hhmmss-app";
     public bool KeepText { get; set; } = false;
-    public RecordKeepTime TextKeepTime { get; set; } = 0;
+    public KeepTime TextKeepTime { get; set; } = 0;
     public bool KeepImages { get; set; } = false;
-    public RecordKeepTime ImagesKeepTime { get; set; } = 0;
+    public KeepTime ImagesKeepTime { get; set; } = 0;
     public bool KeepFiles { get; set; } = false;
-    public RecordKeepTime FilesKeepTime { get; set; } = 0;
+    public KeepTime FilesKeepTime { get; set; } = 0;
 
     [JsonIgnore]
-    public List<Tuple<CbContentType, RecordKeepTime>> KeepTimePairs => 
+    public List<Tuple<DataType, KeepTime>> KeepTimePairs => 
         new ()
         {
-            new(CbContentType.Text, TextKeepTime),
-            new(CbContentType.Image, ImagesKeepTime),
-            new(CbContentType.Files, FilesKeepTime),
+            new(DataType.Text, TextKeepTime),
+            new(DataType.Image, ImagesKeepTime),
+            new(DataType.Files, FilesKeepTime),
         };
 
     public void Save()

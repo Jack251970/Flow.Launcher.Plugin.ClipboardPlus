@@ -1,6 +1,6 @@
 ﻿namespace ClipboardPlus.Core.Data.Enums;
 
-public enum CbContentType
+public enum DataType
 {
     Text = 0,
     Image = 1,

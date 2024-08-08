@@ -322,11 +322,11 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         // process clipboard data
         switch (e.ContentType)
         {
-            case CbContentType.Text:
+            case DataType.Text:
                 clipboardData.Text = ClipboardMonitor.ClipboardText;
                 Context.API.LogDebug(ClassName, "Processed text change");
                 break;
-            case CbContentType.Image:
+            case DataType.Image:
                 clipboardData.Text = $"Image:{clipboardData.Time:yy-MM-dd-HH:mm:ss}";
                 if (Settings.CacheImages)
                 {
@@ -342,13 +342,13 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 }
                 Context.API.LogDebug(ClassName, "Processed image change");
                 break;
-            case CbContentType.Files:
+            case DataType.Files:
                 var t = ClipboardMonitor.ClipboardFiles.ToArray();
                 clipboardData.Data = t;
                 clipboardData.Text = string.Join("\n", t.Take(2)) + "\n...";
                 Context.API.LogDebug(ClassName, "Processed file change");
                 break;
-            case CbContentType.Other:
+            case DataType.Other:
                 // TODO: Handle other formats.
                 Context.API.LogDebug(ClassName, "Other change listened, skip");
                 return;
@@ -369,9 +369,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
         // add to database if needed
         var needAddDatabase =
-            Settings.KeepText && clipboardData.Type == CbContentType.Text
-            || Settings.KeepImages && clipboardData.Type == CbContentType.Image
-            || Settings.KeepFiles && clipboardData.Type == CbContentType.Files;
+            Settings.KeepText && clipboardData.Type == DataType.Text
+            || Settings.KeepImages && clipboardData.Type == DataType.Image
+            || Settings.KeepFiles && clipboardData.Type == DataType.Files;
         if (needAddDatabase)
         {
             await DbHelper.AddOneRecordAsync(clipboardData);
@@ -520,7 +520,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 var ctime = new DateTimeOffset(clipboardData.CreateTime);
                 score = Convert.ToInt32(ctime.ToUnixTimeSeconds().ToString()[^9..]);
                 break;
-            case RecordOrder.Type:
+            case RecordOrder.DataType:
                 score = (int)clipboardData.Type;
                 break;
             case RecordOrder.SourceApplication:

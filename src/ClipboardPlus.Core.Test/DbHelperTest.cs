@@ -19,13 +19,13 @@ public class DbHelperTest
         {
             HashId = StringUtils.GetGuid(),
             Text = "Text",
-            Type = CbContentType.Text,
+            Type = DataType.Text,
             Data = "Test Data",
             SenderApp = "Source.exe",
             DisplayTitle = "Test Display Title",
             IconPath = _defaultIconPath,
             Icon = new BitmapImage(new Uri(_defaultIconPath, UriKind.RelativeOrAbsolute)),
-            Glyph = ResourceHelper.GetGlyph(CbContentType.Text),
+            Glyph = ResourceHelper.GetGlyph(DataType.Text),
             PreviewImagePath = _defaultIconPath,
             Score = 241,
             InitScore = 1,
@@ -44,7 +44,7 @@ public class DbHelperTest
     public ClipboardData GetRandomClipboardData()
     {
         var rand = new Random();
-        var type = (CbContentType)rand.Next(3);
+        var type = (DataType)rand.Next(3);
         var data = new ClipboardData()
         {
             HashId = StringUtils.GetGuid(),
@@ -63,11 +63,11 @@ public class DbHelperTest
             Pinned = false,
             CreateTime = DateTime.Now,
         };
-        if (data.Type == CbContentType.Image)
+        if (data.Type == DataType.Image)
         {
             data.Data = _defaultImage;
         }
-        else if (data.Type == CbContentType.Files)
+        else if (data.Type == DataType.Files)
         {
             data.Data = new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10) };
         }
@@ -139,7 +139,7 @@ public class DbHelperTest
         await helper.DeleteRecordByKeepTimeAsync(type, keepTime);
 
         var recordsAfterDelete = await helper.GetAllRecordAsync();
-        foreach (var record in recordsAfterDelete.Where(r => r.Type == (CbContentType)type))
+        foreach (var record in recordsAfterDelete.Where(r => r.Type == (DataType)type))
         {
             var expTime = record.CreateTime + TimeSpan.FromHours(keepTime);
             if (expTime < now)

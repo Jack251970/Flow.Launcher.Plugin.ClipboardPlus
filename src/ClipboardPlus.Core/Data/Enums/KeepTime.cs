@@ -2,7 +2,7 @@
 
 namespace ClipboardPlus.Core.Data.Enums;
 
-public enum RecordKeepTime
+public enum KeepTime
 {
     [Description("flowlauncher_plugin_clipboardplus_record_keep_time_always")]
     Always = 0,

@@ -60,7 +60,7 @@ public class Record
 
     public static ClipboardData ToClipboardData(Record record)
     {
-        var type = (CbContentType)record.ContentType;
+        var type = (DataType)record.ContentType;
         var clipboardData = new ClipboardData
         {
             HashId = record.HashId,
@@ -82,12 +82,12 @@ public class Record
         };
         switch (type)
         {
-            case CbContentType.Text:
+            case DataType.Text:
                 break;
-            case CbContentType.Image:
+            case DataType.Image:
                 clipboardData.Data = record.DataMd5.ToImage();
                 break;
-            case CbContentType.Files:
+            case DataType.Files:
                 clipboardData.Data = record.DataMd5.Split('\n');
                 break;
             default:

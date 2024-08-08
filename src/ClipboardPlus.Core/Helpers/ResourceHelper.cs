@@ -17,13 +17,13 @@ public static class ResourceHelper
     private static BitmapImage FilesIcon => new(new Uri(PathHelpers.FileIconPath, UriKind.RelativeOrAbsolute));
     private static BitmapImage ImageIcon => new(new Uri(PathHelpers.ImageIconPath, UriKind.RelativeOrAbsolute));
 
-    public static BitmapImage GetIcon(CbContentType type)
+    public static BitmapImage GetIcon(DataType type)
     {
         return type switch
         {
-            CbContentType.Text => TextIcon,
-            CbContentType.Files => FilesIcon,
-            CbContentType.Image => ImageIcon,
+            DataType.Text => TextIcon,
+            DataType.Files => FilesIcon,
+            DataType.Image => ImageIcon,
             _ => AppIcon
         };
     }
@@ -60,13 +60,13 @@ public static class ResourceHelper
     private static GlyphInfo FilesGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE7C3");
     private static GlyphInfo ImageGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE91B");
 
-    public static GlyphInfo GetGlyph(CbContentType type)
+    public static GlyphInfo GetGlyph(DataType type)
     {
         return type switch
         {
-            CbContentType.Text => TextGlyph,
-            CbContentType.Files => FilesGlyph,
-            CbContentType.Image => ImageGlyph,
+            DataType.Text => TextGlyph,
+            DataType.Files => FilesGlyph,
+            DataType.Image => ImageGlyph,
             _ => UnknownGlyph
         };
     }

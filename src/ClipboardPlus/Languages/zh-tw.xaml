@@ -56,7 +56,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_score">分數</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">剏建時間</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_source_application">源應用</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_type">類彆</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_data_type">數據類型</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action_copy">複製</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action_copy_paste">複製竝粘貼</system:String>

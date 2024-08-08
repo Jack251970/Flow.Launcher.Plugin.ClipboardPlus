@@ -165,7 +165,7 @@ public class CbMonitor : IDisposable
         ObserveLastEntry = true;
     }
 
-    internal void Invoke(object? content, CbContentType type, SourceApplication source)
+    internal void Invoke(object? content, DataType type, SourceApplication source)
     {
         ClipboardChanged?.Invoke(this, new ClipboardChangedEventArgs(content, type, source));
     }
@@ -205,7 +205,7 @@ public class CbMonitor : IDisposable
     {
         public ClipboardChangedEventArgs(
             object? content,
-            CbContentType contentType,
+            DataType contentType,
             SourceApplication source
         )
         {
@@ -231,7 +231,7 @@ public class CbMonitor : IDisposable
         /// <summary>
         /// Gets the currently copied clipboard content-type.
         /// </summary>
-        public CbContentType ContentType { get; }
+        public DataType ContentType { get; }
 
         /// <summary>
         /// Gets the application from where the

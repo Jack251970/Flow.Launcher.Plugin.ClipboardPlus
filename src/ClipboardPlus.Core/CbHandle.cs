@@ -139,7 +139,7 @@ public partial class CbHandle : Form
 
                 CbMonitorInstance.Invoke(
                     capturedImage,
-                    CbContentType.Image,
+                    DataType.Image,
                     new SourceApplication(
                         GetForegroundWindow(),
                         CbMonitorInstance.ForegroundWindowHandle(),
@@ -163,7 +163,7 @@ public partial class CbHandle : Form
 
                 CbMonitorInstance.Invoke(
                     capturedText,
-                    CbContentType.Text,
+                    DataType.Text,
                     new SourceApplication(
                         GetForegroundWindow(),
                         CbMonitorInstance.ForegroundWindowHandle(),
@@ -190,7 +190,7 @@ public partial class CbHandle : Form
 
                     CbMonitorInstance.Invoke(
                         dataObj,
-                        CbContentType.Other,
+                        DataType.Other,
                         new SourceApplication(
                             GetForegroundWindow(),
                             CbMonitorInstance.ForegroundWindowHandle(),
@@ -209,7 +209,7 @@ public partial class CbHandle : Form
 
                     CbMonitorInstance.Invoke(
                         capturedFiles,
-                        CbContentType.Files,
+                        DataType.Files,
                         new SourceApplication(
                             GetForegroundWindow(),
                             CbMonitorInstance.ForegroundWindowHandle(),
@@ -228,7 +228,7 @@ public partial class CbHandle : Form
             {
                 CbMonitorInstance.Invoke(
                     dataObj,
-                    CbContentType.Other,
+                    DataType.Other,
                     new SourceApplication(
                         GetForegroundWindow(),
                         CbMonitorInstance.ForegroundWindowHandle(),

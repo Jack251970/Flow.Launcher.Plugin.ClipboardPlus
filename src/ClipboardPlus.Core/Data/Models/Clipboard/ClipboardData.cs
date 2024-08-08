@@ -13,7 +13,7 @@ public struct ClipboardData : IEquatable<ClipboardData>
     public required BitmapImage Icon;
     public required GlyphInfo Glyph;
     public required string PreviewImagePath; // actually not used for now
-    public required CbContentType Type;
+    public required DataType Type;
     public required int Score;
     public required int InitScore;
     public required DateTime Time;
@@ -57,9 +57,9 @@ public struct ClipboardData : IEquatable<ClipboardData>
     {
         return Type switch
         {
-            CbContentType.Text => Data as string,
-            CbContentType.Image => Data is not Image im ? Icon.ToBase64() : im.ToBase64(),
-            CbContentType.Files => Data is string[] t ? string.Join('\n', t) : Data as string,
+            DataType.Text => Data as string,
+            DataType.Image => Data is not Image im ? Icon.ToBase64() : im.ToBase64(),
+            DataType.Files => Data is string[] t ? string.Join('\n', t) : Data as string,
             _ => throw new NotImplementedException(
                 "Data to string for type not in Text, Image, Files are not implemented now."
             ),  // don't process others

@@ -13,6 +13,6 @@ public enum RecordOrder
     [Description("flowlauncher_plugin_clipboardplus_record_order_source_application")]
     SourceApplication = 2,
 
-    [Description("flowlauncher_plugin_clipboardplus_record_order_type")]
-    Type = 3,
+    [Description("flowlauncher_plugin_clipboardplus_record_order_data_type")]
+    DataType = 3,
 }

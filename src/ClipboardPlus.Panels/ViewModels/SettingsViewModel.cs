@@ -232,8 +232,8 @@ public class SettingsViewModel : BaseModel, IDisposable
         }
     }
 
-    private IReadOnlyList<EnumBindingModel<RecordKeepTime>> _textKeepTimes;
-    public IReadOnlyList<EnumBindingModel<RecordKeepTime>> TextKeepTimes
+    private IReadOnlyList<EnumBindingModel<KeepTime>> _textKeepTimes;
+    public IReadOnlyList<EnumBindingModel<KeepTime>> TextKeepTimes
     {
         get => _textKeepTimes;
         set
@@ -243,8 +243,8 @@ public class SettingsViewModel : BaseModel, IDisposable
         }
     }
 
-    private EnumBindingModel<RecordKeepTime> _selectedTextKeepTime;
-    public EnumBindingModel<RecordKeepTime> SelectedTextKeepTime
+    private EnumBindingModel<KeepTime> _selectedTextKeepTime;
+    public EnumBindingModel<KeepTime> SelectedTextKeepTime
     {
         get => _selectedTextKeepTime;
         set
@@ -269,8 +269,8 @@ public class SettingsViewModel : BaseModel, IDisposable
         }
     }
 
-    private IReadOnlyList<EnumBindingModel<RecordKeepTime>> _imagesKeepTimes;
-    public IReadOnlyList<EnumBindingModel<RecordKeepTime>> ImagesKeepTimes
+    private IReadOnlyList<EnumBindingModel<KeepTime>> _imagesKeepTimes;
+    public IReadOnlyList<EnumBindingModel<KeepTime>> ImagesKeepTimes
     {
         get => _imagesKeepTimes;
         set
@@ -280,8 +280,8 @@ public class SettingsViewModel : BaseModel, IDisposable
         }
     }
 
-    private EnumBindingModel<RecordKeepTime> _selectedImagesKeepTime;
-    public EnumBindingModel<RecordKeepTime> SelectedImagesKeepTime
+    private EnumBindingModel<KeepTime> _selectedImagesKeepTime;
+    public EnumBindingModel<KeepTime> SelectedImagesKeepTime
     {
         get => _selectedImagesKeepTime;
         set
@@ -306,8 +306,8 @@ public class SettingsViewModel : BaseModel, IDisposable
         }
     }
 
-    private IReadOnlyList<EnumBindingModel<RecordKeepTime>> _filesKeepTimes;
-    public IReadOnlyList<EnumBindingModel<RecordKeepTime>> FilesKeepTimes
+    private IReadOnlyList<EnumBindingModel<KeepTime>> _filesKeepTimes;
+    public IReadOnlyList<EnumBindingModel<KeepTime>> FilesKeepTimes
     {
         get => _filesKeepTimes;
         set
@@ -317,8 +317,8 @@ public class SettingsViewModel : BaseModel, IDisposable
         }
     }
 
-    private EnumBindingModel<RecordKeepTime> _selectedFilesKeepTime;
-    public EnumBindingModel<RecordKeepTime> SelectedFilesKeepTime
+    private EnumBindingModel<KeepTime> _selectedFilesKeepTime;
+    public EnumBindingModel<KeepTime> SelectedFilesKeepTime
     {
         get => _selectedFilesKeepTime;
         set
@@ -339,9 +339,9 @@ public class SettingsViewModel : BaseModel, IDisposable
         nameof(_selectedFilesKeepTime))]
     public void InitializeKeepTimeSelection()
     {
-        _textKeepTimes = EnumBindingModel<RecordKeepTime>.CreateList(Context);
-        _imagesKeepTimes = EnumBindingModel<RecordKeepTime>.CreateList(Context);
-        _filesKeepTimes = EnumBindingModel<RecordKeepTime>.CreateList(Context);
+        _textKeepTimes = EnumBindingModel<KeepTime>.CreateList(Context);
+        _imagesKeepTimes = EnumBindingModel<KeepTime>.CreateList(Context);
+        _filesKeepTimes = EnumBindingModel<KeepTime>.CreateList(Context);
 
         _selectedTextKeepTime = _textKeepTimes.First(x => x.Value == Settings.TextKeepTime);
         _selectedImagesKeepTime = _imagesKeepTimes.First(x => x.Value == Settings.ImagesKeepTime);
@@ -350,9 +350,9 @@ public class SettingsViewModel : BaseModel, IDisposable
 
     private void ReloadKeepTimes()
     {
-        _textKeepTimes = EnumBindingModel<RecordKeepTime>.CreateList(Context);
-        _imagesKeepTimes = EnumBindingModel<RecordKeepTime>.CreateList(Context);
-        _filesKeepTimes = EnumBindingModel<RecordKeepTime>.CreateList(Context);
+        _textKeepTimes = EnumBindingModel<KeepTime>.CreateList(Context);
+        _imagesKeepTimes = EnumBindingModel<KeepTime>.CreateList(Context);
+        _filesKeepTimes = EnumBindingModel<KeepTime>.CreateList(Context);
 
         SelectedTextKeepTime = TextKeepTimes.First(x => x.Value == Settings.TextKeepTime);
         SelectedImagesKeepTime = ImagesKeepTimes.First(x => x.Value == Settings.ImagesKeepTime);

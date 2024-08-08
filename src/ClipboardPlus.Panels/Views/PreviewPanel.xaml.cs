@@ -68,13 +68,13 @@ public partial class PreviewPanel : UserControl
     {
         switch (ClipboardData.Type)
         {
-            case CbContentType.Text:
+            case DataType.Text:
                 SetText(ClipboardData.Text);
                 break;
-            case CbContentType.Files:
+            case DataType.Files:
                 SetText(ClipboardData.Data as string[] ?? Array.Empty<string>());
                 break;
-            case CbContentType.Image:
+            case DataType.Image:
                 SetImage();
                 break;
             default:
