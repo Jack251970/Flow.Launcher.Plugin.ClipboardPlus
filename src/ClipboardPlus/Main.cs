@@ -69,8 +69,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 {
                     new Result
                     {
-                        Title = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_title"),
-                        SubTitle = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_subtitle"),
+                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_title"),
+                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_subtitle"),
                         IcoPath = PathHelper.ListIconPath,
                         Glyph = ResourceHelper.ListGlyph,
                         Score = 2,
@@ -82,8 +82,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     },
                     new Result
                     {
-                        Title = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_title"),
-                        SubTitle = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_subtitle"),
+                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_title"),
+                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_subtitle"),
                         IcoPath = PathHelper.DatabaseIconPath,
                         Glyph = ResourceHelper.DatabaseGlyph,
                         Score = 1,
@@ -117,8 +117,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             results.Add(
                 new Result
                 {
-                    Title = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_title"),
-                    SubTitle = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_subtitle"),
+                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_title"),
+                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_subtitle"),
                     IcoPath = PathHelper.ClearIconPath,
                     Glyph = ResourceHelper.ClearGlyph,
                     Score = Settings.MaxRecords + 1,
@@ -203,8 +203,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             {
                 new Result
                 {
-                    Title = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_copy_title"),
-                    SubTitle = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_copy_subtitle"),
+                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_title"),
+                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_subtitle"),
                     IcoPath = PathHelper.CopyIconPath,
                     Glyph = ResourceHelper.CopyGlyph,
                     Score = 3,
@@ -216,8 +216,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 },
                 new Result
                 {
-                    Title = Context.API.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_title"),
-                    SubTitle = Context.API.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_subtitle"),
+                    Title = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_title"),
+                    SubTitle = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_subtitle"),
                     IcoPath = PathHelper.GetPinIconPath(pinned),
                     Glyph = ResourceHelper.GetPinGlyph(pinned),
                     Score = 2,
@@ -229,8 +229,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 },
                 new Result
                 {
-                    Title = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_delete_title"),
-                    SubTitle = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_delete_subtitle"),
+                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_delete_title"),
+                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_delete_subtitle"),
                     IcoPath = PathHelper.DeleteIconPath,
                     Glyph = ResourceHelper.DeleteGlyph,
                     Score = 1,
@@ -251,12 +251,12 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     public string GetTranslatedPluginTitle()
     {
-        return Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_plugin_name");
+        return Context.GetTranslation("flowlauncher_plugin_clipboardplus_plugin_name");
     }
 
     public string GetTranslatedPluginDescription()
     {
-        return Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_plugin_description");
+        return Context.GetTranslation("flowlauncher_plugin_clipboardplus_plugin_description");
     }
 
     public void OnCultureInfoChanged(CultureInfo newCulture)
@@ -330,7 +330,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 if (Settings.CacheImages)
                 {
                     var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
-                        clipboardData.SenderApp ?? Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app"));
+                        clipboardData.SenderApp ?? Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app"));
                     FileUtils.SaveImageCache(clipboardData, PathHelper.ImageCachePath, imageName);
                 }
                 var img = ClipboardMonitor.ClipboardImage;

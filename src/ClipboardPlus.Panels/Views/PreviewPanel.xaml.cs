@@ -15,7 +15,7 @@ public partial class PreviewPanel : UserControl
     private ClipboardData ClipboardData;
 
     // Words count prefix
-    private string WordsCountPrefix => Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_words_count_prefix") ?? "Words count: ";
+    private string WordsCountPrefix => Context.GetTranslation("flowlauncher_plugin_clipboardplus_words_count_prefix") ?? "Words count: ";
 
     #endregion
 

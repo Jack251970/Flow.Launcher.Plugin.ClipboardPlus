@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 
 namespace ClipboardPlus.Panels.ViewModels;
@@ -8,7 +7,6 @@ namespace ClipboardPlus.Panels.ViewModels;
 public class EnumBindingModel<T> where T : struct, Enum
 {
     public string Name { get; private set; } = string.Empty;
-    public string LocalizationKey { get; private set; } = string.Empty;
     public string LocalizationString { get; private set; } = string.Empty;
     public T Value { get; private set; } = default;
 
@@ -18,8 +16,7 @@ public class EnumBindingModel<T> where T : struct, Enum
             .Select(value => new EnumBindingModel<T>
             {
                 Name = value.ToString(),
-                LocalizationKey = GetDescriptionAttr(value),
-                LocalizationString = context?.API.GetTranslation(GetDescriptionAttr(value)) ?? GetDescriptionAttr(value),
+                LocalizationString = context.GetTranslation(value),
                 Value = value
             })
             .ToArray();
@@ -27,25 +24,12 @@ public class EnumBindingModel<T> where T : struct, Enum
 
     public EnumBindingModel<T> From(T value, PluginInitContext? context)
     {
-        var name = value.ToString();
-        var description = GetDescriptionAttr(value);
-        
         return new EnumBindingModel<T>
         {
-            Name = name,
-            LocalizationKey = description,
-            LocalizationString = context?.API.GetTranslation(description) ?? description,
+            Name = value.ToString(),
+            LocalizationString = context.GetTranslation(value),
             Value = value
         };
-    }
-
-    private static string GetDescriptionAttr(T source)
-    {
-        var fi = source.GetType().GetField(source.ToString());
-
-        var attributes = (DescriptionAttribute[])fi?.GetCustomAttributes(typeof(DescriptionAttribute), false)!;
-
-        return attributes is { Length: > 0 } ? attributes[0].Description : source.ToString();
     }
 
     public static bool operator ==(EnumBindingModel<T> a, EnumBindingModel<T> b) => a.Equals(b);
@@ -57,7 +41,6 @@ public class EnumBindingModel<T> where T : struct, Enum
         if (obj is EnumBindingModel<T> model)
         {
             return Name == model.Name
-                && LocalizationKey == model.LocalizationKey
                 && LocalizationString == model.LocalizationString
                 && Value.Equals(model.Value);
         }
@@ -67,7 +50,7 @@ public class EnumBindingModel<T> where T : struct, Enum
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Name, LocalizationKey, LocalizationString, Value);
+        return HashCode.Combine(Name, LocalizationString, Value);
     }
 
     public override string ToString()
