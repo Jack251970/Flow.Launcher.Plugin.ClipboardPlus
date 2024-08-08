@@ -52,4 +52,27 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_images">Keep images:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_files">Keep files:</system:String>
 
+    <!--  Enum  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_score">Score</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">Create time</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_source_application">Source application</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_type">Type</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action_copy">Copy</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action_copy_paste">Copy and paste</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action_copy_delete_list">Copy and delete in list</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action_copy_delete_both">Copy and delete in both list and database</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action_copy_paste_delete_list">Copy, paste and delete in list</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action_copy_paste_delete_both">Copy, paste and delete in both list and database</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_always">Always</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_1_hour">1 hour</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_12_hours">12 hours</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_24_hours">24 hours</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_3_days">3 days</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_7_days">7 days</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_1_month">1 month</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_3_months">3 months</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_1_year">1 year</system:String>
+
 </ResourceDictionary>

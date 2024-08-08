@@ -6,25 +6,25 @@ namespace ClipboardPlus.Core.Data.Models;
 public class Settings
 {
     public string ClearKeyword { get; set; } = "clear";
-    public int MaxDataCount { get; set; } = 10000;
-    public CbOrders OrderBy { get; set; } = CbOrders.Score;
+    public int MaxRecords { get; set; } = 10000;
+    public RecordOrder RecordOrder { get; set; } = RecordOrder.Score;
     public ClickAction ClickAction { get; set; } = ClickAction.Copy;
     public bool CacheImages { get; set; } = false;
     public string CacheFormat { get; set; } = "yyyy-MM-dd-hhmmss-app";
     public bool KeepText { get; set; } = false;
-    public RecordKeepTime KeepTextHours { get; set; } = 0;
-    public bool KeepImage { get; set; } = false;
-    public RecordKeepTime KeepImageHours { get; set; } = 0;
-    public bool KeepFile { get; set; } = false;
-    public RecordKeepTime KeepFileHours { get; set; } = 0;
+    public RecordKeepTime TextKeepTime { get; set; } = 0;
+    public bool KeepImages { get; set; } = false;
+    public RecordKeepTime ImagesKeepTime { get; set; } = 0;
+    public bool KeepFiles { get; set; } = false;
+    public RecordKeepTime FilesKeepTime { get; set; } = 0;
 
     [JsonIgnore]
     public List<Tuple<CbContentType, RecordKeepTime>> KeepTimePairs => 
         new ()
         {
-            new(CbContentType.Text, KeepTextHours),
-            new(CbContentType.Image, KeepImageHours),
-            new(CbContentType.Files, KeepFileHours),
+            new(CbContentType.Text, TextKeepTime),
+            new(CbContentType.Image, ImagesKeepTime),
+            new(CbContentType.Files, FilesKeepTime),
         };
 
     public void Save()

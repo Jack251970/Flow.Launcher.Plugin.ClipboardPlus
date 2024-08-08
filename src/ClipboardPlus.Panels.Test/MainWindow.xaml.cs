@@ -11,10 +11,6 @@ namespace ClipboardPlus.Panels.Test
         public MainWindow()
         {
             InitializeComponent();
-            SettingsPanel.MaxDataCount = 300;
-            SettingsPanel.KeepTextHours = RecordKeepTime.Hours24;
-            SettingsPanel.KeepImageHours = RecordKeepTime.Year1;
-            SettingsPanel.KeepFileHours = RecordKeepTime.Month1;
         }
     }
 }

@@ -38,7 +38,7 @@ public static partial class StringUtils
         return Guid.NewGuid().ToString("D");
     }
 
-    public static string FormatImageName(string format, DateTime dateTime, string appname)
+    public static string FormatImageName(string format, DateTime dateTime, string appname = "Flow.Launcher.exe")
     {
         var imageName = format
             .Replace("yyyy", dateTime.ToString("yyyy"))

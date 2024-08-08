@@ -1,5 +1,4 @@
 using ClipboardPlus.Core;
-using ClipboardPlus.Panels;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -34,6 +33,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     // Settings
     private Settings Settings = null!;
+
+    // Settings view model
+    private SettingsViewModel ViewModel = null!;
 
     // Database helper
     private DbHelpers DbHelper = null!;
@@ -119,7 +121,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     SubTitle = Context.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_subtitle"),
                     IcoPath = PathHelpers.ClearIconPath,
                     Glyph = ResourceHelper.ClearGlyph,
-                    Score = Settings.MaxDataCount + 1,
+                    Score = Settings.MaxRecords + 1,
                     Action = _ =>
                     {
                         Context.API.ChangeQuery($"{ActionKeyword} {Settings.ClearKeyword} ", true);
@@ -151,6 +153,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         Settings.Save();
         Context.API.LogDebug(ClassName, "Init settings successfully");
         Context.API.LogInfo(ClassName, $"{Settings}");
+
+        // init settings viewmodel
+        ViewModel = new SettingsViewModel(context, Settings, ReloadDataAsync, Save);
 
         // init database & records
         DbHelper = new DbHelpers(PathHelpers.DatabasePath);
@@ -271,7 +276,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     public Control CreateSettingPanel()
     {
         Context.API.LogWarn(ClassName, $"{Settings}");
-        return new SettingsPanel(Settings, Context, ReloadDataAsync, Save);
+        return new SettingsPanel(ViewModel);
     }
 
     #endregion
@@ -359,8 +364,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         // add to database if needed
         var needAddDatabase =
             Settings.KeepText && clipboardData.Type == CbContentType.Text
-            || Settings.KeepImage && clipboardData.Type == CbContentType.Image
-            || Settings.KeepFile && clipboardData.Type == CbContentType.Files;
+            || Settings.KeepImages && clipboardData.Type == CbContentType.Image
+            || Settings.KeepFiles && clipboardData.Type == CbContentType.Files;
         if (needAddDatabase)
         {
             await DbHelper.AddOneRecordAsync(clipboardData);
@@ -368,7 +373,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         Context.API.LogDebug(ClassName, "Added to database");
 
         // remove last record if needed
-        if (RecordsList.Count >= Settings.MaxDataCount)
+        if (RecordsList.Count >= Settings.MaxRecords)
         {
             RecordsList.RemoveLast();
         }
@@ -501,18 +506,18 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             return int.MaxValue;
         }
 
-        var orderBy = Settings.OrderBy;
+        var orderBy = Settings.RecordOrder;
         int score = 0;
         switch (orderBy)
         {
-            case CbOrders.CreateTime:
+            case RecordOrder.CreateTime:
                 var ctime = new DateTimeOffset(clipboardData.CreateTime);
                 score = Convert.ToInt32(ctime.ToUnixTimeSeconds().ToString()[^9..]);
                 break;
-            case CbOrders.Type:
+            case RecordOrder.Type:
                 score = (int)clipboardData.Type;
                 break;
-            case CbOrders.SourceApplication:
+            case RecordOrder.SourceApplication:
                 var last = int.Min(clipboardData.SenderApp.Length, 10);
                 score = Encoding.UTF8.GetBytes(clipboardData.SenderApp[..last]).Sum(i => i);
                 break;
