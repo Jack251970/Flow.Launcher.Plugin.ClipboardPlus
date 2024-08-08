@@ -38,11 +38,11 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private SettingsViewModel SettingsViewModel = null!;
 
     // Database helper
-    private DbHelper DbHelper = null!;
+    private DatabaseHelper DatabaseHelper = null!;
 
     // Clipboard monitor instance
     // Warning: Do not init the instance in InitAsync function! This will cause issues.
-    private CbMonitor ClipboardMonitor = new() { ObserveLastEntry = false };
+    private ClipboardMonitor ClipboardMonitor = new() { ObserveLastEntry = false };
 
     // Records list & Score
     private LinkedList<ClipboardData> RecordsList = new();
@@ -90,7 +90,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                         AsyncAction = async _ =>
                         {
                             RecordsList.Clear();
-                            await DbHelper.DeleteAllRecordsAsync();
+                            await DatabaseHelper.DeleteAllRecordsAsync();
                             CurrentScore = 1;
                             return true;
                         }
@@ -158,14 +158,14 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         SettingsViewModel = new SettingsViewModel(context, Settings, ReloadDataAsync, Save);
 
         // init database & records
-        DbHelper = new DbHelper(PathHelper.DatabasePath);
+        DatabaseHelper = new DatabaseHelper(PathHelper.DatabasePath);
         if (File.Exists(PathHelper.DatabasePath))
         {
-            await InitRecordsFromDb();
+            await InitRecordsFromDatabase();
         }
         else
         {
-            await DbHelper.CreateDbAsync();
+            await DatabaseHelper.CreateDatabaseAsync();
         }
         Context.API.LogDebug(ClassName, "Init database successfully");
 
@@ -181,7 +181,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     public async Task ReloadDataAsync()
     {
         // reload records
-        await InitRecordsFromDb();
+        await InitRecordsFromDatabase();
     }
 
     #endregion
@@ -288,7 +288,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     #region Clipboard Monitor
 
-    private async void OnClipboardChange(object? sender, CbMonitor.ClipboardChangedEventArgs e)
+    private async void OnClipboardChange(object? sender, ClipboardMonitor.ClipboardChangedEventArgs e)
     {
         Context.API.LogDebug(ClassName, "Clipboard changed");
         if (e.Content is null)
@@ -373,7 +373,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             || Settings.KeepFiles && clipboardData.Type == DataType.Files;
         if (needAddDatabase)
         {
-            await DbHelper.AddOneRecordAsync(clipboardData);
+            await DatabaseHelper.AddOneRecordAsync(clipboardData);
         }
         Context.API.LogDebug(ClassName, "Added to database");
 
@@ -392,7 +392,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     #region Database Functions
 
-    private async Task InitRecordsFromDb()
+    private async Task InitRecordsFromDatabase()
     {
         // clear expired records
         try
@@ -400,7 +400,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             foreach (var pair in Settings.KeepTimePairs)
             {
                 Context.API.LogInfo(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
-                await DbHelper.DeleteRecordByKeepTimeAsync(
+                await DatabaseHelper.DeleteRecordByKeepTimeAsync(
                     (int)pair.Item1,
                     pair.Item2.ToKeepTime()
                 );
@@ -413,7 +413,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
 
         // restore records
-        var records = await DbHelper.GetAllRecordAsync();
+        var records = await DatabaseHelper.GetAllRecordAsync();
         if (records.Count > 0)
         {
             RecordsList = records;
@@ -556,7 +556,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private async void RemoveFromListDatabase(ClipboardData clipboardData, bool needEsc = false)
     {
         RecordsList.Remove(clipboardData);
-        await DbHelper.DeleteOneRecordAsync(clipboardData);
+        await DatabaseHelper.DeleteOneRecordAsync(clipboardData);
         if (needEsc)
         {
             new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
@@ -570,7 +570,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         clipboardData.Score = clipboardData.Pinned ? int.MaxValue : clipboardData.InitScore;
         RecordsList.Remove(clipboardData);
         RecordsList.AddLast(clipboardData);
-        await DbHelper.PinOneRecordAsync(clipboardData);
+        await DatabaseHelper.PinOneRecordAsync(clipboardData);
         // TODO: Ask Flow-Launcher for a better way to refresh the query.
         if (needEsc)
         {
@@ -594,11 +594,11 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         if (disposing)
         {
             Context.API.LogDebug(ClassName, $"Enter dispose");
-            if (DbHelper != null)
+            if (DatabaseHelper != null)
             {
-                DbHelper?.Dispose();
-                DbHelper = null!;
-                Context.API.LogDebug(ClassName, $"Disposed DbHelper");
+                DatabaseHelper?.Dispose();
+                DatabaseHelper = null!;
+                Context.API.LogDebug(ClassName, $"Disposed DatabaseHelper");
             }
             ClipboardMonitor.ClipboardChanged -= OnClipboardChange;
             ClipboardMonitor.Dispose();

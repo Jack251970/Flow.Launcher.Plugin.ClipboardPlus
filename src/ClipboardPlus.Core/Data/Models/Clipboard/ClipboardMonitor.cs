@@ -1,8 +1,7 @@
 ﻿/*
- * Basically CbMonitor.cs and CbHandle.cs are taken from SharpClipboard
+ * ClipboardMonitor.cs is from https://github.com/Willy-Kimura/SharpClipboard
  * with some modification, the original source code doesn't provide a
- * license, but MIT shown in nuget package so I copied them here.
- * Thanks for Willy-Kimura (https://github.com/Willy-Kimura/SharpClipboard)
+ * license, but MIT license shown in nuget package so I copied them here
  */
 
 using System.Runtime.InteropServices;
@@ -10,12 +9,12 @@ using Timer = System.Windows.Forms.Timer;
 
 namespace ClipboardPlus.Core.Data.Models;
 
-public class CbMonitor : IDisposable
+public class ClipboardMonitor : IDisposable
 {
     #region Fields
 
     private Timer _timer = new();
-    private CbHandle _handle = new();
+    private ClipboardHandle _handle = new();
     private ObservableDataFormats _observableFormats = new();
 
     private bool _monitorClipboard;
@@ -77,7 +76,7 @@ public class CbMonitor : IDisposable
 
     #endregion
 
-    public CbMonitor()
+    public ClipboardMonitor()
     {
         SetDefaults();
     }
@@ -155,7 +154,7 @@ public class CbMonitor : IDisposable
     /// </summary>
     private void SetDefaults()
     {
-        _handle.CbMonitorInstance = this;
+        _handle.ClipboardMonitorInstance = this;
 
         _timer.Enabled = true;
         _timer.Interval = 1000;
@@ -174,7 +173,7 @@ public class CbMonitor : IDisposable
     /// Gets the foreground or currently active window handle.
     /// </summary>
     [DllImport("user32.dll")]
-    static extern IntPtr GetForegroundWindow();
+    private static extern IntPtr GetForegroundWindow();
 
     #endregion
 

@@ -2,7 +2,7 @@
 
 namespace ClipboardPlus.Core.Data.Models;
 
-public partial class CbHandle
+public partial class ClipboardHandle
 {
     /// <summary>
     /// Required designer variable.
@@ -34,7 +34,7 @@ public partial class CbHandle
         this.components = new System.ComponentModel.Container();
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         this.ClientSize = new System.Drawing.Size(800, 450);
-        this.Text = "CbHandle";
+        this.Text = "ClipboardHandle";
     }
 
     #endregion

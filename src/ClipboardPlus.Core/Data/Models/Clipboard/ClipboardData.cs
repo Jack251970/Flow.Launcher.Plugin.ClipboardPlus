@@ -40,12 +40,7 @@ public struct ClipboardData : IEquatable<ClipboardData>
 
     public override readonly int GetHashCode()
     {
-        var hashcode =
-            Text.GetHashCode()
-            ^ DisplayTitle.GetHashCode()
-            ^ SenderApp.GetHashCode()
-            ^ Type.GetHashCode();
-        return hashcode;
+        return HashCode.Combine(Text, DisplayTitle, SenderApp, Type);
     }
 
     public readonly string GetMd5()

@@ -8,7 +8,7 @@ using Xunit.Abstractions;
 
 namespace ClipboardPlus.Core.Test;
 
-public class DbHelperTest
+public class DatabaseHelperTest
 {
     private readonly static string _defaultIconPath = "Images/clipboard.png";
 
@@ -36,7 +36,7 @@ public class DbHelperTest
 
     private readonly ITestOutputHelper _testOutputHelper;
 
-    public DbHelperTest(ITestOutputHelper testOutputHelper)
+    public DatabaseHelperTest(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
     }
@@ -75,15 +75,15 @@ public class DbHelperTest
     }
 
     [Fact]
-    public async Task TestCreateDb()
+    public async Task TestCreateDatabase()
     {
-        var helper = new DbHelper(
+        var helper = new DatabaseHelper(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Shared
         );
         _testOutputHelper.WriteLine(helper.Connection.ConnectionString);
-        await helper.CreateDbAsync();
+        await helper.CreateDatabaseAsync();
         var sql = @"SELECT name from sqlite_master WHERE name IN ('record', 'assets') ORDER BY name ASC;";
         var r = helper.Connection.Query(sql).AsList();
         Assert.True(r.Count == 2 && r[0].name == "assets" && r[1].name == "record");
@@ -95,12 +95,12 @@ public class DbHelperTest
     {
         // test text
         var exampleTextRecord = GetRandomClipboardData();
-        var helper = new DbHelper(
+        var helper = new DatabaseHelper(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Shared
         );
-        await helper.CreateDbAsync();
+        await helper.CreateDatabaseAsync();
         await helper.AddOneRecordAsync(exampleTextRecord);
         var c = (await helper.GetAllRecordAsync()).First();
         await helper.CloseAsync();
@@ -115,12 +115,12 @@ public class DbHelperTest
     [InlineData(2, "2023-05-28 11:35:00.1+08:00", 72)]
     public async Task TestDeleteRecordBefore(int type, string creatTime, int keepTime)
     {
-        var helper = new DbHelper(
+        var helper = new DatabaseHelper(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Shared
         );
-        await helper.CreateDbAsync();
+        await helper.CreateDatabaseAsync();
         var now = DateTime.Now;
         var ctime = DateTime.ParseExact(
             creatTime,

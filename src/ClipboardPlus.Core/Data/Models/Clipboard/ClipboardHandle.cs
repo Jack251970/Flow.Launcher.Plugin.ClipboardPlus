@@ -1,15 +1,21 @@
-﻿using System.Text;
+﻿/*
+ * ClipboardHandle.cs is from https://github.com/Willy-Kimura/SharpClipboard
+ * with some modification, the original source code doesn't provide a
+ * license, but MIT license shown in nuget package so I copied them here
+ */
+
+using System.Text;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace ClipboardPlus.Core.Data.Models;
 
-public partial class CbHandle : Form
+public partial class ClipboardHandle : Form
 {
     #region Constructor
 
-    public CbHandle()
+    public ClipboardHandle()
     {
         InitializeComponent();
 
@@ -49,15 +55,17 @@ public partial class CbHandle : Form
     {
         get
         {
-            if (CbMonitorInstance.ObserveLastEntry)
+            if (ClipboardMonitorInstance.ObserveLastEntry)
+            {
                 _ready = true;
+            }
             return _ready;
         }
         set => _ready = value;
     }
 
     // instant in monitor
-    internal CbMonitor CbMonitorInstance { get; set; } = null!;
+    internal ClipboardMonitor ClipboardMonitorInstance { get; set; } = null!;
 
     #endregion
 
@@ -117,7 +125,7 @@ public partial class CbHandle : Form
     private void OnDrawClipboardChanged()
     {
         // If clipboard-monitoring is enabled, proceed to listening.
-        if (!Ready || !CbMonitorInstance.MonitorClipboard)
+        if (!Ready || !ClipboardMonitorInstance.MonitorClipboard)
         {
             return;
         }
@@ -130,19 +138,19 @@ public partial class CbHandle : Form
         {
             // Determines whether a file/files have been cut/copied.
             if (
-                CbMonitorInstance.ObservableFormats.Images
+                ClipboardMonitorInstance.ObservableFormats.Images
                 && dataObj.GetDataPresent(DataFormats.Bitmap)
             )
             {
                 var capturedImage = dataObj.GetData(DataFormats.Bitmap) as Image;
-                CbMonitorInstance.ClipboardImage = capturedImage;
+                ClipboardMonitorInstance.ClipboardImage = capturedImage;
 
-                CbMonitorInstance.Invoke(
+                ClipboardMonitorInstance.Invoke(
                     capturedImage,
                     DataType.Image,
                     new SourceApplication(
                         GetForegroundWindow(),
-                        CbMonitorInstance.ForegroundWindowHandle(),
+                        ClipboardMonitorInstance.ForegroundWindowHandle(),
                         GetApplicationName(),
                         GetActiveWindowTitle(),
                         GetApplicationPath()
@@ -151,7 +159,7 @@ public partial class CbHandle : Form
             }
             // Determines whether text has been cut/copied.
             else if (
-                CbMonitorInstance.ObservableFormats.Texts
+                ClipboardMonitorInstance.ObservableFormats.Texts
                 && (
                     dataObj.GetDataPresent(DataFormats.Text)
                     || dataObj.GetDataPresent(DataFormats.UnicodeText)
@@ -159,14 +167,14 @@ public partial class CbHandle : Form
             )
             {
                 var capturedText = dataObj.GetData(DataFormats.UnicodeText) as string;
-                CbMonitorInstance.ClipboardText = capturedText ?? "";
+                ClipboardMonitorInstance.ClipboardText = capturedText ?? "";
 
-                CbMonitorInstance.Invoke(
+                ClipboardMonitorInstance.Invoke(
                     capturedText,
                     DataType.Text,
                     new SourceApplication(
                         GetForegroundWindow(),
-                        CbMonitorInstance.ForegroundWindowHandle(),
+                        ClipboardMonitorInstance.ForegroundWindowHandle(),
                         GetApplicationName(),
                         GetActiveWindowTitle(),
                         GetApplicationPath()
@@ -174,7 +182,7 @@ public partial class CbHandle : Form
                 );
             }
             else if (
-                CbMonitorInstance.ObservableFormats.Files
+                ClipboardMonitorInstance.ObservableFormats.Files
                 && dataObj.GetDataPresent(DataFormats.FileDrop)
             )
             {
@@ -184,16 +192,16 @@ public partial class CbHandle : Form
                 // Therefore assign the content its rightful type.
                 if (dataObj.GetData(DataFormats.FileDrop) is not string[] capturedFiles)
                 {
-                    CbMonitorInstance.ClipboardObject = dataObj;
+                    ClipboardMonitorInstance.ClipboardObject = dataObj;
                     var txt = dataObj.GetData(DataFormats.UnicodeText) as string;
-                    CbMonitorInstance.ClipboardText = txt ?? "";
+                    ClipboardMonitorInstance.ClipboardText = txt ?? "";
 
-                    CbMonitorInstance.Invoke(
+                    ClipboardMonitorInstance.Invoke(
                         dataObj,
                         DataType.Other,
                         new SourceApplication(
                             GetForegroundWindow(),
-                            CbMonitorInstance.ForegroundWindowHandle(),
+                            ClipboardMonitorInstance.ForegroundWindowHandle(),
                             GetApplicationName(),
                             GetActiveWindowTitle(),
                             GetApplicationPath()
@@ -203,16 +211,16 @@ public partial class CbHandle : Form
                 else
                 {
                     // Clear all existing files before update.
-                    CbMonitorInstance.ClipboardFiles.Clear();
-                    CbMonitorInstance.ClipboardFiles.AddRange(capturedFiles);
-                    CbMonitorInstance.ClipboardFile = capturedFiles[0];
+                    ClipboardMonitorInstance.ClipboardFiles.Clear();
+                    ClipboardMonitorInstance.ClipboardFiles.AddRange(capturedFiles);
+                    ClipboardMonitorInstance.ClipboardFile = capturedFiles[0];
 
-                    CbMonitorInstance.Invoke(
+                    ClipboardMonitorInstance.Invoke(
                         capturedFiles,
                         DataType.Files,
                         new SourceApplication(
                             GetForegroundWindow(),
-                            CbMonitorInstance.ForegroundWindowHandle(),
+                            ClipboardMonitorInstance.ForegroundWindowHandle(),
                             GetApplicationName(),
                             GetActiveWindowTitle(),
                             GetApplicationPath()
@@ -222,16 +230,16 @@ public partial class CbHandle : Form
             }
             // Determines whether a complex object has been cut/copied.
             else if (
-                CbMonitorInstance.ObservableFormats.Others
+                ClipboardMonitorInstance.ObservableFormats.Others
                 && !dataObj.GetDataPresent(DataFormats.FileDrop)
             )
             {
-                CbMonitorInstance.Invoke(
+                ClipboardMonitorInstance.Invoke(
                     dataObj,
                     DataType.Other,
                     new SourceApplication(
                         GetForegroundWindow(),
-                        CbMonitorInstance.ForegroundWindowHandle(),
+                        ClipboardMonitorInstance.ForegroundWindowHandle(),
                         GetApplicationName(),
                         GetActiveWindowTitle(),
                         GetApplicationPath()
@@ -303,9 +311,8 @@ public partial class CbHandle : Form
             {
                 _executablePath = processModule.FileName;
             }
-            _executableName = _executablePath.Substring(
-                _executablePath.LastIndexOf(@"\", StringComparison.Ordinal) + 1
-            );
+            _executableName = _executablePath[
+                (_executablePath.LastIndexOf(@"\", StringComparison.Ordinal) + 1)..];
         }
         catch (Exception)
         {
@@ -328,7 +335,7 @@ public partial class CbHandle : Form
 
         try
         {
-            handle = CbMonitorInstance.ForegroundWindowHandle();
+            handle = ClipboardMonitorInstance.ForegroundWindowHandle();
         }
         catch (Exception)
         {

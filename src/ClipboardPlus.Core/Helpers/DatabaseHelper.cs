@@ -4,7 +4,7 @@ using System.Data;
 
 namespace ClipboardPlus.Core.Helpers;
 
-public class DbHelper : IDisposable
+public class DatabaseHelper : IDisposable
 {
     #region Fields
 
@@ -94,13 +94,13 @@ public class DbHelper : IDisposable
 
     #region Constructors
 
-    public DbHelper(SqliteConnection connection)
+    public DatabaseHelper(SqliteConnection connection)
     {
         Connection = connection;
     }
 
-    public DbHelper(
-        string dbPath,
+    public DatabaseHelper(
+        string databasePath,
         SqliteCacheMode cache = SqliteCacheMode.Shared,
         SqliteOpenMode mode = SqliteOpenMode.ReadWriteCreate,
         bool keepConnection = true
@@ -108,7 +108,7 @@ public class DbHelper : IDisposable
     {
         var connString = new SqliteConnectionStringBuilder()
         {
-            DataSource = dbPath,
+            DataSource = databasePath,
             Mode = mode,
             ForeignKeys = true,
             Cache = cache,
@@ -121,7 +121,7 @@ public class DbHelper : IDisposable
 
     #region Public Methods
 
-    public async Task CreateDbAsync()
+    public async Task CreateDatabaseAsync()
     {
         Connection.Open();
         // check if `record` exists
@@ -187,7 +187,7 @@ public class DbHelper : IDisposable
     public async Task DeleteAllRecordsAsync()
     {
         await Connection.ExecuteAsync(SqlDeleteAllRecords);
-        await CreateDbAsync();
+        await CreateDatabaseAsync();
     }
 
     public async Task PinOneRecordAsync(ClipboardData data)
