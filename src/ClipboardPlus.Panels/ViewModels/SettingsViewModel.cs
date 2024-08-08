@@ -18,7 +18,6 @@ public class SettingsViewModel : BaseModel
 
     public IReadOnlyList<EnumBindingModel<RecordOrder>> RecordOrders { get; set; }
     public IReadOnlyList<EnumBindingModel<ClickAction>> ClickActions { get; set; }
-    // TODO: Check if we can just use one list for all keep times.
     public IReadOnlyList<EnumBindingModel<RecordKeepTime>> TextKeepTimes { get; set; }
     public IReadOnlyList<EnumBindingModel<RecordKeepTime>> ImagesKeepTimes { get; set; }
     public IReadOnlyList<EnumBindingModel<RecordKeepTime>> FilesKeepTimes { get; set; }
@@ -33,6 +32,7 @@ public class SettingsViewModel : BaseModel
 
         InitializeRecordOrderSelection();
         InitializeClickActionSelection();
+        InitializeCacheFormatPreview();
         InitializeKeepTimeSelection();
     }
 
@@ -157,7 +157,7 @@ public class SettingsViewModel : BaseModel
 
     #region Cache Format Preview
 
-    private string _cacheFormatPreview = string.Empty;
+    private string _cacheFormatPreview;
     public string CacheFormatPreview
     {
         get => _cacheFormatPreview;
@@ -166,6 +166,12 @@ public class SettingsViewModel : BaseModel
             _cacheFormatPreview = value;
             OnPropertyChanged();
         }
+    }
+
+    [MemberNotNull(nameof(_cacheFormatPreview))]
+    public void InitializeCacheFormatPreview()
+    {
+        _cacheFormatPreview = StringUtils.FormatImageName(Settings.CacheFormat, DateTime.Now);
     }
 
     #endregion

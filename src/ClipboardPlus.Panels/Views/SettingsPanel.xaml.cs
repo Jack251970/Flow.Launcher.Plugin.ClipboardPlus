@@ -41,6 +41,7 @@ public partial class SettingsPanel : UserControl
 
     #region Cache Image Button
 
+    // TODO: Move them to ViewModel.
     private void CacheImageButton_Click(object sender, RoutedEventArgs e)
     {
         Process.Start(new ProcessStartInfo()
