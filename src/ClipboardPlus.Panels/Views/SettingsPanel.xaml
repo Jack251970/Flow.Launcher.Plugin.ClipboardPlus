@@ -75,13 +75,13 @@
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_order_by}" />
         <ComboBox
+            x:Name="RecordOrderComboBox"
             Grid.Row="2"
             Grid.Column="1"
             Margin="10,5,0,5"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            DisplayMemberPath="Description"
-            ItemsSource="{Binding RecordOrders, Mode=OneTime}"
+            ItemsSource="{Binding RecordOrders, Mode=OneWay}"
             SelectedItem="{Binding SelectedRecordOrder, Mode=TwoWay}" />
 
         <!--  Click Action  -->
@@ -97,8 +97,7 @@
             Margin="10,5,0,5"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            DisplayMemberPath="Description"
-            ItemsSource="{Binding ClickActions, Mode=OneTime}"
+            ItemsSource="{Binding ClickActions, Mode=OneWay}"
             SelectedItem="{Binding SelectedClickAction, Mode=TwoWay}" />
 
         <!--  Seperator  -->
@@ -245,9 +244,8 @@
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            DisplayMemberPath="Description"
             IsEnabled="{Binding KeepText, Mode=OneWay}"
-            ItemsSource="{Binding TextKeepTimes, Mode=OneTime}"
+            ItemsSource="{Binding TextKeepTimes, Mode=OneWay}"
             SelectedItem="{Binding SelectedTextKeepTime, Mode=TwoWay}" />
 
         <!--  Keep Images  -->
@@ -264,9 +262,8 @@
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            DisplayMemberPath="Description"
             IsEnabled="{Binding KeepImages, Mode=OneWay}"
-            ItemsSource="{Binding ImagesKeepTimes, Mode=OneTime}"
+            ItemsSource="{Binding ImagesKeepTimes, Mode=OneWay}"
             SelectedItem="{Binding SelectedImagesKeepTime, Mode=TwoWay}" />
 
         <!--  Keep Files  -->
@@ -283,9 +280,8 @@
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            DisplayMemberPath="Description"
             IsEnabled="{Binding KeepFiles, Mode=OneWay}"
-            ItemsSource="{Binding FilesKeepTimes, Mode=OneTime}"
+            ItemsSource="{Binding FilesKeepTimes, Mode=OneWay}"
             SelectedItem="{Binding SelectedFilesKeepTime, Mode=TwoWay}" />
 
     </Grid>

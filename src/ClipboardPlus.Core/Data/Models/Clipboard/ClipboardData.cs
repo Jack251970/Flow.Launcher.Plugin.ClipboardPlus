@@ -20,23 +20,23 @@ public struct ClipboardData : IEquatable<ClipboardData>
     public required bool Pinned;
     public required DateTime CreateTime;
 
+    public static bool operator ==(ClipboardData a, ClipboardData b) => a.Equals(b);
+
+    public static bool operator !=(ClipboardData a, ClipboardData b) => !a.Equals(b);
+
     public readonly bool Equals(ClipboardData b)
     {
-        return HashId == b.HashId;
+        return Equals(b);
     }
 
     public override readonly bool Equals(object? obj)
     {
         if (obj is ClipboardData clipboardData)
         {
-            return this == clipboardData;
+            return HashId == clipboardData.HashId;
         }
         return false;
     }
-
-    public static bool operator ==(ClipboardData a, ClipboardData b) => a.HashId == b.HashId;
-
-    public static bool operator !=(ClipboardData a, ClipboardData b) => a.HashId != b.HashId;
 
     public override readonly int GetHashCode()
     {
