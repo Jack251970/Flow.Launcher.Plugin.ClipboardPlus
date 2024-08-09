@@ -13,7 +13,7 @@ public struct ClipboardData : IEquatable<ClipboardData>
     public required BitmapImage Icon;
     public required GlyphInfo Glyph;
     public required string PreviewImagePath; // actually not used for now
-    public required DataType Type;
+    public required DataType DataType;
     public required int Score;
     public required int InitScore;
     public required DateTime Time;
@@ -40,7 +40,7 @@ public struct ClipboardData : IEquatable<ClipboardData>
 
     public override readonly int GetHashCode()
     {
-        return HashCode.Combine(Text, DisplayTitle, SenderApp, Type);
+        return HashCode.Combine(Text, DisplayTitle, SenderApp, DataType);
     }
 
     public readonly string GetMd5()
@@ -50,7 +50,7 @@ public struct ClipboardData : IEquatable<ClipboardData>
 
     public readonly string DataToString()
     {
-        return Type switch
+        return DataType switch
         {
             DataType.Text => Data as string,
             DataType.Image => Data is not Image im ? Icon.ToBase64() : im.ToBase64(),
@@ -61,8 +61,21 @@ public struct ClipboardData : IEquatable<ClipboardData>
         } ?? string.Empty;
     }
 
+    public readonly Image? DataToImage()
+    {
+        return DataType switch
+        {
+            DataType.Text => null,
+            DataType.Image => Data as Image,
+            DataType.Files => null,
+            _ => throw new NotImplementedException(
+                "Data to string for type not in Text, Image, Files are not implemented now."
+            ),  // don't process others
+        };
+    }
+
     public override readonly string ToString()
     {
-        return $"ClipboardDate(type: {Type}, text: {Text}, ctime: {CreateTime})";
+        return $"ClipboardDate(type: {DataType}, text: {Text}, ctime: {CreateTime})";
     }
 }

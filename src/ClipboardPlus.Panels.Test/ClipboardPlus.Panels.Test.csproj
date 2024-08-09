@@ -9,6 +9,16 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Images\clipboard.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Images\clipboard.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\ClipboardPlus.Panels\ClipboardPlus.Panels.csproj" />
     </ItemGroup>
 

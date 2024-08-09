@@ -19,7 +19,7 @@ public class DatabaseHelperTest
         {
             HashId = StringUtils.GetGuid(),
             Text = "Text",
-            Type = DataType.Text,
+            DataType = DataType.Text,
             Data = "Test Data",
             SenderApp = "Source.exe",
             DisplayTitle = "Test Display Title",
@@ -49,7 +49,7 @@ public class DatabaseHelperTest
         {
             HashId = StringUtils.GetGuid(),
             Text = StringUtils.RandomString(10),
-            Type = type,
+            DataType = type,
             Data = StringUtils.RandomString(10),
             SenderApp = StringUtils.RandomString(5) + ".exe",
             DisplayTitle = StringUtils.RandomString(10),
@@ -63,11 +63,11 @@ public class DatabaseHelperTest
             Pinned = false,
             CreateTime = DateTime.Now,
         };
-        if (data.Type == DataType.Image)
+        if (data.DataType == DataType.Image)
         {
             data.Data = _defaultImage;
         }
-        else if (data.Type == DataType.Files)
+        else if (data.DataType == DataType.Files)
         {
             data.Data = new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10) };
         }
@@ -139,7 +139,7 @@ public class DatabaseHelperTest
         await helper.DeleteRecordByKeepTimeAsync(type, keepTime);
 
         var recordsAfterDelete = await helper.GetAllRecordAsync();
-        foreach (var record in recordsAfterDelete.Where(r => r.Type == (DataType)type))
+        foreach (var record in recordsAfterDelete.Where(r => r.DataType == (DataType)type))
         {
             var expTime = record.CreateTime + TimeSpan.FromHours(keepTime);
             if (expTime < now)

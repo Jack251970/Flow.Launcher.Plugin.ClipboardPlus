@@ -303,7 +303,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             HashId = StringUtils.GetGuid(),
             Text = "",
             DisplayTitle = "",
-            Type = e.ContentType,
+            DataType = e.ContentType,
             Data = e.Content,
             SenderApp = e.SourceApplication.Name,
             IconPath = PathHelper.AppIconPath,
@@ -354,8 +354,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             default:
                 break;
         }
-        clipboardData.Icon = ResourceHelper.GetIcon(clipboardData.Type);
-        clipboardData.Glyph = ResourceHelper.GetGlyph(clipboardData.Type);
+        clipboardData.Icon = ResourceHelper.GetIcon(clipboardData.DataType);
+        clipboardData.Glyph = ResourceHelper.GetGlyph(clipboardData.DataType);
         clipboardData.DisplayTitle = MyRegex().Replace(clipboardData.Text.Trim(), "");
 
         // add to list and database if no repeat 
@@ -368,9 +368,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
         // add to database if needed
         var needAddDatabase =
-            Settings.KeepText && clipboardData.Type == DataType.Text
-            || Settings.KeepImages && clipboardData.Type == DataType.Image
-            || Settings.KeepFiles && clipboardData.Type == DataType.Files;
+            Settings.KeepText && clipboardData.DataType == DataType.Text
+            || Settings.KeepImages && clipboardData.DataType == DataType.Image
+            || Settings.KeepFiles && clipboardData.DataType == DataType.Files;
         if (needAddDatabase)
         {
             await DatabaseHelper.AddOneRecordAsync(clipboardData);
@@ -520,7 +520,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 score = Convert.ToInt32(ctime.ToUnixTimeSeconds().ToString()[^9..]);
                 break;
             case RecordOrder.DataType:
-                score = (int)clipboardData.Type;
+                score = (int)clipboardData.DataType;
                 break;
             case RecordOrder.SourceApplication:
                 var last = int.Min(clipboardData.SenderApp.Length, 10);

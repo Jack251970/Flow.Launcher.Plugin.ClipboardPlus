@@ -5,20 +5,19 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ClipboardPlus.Panels.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:userControls="clr-namespace:ClipboardPlus.Panels.UserControls"
+    xmlns:viewModels="clr-namespace:ClipboardPlus.Panels.ViewModels"
+    d:DataContext="{d:DesignInstance viewModels:PreviewViewModel}"
     mc:Ignorable="d">
 
-    <Grid
-        x:Name="Preview"
-        MinHeight="380"
-        HorizontalAlignment="Center">
+    <Grid MinHeight="380" HorizontalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!--  Image Viewer  -->
+        <!--  Image Preview  -->
         <Image
-            x:Name="PreImage"
             Grid.Row="0"
             Grid.Column="0"
             MaxWidth="320"
@@ -26,42 +25,34 @@
             Margin="10"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Panel.ZIndex="0"
-            Visibility="Hidden" />
+            Source="{Binding PreviewImage, Mode=OneWay}"
+            Visibility="{Binding ImagePreviewVisibility, Mode=OneTime}" />
 
-        <!--  Text Viewer  -->
+        <!--  Text Preview  -->
         <ScrollViewer
-            x:Name="PreTxtBoxSv"
             Grid.Row="0"
             Grid.Column="0"
             MaxHeight="400"
             Padding="5"
             HorizontalAlignment="Center"
             HorizontalContentAlignment="Left"
-            Panel.ZIndex="1"
             HorizontalScrollBarVisibility="Auto"
-            VerticalScrollBarVisibility="Auto">
-            <TextBox
-                x:Name="PreTxtBox"
+            VerticalScrollBarVisibility="Auto"
+            Visibility="{Binding TextPreviewVisibility, Mode=OneTime}">
+            <userControls:PreviewTextBox
                 MinWidth="320"
                 Margin="5"
                 Padding="5"
-                Focusable="True"
-                HorizontalScrollBarVisibility="Disabled"
-                IsReadOnly="False"
-                IsUndoEnabled="True"
-                Text=""
-                TextAlignment="Left"
-                UseLayoutRounding="False"
-                VerticalScrollBarVisibility="Disabled" />
+                Text="{Binding PreviewText, Mode=TwoWay}" />
         </ScrollViewer>
 
-        <!--  Preview Sub Title  -->
+        <!--  Status Preview  -->
         <TextBlock
-            x:Name="PreSubTitle"
             Grid.Row="1"
             Margin="10,5,10,5"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Center" />
+            VerticalAlignment="Center"
+            Text="{Binding PreviewStatus, Mode=OneWay}"
+            Visibility="{Binding StatusPreviewVisibility, Mode=OneTime}" />
     </Grid>
 </UserControl>

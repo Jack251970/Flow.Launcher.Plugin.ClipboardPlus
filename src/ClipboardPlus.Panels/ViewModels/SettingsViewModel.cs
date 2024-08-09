@@ -36,9 +36,9 @@ public class SettingsViewModel : BaseModel, IDisposable
 
     public void OnCultureInfoChanged(CultureInfo _)
     {
-        ReloadRecordOrders();
-        ReloadClickActions();
-        ReloadKeepTimes();
+        RefreshRecordOrders();
+        RefreshClickActions();
+        RefreshKeepTimes();
     }
 
     #region Commands
@@ -142,7 +142,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         _selectedRecordOrder = _recordOrders.First(x => x.Value == Settings.RecordOrder);
     }
 
-    private void ReloadRecordOrders()
+    private void RefreshRecordOrders()
     {
         _recordOrders = EnumBindingModel<RecordOrder>.CreateList(Context);
 
@@ -187,7 +187,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         _selectedClickAction = _clickActions.First(x => x.Value == Settings.ClickAction);
     }
 
-    private void ReloadClickActions()
+    private void RefreshClickActions()
     {
         _clickActions = EnumBindingModel<ClickAction>.CreateList(Context);
 
@@ -378,7 +378,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         _selectedFilesKeepTime = _filesKeepTimes.First(x => x.Value == Settings.FilesKeepTime);
     }
 
-    private void ReloadKeepTimes()
+    private void RefreshKeepTimes()
     {
         _textKeepTimes = EnumBindingModel<KeepTime>.CreateList(Context);
         _imagesKeepTimes = EnumBindingModel<KeepTime>.CreateList(Context);
