@@ -55,7 +55,7 @@ public class DatabaseHelper : IDisposable
             score, init_score, 'time', create_time, pinned) 
         VALUES (
             @HashId, @DataMd5, @Text, @DisplayTitle, @SenderApp, 
-            @IconPath, @IconMd5, @PreviewImagePath, @ContentType,
+            @IconPath, @IconMd5, @PreviewImagePath, @DataType,
             @Score, @InitScore, @Time, @CreateTime, @Pinned);";
 
     private readonly string SqlSelectRecordCountByMd5 =
@@ -75,7 +75,7 @@ public class DatabaseHelper : IDisposable
         """
         SELECT r.id as Id, a.data_b64 as DataMd5, r.text as Text, r.display_title as DisplayTitle,
             r.senderapp as SenderApp, r.icon_path as IconPath, b.data_b64 as IconMd5,
-            r.preview_image_path as PreviewImagePath, r.content_type as ContentType,
+            r.preview_image_path as PreviewImagePath, r.content_type as DataType,
             r.score as Score, r.init_score as InitScore, r.time as Time,
             r.create_time as CreateTime, r.pinned as Pinned, r.hash_id as HashId
         FROM record r
@@ -87,7 +87,7 @@ public class DatabaseHelper : IDisposable
         """
         DELETE FROM record
         WHERE strftime('%s', 'now') - strftime('%s', create_time) > @KeepTime*3600
-        AND content_type=@ContentType;
+        AND content_type=@DataType;
         """;
 
     #endregion
@@ -214,11 +214,11 @@ public class DatabaseHelper : IDisposable
         return allRecord;
     }
 
-    public async Task DeleteRecordByKeepTimeAsync(int contentType, int keepTime)
+    public async Task DeleteRecordByKeepTimeAsync(int DataType, int keepTime)
     {
         await Connection.ExecuteAsync(
             SqlDeleteRecordByKeepTime,
-            new { KeepTime = keepTime, ContentType = contentType }
+            new { KeepTime = keepTime, DataType = DataType }
         );
         await CloseIfNotKeepAsync();
     }

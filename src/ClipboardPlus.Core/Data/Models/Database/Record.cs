@@ -11,7 +11,7 @@ public class Record
     public string IconPath { get; set; } = string.Empty;
     public string IconMd5 { get; set; } = string.Empty;
     public string PreviewImagePath { get; set; } = string.Empty;
-    public int ContentType { get; set; }
+    public int DataType { get; set; }
     public int Score { get; set; }
     public int InitScore { get; set; }
     public DateTime _time;
@@ -48,7 +48,7 @@ public class Record
             IconPath = data.IconPath,
             IconMd5 = iconMd5,
             PreviewImagePath = data.PreviewImagePath,
-            ContentType = (int)data.DataType,
+            DataType = (int)data.DataType,
             Score = data.Score,
             InitScore = data.InitScore,
             Time = data.Time.ToString("O"),
@@ -60,7 +60,7 @@ public class Record
 
     public static ClipboardData ToClipboardData(Record record)
     {
-        var type = (DataType)record.ContentType;
+        var type = (DataType)record.DataType;
         var clipboardData = new ClipboardData
         {
             HashId = record.HashId,
@@ -82,12 +82,12 @@ public class Record
         };
         switch (type)
         {
-            case DataType.Text:
+            case Enums.DataType.Text:
                 break;
-            case DataType.Image:
+            case Enums.DataType.Image:
                 clipboardData.Data = record.DataMd5.ToImage();
                 break;
-            case DataType.Files:
+            case Enums.DataType.Files:
                 clipboardData.Data = record.DataMd5.Split('\n');
                 break;
             default:

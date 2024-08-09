@@ -76,10 +76,14 @@ public class ClipboardMonitor : IDisposable
 
     #endregion
 
+    #region Constructors
+
     public ClipboardMonitor()
     {
         SetDefaults();
     }
+
+    #endregion
 
     #region Methods
 
@@ -204,12 +208,12 @@ public class ClipboardMonitor : IDisposable
     {
         public ClipboardChangedEventArgs(
             object? content,
-            DataType contentType,
+            DataType dataType,
             SourceApplication source
         )
         {
             Content = content;
-            ContentType = contentType;
+            DataType = dataType;
 
             SourceApplication = new SourceApplication(
                 source.Id,
@@ -230,7 +234,7 @@ public class ClipboardMonitor : IDisposable
         /// <summary>
         /// Gets the currently copied clipboard content-type.
         /// </summary>
-        public DataType ContentType { get; }
+        public DataType DataType { get; }
 
         /// <summary>
         /// Gets the application from where the

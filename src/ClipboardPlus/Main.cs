@@ -60,7 +60,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         return Task.Run(() => Query(query));
     }
 
-    // TODO: Support Glphy in the result.
     public List<Result> Query(Query query)
     {
         var results = new List<Result>();
@@ -308,7 +307,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             HashId = StringUtils.GetGuid(),
             Text = "",
             DisplayTitle = "",
-            DataType = e.ContentType,
+            DataType = e.DataType,
             Data = e.Content,
             SenderApp = e.SourceApplication.Name,
             IconPath = PathHelper.AppIconPath,
@@ -324,7 +323,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         CurrentScore++;
 
         // process clipboard data
-        switch (e.ContentType)
+        switch (e.DataType)
         {
             case DataType.Text:
                 clipboardData.Text = ClipboardMonitor.ClipboardText;
@@ -337,12 +336,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
                         clipboardData.SenderApp ?? Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app"));
                     FileUtils.SaveImageCache(clipboardData, PathHelper.ImageCachePath, imageName);
-                }
-                var img = ClipboardMonitor.ClipboardImage;
-                // TODO: Optimize?
-                if (img != null)
-                {
-                    clipboardData.Icon = img.ToBitmapImage();
                 }
                 Context.API.LogDebug(ClassName, "Processed image change");
                 break;
