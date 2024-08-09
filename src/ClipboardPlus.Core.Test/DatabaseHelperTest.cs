@@ -141,4 +141,40 @@ public class DatabaseHelperTest
         }
         await helper.CloseAsync();
     }
+
+    [Fact]
+    public async Task TestPinRecord()
+    {
+        var exampleTextRecord = GetRandomClipboardData();
+        var helper = new DatabaseHelper(
+            "TestDb",
+            mode: SqliteOpenMode.Memory,
+            cache: SqliteCacheMode.Shared
+        );
+        await helper.CreateDatabaseAsync();
+        await helper.AddOneRecordAsync(exampleTextRecord);
+        var c1 = (await helper.GetAllRecordAsync()).First();
+        exampleTextRecord.Pinned = !exampleTextRecord.Pinned;
+        await helper.PinOneRecordAsync(exampleTextRecord);
+        var c2 = (await helper.GetAllRecordAsync()).First();
+        await helper.CloseAsync();
+        Assert.True(c1.Pinned == !c2.Pinned);
+    }
+
+    [Fact]
+    public async Task TestDeleteOneRecord()
+    {
+        var exampleTextRecord = GetRandomClipboardData();
+        var helper = new DatabaseHelper(
+            "TestDb",
+            mode: SqliteOpenMode.Memory,
+            cache: SqliteCacheMode.Shared
+        );
+        await helper.CreateDatabaseAsync();
+        await helper.AddOneRecordAsync(exampleTextRecord);
+        await helper.DeleteOneRecordAsync(exampleTextRecord);
+        var c = await helper.GetAllRecordAsync();
+        await helper.CloseAsync();
+        Assert.True(c.Count == 0);
+    }
 }
