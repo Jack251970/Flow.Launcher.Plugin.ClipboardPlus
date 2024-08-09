@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using System;
-using System.Runtime.CompilerServices;
 using System.Globalization;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace ClipboardPlus.Panels.ViewModels;
 
@@ -38,17 +41,44 @@ public class SettingsViewModel : BaseModel, IDisposable
         ReloadKeepTimes();
     }
 
-    protected void OnPropertyChanged(bool reload, [CallerMemberName] string propertyName = "")
+    #region Commands
+
+    #region Open Cache Image Folder
+
+    public ICommand OpenCacheImageFolderCommand => new RelayCommand(OpenCacheImageFolder);
+
+    private void OpenCacheImageFolder(object? parameter)
     {
-        OnPropertyChanged(propertyName);
-        // TODO: Use Context.API instead.
-        // Context.API.SaveSettingJsonStorage<Settings>();
-        SaveSettings?.Invoke();
-        if (reload)
+        Process.Start(new ProcessStartInfo()
         {
-            ReloadDataAsync?.Invoke();
+            FileName = PathHelper.ImageCachePath,
+            UseShellExecute = true,
+            Verb = "open"
+        });
+    }
+
+    #endregion
+
+    #region Format String Insert
+
+    public ICommand FormatStringInsertCommand => new RelayCommand(FormatStringInsert);
+
+    private void FormatStringInsert(object? parameter)
+    {
+        if (parameter is object[] parameters && parameters.Length == 2)
+        {
+            if (parameters[0] is TextBox textBox && parameters[1] is string customString)
+            {
+                CacheFormat = CacheFormat.Insert(textBox.CaretIndex, customString ?? string.Empty);
+            }
         }
     }
+
+    #endregion
+
+    #endregion
+
+    #region Properties
 
     #region Clear Keyword
 
@@ -361,6 +391,20 @@ public class SettingsViewModel : BaseModel, IDisposable
         OnPropertyChanged(nameof(TextKeepTimes));
         OnPropertyChanged(nameof(ImagesKeepTimes));
         OnPropertyChanged(nameof(FilesKeepTimes));
+    }
+
+    #endregion
+
+    protected void OnPropertyChanged(bool reload, [CallerMemberName] string propertyName = "")
+    {
+        OnPropertyChanged(propertyName);
+        // TODO: Use Context.API instead.
+        // Context.API.SaveSettingJsonStorage<Settings>();
+        SaveSettings?.Invoke();
+        if (reload)
+        {
+            ReloadDataAsync?.Invoke();
+        }
     }
 
     #endregion

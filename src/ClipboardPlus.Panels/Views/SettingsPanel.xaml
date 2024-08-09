@@ -2,6 +2,7 @@
     x:Class="ClipboardPlus.Panels.Views.SettingsPanel"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converts="clr-namespace:ClipboardPlus.Panels.Converts"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ClipboardPlus.Panels.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -9,6 +10,10 @@
     xmlns:viewModels="clr-namespace:ClipboardPlus.Panels.ViewModels"
     d:DataContext="{d:DesignInstance viewModels:SettingsViewModel}"
     mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converts:MultiParameterConverter x:Key="MultiParameterConverter" />
+    </UserControl.Resources>
 
     <Grid Margin="60,15,0,15">
         <Grid.RowDefinitions>
@@ -56,7 +61,6 @@
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_max_records}" />
         <userControls:NumberBox
-            x:Name="MaxRecValueBox"
             Grid.Row="1"
             Grid.Column="1"
             Width="100"
@@ -75,7 +79,6 @@
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_order_by}" />
         <ComboBox
-            x:Name="RecordOrderComboBox"
             Grid.Row="2"
             Grid.Column="1"
             Margin="10,5,0,5"
@@ -126,7 +129,7 @@
             Margin="10,5,0,5"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            Click="CacheImageButton_Click"
+            Command="{Binding OpenCacheImageFolderCommand}"
             Content="{DynamicResource flowlauncher_plugin_clipboardplus_open_cache_folder}" />
 
         <!--  Cache Format  -->
@@ -137,7 +140,7 @@
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_cache_format}" />
         <TextBox
-            x:Name="TextBoxCacheFormat"
+            x:Name="CacheFormatTextBox"
             Grid.Row="6"
             Grid.Column="1"
             MinWidth="200"
@@ -159,45 +162,87 @@
             <Button
                 MinWidth="30"
                 Margin="0,0,3,0"
-                Click="FormatButton_OnClick"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_year}"
-                Tag="yyyy" />
+                Command="{Binding FormatStringInsertCommand}"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_year}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource MultiParameterConverter}">
+                        <Binding ElementName="CacheFormatTextBox" />
+                        <Binding Source="yyyy" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
             <Button
                 MinWidth="30"
                 Margin="0,0,3,0"
-                Click="FormatButton_OnClick"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_month}"
-                Tag="MM" />
+                Command="{Binding FormatStringInsertCommand}"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_month}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource MultiParameterConverter}">
+                        <Binding ElementName="CacheFormatTextBox" />
+                        <Binding Source="MM" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
             <Button
                 MinWidth="30"
                 Margin="0,0,3,0"
-                Click="FormatButton_OnClick"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_day}"
-                Tag="dd" />
+                Command="{Binding FormatStringInsertCommand}"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_day}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource MultiParameterConverter}">
+                        <Binding ElementName="CacheFormatTextBox" />
+                        <Binding Source="dd" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
             <Button
                 MinWidth="30"
                 Margin="0,0,3,0"
-                Click="FormatButton_OnClick"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_hour}"
-                Tag="hh" />
+                Command="{Binding FormatStringInsertCommand}"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_hour}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource MultiParameterConverter}">
+                        <Binding ElementName="CacheFormatTextBox" />
+                        <Binding Source="hh" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
             <Button
                 MinWidth="30"
                 Margin="0,0,3,0"
-                Click="FormatButton_OnClick"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_minute}"
-                Tag="mm" />
+                Command="{Binding FormatStringInsertCommand}"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_minute}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource MultiParameterConverter}">
+                        <Binding ElementName="CacheFormatTextBox" />
+                        <Binding Source="mm" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
             <Button
                 MinWidth="30"
                 Margin="0,0,3,0"
-                Click="FormatButton_OnClick"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_second}"
-                Tag="ss" />
+                Command="{Binding FormatStringInsertCommand}"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_second}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource MultiParameterConverter}">
+                        <Binding ElementName="CacheFormatTextBox" />
+                        <Binding Source="ss" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
             <Button
                 MinWidth="30"
                 Margin="0,0,0,0"
-                Click="FormatButton_OnClick"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_app}"
-                Tag="app" />
+                Command="{Binding FormatStringInsertCommand}"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_app}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource MultiParameterConverter}">
+                        <Binding ElementName="CacheFormatTextBox" />
+                        <Binding Source="app" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
         </StackPanel>
 
         <!--  Cache Format Preview  -->
@@ -208,7 +253,6 @@
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_cache_format_preview}" />
         <TextBox
-            x:Name="TextBoxCacheFormatPreview"
             Grid.Row="8"
             Grid.Column="1"
             MinWidth="200"
