@@ -15,14 +15,14 @@ public class DatabaseHelper : IDisposable
 
     #region Commands Strings
 
-    private readonly string SqlCheckTableRecord = "SELECT name from sqlite_master WHERE name='record';";
+    private readonly string SqlSelectRecordTable = "SELECT name from sqlite_master WHERE name='record';";
     private readonly string SqlCreateDatabase =
         """
-        CREATE TABLE assets (
-            id	        INTEGER NOT NULL UNIQUE,
-            data_b64	TEXT,
-            md5         TEXT UNIQUE ,
-            PRIMARY KEY("id" AUTOINCREMENT)
+        CREATE TABLE "assets" (
+            "id"	    INTEGER NOT NULL UNIQUE,
+            "data_b64"	TEXT,
+            "md5"       TEXT UNIQUE ,
+            PRIMARY     KEY("id" AUTOINCREMENT)
         );
         CREATE TABLE "record" (
             "id"	                INTEGER NOT NULL UNIQUE,
@@ -34,15 +34,15 @@ public class DatabaseHelper : IDisposable
             "icon_path"	            TEXT,
             "icon_md5"	            TEXT,
             "preview_image_path"    TEXT,
-            "content_type"	        INTEGER,
+            "data_type"	            INTEGER,
             "score"	                INTEGER,
             "init_score"	        INTEGER,
             "time"	                TEXT,
             "create_time"	        TEXT,
             "pinned"	            INTEGER,
-            PRIMARY KEY("id" AUTOINCREMENT),
-            FOREIGN KEY("icon_md5") REFERENCES "assets"("md5"),
-            FOREIGN KEY("data_md5") REFERENCES "assets"("md5") ON DELETE CASCADE
+            PRIMARY                 KEY("id" AUTOINCREMENT),
+            FOREIGN                 KEY("icon_md5") REFERENCES "assets"("md5"),
+            FOREIGN                 KEY("data_md5") REFERENCES "assets"("md5") ON DELETE CASCADE
         );
         """;
 
@@ -51,7 +51,7 @@ public class DatabaseHelper : IDisposable
     private readonly string SqlInsertRecord =
         @"INSERT OR IGNORE INTO record(
             hash_id, data_md5, text, display_title, senderapp, 
-            icon_path, icon_md5, preview_image_path, content_type,
+            icon_path, icon_md5, preview_image_path, data_type,
             score, init_score, 'time', create_time, pinned) 
         VALUES (
             @HashId, @DataMd5, @Text, @DisplayTitle, @SenderApp, 
@@ -75,7 +75,7 @@ public class DatabaseHelper : IDisposable
         """
         SELECT r.id as Id, a.data_b64 as DataMd5, r.text as Text, r.display_title as DisplayTitle,
             r.senderapp as SenderApp, r.icon_path as IconPath, b.data_b64 as IconMd5,
-            r.preview_image_path as PreviewImagePath, r.content_type as DataType,
+            r.preview_image_path as PreviewImagePath, r.data_type as DataType,
             r.score as Score, r.init_score as InitScore, r.time as Time,
             r.create_time as CreateTime, r.pinned as Pinned, r.hash_id as HashId
         FROM record r
@@ -87,7 +87,7 @@ public class DatabaseHelper : IDisposable
         """
         DELETE FROM record
         WHERE strftime('%s', 'now') - strftime('%s', create_time) > @KeepTime*3600
-        AND content_type=@DataType;
+        AND data_type=@DataType;
         """;
 
     #endregion
@@ -106,14 +106,14 @@ public class DatabaseHelper : IDisposable
         bool keepConnection = true
     )
     {
-        var connString = new SqliteConnectionStringBuilder()
+        var connectionString = new SqliteConnectionStringBuilder()
         {
             DataSource = databasePath,
             Mode = mode,
             ForeignKeys = true,
             Cache = cache,
         }.ToString();
-        Connection = new SqliteConnection(connString);
+        Connection = new SqliteConnection(connectionString);
         KeepConnection = keepConnection;
     }
 
@@ -125,10 +125,10 @@ public class DatabaseHelper : IDisposable
     {
         Connection.Open();
         // check if `record` exists
-        var name = Connection.QueryFirstOrDefault<string>(SqlCheckTableRecord);
-        // if not exists, create `record` and `assets` table
+        var name = Connection.QueryFirstOrDefault<string>(SqlSelectRecordTable);
         if (name != "record")
         {
+            // if not exists, create `record` and `assets` table
             Connection.Execute(SqlCreateDatabase);
             await CloseIfNotKeepAsync();
         }
@@ -214,11 +214,11 @@ public class DatabaseHelper : IDisposable
         return allRecord;
     }
 
-    public async Task DeleteRecordByKeepTimeAsync(int DataType, int keepTime)
+    public async Task DeleteRecordByKeepTimeAsync(int dataType, int keepTime)
     {
         await Connection.ExecuteAsync(
             SqlDeleteRecordByKeepTime,
-            new { KeepTime = keepTime, DataType = DataType }
+            new { KeepTime = keepTime, DataType = dataType }
         );
         await CloseIfNotKeepAsync();
     }
