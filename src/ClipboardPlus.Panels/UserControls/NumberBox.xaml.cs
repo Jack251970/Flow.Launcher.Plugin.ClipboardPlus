@@ -110,7 +110,6 @@ public partial class NumberBox : UserControl
 
     private void UpdateTextBoxValue(int newValue)
     {
-        // TODO: Update ValueBox.Text with StringFormat={}{0:####0}}
         if (ValueBox.Text != newValue.ToString())
         {
             ValueBox.Text = newValue.ToString();

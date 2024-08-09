@@ -1,6 +1,7 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -9,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using WindowsInput;
-using System.Globalization;
 
 namespace ClipboardPlus;
 
@@ -23,6 +23,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     // Class name for logging
     private string ClassName => GetType().Name;
+
+    // Culture info
+    private CultureInfo CultureInfo = null!;
 
     // Action keyword
     // TODO: Change it but clear action won't change.
@@ -261,6 +264,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     public void OnCultureInfoChanged(CultureInfo newCulture)
     {
+        Context.API.LogDebug(ClassName, $"Culture info changed to {newCulture}");
+        CultureInfo = newCulture;
         SettingsViewModel.OnCultureInfoChanged(newCulture);
     }
 
@@ -428,8 +433,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     private Result GetResultFromClipboardData(ClipboardData clipboardData)
     {
-        // TODO: Add CultureInfo support.
-        var dispSubTitle = $"{clipboardData.CreateTime:yyyy-MM-dd-hh-mm-ss}: {clipboardData.SenderApp}";
+        var dispSubTitle = $"{clipboardData.CreateTime.ToString(CultureInfo)}: {clipboardData.SenderApp}";
         dispSubTitle = clipboardData.Pinned ? $"{PinUnicode}{dispSubTitle}" : dispSubTitle;
         return new Result
         {
@@ -443,22 +447,14 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             SubTitleToolTip = dispSubTitle,
             ContextData = clipboardData,
             PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(Context, clipboardData)),
-            AsyncAction = async _ =>
+            Action = _ =>
             {
-                // TODO: Fix bug here.
                 switch (Settings.ClickAction)
                 {
                     case ClickAction.CopyPaste:
                         CopyToClipboard(clipboardData);
+                        Context.API.VisibilityChanged += Paste_VisibilityChanged;
                         Context.API.HideMainWindow();
-                        while (Context.API.IsMainWindowVisible())
-                        {
-                            await Task.Delay(100);
-                        }
-                        new InputSimulator().Keyboard.ModifiedKeyStroke(
-                            VirtualKeyCode.CONTROL,
-                            VirtualKeyCode.VK_V
-                        );
                         break;
                     case ClickAction.CopyDeleteList:
                         CopyToClipboard(clipboardData);
@@ -470,37 +466,37 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                         break;
                     case ClickAction.CopyPasteDeleteList:
                         CopyToClipboard(clipboardData);
+                        Context.API.VisibilityChanged += Paste_VisibilityChanged;
                         Context.API.HideMainWindow();
-                        while (Context.API.IsMainWindowVisible())
-                        {
-                            await Task.Delay(100);
-                        }
-                        new InputSimulator().Keyboard.ModifiedKeyStroke(
-                            VirtualKeyCode.CONTROL,
-                            VirtualKeyCode.VK_V
-                        );
                         RemoveFromList(clipboardData, false);
                         break;
                     case ClickAction.CopyPasteDeleteListDatabase:
                         CopyToClipboard(clipboardData);
+                        Context.API.VisibilityChanged += Paste_VisibilityChanged;
                         Context.API.HideMainWindow();
-                        while (Context.API.IsMainWindowVisible())
-                        {
-                            await Task.Delay(100);
-                        }
-                        new InputSimulator().Keyboard.ModifiedKeyStroke(
-                            VirtualKeyCode.CONTROL,
-                            VirtualKeyCode.VK_V
-                        );
                         RemoveFromListDatabase(clipboardData, false);
                         break;
                     default:
                         CopyToClipboard(clipboardData);
                         break;
                 }
+                Context.API.ShowMsg(Context.GetTranslation(Settings.ClickAction));
                 return true;
             },
         };
+    }
+
+    private async void Paste_VisibilityChanged(object sender, VisibilityChangedEventArgs args)
+    {
+        if (args.IsVisible == false)
+        {
+            await Task.Delay(100);
+            new InputSimulator().Keyboard.ModifiedKeyStroke(
+                VirtualKeyCode.CONTROL,
+                VirtualKeyCode.VK_V
+            );
+            Context.API.VisibilityChanged -= Paste_VisibilityChanged;
+        }
     }
 
     private int GetNewScoreByOrderBy(ClipboardData clipboardData)
