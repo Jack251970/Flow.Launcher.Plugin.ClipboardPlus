@@ -69,7 +69,7 @@ saving large images via `KeepImage` to database may block query for a little whi
 - [ ] Image Type Classification
 - [ ] File Type Classification
 - [X] Light / Dark Support
-- [ ] Multi-language support
+- [X] Multi-language support
 - [ ] Cached images format definition
 
 ## Reference
