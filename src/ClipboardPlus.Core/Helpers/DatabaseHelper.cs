@@ -19,10 +19,10 @@ public class DatabaseHelper : IDisposable
     private readonly string SqlCreateDatabase =
         """
         CREATE TABLE "assets" (
-            "id"	    INTEGER NOT NULL UNIQUE,
-            "data_b64"	TEXT,
-            "md5"       TEXT UNIQUE ,
-            PRIMARY     KEY("id" AUTOINCREMENT)
+            "id"	                INTEGER NOT NULL UNIQUE,
+            "data_b64"	            TEXT,
+            "md5"                   TEXT UNIQUE ,
+            PRIMARY                 KEY("id" AUTOINCREMENT)
         );
         CREATE TABLE "record" (
             "id"	                INTEGER NOT NULL UNIQUE,
