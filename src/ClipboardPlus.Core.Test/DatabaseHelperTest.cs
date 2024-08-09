@@ -2,7 +2,6 @@ using Dapper;
 using Microsoft.Data.Sqlite;
 using System.Drawing;
 using System.Globalization;
-using System.Windows.Media.Imaging;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,14 +21,10 @@ public class DatabaseHelperTest
             DataType = DataType.Text,
             Data = "Test Data",
             SenderApp = "Source.exe",
-            DisplayTitle = "Test Display Title",
-            IconPath = _defaultIconPath,
-            Icon = new BitmapImage(new Uri(_defaultIconPath, UriKind.RelativeOrAbsolute)),
-            Glyph = ResourceHelper.GetGlyph(DataType.Text),
+            Title = "Test Title",
             PreviewImagePath = _defaultIconPath,
             Score = 241,
             InitScore = 1,
-            Time = DateTime.Now,
             Pinned = false,
             CreateTime = DateTime.Now,
         };
@@ -52,14 +47,10 @@ public class DatabaseHelperTest
             DataType = type,
             Data = StringUtils.RandomString(10),
             SenderApp = StringUtils.RandomString(5) + ".exe",
-            DisplayTitle = StringUtils.RandomString(10),
-            IconPath = _defaultIconPath,
-            Icon = new BitmapImage(new Uri(_defaultIconPath, UriKind.RelativeOrAbsolute)),
-            Glyph = ResourceHelper.GetGlyph(type),
+            Title = StringUtils.RandomString(10),
             PreviewImagePath = _defaultIconPath,
             Score = rand.Next(1000),
             InitScore = rand.Next(1000),
-            Time = DateTime.Now,
             Pinned = false,
             CreateTime = DateTime.Now,
         };

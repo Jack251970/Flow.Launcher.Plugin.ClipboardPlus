@@ -21,7 +21,7 @@ public class DatabaseHelper : IDisposable
         CREATE TABLE "assets" (
             "id"	                INTEGER NOT NULL UNIQUE,
             "data_b64"	            TEXT,
-            "md5"                   TEXT UNIQUE ,
+            "data_md5"              TEXT UNIQUE ,
             PRIMARY                 KEY("id" AUTOINCREMENT)
         );
         CREATE TABLE "record" (
@@ -29,58 +29,50 @@ public class DatabaseHelper : IDisposable
             "hash_id"	            TEXT UNIQUE,
             "data_md5"	            TEXT,
             "text"	                TEXT,
-            "display_title"	        TEXT,
-            "senderapp"	            TEXT,
-            "icon_path"	            TEXT,
-            "icon_md5"	            TEXT,
+            "title"	                TEXT,
+            "sender_app"	        TEXT,
             "preview_image_path"    TEXT,
             "data_type"	            INTEGER,
             "score"	                INTEGER,
             "init_score"	        INTEGER,
-            "time"	                TEXT,
             "create_time"	        TEXT,
             "pinned"	            INTEGER,
             PRIMARY                 KEY("id" AUTOINCREMENT),
-            FOREIGN                 KEY("icon_md5") REFERENCES "assets"("md5"),
-            FOREIGN                 KEY("data_md5") REFERENCES "assets"("md5") ON DELETE CASCADE
+            FOREIGN                 KEY("data_md5") REFERENCES "assets"("data_md5") ON DELETE CASCADE
         );
         """;
 
     private readonly string SqlInsertAssets =
-        "INSERT OR IGNORE INTO assets(data_b64, md5) VALUES (@DataB64, @Md5);";
+        "INSERT OR IGNORE INTO assets(data_b64, data_md5) VALUES (@DataB64, @DataMd5);";
     private readonly string SqlInsertRecord =
         @"INSERT OR IGNORE INTO record(
-            hash_id, data_md5, text, display_title, senderapp, 
-            icon_path, icon_md5, preview_image_path, data_type,
-            score, init_score, 'time', create_time, pinned) 
+            hash_id, data_md5, text, title, sender_app, preview_image_path, 
+            data_type, score, init_score, create_time, pinned) 
         VALUES (
-            @HashId, @DataMd5, @Text, @DisplayTitle, @SenderApp, 
-            @IconPath, @IconMd5, @PreviewImagePath, @DataType,
-            @Score, @InitScore, @Time, @CreateTime, @Pinned);";
+            @HashId, @DataMd5, @Text, @Title, @SenderApp, @PreviewImagePath, 
+            @DataType, @Score, @InitScore, @CreateTime, @Pinned);";
 
     private readonly string SqlSelectRecordCountByMd5 =
         "SELECT COUNT() FROM record WHERE data_md5=@DataMd5;";
     private readonly string SqlDeleteRecordAssets1 =
         "DELETE FROM record WHERE hash_id=@HashId OR data_md5=@DataMd5;";
     private readonly string SqlDeleteRecordAssets2 =
-        "PRAGMA foreign_keys = ON; DELETE FROM assets WHERE md5=@DataMd5;";
+        "PRAGMA foreign_keys = ON; DELETE FROM assets WHERE data_md5=@DataMd5;";
 
     private readonly string SqlDeleteAllRecords =
         "DROP TABLE IF EXISTS record; DROP TABLE IF EXISTS assets; VACUUM;";
 
     private readonly string SqlUpdateRecordPinned =
-        "UPDATE record SET pinned=@Pin, icon_md5=@IconMd5 WHERE hash_id=@HashId;";
+        "UPDATE record SET pinned=@Pin WHERE hash_id=@HashId;";
 
     private readonly string SqlSelectAllRecord =
         """
-        SELECT r.id as Id, a.data_b64 as DataMd5, r.text as Text, r.display_title as DisplayTitle,
-            r.senderapp as SenderApp, r.icon_path as IconPath, b.data_b64 as IconMd5,
-            r.preview_image_path as PreviewImagePath, r.data_type as DataType,
-            r.score as Score, r.init_score as InitScore, r.time as Time,
+        SELECT r.id as Id, a.data_b64 as DataMd5, r.text as Text, r.title as Title,
+            r.sender_app as SenderApp, r.preview_image_path as PreviewImagePath,
+            r.data_type as DataType, r.score as Score, r.init_score as InitScore,
             r.create_time as CreateTime, r.pinned as Pinned, r.hash_id as HashId
         FROM record r
-        LEFT JOIN assets a ON r.data_md5=a.md5
-        LEFT JOIN assets b ON r.icon_md5=b.md5;
+        LEFT JOIN assets a ON r.data_md5=a.data_md5;
         """;
 
     private readonly string SqlDeleteRecordByKeepTime =
@@ -134,23 +126,20 @@ public class DatabaseHelper : IDisposable
         }
     }
 
-    // TODO: Optimize large assets saving performance.
+    // TODO: Optimize large asset saving performance.
     public async Task AddOneRecordAsync(ClipboardData data)
     {
         Connection.Open();
-        // insert assets
-        var iconB64 = data.Icon.ToBase64();
-        var iconMd5 = iconB64.GetMd5();
+        // insert data
         var dataB64 = data.DataToString();
         var dataMd5 = dataB64.GetMd5();
-        var assets = new List<Assets>
+        var assets = new List<Asset>
         {
-            new() { DataB64 = iconB64, Md5 = iconMd5 },
-            new() { DataB64 = dataB64, Md5 = dataMd5 },
+            new() { DataB64 = dataB64, DataMd5 = dataMd5 },
         };
         await Connection.ExecuteAsync(SqlInsertAssets, assets);
         // insert record
-        // note: you must insert record after assets, because record depends on assets
+        // note: you must insert record after data
         var record = Record.FromClipboardData(data);
         await Connection.ExecuteAsync(SqlInsertRecord, record);
         await CloseIfNotKeepAsync();
@@ -192,16 +181,8 @@ public class DatabaseHelper : IDisposable
 
     public async Task PinOneRecordAsync(ClipboardData data)
     {
-        // insert assets
-        var iconB64 = data.Icon.ToBase64();
-        var iconMd5 = iconB64.GetMd5();
-        var assets = new List<Assets>
-        {
-            new() { DataB64 = iconB64, Md5 = iconMd5 },
-        };
-        await Connection.ExecuteAsync(SqlInsertAssets, assets);
         // update record
-        var record = new { Pin = data.Pinned, data.HashId, IconMd5 = iconMd5 };
+        var record = new { Pin = data.Pinned, data.HashId };
         await Connection.ExecuteAsync(SqlUpdateRecordPinned, record);
         await CloseIfNotKeepAsync();
     }

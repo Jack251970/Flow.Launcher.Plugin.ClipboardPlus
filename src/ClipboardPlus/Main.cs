@@ -103,8 +103,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         else
         {
             // records results
-            var displayData =
-            query.Search.Trim().Length == 0
+            var records =
+                query.Search.Trim().Length == 0
                 ? RecordsList.ToArray()
                 : RecordsList
                     .Where(
@@ -113,7 +113,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                             && i.Text.ToLower().Contains(query.Search.Trim().ToLower())
                     )
                     .ToArray();
-            results.AddRange(displayData.Select(GetResultFromClipboardData));
+            results.AddRange(records.Select(GetResultFromClipboardData));
             Context.API.LogDebug(ClassName, "Added records successfully");
             // clear results
             results.Add(
@@ -306,17 +306,13 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         {
             HashId = StringUtils.GetGuid(),
             Text = "",
-            DisplayTitle = "",
+            Title = "",
             DataType = e.DataType,
             Data = e.Content,
             SenderApp = e.SourceApplication.Name,
-            IconPath = PathHelper.AppIconPath,
-            Icon = null!,
-            Glyph = null!,
             PreviewImagePath = PathHelper.AppIconPath,
             Score = CurrentScore + 1,
             InitScore = CurrentScore + 1,
-            Time = now,
             Pinned = false,
             CreateTime = now,
         };
@@ -330,7 +326,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 Context.API.LogDebug(ClassName, "Processed text change");
                 break;
             case DataType.Image:
-                clipboardData.Text = $"Image:{clipboardData.Time:yy-MM-dd-HH:mm:ss}";
+                clipboardData.Text = $"Image: {clipboardData.CreateTime.ToString(CultureInfo)}";
                 if (Settings.CacheImages)
                 {
                     var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
@@ -352,12 +348,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             default:
                 break;
         }
-        clipboardData.Icon = ResourceHelper.GetIcon(clipboardData.DataType);
-        clipboardData.Glyph = ResourceHelper.GetGlyph(clipboardData.DataType);
-        clipboardData.DisplayTitle = MyRegex().Replace(clipboardData.Text.Trim(), "");
+        clipboardData.Title = MyRegex().Replace(clipboardData.Text.Trim(), "");
 
         // add to list and database if no repeat 
-        if (RecordsList.Any(node => node.GetMd5() == clipboardData.GetMd5()))
+        if (RecordsList.Any(record => record.DataMd5 == clipboardData.DataMd5))
         {
             return;
         }
@@ -430,7 +424,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         dispSubTitle = clipboardData.Pinned ? $"{PinUnicode}{dispSubTitle}" : dispSubTitle;
         return new Result
         {
-            Title = clipboardData.DisplayTitle,
+            Title = clipboardData.Title,
             SubTitle = dispSubTitle,
             Icon = () => clipboardData.Icon,
             Glyph = clipboardData.Glyph,

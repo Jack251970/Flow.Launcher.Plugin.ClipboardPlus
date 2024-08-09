@@ -2,56 +2,86 @@
 
 public class Record
 {
+    /// <summary>
+    /// Primary key of the record.
+    /// </summary>
     public int Id { get; set; }
+
+    /// <summary>
+    /// Hash id of the data, used to identify the data.
+    /// </summary>
     public string HashId { get; set; } = string.Empty;
+
+    /// <summary>
+    /// MD5 hash of the data, also used to identify the data.
+    /// </summary>
     public string DataMd5 { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Display text for the data.
+    /// </summary>
     public string Text { get; set; } = string.Empty;
-    public string DisplayTitle { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Display title for the data.
+    /// </summary>
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Sender application of the data.
+    /// </summary>
     public string SenderApp { get; set; } = string.Empty;
-    public string IconPath { get; set; } = string.Empty;
-    public string IconMd5 { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Path of the cached image for preview.
+    /// </summary>
     public string PreviewImagePath { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Type of the data.
+    /// </summary>
     public int DataType { get; set; }
+
+    /// <summary>
+    /// Score of the record for ranking.
+    /// </summary>
     public int Score { get; set; }
+
+    /// <summary>
+    /// Initial score of the record for pinning feature.
+    /// </summary>
     public int InitScore { get; set; }
-    public DateTime _time;
 
-    public string Time
-    {
-        get => _time.ToString("O");
-        set => _time = DateTime.Parse(value);
-    }
+    /// <summary>
+    /// Whether the record is pinned.
+    /// </summary>
+    public bool Pinned { get; set; }
 
-    public DateTime _create_time;
-
+    /// <summary>
+    /// Create time of the record.
+    /// </summary>
+    public DateTime _createTime;
     public string CreateTime
     {
-        get => _create_time.ToString("O");
-        set => _create_time = DateTime.Parse(value);
+        get => _createTime.ToString("O");
+        set => _createTime = DateTime.Parse(value);
     }
-
-    public bool Pinned { get; set; }
 
     public static Record FromClipboardData(ClipboardData data)
     {
-        var iconB64 = data.Icon.ToBase64();
-        var iconMd5 = iconB64.GetMd5();
-        string insertData = data.DataToString();
+        var insertData = data.DataToString();
         var dataMd5 = insertData.GetMd5();
         var record = new Record
         {
             HashId = data.HashId,
             DataMd5 = dataMd5,
             Text = data.Text,
-            DisplayTitle = data.DisplayTitle,
+            Title = data.Title,
             SenderApp = data.SenderApp,
-            IconPath = data.IconPath,
-            IconMd5 = iconMd5,
             PreviewImagePath = data.PreviewImagePath,
             DataType = (int)data.DataType,
             Score = data.Score,
             InitScore = data.InitScore,
-            Time = data.Time.ToString("O"),
             CreateTime = data.CreateTime.ToString("O"),
             Pinned = data.Pinned,
         };
@@ -66,18 +96,13 @@ public class Record
             HashId = record.HashId,
             Data = record.DataMd5,
             Text = record.Text,
-            DisplayTitle = record.DisplayTitle,
+            Title = record.Title,
             SenderApp = record.SenderApp,
-            // TODO: Check need save data.
-            IconPath = record.IconPath,
-            Icon = record.IconMd5.ToBitmapImage(),
-            Glyph = ResourceHelper.GetGlyph(type),
             PreviewImagePath = record.PreviewImagePath,
             DataType = type,
             Score = record.Score,
             InitScore = record.InitScore,
-            Time = record._time,
-            CreateTime = record._create_time,
+            CreateTime = record._createTime,
             Pinned = record.Pinned,
         };
         switch (type)

@@ -4,49 +4,75 @@ namespace ClipboardPlus.Core.Data.Models;
 
 public struct ClipboardData : IEquatable<ClipboardData>
 {
+    /// <summary>
+    /// Hash id of the data, used to identify the data.
+    /// </summary>
     public required string HashId;
+
+    /// <summary>
+    /// Clipboard data of the record.
+    /// </summary>
     public required object Data;
+
+    /// <summary>
+    /// MD5 hash of the data, also used to identify the data.
+    /// </summary>
+    public readonly string DataMd5 => DataToString().GetMd5();
+
+    /// <summary>
+    /// Display text for the data.
+    /// </summary>
     public required string Text;
-    public required string DisplayTitle;
+
+    /// <summary>
+    /// Display title for the data.
+    /// </summary>
+    public required string Title;
+
+    /// <summary>
+    /// Sender application of the data.
+    /// </summary>
     public required string SenderApp;
-    public required string IconPath;
-    public required BitmapImage Icon;
-    public required GlyphInfo Glyph;
-    public required string PreviewImagePath; // actually not used for now
+
+    /// <summary>
+    /// Icon representing the type of the data.
+    /// </summary>
+    public readonly BitmapImage Icon => ResourceHelper.GetIcon(DataType);
+
+    /// <summary>
+    /// Glyph representing the type of the data.
+    /// </summary>
+    public readonly GlyphInfo Glyph => ResourceHelper.GetGlyph(DataType);
+
+    /// <summary>
+    /// Path of the cached image for preview.
+    /// </summary>
+    public required string PreviewImagePath;
+
+    /// <summary>
+    /// Type of the data.
+    /// </summary>
     public required DataType DataType;
+
+    /// <summary>
+    /// Score of the record for ranking.
+    /// </summary>
     public required int Score;
+
+    /// <summary>
+    /// Initial score of the record for pinning feature.
+    /// </summary>
     public required int InitScore;
-    public required DateTime Time;
+
+    /// <summary>
+    /// Whether the record is pinned.
+    /// </summary>
     public required bool Pinned;
+
+    /// <summary>
+    /// Create time of the record.
+    /// </summary>
     public required DateTime CreateTime;
-
-    public static bool operator ==(ClipboardData a, ClipboardData b) => a.Equals(b);
-
-    public static bool operator !=(ClipboardData a, ClipboardData b) => !a.Equals(b);
-
-    public readonly bool Equals(ClipboardData b)
-    {
-        return Equals(b);
-    }
-
-    public override readonly bool Equals(object? obj)
-    {
-        if (obj is ClipboardData clipboardData)
-        {
-            return HashId == clipboardData.HashId;
-        }
-        return false;
-    }
-
-    public override readonly int GetHashCode()
-    {
-        return HashCode.Combine(Text, DisplayTitle, SenderApp, DataType);
-    }
-
-    public readonly string GetMd5()
-    {
-        return DataToString().GetMd5();
-    }
 
     public readonly string DataToString()
     {
@@ -72,6 +98,32 @@ public struct ClipboardData : IEquatable<ClipboardData>
                 "Data to string for type not in Text, Image, Files are not implemented now."
             ),  // don't process others
         };
+    }
+
+    public static bool operator ==(ClipboardData a, ClipboardData b) => a.Equals(b);
+
+    public static bool operator !=(ClipboardData a, ClipboardData b) => !a.Equals(b);
+
+    public readonly bool Equals(ClipboardData b)
+    {
+        return Equals(b);
+    }
+
+    public override readonly bool Equals(object? obj)
+    {
+        if (obj is ClipboardData clipboardData)
+        {
+            return Text == clipboardData.Text &&
+                Title == clipboardData.Title &&
+                SenderApp == clipboardData.SenderApp &&
+                DataType == clipboardData.DataType;
+        }
+        return false;
+    }
+
+    public override readonly int GetHashCode()
+    {
+        return HashCode.Combine(Text, Title, SenderApp, DataType);
     }
 
     public override readonly string ToString()

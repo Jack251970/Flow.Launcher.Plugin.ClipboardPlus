@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows;
-using System.Windows.Media.Imaging;
 
 namespace ClipboardPlus.Panels.Test;
 
@@ -37,14 +36,10 @@ public partial class MainWindow : Window
             DataType = type,
             Data = StringUtils.RandomString(10),
             SenderApp = StringUtils.RandomString(5) + ".exe",
-            DisplayTitle = StringUtils.RandomString(10),
-            IconPath = _defaultIconPath,
-            Icon = new BitmapImage(new Uri(_defaultIconPath, UriKind.RelativeOrAbsolute)),
-            Glyph = ResourceHelper.GetGlyph(type),
+            Title = StringUtils.RandomString(10),
             PreviewImagePath = _defaultIconPath,
             Score = rand.Next(1000),
             InitScore = rand.Next(1000),
-            Time = DateTime.Now,
             Pinned = false,
             CreateTime = DateTime.Now,
         };
