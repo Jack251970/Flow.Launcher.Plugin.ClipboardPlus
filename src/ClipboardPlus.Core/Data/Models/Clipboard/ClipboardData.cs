@@ -104,21 +104,21 @@ public struct ClipboardData : IEquatable<ClipboardData>
 
     public static bool operator !=(ClipboardData a, ClipboardData b) => !a.Equals(b);
 
-    public readonly bool Equals(ClipboardData b)
-    {
-        return Equals(b);
-    }
-
     public override readonly bool Equals(object? obj)
     {
         if (obj is ClipboardData clipboardData)
         {
-            return Text == clipboardData.Text &&
-                Title == clipboardData.Title &&
-                SenderApp == clipboardData.SenderApp &&
-                DataType == clipboardData.DataType;
+            return Equals(clipboardData);
         }
         return false;
+    }
+
+    public readonly bool Equals(ClipboardData b)
+    {
+        return Text == b.Text &&
+            Title == b.Title &&
+            SenderApp == b.SenderApp &&
+            DataType == b.DataType;
     }
 
     public override readonly int GetHashCode()
@@ -128,6 +128,6 @@ public struct ClipboardData : IEquatable<ClipboardData>
 
     public override readonly string ToString()
     {
-        return $"ClipboardDate(type: {DataType}, text: {Text}, ctime: {CreateTime})";
+        return $"ClipboardData(Type: {DataType}, Title: {Title}, Text: {Text}, CreateTime: {CreateTime})";
     }
 }

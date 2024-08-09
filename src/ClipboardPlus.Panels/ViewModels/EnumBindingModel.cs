@@ -40,12 +40,16 @@ public class EnumBindingModel<T> where T : struct, Enum
     {
         if (obj is EnumBindingModel<T> model)
         {
-            return Name == model.Name
-                && LocalizationString == model.LocalizationString
-                && Value.Equals(model.Value);
+            return Equals(model);
         }
-
         return false;
+    }
+
+    public bool Equals(EnumBindingModel<T> b)
+    {
+        return Name == b.Name
+            && LocalizationString == b.LocalizationString
+            && Value.Equals(b.Value);
     }
 
     public override int GetHashCode()

@@ -120,4 +120,32 @@ public class Record
         }
         return clipboardData;
     }
+
+    public static bool operator ==(Record a, Record b) => a.Equals(b);
+
+    public static bool operator !=(Record a, Record b) => !a.Equals(b);
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is Record record)
+        {
+            return Equals(record);
+        }
+        return false;
+    }
+
+    public bool Equals(Record b)
+    {
+        return HashId == b.HashId;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(HashId);
+    }
+
+    public override string ToString()
+    {
+        return $"Record(Type: {DataType}, Title: {Title}, Text: {Text}, CreateTime: {CreateTime})";
+    }
 }
