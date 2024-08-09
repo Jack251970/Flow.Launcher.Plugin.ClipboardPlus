@@ -6,7 +6,9 @@ namespace ClipboardPlus.Core.Helpers;
 
 public class DatabaseHelper : IDisposable
 {
-    #region Fields
+    #region Properties
+
+    #region Connection
 
     public SqliteConnection Connection;
     public bool KeepConnection;
@@ -18,10 +20,10 @@ public class DatabaseHelper : IDisposable
     private readonly string SqlSelectRecordTable = "SELECT name from sqlite_master WHERE name='record';";
     private readonly string SqlCreateDatabase =
         """
-        CREATE TABLE "assets" (
-            "id"	                INTEGER NOT NULL UNIQUE,
-            "data_b64"	            TEXT,
-            "data_md5"              TEXT UNIQUE ,
+        CREATE TABLE assets (
+            id	                    INTEGER NOT NULL UNIQUE,
+            data_b64	            TEXT,
+            data_md5                TEXT UNIQUE ,
             PRIMARY                 KEY("id" AUTOINCREMENT)
         );
         CREATE TABLE "record" (
@@ -84,6 +86,8 @@ public class DatabaseHelper : IDisposable
 
     #endregion
 
+    #endregion
+
     #region Constructors
 
     public DatabaseHelper(SqliteConnection connection)
@@ -111,7 +115,9 @@ public class DatabaseHelper : IDisposable
 
     #endregion
 
-    #region Public Methods
+    #region Methods
+
+    #region Database Operations
 
     public async Task CreateDatabaseAsync()
     {
@@ -156,10 +162,12 @@ public class DatabaseHelper : IDisposable
         // depends on corresponding record in table `assets`, in this condition,
         // we only delete record in table `record`
         if (count > 1)
+        {
             await Connection.ExecuteAsync(
                 SqlDeleteRecordAssets1,
                 new { clipboardData.HashId, DataMd5 = dataMd5 }
             );
+        }
         // otherwise, no record depends on assets, directly delete records
         // both in `record` and `assets` using foreign key constraint,
         // i.e., ON DELETE CASCADE
@@ -204,7 +212,9 @@ public class DatabaseHelper : IDisposable
         await CloseIfNotKeepAsync();
     }
 
-    #region Open & Close
+    #endregion
+
+    #region Connection Management
 
     public async Task OpenAsync()
     {
@@ -238,6 +248,14 @@ public class DatabaseHelper : IDisposable
         }
     }
 
+    private async Task CloseIfNotKeepAsync()
+    {
+        if (!KeepConnection)
+        {
+            await Connection.CloseAsync();
+        }
+    }
+
     #endregion
 
     #region IDisposable Interface
@@ -258,18 +276,6 @@ public class DatabaseHelper : IDisposable
     }
 
     #endregion
-
-    #endregion
-
-    #region Private Methods
-
-    private async Task CloseIfNotKeepAsync()
-    {
-        if (!KeepConnection)
-        {
-            await Connection.CloseAsync();
-        }
-    }
 
     #endregion
 }
