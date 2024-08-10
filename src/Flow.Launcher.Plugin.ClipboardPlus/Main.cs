@@ -333,7 +333,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 Context.API.LogDebug(ClassName, "Processed file change");
                 break;
             case DataType.Other:
-                // TODO: Handle other formats.
+                // Clipboard monitor for type not in Text, Image, Files are not implemented now.
                 Context.API.LogDebug(ClassName, "Other change listened, skip");
                 return;
             default:

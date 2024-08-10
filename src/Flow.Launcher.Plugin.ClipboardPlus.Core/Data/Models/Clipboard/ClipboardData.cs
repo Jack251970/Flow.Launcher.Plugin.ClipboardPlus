@@ -95,7 +95,7 @@ public struct ClipboardData : IEquatable<ClipboardData>
             DataType.Image => Data as Image,
             DataType.Files => null,
             _ => throw new NotImplementedException(
-                "Data to string for type not in Text, Image, Files are not implemented now."
+                "Data to image for type not in Text, Image, Files are not implemented now."
             ),  // don't process others
         };
     }

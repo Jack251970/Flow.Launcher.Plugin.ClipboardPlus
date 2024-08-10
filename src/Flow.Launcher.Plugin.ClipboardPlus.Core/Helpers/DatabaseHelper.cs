@@ -136,7 +136,7 @@ public class DatabaseHelper : IDisposable
     public async Task AddOneRecordAsync(ClipboardData data)
     {
         Connection.Open();
-        // insert data
+        // insert assets
         var dataB64 = data.DataToString();
         var dataMd5 = dataB64.GetMd5();
         var assets = new List<Asset>
