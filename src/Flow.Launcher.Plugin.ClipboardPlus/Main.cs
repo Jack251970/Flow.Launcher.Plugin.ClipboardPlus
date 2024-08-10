@@ -511,6 +511,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     private static void CopyToClipboard(ClipboardData clipboardData)
     {
+        // TODO: Add support for files.
         System.Windows.Forms.Clipboard.SetDataObject(clipboardData.Data);
     }
 

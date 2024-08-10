@@ -47,6 +47,7 @@ public struct ClipboardData : IEquatable<ClipboardData>
     /// <summary>
     /// Path of the cached image for preview.
     /// </summary>
+    // TODO: Add support.
     public required string PreviewImagePath;
 
     /// <summary>
@@ -87,6 +88,7 @@ public struct ClipboardData : IEquatable<ClipboardData>
         } ?? string.Empty;
     }
 
+    // TODO: Change to BitmapImage.
     public readonly Image? DataToImage()
     {
         return DataType switch
