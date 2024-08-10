@@ -1,0 +1,30 @@
+﻿<Window
+    x:Class="Flow.Launcher.Plugin.ClipboardPlus.Panels.Test.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.Test"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:panels="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.Views;assembly=Flow.Launcher.Plugin.ClipboardPlus.Panels"
+    Title="MainWindow"
+    Width="800"
+    Height="500"
+    mc:Ignorable="d">
+    <Grid>
+        <TabControl SelectedIndex="0">
+            <TabItem Header="Settings">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Button Click="Button_Click" Content="Click to envoke OnCultureInfoChanged event" />
+                    <panels:SettingsPanel x:Name="SettingsPanel" Grid.Row="1" />
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="PreviewTextTabItem" Header="Preview Text" />
+            <TabItem x:Name="PreviewImageTabItem" Header="Preview Image" />
+            <TabItem x:Name="PreviewFilesTabItem" Header="Preview Files" />
+        </TabControl>
+    </Grid>
+</Window>

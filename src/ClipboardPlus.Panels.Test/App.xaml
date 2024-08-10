@@ -1,8 +1,0 @@
-﻿<Application
-    x:Class="ClipboardPlus.Panels.Test.App"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:ClipboardPlus.Panels.Test"
-    StartupUri="MainWindow.xaml">
-    <Application.Resources />
-</Application>

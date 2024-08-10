@@ -116,7 +116,7 @@ public class PublishTask : FrostingTask<BuildContext>
 
         var ptn =
             // Core
-            @"ClipboardPlus\.dll|ClipboardPlus.+\.dll|"
+            @"Flow.Launcher.Plugin.ClipboardPlus\.dll|Flow.Launcher.Plugin.ClipboardPlus.+\.dll|"
             // Nuget
             + @"Dapper\.dll|"
             + @"H\.InputSimulator\.dll|"

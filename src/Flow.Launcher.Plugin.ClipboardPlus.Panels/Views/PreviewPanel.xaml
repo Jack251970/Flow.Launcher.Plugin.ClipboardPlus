@@ -1,0 +1,58 @@
+﻿<UserControl
+    x:Class="Flow.Launcher.Plugin.ClipboardPlus.Panels.Views.PreviewPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:userControls="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.UserControls"
+    xmlns:viewModels="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.ViewModels"
+    d:DataContext="{d:DesignInstance viewModels:PreviewViewModel}"
+    mc:Ignorable="d">
+
+    <Grid MinHeight="380" HorizontalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Image Preview  -->
+        <Image
+            Grid.Row="0"
+            Grid.Column="0"
+            MaxWidth="320"
+            MaxHeight="320"
+            Margin="10"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Source="{Binding PreviewImage, Mode=OneWay}"
+            Visibility="{Binding ImagePreviewVisibility, Mode=OneTime}" />
+
+        <!--  Text Preview  -->
+        <ScrollViewer
+            Grid.Row="0"
+            Grid.Column="0"
+            MaxHeight="400"
+            Padding="5"
+            HorizontalAlignment="Center"
+            HorizontalContentAlignment="Left"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Auto"
+            Visibility="{Binding TextPreviewVisibility, Mode=OneTime}">
+            <userControls:PreviewTextBox
+                MinWidth="320"
+                Margin="5"
+                Padding="5"
+                Text="{Binding PreviewText, Mode=TwoWay}" />
+        </ScrollViewer>
+
+        <!--  Status Preview  -->
+        <TextBlock
+            Grid.Row="1"
+            Margin="10,5,10,5"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            Text="{Binding PreviewStatus, Mode=OneWay}"
+            Visibility="{Binding StatusPreviewVisibility, Mode=OneTime}" />
+    </Grid>
+</UserControl>
