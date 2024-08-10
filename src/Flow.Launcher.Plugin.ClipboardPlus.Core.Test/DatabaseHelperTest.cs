@@ -94,8 +94,8 @@ public class DatabaseHelperTest
         await helper.CreateDatabaseAsync();
         await helper.AddOneRecordAsync(exampleTextRecord);
         var c = (await helper.GetAllRecordAsync()).First();
+        Assert.Equal(c, exampleTextRecord);
         await helper.CloseAsync();
-        Assert.True(c == exampleTextRecord);
     }
 
     [Theory]
@@ -157,8 +157,8 @@ public class DatabaseHelperTest
         exampleTextRecord.Pinned = !exampleTextRecord.Pinned;
         await helper.PinOneRecordAsync(exampleTextRecord);
         var c2 = (await helper.GetAllRecordAsync()).First();
+        Assert.Equal(c1.Pinned, !c2.Pinned);
         await helper.CloseAsync();
-        Assert.True(c1.Pinned == !c2.Pinned);
     }
 
     [Fact]
@@ -174,7 +174,7 @@ public class DatabaseHelperTest
         await helper.AddOneRecordAsync(exampleTextRecord);
         await helper.DeleteOneRecordAsync(exampleTextRecord);
         var c = await helper.GetAllRecordAsync();
+        Assert.Empty(c);
         await helper.CloseAsync();
-        Assert.True(c.Count == 0);
     }
 }

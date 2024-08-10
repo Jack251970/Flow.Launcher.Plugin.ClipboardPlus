@@ -132,7 +132,6 @@ public class DatabaseHelper : IDisposable
         }
     }
 
-    // TODO: Optimize large asset saving performance.
     public async Task AddOneRecordAsync(ClipboardData data)
     {
         Connection.Open();
