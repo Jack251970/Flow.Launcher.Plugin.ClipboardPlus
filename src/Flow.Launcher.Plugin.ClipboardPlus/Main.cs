@@ -26,10 +26,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     // Culture info
     private CultureInfo CultureInfo = null!;
 
-    // Action keyword
-    // TODO: Change it but clear action won't change.
-    private string ActionKeyword => Context.CurrentPluginMetadata.ActionKeyword ?? "cbp";
-
     // Pinned symbol
     private const string PinUnicode = "📌";
 
@@ -125,7 +121,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Score = Settings.MaxRecords + 1,
                     Action = _ =>
                     {
-                        Context.API.ChangeQuery($"{ActionKeyword} {Settings.ClearKeyword} ", true);
+                        Context.API.ChangeQuery($"{query.ActionKeyword} {Settings.ClearKeyword} ", true);
                         return false;
                     },
                 }
