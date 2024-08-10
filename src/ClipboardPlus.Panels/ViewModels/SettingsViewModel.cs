@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -17,16 +16,10 @@ public class SettingsViewModel : BaseModel, IDisposable
 
     private PluginInitContext? Context { get; set; }
 
-    private Func<Task>? ReloadDataAsync { get; set; }
-    private Action? SaveSettings { get; set; }
-
-    public SettingsViewModel(PluginInitContext? context, Settings settings, Func<Task>? func, Action? action)
+    public SettingsViewModel(PluginInitContext? context, Settings settings)
     {
         Context = context;
         Settings = settings;
-
-        ReloadDataAsync = func;
-        SaveSettings = action;
 
         InitializeRecordOrderSelection();
         InitializeClickActionSelection();
@@ -88,7 +81,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         set
         {
             Settings.ClearKeyword = value;
-            OnPropertyChanged(false);
+            OnPropertyChanged();
         }
     }
 
@@ -102,7 +95,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         set
         {
             Settings.MaxRecords = value;
-            OnPropertyChanged(false);
+            OnPropertyChanged();
         }
     }
 
@@ -129,7 +122,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         {
             _selectedRecordOrder = value;
             Settings.RecordOrder = value.Value;
-            OnPropertyChanged(true);
+            OnPropertyChanged();
         }
     }
 
@@ -174,7 +167,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         {
             _selectedClickAction = value;
             Settings.ClickAction = value.Value;
-            OnPropertyChanged(false);
+            OnPropertyChanged();
         }
     }
 
@@ -206,7 +199,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         set
         {
             Settings.CacheImages = value;
-            OnPropertyChanged(false);
+            OnPropertyChanged();
         }
     }
 
@@ -221,7 +214,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         {
             Settings.CacheFormat = value;
             CacheFormatPreview = StringUtils.FormatImageName(value, DateTime.Now);
-            OnPropertyChanged(false);
+            OnPropertyChanged();
         }
     }
 
@@ -258,7 +251,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         set
         {
             Settings.KeepText = value;
-            OnPropertyChanged(true);
+            OnPropertyChanged();
         }
     }
 
@@ -281,7 +274,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         {
             _selectedTextKeepTime = value;
             Settings.TextKeepTime = value.Value;
-            OnPropertyChanged(true);
+            OnPropertyChanged();
         }
     }
 
@@ -295,7 +288,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         set
         {
             Settings.KeepImages = value;
-            OnPropertyChanged(true);
+            OnPropertyChanged();
         }
     }
 
@@ -318,7 +311,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         {
             _selectedImagesKeepTime = value;
             Settings.ImagesKeepTime = value.Value;
-            OnPropertyChanged(true);
+            OnPropertyChanged();
         }
     }
 
@@ -332,7 +325,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         set
         {
             Settings.KeepFiles = value;
-            OnPropertyChanged(true);
+            OnPropertyChanged();
         }
     }
 
@@ -355,7 +348,7 @@ public class SettingsViewModel : BaseModel, IDisposable
         {
             _selectedFilesKeepTime = value;
             Settings.FilesKeepTime = value.Value;
-            OnPropertyChanged(true);
+            OnPropertyChanged();
         }
     }
 
@@ -395,16 +388,10 @@ public class SettingsViewModel : BaseModel, IDisposable
 
     #endregion
 
-    protected void OnPropertyChanged(bool reload, [CallerMemberName] string propertyName = "")
+    protected new void OnPropertyChanged([CallerMemberName] string propertyName = "")
     {
-        OnPropertyChanged(propertyName);
-        // TODO: Use Context.API instead.
-        // Context.API.SaveSettingJsonStorage<Settings>();
-        SaveSettings?.Invoke();
-        if (reload)
-        {
-            ReloadDataAsync?.Invoke();
-        }
+        base.OnPropertyChanged(propertyName);
+        Context?.API.SaveSettingJsonStorage<Settings>();
     }
 
     #endregion
@@ -423,8 +410,6 @@ public class SettingsViewModel : BaseModel, IDisposable
         {
             Settings = null!;
             Context = null!;
-            ReloadDataAsync = null!;
-            SaveSettings = null!;
             RecordOrders = null!;
             ClickActions = null!;
             TextKeepTimes = null!;

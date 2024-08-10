@@ -21,7 +21,7 @@ public partial class SettingsPanel : UserControl
     public SettingsPanel()
     {
         var settings = new Settings();
-        var viewModel = new SettingsViewModel(null!, settings, null!, null!);
+        var viewModel = new SettingsViewModel(null!, settings);
         DataContext = viewModel;
         InitializeComponent();
         ViewModel = viewModel;

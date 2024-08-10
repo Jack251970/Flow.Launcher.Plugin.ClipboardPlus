@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace ClipboardPlus.Core.Data.Models;
 
@@ -26,19 +25,6 @@ public class Settings
             new(DataType.Image, ImagesKeepTime),
             new(DataType.Files, FilesKeepTime),
         };
-
-    public void Save()
-    {
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        File.WriteAllText(PathHelper.SettingsPath, JsonSerializer.Serialize(this, options));
-    }
-
-    public static Settings Load(string filePath)
-    {
-        var options = new JsonSerializerOptions() { WriteIndented = true };
-        using var fs = File.OpenRead(filePath);
-        return JsonSerializer.Deserialize<Settings>(fs, options) ?? new Settings();
-    }
 
     public override string ToString()
     {

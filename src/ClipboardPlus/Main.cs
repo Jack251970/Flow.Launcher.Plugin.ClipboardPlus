@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.IO;
 using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -143,21 +142,12 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         PathHelper.Init(context);
 
         // init settings
-        if (File.Exists(PathHelper.SettingsPath))
-        {
-            using var fs = File.OpenRead(PathHelper.SettingsPath);
-            Settings = JsonSerializer.Deserialize<Settings>(fs)!;
-        }
-        else
-        {
-            Settings = new Settings();
-        }
-        Settings.Save();
+        Settings = context.API.LoadSettingJsonStorage<Settings>();
         Context.API.LogDebug(ClassName, "Init settings successfully");
         Context.API.LogInfo(ClassName, $"{Settings}");
 
         // init settings viewmodel
-        SettingsViewModel = new SettingsViewModel(context, Settings, ReloadDataAsync, Save);
+        SettingsViewModel = new SettingsViewModel(context, Settings);
 
         // init database & records
         DatabaseHelper = new DatabaseHelper(PathHelper.DatabasePath);
@@ -275,7 +265,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     // Warning: This method will be called after dispose.
     public void Save()
     {
-        Settings?.Save();
+        // We don't need to save plugin settings because all settings will be saved.
+        //Context?.API.SaveSettingJsonStorage<Settings>();
     }
 
     #endregion
