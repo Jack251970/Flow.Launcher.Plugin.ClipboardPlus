@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -42,12 +41,7 @@ public class SettingsViewModel : BaseModel, IDisposable
 
     private void OpenCacheImageFolder(object? parameter)
     {
-        Process.Start(new ProcessStartInfo()
-        {
-            FileName = PathHelper.ImageCachePath,
-            UseShellExecute = true,
-            Verb = "open"
-        });
+        Context?.API.OpenDirectory(PathHelper.ImageCachePath);
     }
 
     #endregion
