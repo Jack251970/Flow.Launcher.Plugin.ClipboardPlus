@@ -7,6 +7,7 @@
     <!--  General  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_name">剪切闆+</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">輕鬆管理你的剪切闆歴史，支持文字、圖像和文件</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard">複製到剪貼闆</system:String>
 
     <!--  Main  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_title">清除所有記録</system:String>

@@ -467,7 +467,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                         CopyToClipboard(clipboardData);
                         break;
                 }
-                Context.API.ShowMsg(Context.GetTranslation(Settings.ClickAction));
+                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard"), 
+                    StringUtils.CompressString(clipboardData.Text, 36));
                 return true;
             },
         };

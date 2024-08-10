@@ -30,4 +30,19 @@ public class UtilsTest
         _testOutputHelper.WriteLine($"Cn: {cn1}");
         Assert.True(en == en1 && cn == cn1);
     }
+
+    [Theory]
+    [InlineData("hello", 4, "h...")]
+    [InlineData("hello", 5, "hello")]
+    [InlineData("hello", 6, "hello")]
+    [InlineData("你好！", 5, "你...")]
+    [InlineData("你好📌", 5, "你...")]
+    [InlineData("你a好！", 6, "你a...")]
+    [InlineData("你好！", 6, "你好！")]
+    public void TestCompressString(string s, int en_length, string expected)
+    {
+        var result = StringUtils.CompressString(s, en_length);
+        _testOutputHelper.WriteLine($"Result: {result}");
+        Assert.True(result == expected);
+    }
 }
