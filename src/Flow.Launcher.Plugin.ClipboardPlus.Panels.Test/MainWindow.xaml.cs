@@ -59,7 +59,7 @@ public partial class MainWindow : Window
             Data = StringUtils.RandomString(10),
             SenderApp = StringUtils.RandomString(5) + ".exe",
             Title = StringUtils.RandomString(10),
-            PreviewImagePath = _defaultIconPath,
+            CachedImagePath = _defaultIconPath,
             Score = rand.Next(1000),
             InitScore = rand.Next(1000),
             Pinned = false,

@@ -95,16 +95,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         else
         {
             // records results
-            var records =
-                query.Search.Trim().Length == 0
+            var records = query.Search.Trim().Length == 0
                 ? RecordsList.ToArray()
-                : RecordsList
-                    .Where(
-                        i =>
-                            !string.IsNullOrEmpty(i.Text)
-                            && i.Text.ToLower().Contains(query.Search.Trim().ToLower())
-                    )
-                    .ToArray();
+                : RecordsList.Where(i => !string.IsNullOrEmpty(i.Text) && i.Text.ToLower().Contains(query.Search.Trim().ToLower())).ToArray();
             results.AddRange(records.Select(GetResultFromClipboardData));
             Context.API.LogDebug(ClassName, "Added records successfully");
             // clear results
@@ -291,7 +284,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             DataType = e.DataType,
             Data = e.Content,
             SenderApp = e.SourceApplication.Name,
-            PreviewImagePath = PathHelper.AppIconPath,
+            CachedImagePath = string.Empty,
             Score = CurrentScore + 1,
             InitScore = CurrentScore + 1,
             Pinned = false,
@@ -312,7 +305,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 {
                     var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
                         clipboardData.SenderApp ?? Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app"));
-                    FileUtils.SaveImageCache(clipboardData, PathHelper.ImageCachePath, imageName);
+                    var imagePath = FileUtils.SaveImageCache(clipboardData, PathHelper.ImageCachePath, imageName);
+                    clipboardData.CachedImagePath = imagePath;
                 }
                 Context.API.LogDebug(ClassName, "Processed image change");
                 break;

@@ -33,7 +33,7 @@ public class DatabaseHelper : IDisposable
             "text"	                TEXT,
             "title"	                TEXT,
             "sender_app"	        TEXT,
-            "preview_image_path"    TEXT,
+            "cached_image_path"     TEXT,
             "data_type"	            INTEGER,
             "score"	                INTEGER,
             "init_score"	        INTEGER,
@@ -48,10 +48,10 @@ public class DatabaseHelper : IDisposable
         "INSERT OR IGNORE INTO assets(data_b64, data_md5) VALUES (@DataB64, @DataMd5);";
     private readonly string SqlInsertRecord =
         @"INSERT OR IGNORE INTO record(
-            hash_id, data_md5, text, title, sender_app, preview_image_path, 
+            hash_id, data_md5, text, title, sender_app, cached_image_path, 
             data_type, score, init_score, create_time, pinned) 
         VALUES (
-            @HashId, @DataMd5, @Text, @Title, @SenderApp, @PreviewImagePath, 
+            @HashId, @DataMd5, @Text, @Title, @SenderApp, @CachedImagePath, 
             @DataType, @Score, @InitScore, @CreateTime, @Pinned);";
 
     private readonly string SqlSelectRecordCountByMd5 =
@@ -70,7 +70,7 @@ public class DatabaseHelper : IDisposable
     private readonly string SqlSelectAllRecord =
         """
         SELECT r.id as Id, a.data_b64 as DataMd5, r.text as Text, r.title as Title,
-            r.sender_app as SenderApp, r.preview_image_path as PreviewImagePath,
+            r.sender_app as SenderApp, r.cached_image_path as CachedImagePath,
             r.data_type as DataType, r.score as Score, r.init_score as InitScore,
             r.create_time as CreateTime, r.pinned as Pinned, r.hash_id as HashId
         FROM record r

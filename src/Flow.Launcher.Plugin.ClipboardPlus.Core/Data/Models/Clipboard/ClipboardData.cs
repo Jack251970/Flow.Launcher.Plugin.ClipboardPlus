@@ -47,8 +47,7 @@ public struct ClipboardData : IEquatable<ClipboardData>
     /// <summary>
     /// Path of the cached image for preview.
     /// </summary>
-    // TODO: Add support.
-    public required string PreviewImagePath;
+    public required string CachedImagePath;
 
     /// <summary>
     /// Type of the data.

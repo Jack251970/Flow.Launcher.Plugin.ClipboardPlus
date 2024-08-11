@@ -35,7 +35,7 @@ public class Record
     /// <summary>
     /// Path of the cached image for preview.
     /// </summary>
-    public string PreviewImagePath { get; set; } = string.Empty;
+    public string CachedImagePath { get; set; } = string.Empty;
 
     /// <summary>
     /// Type of the data.
@@ -78,7 +78,7 @@ public class Record
             Text = data.Text,
             Title = data.Title,
             SenderApp = data.SenderApp,
-            PreviewImagePath = data.PreviewImagePath,
+            CachedImagePath = data.CachedImagePath,
             DataType = (int)data.DataType,
             Score = data.Score,
             InitScore = data.InitScore,
@@ -98,7 +98,7 @@ public class Record
             Text = record.Text,
             Title = record.Title,
             SenderApp = record.SenderApp,
-            PreviewImagePath = record.PreviewImagePath,
+            CachedImagePath = record.CachedImagePath,
             DataType = type,
             Score = record.Score,
             InitScore = record.InitScore,

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 
@@ -89,8 +88,7 @@ public class PreviewViewModel : BaseModel
 
     private void InitializeContent()
     {
-
-       switch (ClipboardData.DataType)
+        switch (ClipboardData.DataType)
         {
             case DataType.Text:
             case DataType.Files:
@@ -99,6 +97,7 @@ public class PreviewViewModel : BaseModel
                 break;
             case DataType.Image:
                 PreviewText = string.Empty;
+                // TODO: Add support for cached image path loading.
                 PreviewImage = ClipboardData.DataToImage()?.ToBitmapImage();
                 break;
             default:
