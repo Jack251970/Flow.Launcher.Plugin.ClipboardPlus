@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Drawing;
+using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
+using Image = System.Drawing.Image;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Test;
 
@@ -9,6 +12,8 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Test;
 /// </summary>
 public partial class MainWindow : Window
 {
+    private readonly ClipboardPlus ClipboardPlus = new();
+
     private readonly static string _defaultIconPath = "Images/clipboard.png";
 
     private readonly Image _defaultImage = new Bitmap(_defaultIconPath);
@@ -16,14 +21,31 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        PreviewTextTabItem.Content = new PreviewPanel(null!, GetRandomClipboardData(DataType.Text));
-        PreviewImageTabItem.Content = new PreviewPanel(null!, GetRandomClipboardData(DataType.Image));
-        PreviewFilesTabItem.Content = new PreviewPanel(null!, GetRandomClipboardData(DataType.Files));
+
+        // Settings panel
+        var grid = new Grid();
+        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        var button = new Button() { Content = "Click to invoke OnCultureInfoChanged event" };
+        button.Click += Button_Click;
+        Grid.SetRow(button, 0);
+        var settingsPanel = new SettingsPanel(ClipboardPlus);
+        Grid.SetRow(settingsPanel, 1);
+        grid.Children.Add(button);
+        grid.Children.Add(settingsPanel);
+        PreviewSettingsTabItem.Content = grid;
+
+        // Preview panels
+        PreviewTextTabItem.Content = new PreviewPanel(ClipboardPlus, GetRandomClipboardData(DataType.Text));
+        PreviewImageTabItem.Content = new PreviewPanel(ClipboardPlus, GetRandomClipboardData(DataType.Image));
+        PreviewFilesTabItem.Content = new PreviewPanel(ClipboardPlus, GetRandomClipboardData(DataType.Files));
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        SettingsPanel.ViewModel.OnCultureInfoChanged(null!);
+        var newCulture = ClipboardPlus.CultureInfo.Name == "en-US" ? "zh-CN" : "en-US";
+        var newCultureInfo = new CultureInfo(newCulture);
+        ClipboardPlus.OnCultureInfoChanged(newCultureInfo);
     }
 
     private ClipboardData GetRandomClipboardData(DataType type)

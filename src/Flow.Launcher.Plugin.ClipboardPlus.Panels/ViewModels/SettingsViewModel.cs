@@ -9,28 +9,22 @@ using System.Windows.Input;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.ViewModels;
 
-public class SettingsViewModel : BaseModel, IDisposable
+public class SettingsViewModel : BaseModel
 {
-    public Settings Settings { get; set; }
+    public IClipboardPlus ClipboardPlus { get; private set; }
 
-    private PluginInitContext? Context { get; set; }
+    private PluginInitContext? Context => ClipboardPlus.Context;
 
-    public SettingsViewModel(PluginInitContext? context, Settings settings)
+    private ISettings Settings => ClipboardPlus.Settings;
+
+    public SettingsViewModel(IClipboardPlus clipboardPlus)
     {
-        Context = context;
-        Settings = settings;
-
+        ClipboardPlus = clipboardPlus;
+        ClipboardPlus.CultureInfoChanged += ClipboardPlus_CultureInfoChanged;
         InitializeRecordOrderSelection();
         InitializeClickActionSelection();
         InitializeCacheFormatPreview();
         InitializeKeepTimeSelection();
-    }
-
-    public void OnCultureInfoChanged(CultureInfo _)
-    {
-        RefreshRecordOrders();
-        RefreshClickActions();
-        RefreshKeepTimes();
     }
 
     #region Commands
@@ -65,7 +59,7 @@ public class SettingsViewModel : BaseModel, IDisposable
 
     #endregion
 
-    #region Properties
+    #region Dependency Properties
 
     #region Clear Keyword
 
@@ -382,34 +376,25 @@ public class SettingsViewModel : BaseModel, IDisposable
 
     #endregion
 
+    #endregion
+
+    #region OnPropertyChanged
+
     protected new void OnPropertyChanged([CallerMemberName] string propertyName = "")
     {
         base.OnPropertyChanged(propertyName);
-        Context?.API.SaveSettingJsonStorage<Settings>();
+        ClipboardPlus.SaveSettingJsonStorage();
     }
 
     #endregion
 
-    #region IDisposable Interface
+    #region Culture Info
 
-    public void Dispose()
+    private void ClipboardPlus_CultureInfoChanged(object? sender, CultureInfo cultureInfo)
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            Settings = null!;
-            Context = null!;
-            RecordOrders = null!;
-            ClickActions = null!;
-            TextKeepTimes = null!;
-            ImagesKeepTimes = null!;
-            FilesKeepTimes = null!;
-        }
+        RefreshRecordOrders();
+        RefreshClickActions();
+        RefreshKeepTimes();
     }
 
     #endregion

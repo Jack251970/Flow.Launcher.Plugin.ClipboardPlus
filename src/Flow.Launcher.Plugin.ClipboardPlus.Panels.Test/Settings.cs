@@ -1,20 +1,35 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text.Json.Serialization;
 
-namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
+namespace Flow.Launcher.Plugin.ClipboardPlus;
 
-public class Settings
+public class Settings : ISettings
 {
     public string ClearKeyword { get; set; } = "clear";
+
     public int MaxRecords { get; set; } = 10000;
+
     public RecordOrder RecordOrder { get; set; } = RecordOrder.Score;
+
     public ClickAction ClickAction { get; set; } = ClickAction.Copy;
+
     public bool CacheImages { get; set; } = false;
+
     public string CacheFormat { get; set; } = "yyyy-MM-dd-hhmmss-app";
+
     public bool KeepText { get; set; } = false;
+
     public KeepTime TextKeepTime { get; set; } = 0;
+
     public bool KeepImages { get; set; } = false;
+
     public KeepTime ImagesKeepTime { get; set; } = 0;
+
     public bool KeepFiles { get; set; } = false;
+
     public KeepTime FilesKeepTime { get; set; } = 0;
 
     [JsonIgnore]
@@ -34,7 +49,7 @@ public class Settings
             "Settings(\n",
             (current, prop) =>
             {
-                if (prop.Name == nameof(KeepTimePairs))
+                if (CheckJsonIgnoredAttribute(prop))
                 {
                     return current;
                 }
@@ -43,5 +58,10 @@ public class Settings
         );
         s += ")";
         return s;
+    }
+
+    private static bool CheckJsonIgnoredAttribute(PropertyInfo prop)
+    {
+        return prop.GetCustomAttribute<JsonIgnoreAttribute>() != null;
     }
 }

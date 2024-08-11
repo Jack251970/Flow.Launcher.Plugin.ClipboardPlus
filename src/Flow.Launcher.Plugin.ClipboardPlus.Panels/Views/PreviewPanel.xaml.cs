@@ -6,9 +6,9 @@ public partial class PreviewPanel : UserControl
 {
     public readonly PreviewViewModel ViewModel;
 
-    public PreviewPanel(PluginInitContext context, ClipboardData clipboardData)
+    public PreviewPanel(IClipboardPlus clipboardPlus, ClipboardData clipboardData)
     {
-        ViewModel = new PreviewViewModel(context, clipboardData);
+        ViewModel = new PreviewViewModel(clipboardPlus, clipboardData);
         DataContext = ViewModel;
         InitializeComponent();
         DataContext = ViewModel;

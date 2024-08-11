@@ -5,26 +5,23 @@ using System.Windows.Media;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.ViewModels;
 
-public class PreviewViewModel : BaseModel, IDisposable
+public class PreviewViewModel : BaseModel
 {
-    public ClipboardData ClipboardData;
+    public IClipboardPlus ClipboardPlus { get; private set; }
 
-    private PluginInitContext? Context { get; set; }
+    private PluginInitContext? Context => ClipboardPlus.Context;
 
-    public PreviewViewModel(PluginInitContext? context, ClipboardData clipboardData)
+    private ClipboardData ClipboardData;
+
+    public PreviewViewModel(IClipboardPlus clipboardPlus, ClipboardData clipboardData)
     {
-        Context = context;
+        ClipboardPlus = clipboardPlus;
+        ClipboardPlus.CultureInfoChanged += ClipboardPlus_CultureInfoChanged;
         ClipboardData = clipboardData;
-
         InitializeContent();
     }
 
-    public void OnCultureInfoChanged(CultureInfo _)
-    {
-        RefreshStatus();
-    }
-
-    #region Properties
+    #region Dependency Properties
 
     #region Image Preview
 
@@ -82,6 +79,12 @@ public class PreviewViewModel : BaseModel, IDisposable
         }
     }
 
+    private void RefreshStatus()
+    {
+        PreviewStatus = Context.GetTranslation("flowlauncher_plugin_clipboardplus_words_count_prefix") +
+            StringUtils.CountWords(PreviewText);
+    }
+
     #endregion
 
     private void InitializeContent()
@@ -103,28 +106,13 @@ public class PreviewViewModel : BaseModel, IDisposable
         }
     }
 
-    private void RefreshStatus()
-    {
-        PreviewStatus = Context.GetTranslation("flowlauncher_plugin_clipboardplus_words_count_prefix") + 
-            StringUtils.CountWords(PreviewText);
-    }
-
     #endregion
 
-    #region IDisposable Interface
+    #region Culture Info
 
-    public void Dispose()
+    private void ClipboardPlus_CultureInfoChanged(object? sender, CultureInfo cultureInfo)
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            Context = null!;
-        }
+        RefreshStatus();
     }
 
     #endregion

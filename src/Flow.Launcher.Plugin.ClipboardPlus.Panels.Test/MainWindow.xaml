@@ -12,16 +12,7 @@
     mc:Ignorable="d">
     <Grid>
         <TabControl SelectedIndex="0">
-            <TabItem Header="Settings">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Button Click="Button_Click" Content="Click to envoke OnCultureInfoChanged event" />
-                    <panels:SettingsPanel x:Name="SettingsPanel" Grid.Row="1" />
-                </Grid>
-            </TabItem>
+            <TabItem x:Name="PreviewSettingsTabItem" Header="Settings" />
             <TabItem x:Name="PreviewTextTabItem" Header="Preview Text" />
             <TabItem x:Name="PreviewImageTabItem" Header="Preview Image" />
             <TabItem x:Name="PreviewFilesTabItem" Header="Preview Files" />

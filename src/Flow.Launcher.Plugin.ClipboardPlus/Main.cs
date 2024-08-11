@@ -13,7 +13,7 @@ using WindowsInput;
 namespace Flow.Launcher.Plugin.ClipboardPlus;
 
 public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPluginI18n,
-    ISavable, ISettingProvider, IDisposable
+    ISavable, ISettingProvider, IClipboardPlus, IDisposable
 {
     #region Properties
 
@@ -31,9 +31,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     // Settings
     private Settings Settings = null!;
-
-    // Settings view model
-    private SettingsViewModel SettingsViewModel = null!;
 
     // Database helper
     private DatabaseHelper DatabaseHelper = null!;
@@ -142,9 +139,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         Context.API.LogDebug(ClassName, "Init settings successfully");
         Context.API.LogInfo(ClassName, $"{Settings}");
 
-        // init settings viewmodel
-        SettingsViewModel = new SettingsViewModel(context, Settings);
-
         // init database & records
         DatabaseHelper = new DatabaseHelper(PathHelper.DatabasePath);
         if (File.Exists(PathHelper.DatabasePath))
@@ -247,11 +241,11 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         return Context.GetTranslation("flowlauncher_plugin_clipboardplus_plugin_description");
     }
 
-    public void OnCultureInfoChanged(CultureInfo newCulture)
+    public void OnCultureInfoChanged(CultureInfo cultureInfo)
     {
-        Context.API.LogDebug(ClassName, $"Culture info changed to {newCulture}");
-        CultureInfo = newCulture;
-        SettingsViewModel.OnCultureInfoChanged(newCulture);
+        Context.API.LogDebug(ClassName, $"Culture info changed to {cultureInfo}");
+        CultureInfo = cultureInfo;
+        CultureInfoChanged?.Invoke(this, cultureInfo);
     }
 
     #endregion
@@ -272,7 +266,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     public Control CreateSettingPanel()
     {
         Context.API.LogWarn(ClassName, $"{Settings}");
-        return new SettingsPanel(SettingsViewModel);
+        return new SettingsPanel(this);
     }
 
     #endregion
@@ -420,7 +414,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             TitleToolTip = clipboardData.Text,
             SubTitleToolTip = dispSubTitle,
             ContextData = clipboardData,
-            PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(Context, clipboardData)),
+            PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, clipboardData)),
             Action = _ =>
             {
                 switch (Settings.ClickAction)
@@ -553,6 +547,28 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     #endregion
 
+    #region IClipboardPlus Interface
+
+    PluginInitContext? IClipboardPlus.Context => Context;
+
+    ISettings IClipboardPlus.Settings => Settings;
+
+    public ISettings LoadSettingJsonStorage()
+    {
+        return Settings;
+    }
+
+    public void SaveSettingJsonStorage()
+    {
+        Context.API.SaveSettingJsonStorage<Settings>();
+    }
+
+    CultureInfo IClipboardPlus.CultureInfo => CultureInfo;
+
+    public event EventHandler<CultureInfo>? CultureInfoChanged;
+
+    #endregion
+
     #region IDisposable Interface
 
     public void Dispose()
@@ -565,7 +581,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     {
         if (disposing)
         {
-            Context.API.LogDebug(ClassName, $"Enter dispose");
+            Context.API.LogWarn(ClassName, $"Enter dispose");
             if (DatabaseHelper != null)
             {
                 DatabaseHelper?.Dispose();
@@ -576,12 +592,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             ClipboardMonitor.Dispose();
             ClipboardMonitor = null!;
             Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
-            SettingsViewModel.Dispose();
-            SettingsViewModel = null!;
-            Context.API.LogDebug(ClassName, $"Disposed SettingsViewModel");
+            CultureInfoChanged = null;
             Settings = null!;
             RecordsList = null!;
-            Context.API.LogDebug(ClassName, $"Disposed Other Components");
+            Context.API.LogWarn(ClassName, $"Finish dispose");
         }
     }
 
