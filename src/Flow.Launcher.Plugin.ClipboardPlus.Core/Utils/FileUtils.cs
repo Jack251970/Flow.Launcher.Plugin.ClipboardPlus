@@ -19,9 +19,16 @@ public static class FileUtils
             Directory.CreateDirectory(imageCachePath);
         }
 
-        var path = Path.Join(imageCachePath, $"{name}.png");
-        img.Save(path);
-        return path;
+        try
+        {
+            var path = Path.Join(imageCachePath, $"{name}.png");
+            img.Save(path);
+            return path;
+        }
+        catch (Exception)
+        {
+            return string.Empty;
+        }
     }
 
     public static void ClearImageCache(string imageCachePath)
