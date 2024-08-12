@@ -12,6 +12,7 @@ public static class ResourceHelper
 
     #region Methods
 
+    // Warning: Only Absolute Uri is supported.
     private static BitmapImage AppIcon => new(new Uri(PathHelper.AppIconPath, UriKind.Absolute));
     private static BitmapImage TextIcon => new(new Uri(PathHelper.TextIconPath, UriKind.Absolute));
     private static BitmapImage FilesIcon => new(new Uri(PathHelper.FileIconPath, UriKind.Absolute));
