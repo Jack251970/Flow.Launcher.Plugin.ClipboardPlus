@@ -39,6 +39,7 @@
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">Cache images</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_open_cache_folder">Open cache folder</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_cache_folder">Clean cache folder</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format">Format:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_format_year">Year</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_format_month">Month</system:String>

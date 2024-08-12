@@ -40,6 +40,17 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
+    #region Clear Cache Image Folder
+
+    public ICommand ClearCacheImageFolderCommand => new RelayCommand(ClearCacheImageFolder);
+
+    private void ClearCacheImageFolder(object? parameter)
+    {
+        FileUtils.ClearImageCache(PathHelper.ImageCachePath);
+    }
+
+    #endregion
+
     #region Format String Insert
 
     public ICommand FormatStringInsertCommand => new RelayCommand(FormatStringInsert);

@@ -2,7 +2,7 @@
 
 public static class FileUtils
 {
-    public static string SaveImageCache(ClipboardData clipboardData, string clipCacheDir, string name)
+    public static string SaveImageCache(ClipboardData clipboardData, string imageCachePath, string name)
     {
         if (clipboardData.Data is not Image img)
         {
@@ -14,8 +14,21 @@ public static class FileUtils
             return string.Empty;
         }
 
-        var path = Path.Join(clipCacheDir, $"{name}.png");
+        if (!Directory.Exists(imageCachePath))
+        {
+            Directory.CreateDirectory(imageCachePath);
+        }
+
+        var path = Path.Join(imageCachePath, $"{name}.png");
         img.Save(path);
         return path;
+    }
+
+    public static void ClearImageCache(string imageCachePath)
+    {
+        if (Directory.Exists(imageCachePath))
+        {
+            Directory.Delete(imageCachePath, true);
+        }
     }
 }
