@@ -43,7 +43,7 @@ public class UtilsTest
     {
         var result = StringUtils.CompressString(s, en_length);
         _testOutputHelper.WriteLine($"Result: {result}");
-        Assert.True(result == expected);
+        Assert.Equal(result, expected);
     }
 
     private static readonly DateTime _testDateTime = new(2021, 1, 1, 12, 34, 56);
@@ -54,7 +54,7 @@ public class UtilsTest
     public void TestFormatString(string format, string appname, string result)
     {
         var s = StringUtils.FormatImageName(format, _testDateTime, appname);
-        Assert.True(s == result);
+        Assert.Equal(s, result);
     }
 
     [Theory]
@@ -63,6 +63,20 @@ public class UtilsTest
     public void TestStringToMd5(string s, string md5)
     {
         _testOutputHelper.WriteLine(StringUtils.GetMd5(s));
-        Assert.True(StringUtils.GetMd5(s) == md5);
+        Assert.Equal(StringUtils.GetMd5(s), md5);
+    }
+
+    [Theory]
+    [InlineData("Test")]
+    [InlineData("Test1")]
+    public void TestEncrypt(string s)
+    {
+        var key = StringUtils.GetGuid();
+        _testOutputHelper.WriteLine(key);
+        var e = StringUtils.Encrypt(s, key);
+        _testOutputHelper.WriteLine(e);
+        var d = StringUtils.Decrypt(e, key);
+        _testOutputHelper.WriteLine(d);
+        Assert.Equal(s, d);
     }
 }

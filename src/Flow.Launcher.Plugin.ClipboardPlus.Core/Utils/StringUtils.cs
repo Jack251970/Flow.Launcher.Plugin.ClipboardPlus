@@ -39,7 +39,7 @@ public static partial class StringUtils
 
     public static string GetGuid()
     {
-        return Guid.NewGuid().ToString("D");
+        return Guid.NewGuid().ToString("N");
     }
 
     public static string FormatImageName(string format, DateTime dateTime, string appname = "Flow.Launcher.exe")
@@ -148,9 +148,61 @@ public static partial class StringUtils
         return string.Join("", hex);
     }
 
-    public static string GetBase64(string s)
+    /// <summary>
+    /// Encrypt a string using AES
+    /// </summary>
+    /// <param name="s">
+    /// The string to encrypt, length can be any
+    /// </param>
+    /// <param name="key">
+    /// The key to encrypt the string, length must be 32
+    /// </param>
+    /// <returns>
+    /// The encrypted string
+    /// </returns>
+    public static string Encrypt(string s, string key)
     {
+        var keyBytes = Encoding.UTF8.GetBytes(key);
+        var iv = new byte[16]; // AES block size is 16 bytes
         var inputBytes = Encoding.UTF8.GetBytes(s);
-        return Convert.ToBase64String(inputBytes);
+
+        using var aes = Aes.Create();
+        aes.Key = keyBytes;
+        aes.IV = iv;
+        using var ms = new MemoryStream();
+        using var cs = new CryptoStream(ms, aes.CreateEncryptor(), CryptoStreamMode.Write);
+        cs.Write(inputBytes, 0, inputBytes.Length);
+        cs.FlushFinalBlock();
+        var encryptedBytes = ms.ToArray();
+        return Convert.ToBase64String(encryptedBytes);
+    }
+
+    /// <summary>
+    /// Decrypt a string using AES
+    /// </summary>
+    /// <param name="s">
+    /// The string to decrypt, length must be multiple of 4
+    /// </param>
+    /// <param name="key">
+    /// The key to decrypt the string, length must be 32
+    /// </param>
+    /// <returns>
+    /// The decrypted string
+    /// </returns>
+    public static string Decrypt(string s, string key)
+    {
+        var keyBytes = Encoding.UTF8.GetBytes(key);
+        var iv = new byte[16]; // AES block size is 16 bytes
+        var inputBytes = Convert.FromBase64String(s);
+
+        using var aes = Aes.Create();
+        aes.Key = keyBytes;
+        aes.IV = iv;
+        using var ms = new MemoryStream();
+        using var cs = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Write);
+        cs.Write(inputBytes, 0, inputBytes.Length);
+        cs.FlushFinalBlock();
+        var decryptedBytes = ms.ToArray();
+        return Encoding.UTF8.GetString(decryptedBytes);
     }
 }
