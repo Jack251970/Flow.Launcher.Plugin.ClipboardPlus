@@ -159,7 +159,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             DataType = type,
             Score = record.Score,
             InitScore = record.InitScore,
-            CreateTime = record._createTime,
+            CreateTime = record.createTime,
             Pinned = record.Pinned,
         };
     }
@@ -254,12 +254,13 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     {
         return DataMd5 == b.DataMd5 &&
             SenderApp == b.SenderApp &&
-            DataType == b.DataType;
+            DataType == b.DataType &&
+            CreateTime == b.CreateTime;
     }
 
     public override readonly int GetHashCode()
     {
-        return HashCode.Combine(DataMd5, SenderApp, DataType);
+        return HashCode.Combine(DataMd5, SenderApp, DataType, CreateTime);
     }
 
     public override string ToString()

@@ -294,7 +294,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
 
         // add to list and database if no repeat 
-        if (RecordsList.Any(record => record.DataMd5 == clipboardData.DataMd5))
+        if (RecordsList.Any(record => record == clipboardData))
         {
             return;
         }

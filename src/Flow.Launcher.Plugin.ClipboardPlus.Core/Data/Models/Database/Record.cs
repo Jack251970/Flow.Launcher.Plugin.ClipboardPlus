@@ -51,11 +51,11 @@ public class Record
     /// <summary>
     /// Create time of the record.
     /// </summary>
-    public DateTime _createTime;
+    public DateTime createTime;
     public string CreateTime
     {
-        get => _createTime.ToString("O");
-        set => _createTime = DateTime.Parse(value);
+        get => createTime.ToString("O");
+        set => createTime = DateTime.Parse(value);
     }
 
     /// <summary>
