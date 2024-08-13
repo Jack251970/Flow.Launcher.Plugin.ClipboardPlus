@@ -105,11 +105,17 @@ public partial class MainWindow : Window
     private ClipboardData GetRandomClipboardData(DataType type)
     {
         var rand = new Random();
-        var data = new ClipboardData()
+        object dataContent = type switch
+        {
+            DataType.Text => StringUtils.RandomString(10),
+            DataType.Image => _defaultImage,
+            DataType.Files => new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10), StringUtils.RandomString(10) },
+            _ => null!
+        };
+        var data = new ClipboardData(dataContent)
         {
             HashId = StringUtils.GetGuid(),
             DataType = type,
-            Data = StringUtils.RandomString(10),
             SenderApp = StringUtils.RandomString(5) + ".exe",
             CachedImagePath = _defaultIconPath,
             Score = rand.Next(1000),
@@ -117,14 +123,6 @@ public partial class MainWindow : Window
             Pinned = false,
             CreateTime = DateTime.Now,
         };
-        if (data.DataType == DataType.Image)
-        {
-            data.Data = _defaultImage;
-        }
-        else if (data.DataType == DataType.Files)
-        {
-            data.Data = new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10) };
-        }
         return data;
     }
 }

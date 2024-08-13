@@ -17,12 +17,14 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// If type is Image, the data is in BitmapImage.
     /// If type is Files, the data is in string[].
     /// </summary>
-    public required object Data;
+    private readonly object data;
+    public readonly object Data => data;
 
     /// <summary>
     /// MD5 hash of the data, also used to identify the data.
     /// </summary>
-    public readonly string DataMd5 => StringUtils.GetMd5(DataToString());
+    private readonly string dataMd5;
+    public readonly string DataMd5 => dataMd5;
 
     /// <summary>
     /// Sender application of the data.
@@ -73,6 +75,20 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// Pin symbol in unicode.
     /// </summary>
     private const string PinUnicode = "📌";
+
+    public ClipboardData(object obj)
+    {
+        data = obj;
+        dataMd5 = StringUtils.GetMd5(DataToString());
+        currentCultureInfo = CultureInfo.CurrentCulture;
+    }
+
+    public ClipboardData()
+    {
+        data = null!;
+        dataMd5 = string.Empty;
+        currentCultureInfo = CultureInfo.CurrentCulture;
+    }
 
     /// <summary>
     /// Get the data as string. If the data is not in Text, Image, Files, return empty string.
@@ -135,10 +151,9 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         }
 
         var type = (DataType)record.DataType;
-        return new ClipboardData
+        return new ClipboardData(StringToData(type, record.DataMd5B64))
         {
             HashId = record.HashId,
-            Data = StringToData(type, record.DataMd5B64),
             SenderApp = record.SenderApp,
             CachedImagePath = record.CachedImagePath,
             DataType = type,
@@ -147,7 +162,12 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             CreateTime = record._createTime,
             Pinned = record.Pinned,
         };
-        }
+    }
+
+    /// <summary>
+    /// Cached culture info for the data.
+    /// </summary>
+    private CultureInfo currentCultureInfo;
 
     /// <summary>
     /// Get display title for the data.
@@ -158,9 +178,15 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// <returns>
     /// The display title for the data.
     /// </returns>
-    public readonly string GetTitle(CultureInfo cultureInfo)
+    private string title = null!;
+    public string GetTitle(CultureInfo cultureInfo)
     {
-        return MyRegex().Replace(GetText(cultureInfo).Trim(), "");
+        if (title == null || currentCultureInfo != cultureInfo)
+        {
+            title = MyRegex().Replace(GetText(cultureInfo).Trim(), "");
+            currentCultureInfo = cultureInfo;
+        }
+        return title;
     }
 
     /// <summary>
@@ -172,11 +198,17 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// <returns>
     /// The display subtitle for the data.
     /// </returns>
-    public readonly string GetSubtitle(CultureInfo cultureInfo)
+    private string subtitle = null!;
+    public string GetSubtitle(CultureInfo cultureInfo)
     {
-        var dispSubtitle = $"{CreateTime.ToString(cultureInfo)}: {SenderApp}";
-        dispSubtitle = Pinned ? $"{PinUnicode}{dispSubtitle}" : dispSubtitle;
-        return dispSubtitle;
+        if (subtitle == null || currentCultureInfo != cultureInfo)
+        {
+            var dispSubtitle = $"{CreateTime.ToString(cultureInfo)}: {SenderApp}";
+            dispSubtitle = Pinned ? $"{PinUnicode}{dispSubtitle}" : dispSubtitle;
+            subtitle = dispSubtitle;
+            currentCultureInfo = cultureInfo;
+        }
+        return subtitle;
     }
 
     /// <summary>
@@ -188,15 +220,21 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// <returns>
     /// The display text for the data.
     /// </returns>
-    public readonly string GetText(CultureInfo cultureInfo)
+    private string text = null!;
+    public string GetText(CultureInfo cultureInfo)
     {
-        return DataType switch
+        if (text == null || currentCultureInfo != cultureInfo)
         {
-            DataType.Text => Data as string,
-            DataType.Image => $"Image: {CreateTime.ToString(cultureInfo)}",
-            DataType.Files => Data is string[] t ? string.Join("\n", t.Take(2)) + "\n..." : Data as string,
-            _ => null
-        } ?? string.Empty;
+            text = DataType switch
+            {
+                DataType.Text => Data as string,
+                DataType.Image => $"Image: {CreateTime.ToString(cultureInfo)}",
+                DataType.Files => Data is string[] t ? string.Join("\n", t.Take(2)) + "\n..." : Data as string,
+                _ => null
+            } ?? string.Empty;
+            currentCultureInfo = cultureInfo;
+        }
+        return text;
     }
 
     public static bool operator ==(ClipboardData a, ClipboardData b) => a.Equals(b);
@@ -224,7 +262,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         return HashCode.Combine(DataMd5, SenderApp, DataType);
     }
 
-    public override readonly string ToString()
+    public override string ToString()
     {
         return $"ClipboardData(Type: {DataType}, Text: {GetText(CultureInfo.CurrentCulture)}, CreateTime: {CreateTime})";
     }

@@ -16,11 +16,10 @@ public class DatabaseHelperTest
     private readonly BitmapImage _defaultImage = new(new Uri(Path.Combine(_baseDirectory, _defaultIconPath), UriKind.Absolute));
 
     private readonly ClipboardData TestRecord =
-        new()
+        new("Test Data")
         {
             HashId = StringUtils.GetGuid(),
             DataType = DataType.Text,
-            Data = "Test Data",
             SenderApp = "Source.exe",
             CachedImagePath = _defaultIconPath,
             Score = 241,
@@ -40,11 +39,17 @@ public class DatabaseHelperTest
     {
         var rand = new Random();
         var type = (DataType)rand.Next(3);
-        var data = new ClipboardData()
+        object dataContent = type switch
+        {
+            DataType.Text => StringUtils.RandomString(10),
+            DataType.Image => _defaultImage,
+            DataType.Files => new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10), StringUtils.RandomString(10) },
+            _ => null!
+        };
+        var data = new ClipboardData(dataContent)
         {
             HashId = StringUtils.GetGuid(),
             DataType = type,
-            Data = StringUtils.RandomString(10),
             SenderApp = StringUtils.RandomString(5) + ".exe",
             CachedImagePath = _defaultIconPath,
             Score = rand.Next(1000),
@@ -52,14 +57,6 @@ public class DatabaseHelperTest
             Pinned = false,
             CreateTime = DateTime.Now,
         };
-        if (data.DataType == DataType.Image)
-        {
-            data.Data = _defaultImage;
-        }
-        else if (data.DataType == DataType.Files)
-        {
-            data.Data = new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10) };
-        }
         return data;
     }
 
