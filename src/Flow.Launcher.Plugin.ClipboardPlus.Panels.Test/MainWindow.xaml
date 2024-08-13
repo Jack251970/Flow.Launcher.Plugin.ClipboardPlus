@@ -16,6 +16,18 @@
             <TabItem x:Name="PreviewTextTabItem" Header="Preview Text" />
             <TabItem x:Name="PreviewImageTabItem" Header="Preview Image" />
             <TabItem x:Name="PreviewFilesTabItem" Header="Preview Files" />
+            <TabItem Header="Clipboard Monitor">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="TextBlock1" Grid.Row="0" />
+                    <TextBlock x:Name="TextBlock2" Grid.Row="1" />
+                    <TextBlock x:Name="TextBlock3" Grid.Row="2" />
+                </Grid>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

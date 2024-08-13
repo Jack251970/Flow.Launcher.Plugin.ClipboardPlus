@@ -22,6 +22,8 @@ public partial class MainWindow : Window
 
     private readonly static string _imageSavePath = @"D:\clipboard.png";
 
+    private ClipboardMonitor ClipboardMonitor = new() { ObserveLastEntry = false };
+
     public MainWindow()
     {
         InitializeComponent();
@@ -88,6 +90,47 @@ public partial class MainWindow : Window
         grid3.Children.Add(previewPanel3);
         grid3.Children.Add(label3);
         PreviewFilesTabItem.Content = grid3;
+
+        ClipboardMonitor.ClipboardChanged += OnClipboardChange;
+    }
+
+    private void OnClipboardChange(object? sender, ClipboardMonitor.ClipboardChangedEventArgs e)
+    {
+        if (e.Content is null)
+        {
+            return;
+        }
+
+        // init clipboard data
+        var now = DateTime.Now;
+        var clipboardData = new ClipboardData(e.Content is System.Drawing.Image img ? img.ToBitmapImage() : e.Content)
+        {
+            HashId = StringUtils.GetGuid(),
+            DataType = e.DataType,
+            // TODO: Fix trick for converting System.Drawing.Image.
+            SenderApp = e.SourceApplication.Name,
+            CachedImagePath = string.Empty,
+            Score = 1,
+            InitScore = 1,
+            Pinned = false,
+            CreateTime = now,
+        };
+
+        TextBlock1.Text = $"ClipboardChangedEventArgs\n" +
+            $"DataType: {e.DataType}\n" +
+            $"SourceApplication: {e.SourceApplication.Name}\n" +
+            $"Content: {e.Content}";
+        TextBlock2.Text = $"ClipboardMonitor\n" +
+            $"ClipboardText: {ClipboardMonitor.ClipboardText}\n" +
+            $"ClipboardFiles: {ClipboardMonitor.ClipboardFiles}\n" +
+            $"ClipboardImage: {ClipboardMonitor.ClipboardImage}";
+        TextBlock3.Text = $"ClipboardData\n" +
+            $"DataMd5: {clipboardData.DataMd5}\n" +
+            $"DataToString: {clipboardData.DataToString()}\n" +
+            $"DataToImage: {clipboardData.DataToImage()}\n" +
+            $"Title: {clipboardData.GetTitle(CultureInfo.CurrentCulture)}\n" +
+            $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
+            $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
