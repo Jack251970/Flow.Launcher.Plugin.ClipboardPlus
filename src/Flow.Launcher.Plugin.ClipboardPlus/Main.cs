@@ -305,8 +305,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 Context.API.LogDebug(ClassName, "Processed image change");
                 break;
             case DataType.Files:
-                var filesStrings = ClipboardMonitor.ClipboardFiles.ToArray();
-                clipboardData.Data = filesStrings;
                 Context.API.LogDebug(ClassName, "Processed file change");
                 break;
             case DataType.Other:
