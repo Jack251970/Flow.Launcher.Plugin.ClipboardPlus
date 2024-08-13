@@ -110,11 +110,12 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// </returns>
     public readonly string? DataToString()
     {
+        var t = GetStringType(Encrypt);
         return DataType switch
         {
             DataType.Text => Data as string ?? string.Empty,
-            DataType.Image => (Data is not BitmapImage img ? Icon.ToBase64() : img.ToBase64()) ?? string.Empty,
-            DataType.Files => (Data is string[] t ? string.Join('\n', t) : Data as string )?? string.Empty,
+            DataType.Image => (Data is not BitmapImage img ? Icon.ToString(t) : img.ToString(t)) ?? string.Empty,
+            DataType.Files => (Data is string[] s ? string.Join('\n', s) : Data as string)?? string.Empty,
             _ => null
         };
     }
@@ -158,24 +159,25 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// </returns>
     public static ClipboardData FromRecord(Record record)
     {
-        static object StringToData(DataType type, string base64)
+        static object StringToData(Record record)
         {
-            return type switch
+            var t = GetStringType(record.Encrypt);
+            var s = record.DataMd5B64;
+            return record.DataType switch
             {
-                DataType.Text => base64,
-                DataType.Image => base64.ToBitmapImage(),
-                DataType.Files => base64.Split('\n'),
+                0 => s,
+                1 => s.ToBitmapImage(t),
+                2 => s.Split('\n'),
                 _ => null!
             };
         }
 
-        var type = (DataType)record.DataType;
-        return new ClipboardData(StringToData(type, record.DataMd5B64))
+        return new ClipboardData(StringToData(record))
         {
             HashId = record.HashId,
             SenderApp = record.SenderApp,
             CachedImagePath = record.CachedImagePath,
-            DataType = type,
+            DataType = (DataType)record.DataType,
             Score = record.Score,
             InitScore = record.InitScore,
             CreateTime = record.createTime,
@@ -183,6 +185,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             Encrypt = record.Encrypt
         };
     }
+
+    private static StringType GetStringType(bool encrypt) => encrypt ? StringType.Base64 : StringType.Default;
 
     /// <summary>
     /// Cached culture info for the data.

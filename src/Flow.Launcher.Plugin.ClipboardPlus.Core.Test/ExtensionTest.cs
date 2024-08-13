@@ -34,12 +34,12 @@ public class ExtensionTest
         using var f = File.OpenText(@"Images\clipboard_b64.txt");
         var s = f.ReadToEnd();
         var img = new Bitmap(@"Images\clipboard.png");
-        var s1 = img.ToBase64();
-        Image img1 = s1.ToImage();
+        var s1 = img.ToString(StringType.Base64);
+        Image img1 = s1.ToImage(StringType.Base64);
         var bm = new BitmapImage(new Uri(Path.Combine(_baseDirectory, @"Images\clipboard.png"), UriKind.Absolute));
-        var s2 = bm.ToBase64();
+        var s2 = bm.ToString(StringType.Base64);
         var bm1 = img1.ToBitmapImage();
-        var s3 = bm1.ToBase64();
+        var s3 = bm1.ToString(StringType.Base64);
     }
 
     [Fact]
@@ -47,8 +47,8 @@ public class ExtensionTest
     {
         using var f = File.OpenText(@"Images\clipboard_b64.txt");
         var s = f.ReadToEnd();
-        var img1 = s.ToImage();
-        var imgBitmap = s.ToBitmapImage();
+        var img1 = s.ToImage(StringType.Base64);
+        var imgBitmap = s.ToBitmapImage(StringType.Base64);
         var bm = new BitmapImage(new Uri(Path.Combine(_baseDirectory, @"Images\clipboard.png"), UriKind.Absolute));
     }
 }
