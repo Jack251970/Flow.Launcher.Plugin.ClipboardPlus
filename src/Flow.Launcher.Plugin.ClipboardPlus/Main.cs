@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -13,7 +12,7 @@ using Clipboard = System.Windows.Clipboard;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus;
 
-public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPluginI18n,
+public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPluginI18n,
     ISavable, ISettingProvider, IClipboardPlus, IDisposable
 {
     #region Properties
@@ -26,9 +25,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     // Culture info
     private CultureInfo CultureInfo = null!;
-
-    // Pinned symbol
-    private const string PinUnicode = "📌";
 
     // Settings
     private Settings Settings = null!;
@@ -98,7 +94,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             // records results
             var records = query.Search.Trim().Length == 0
                 ? RecordsList.ToArray()
-                : RecordsList.Where(i => !string.IsNullOrEmpty(i.Text) && i.Text.ToLower().Contains(query.Search.Trim().ToLower())).ToArray();
+                : RecordsList.Where(i => !string.IsNullOrEmpty(i.GetText(CultureInfo)) && i.GetText(CultureInfo).ToLower().Contains(query.Search.Trim().ToLower())).ToArray();
             results.AddRange(records.Select(GetResultFromClipboardData));
             Context.API.LogDebug(ClassName, "Added records successfully");
             // clear results
@@ -280,8 +276,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         var clipboardData = new ClipboardData
         {
             HashId = StringUtils.GetGuid(),
-            Text = "",
-            Title = "",
             DataType = e.DataType,
             // TODO: Fix trick for converting System.Drawing.Image.
             Data = e.Content is System.Drawing.Image img ? img.ToBitmapImage() : e.Content,
@@ -298,11 +292,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         switch (e.DataType)
         {
             case DataType.Text:
-                clipboardData.Text = ClipboardMonitor.ClipboardText;
                 Context.API.LogDebug(ClassName, "Processed text change");
                 break;
             case DataType.Image:
-                clipboardData.Text = $"Image: {clipboardData.CreateTime.ToString(CultureInfo)}";
                 if (Settings.CacheImages)
                 {
                     var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
@@ -315,7 +307,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             case DataType.Files:
                 var filesStrings = ClipboardMonitor.ClipboardFiles.ToArray();
                 clipboardData.Data = filesStrings;
-                clipboardData.Text = string.Join("\n", filesStrings.Take(2)) + "\n...";
                 Context.API.LogDebug(ClassName, "Processed file change");
                 break;
             case DataType.Other:
@@ -325,7 +316,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             default:
                 break;
         }
-        clipboardData.Title = MyRegex().Replace(clipboardData.Text.Trim(), "");
 
         // add to list and database if no repeat 
         if (RecordsList.Any(record => record.DataMd5 == clipboardData.DataMd5))
@@ -353,9 +343,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
         Context.API.LogDebug(ClassName, "Processing clipboard change finished");
     }
-
-    [GeneratedRegex("(\\r|\\n|\\t|\\v)")]
-    private static partial Regex MyRegex();
 
     #endregion
 
@@ -397,18 +384,16 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     private Result GetResultFromClipboardData(ClipboardData clipboardData)
     {
-        var dispSubTitle = $"{clipboardData.CreateTime.ToString(CultureInfo)}: {clipboardData.SenderApp}";
-        dispSubTitle = clipboardData.Pinned ? $"{PinUnicode}{dispSubTitle}" : dispSubTitle;
         return new Result
         {
-            Title = clipboardData.Title,
-            SubTitle = dispSubTitle,
+            Title = clipboardData.GetTitle(CultureInfo),
+            SubTitle = clipboardData.GetSubtitle(CultureInfo),
+            SubTitleToolTip = clipboardData.GetSubtitle(CultureInfo),
             Icon = () => clipboardData.Icon,
             Glyph = clipboardData.Glyph,
-            CopyText = clipboardData.Text,
+            CopyText = clipboardData.GetText(CultureInfo),
             Score = GetNewScoreByOrderBy(clipboardData),
-            TitleToolTip = clipboardData.Text,
-            SubTitleToolTip = dispSubTitle,
+            TitleToolTip = clipboardData.GetText(CultureInfo),
             ContextData = clipboardData,
             PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, clipboardData)),
             Action = _ =>
@@ -445,7 +430,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                         break;
                 }
                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard"), 
-                    StringUtils.CompressString(clipboardData.Text, 36));
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), 36));
                 return true;
             },
         };

@@ -19,11 +19,9 @@ public class DatabaseHelperTest
         new()
         {
             HashId = StringUtils.GetGuid(),
-            Text = "Text",
             DataType = DataType.Text,
             Data = "Test Data",
             SenderApp = "Source.exe",
-            Title = "Test Title",
             CachedImagePath = _defaultIconPath,
             Score = 241,
             InitScore = 1,
@@ -45,11 +43,9 @@ public class DatabaseHelperTest
         var data = new ClipboardData()
         {
             HashId = StringUtils.GetGuid(),
-            Text = StringUtils.RandomString(10),
             DataType = type,
             Data = StringUtils.RandomString(10),
             SenderApp = StringUtils.RandomString(5) + ".exe",
-            Title = StringUtils.RandomString(10),
             CachedImagePath = _defaultIconPath,
             Score = rand.Next(1000),
             InitScore = rand.Next(1000),

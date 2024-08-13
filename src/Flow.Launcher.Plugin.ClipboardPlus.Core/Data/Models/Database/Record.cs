@@ -19,16 +19,6 @@ public class Record
     public string DataMd5B64 { get; set; } = string.Empty;
 
     /// <summary>
-    /// Display text for the data.
-    /// </summary>
-    public string Text { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Display title for the data.
-    /// </summary>
-    public string Title { get; set; } = string.Empty;
-
-    /// <summary>
     /// Sender application of the data.
     /// </summary>
     public string SenderApp { get; set; } = string.Empty;
@@ -84,8 +74,6 @@ public class Record
         {
             HashId = data.HashId,
             DataMd5B64 = data.DataMd5,
-            Text = data.Text,
-            Title = data.Title,
             SenderApp = data.SenderApp,
             CachedImagePath = data.CachedImagePath,
             DataType = (int)data.DataType,
@@ -122,6 +110,6 @@ public class Record
 
     public override string ToString()
     {
-        return $"Record(Type: {DataType}, Title: {Title}, Text: {Text}, CreateTime: {CreateTime})";
+        return $"Record(Type: {DataType}, DataMd5B64: {DataMd5B64}, CreateTime: {CreateTime})";
     }
 }

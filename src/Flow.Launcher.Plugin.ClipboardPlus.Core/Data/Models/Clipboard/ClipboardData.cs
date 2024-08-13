@@ -1,8 +1,10 @@
-﻿using System.Windows.Media.Imaging;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Windows.Media.Imaging;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
-public struct ClipboardData : IEquatable<ClipboardData>
+public partial struct ClipboardData : IEquatable<ClipboardData>
 {
     /// <summary>
     /// Hash id of the data, used to identify the data.
@@ -21,16 +23,6 @@ public struct ClipboardData : IEquatable<ClipboardData>
     /// MD5 hash of the data, also used to identify the data.
     /// </summary>
     public readonly string DataMd5 => StringUtils.GetMd5(DataToString());
-
-    /// <summary>
-    /// Display text for the data.
-    /// </summary>
-    public required string Text;
-
-    /// <summary>
-    /// Display title for the data.
-    /// </summary>
-    public required string Title;
 
     /// <summary>
     /// Sender application of the data.
@@ -76,6 +68,11 @@ public struct ClipboardData : IEquatable<ClipboardData>
     /// Create time of the record.
     /// </summary>
     public required DateTime CreateTime;
+
+    /// <summary>
+    /// Pin symbol in unicode.
+    /// </summary>
+    private const string PinUnicode = "📌";
 
     /// <summary>
     /// Get the data as string. If the data is not in Text, Image, Files, return empty string.
@@ -131,8 +128,6 @@ public struct ClipboardData : IEquatable<ClipboardData>
         {
             HashId = record.HashId,
             Data = null!,
-            Text = record.Text,
-            Title = record.Title,
             SenderApp = record.SenderApp,
             CachedImagePath = record.CachedImagePath,
             DataType = type,
@@ -158,6 +153,56 @@ public struct ClipboardData : IEquatable<ClipboardData>
         return clipboardData;
     }
 
+    /// <summary>
+    /// Get display title for the data.
+    /// </summary>
+    /// <param name="cultureInfo">
+    /// The culture info for the title.
+    /// </param>
+    /// <returns>
+    /// The display title for the data.
+    /// </returns>
+    public readonly string GetTitle(CultureInfo cultureInfo)
+    {
+        return MyRegex().Replace(GetText(cultureInfo).Trim(), "");
+    }
+
+    /// <summary>
+    /// Get display subtitle for the data.
+    /// </summary>
+    /// <param name="cultureInfo">
+    /// The culture info for the subtitle.
+    /// </param>
+    /// <returns>
+    /// The display subtitle for the data.
+    /// </returns>
+    public readonly string GetSubtitle(CultureInfo cultureInfo)
+    {
+        var dispSubtitle = $"{CreateTime.ToString(cultureInfo)}: {SenderApp}";
+        dispSubtitle = Pinned ? $"{PinUnicode}{dispSubtitle}" : dispSubtitle;
+        return dispSubtitle;
+    }
+
+    /// <summary>
+    /// Get display text for the data.
+    /// </summary>
+    /// <param name="cultureInfo">
+    /// The culture info for the text.
+    /// </param>
+    /// <returns>
+    /// The display text for the data.
+    /// </returns>
+    public readonly string GetText(CultureInfo cultureInfo)
+    {
+        return DataType switch
+        {
+            DataType.Text => Data as string,
+            DataType.Image => $"Image: {CreateTime.ToString(cultureInfo)}",
+            DataType.Files => Data is string[] t ? string.Join("\n", t.Take(2)) + "\n..." : Data as string,
+            _ => null
+        } ?? string.Empty;
+    }
+
     public static bool operator ==(ClipboardData a, ClipboardData b) => a.Equals(b);
 
     public static bool operator !=(ClipboardData a, ClipboardData b) => !a.Equals(b);
@@ -173,19 +218,21 @@ public struct ClipboardData : IEquatable<ClipboardData>
 
     public readonly bool Equals(ClipboardData b)
     {
-        return Text == b.Text &&
-            Title == b.Title &&
+        return DataMd5 == b.DataMd5 &&
             SenderApp == b.SenderApp &&
             DataType == b.DataType;
     }
 
     public override readonly int GetHashCode()
     {
-        return HashCode.Combine(Text, Title, SenderApp, DataType);
+        return HashCode.Combine(DataMd5, SenderApp, DataType);
     }
 
     public override readonly string ToString()
     {
-        return $"ClipboardData(Type: {DataType}, Title: {Title}, Text: {Text}, CreateTime: {CreateTime})";
+        return $"ClipboardData(Type: {DataType}, Text: {GetText(CultureInfo.CurrentCulture)}, CreateTime: {CreateTime})";
     }
+
+    [GeneratedRegex("(\\r|\\n|\\t|\\v)")]
+    private static partial Regex MyRegex();
 }
