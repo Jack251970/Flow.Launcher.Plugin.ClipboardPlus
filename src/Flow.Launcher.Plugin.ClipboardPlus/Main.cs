@@ -317,8 +317,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             RecordsList.RemoveLast();
         }
-        Context.API.LogDebug(ClassName, "Processing clipboard change finished");
 
+        // update score
         CurrentScore++;
     }
 
