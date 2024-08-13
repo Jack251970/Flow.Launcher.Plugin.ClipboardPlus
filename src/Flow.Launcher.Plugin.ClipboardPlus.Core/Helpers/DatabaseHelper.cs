@@ -117,7 +117,7 @@ public class DatabaseHelper : IDisposable
 
     #region Database Operations
 
-    public async Task CreateDatabaseAsync()
+    public async Task InitializeDatabaseAsync()
     {
         await HandleOpenCloseAsync(() =>
         {

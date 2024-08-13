@@ -69,7 +69,7 @@ public class DatabaseHelperTest
             cache: SqliteCacheMode.Shared
         );
         _testOutputHelper.WriteLine(helper.Connection.ConnectionString);
-        await helper.CreateDatabaseAsync();
+        await helper.InitializeDatabaseAsync();
         var sql = @"SELECT name from sqlite_master WHERE name IN ('record', 'assets') ORDER BY name ASC;";
         var r = helper.Connection.Query(sql).AsList();
         Assert.True(r.Count == 2 && r[0].name == "assets" && r[1].name == "record");
@@ -86,7 +86,7 @@ public class DatabaseHelperTest
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Shared
         );
-        await helper.CreateDatabaseAsync();
+        await helper.InitializeDatabaseAsync();
         await helper.AddOneRecordAsync(exampleTextRecord);
         var c = (await helper.GetAllRecordsAsync()).First();
         Assert.Equal(c, exampleTextRecord);
@@ -106,7 +106,7 @@ public class DatabaseHelperTest
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Shared
         );
-        await helper.CreateDatabaseAsync();
+        await helper.InitializeDatabaseAsync();
         var now = DateTime.Now;
         var ctime = DateTime.ParseExact(
             creatTime,
@@ -146,7 +146,7 @@ public class DatabaseHelperTest
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Shared
         );
-        await helper.CreateDatabaseAsync();
+        await helper.InitializeDatabaseAsync();
         await helper.AddOneRecordAsync(exampleTextRecord);
         var c1 = (await helper.GetAllRecordsAsync()).First();
         exampleTextRecord.Pinned = !exampleTextRecord.Pinned;
@@ -165,7 +165,7 @@ public class DatabaseHelperTest
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Shared
         );
-        await helper.CreateDatabaseAsync();
+        await helper.InitializeDatabaseAsync();
         await helper.AddOneRecordAsync(exampleTextRecord);
         exampleTextRecord.HashId = string.Empty;
         await helper.DeleteOneRecordAsync(exampleTextRecord);

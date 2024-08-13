@@ -130,14 +130,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         Context.API.LogInfo(ClassName, $"{Settings}");
 
         // init database & records
+        var fileExists = File.Exists(PathHelper.DatabasePath);
         DatabaseHelper = new DatabaseHelper(PathHelper.DatabasePath);
-        if (File.Exists(PathHelper.DatabasePath))
+        await DatabaseHelper.InitializeDatabaseAsync();
+        if (fileExists)
         {
             await InitRecordsFromDatabase();
-        }
-        else
-        {
-            await DatabaseHelper.CreateDatabaseAsync();
         }
         Context.API.LogDebug(ClassName, "Init database successfully");
 
