@@ -1,7 +1,7 @@
 using Dapper;
 using Microsoft.Data.Sqlite;
-using System.Drawing;
 using System.Globalization;
+using System.Windows.Media.Imaging;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -11,7 +11,9 @@ public class DatabaseHelperTest
 {
     private readonly static string _defaultIconPath = "Images/clipboard.png";
 
-    private readonly Image _defaultImage = new Bitmap(_defaultIconPath);
+    private readonly static string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+    private readonly BitmapImage _defaultImage = new(new Uri(Path.Combine(_baseDirectory, _defaultIconPath), UriKind.Absolute));
 
     private readonly ClipboardData TestRecord =
         new()
@@ -93,7 +95,7 @@ public class DatabaseHelperTest
         );
         await helper.CreateDatabaseAsync();
         await helper.AddOneRecordAsync(exampleTextRecord);
-        var c = (await helper.GetAllRecordAsync()).First();
+        var c = (await helper.GetAllRecordsAsync()).First();
         Assert.Equal(c, exampleTextRecord);
         await helper.CloseAsync();
     }
@@ -129,7 +131,7 @@ public class DatabaseHelperTest
 
         await helper.DeleteRecordByKeepTimeAsync(type, keepTime);
 
-        var recordsAfterDelete = await helper.GetAllRecordAsync();
+        var recordsAfterDelete = await helper.GetAllRecordsAsync();
         foreach (var record in recordsAfterDelete.Where(r => r.DataType == (DataType)type))
         {
             var expTime = record.CreateTime + TimeSpan.FromHours(keepTime);
@@ -153,10 +155,10 @@ public class DatabaseHelperTest
         );
         await helper.CreateDatabaseAsync();
         await helper.AddOneRecordAsync(exampleTextRecord);
-        var c1 = (await helper.GetAllRecordAsync()).First();
+        var c1 = (await helper.GetAllRecordsAsync()).First();
         exampleTextRecord.Pinned = !exampleTextRecord.Pinned;
         await helper.PinOneRecordAsync(exampleTextRecord);
-        var c2 = (await helper.GetAllRecordAsync()).First();
+        var c2 = (await helper.GetAllRecordsAsync()).First();
         Assert.Equal(c1.Pinned, !c2.Pinned);
         await helper.CloseAsync();
     }
@@ -173,7 +175,7 @@ public class DatabaseHelperTest
         await helper.CreateDatabaseAsync();
         await helper.AddOneRecordAsync(exampleTextRecord);
         await helper.DeleteOneRecordAsync(exampleTextRecord);
-        var c = await helper.GetAllRecordAsync();
+        var c = await helper.GetAllRecordsAsync();
         Assert.Empty(c);
         await helper.CloseAsync();
     }

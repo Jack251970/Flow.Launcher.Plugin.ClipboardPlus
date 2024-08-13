@@ -69,12 +69,10 @@ public class Record
 
     public static Record FromClipboardData(ClipboardData data)
     {
-        var insertData = data.DataToString();
-        var dataMd5 = insertData.GetMd5();
         var record = new Record
         {
             HashId = data.HashId,
-            DataMd5 = dataMd5,
+            DataMd5 = data.DataMd5,
             Text = data.Text,
             Title = data.Title,
             SenderApp = data.SenderApp,
@@ -86,39 +84,6 @@ public class Record
             Pinned = data.Pinned,
         };
         return record;
-    }
-
-    public static ClipboardData ToClipboardData(Record record)
-    {
-        var type = (DataType)record.DataType;
-        var clipboardData = new ClipboardData
-        {
-            HashId = record.HashId,
-            Data = record.DataMd5,
-            Text = record.Text,
-            Title = record.Title,
-            SenderApp = record.SenderApp,
-            CachedImagePath = record.CachedImagePath,
-            DataType = type,
-            Score = record.Score,
-            InitScore = record.InitScore,
-            CreateTime = record._createTime,
-            Pinned = record.Pinned,
-        };
-        switch (type)
-        {
-            case Enums.DataType.Text:
-                break;
-            case Enums.DataType.Image:
-                clipboardData.Data = record.DataMd5.ToImage();
-                break;
-            case Enums.DataType.Files:
-                clipboardData.Data = record.DataMd5.Split('\n');
-                break;
-            default:
-                break;
-        }
-        return clipboardData;
     }
 
     public static bool operator ==(Record a, Record b) => a.Equals(b);

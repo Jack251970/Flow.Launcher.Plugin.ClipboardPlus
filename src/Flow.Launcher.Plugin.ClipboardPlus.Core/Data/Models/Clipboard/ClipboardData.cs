@@ -74,31 +74,75 @@ public struct ClipboardData : IEquatable<ClipboardData>
     /// </summary>
     public required DateTime CreateTime;
 
+    /// <summary>
+    /// Get the data as string. If the data is not in Text, Image, Files, return empty string.
+    /// </summary>
+    /// <returns>
+    /// If data is in Text, return the data as string.
+    /// If data is in Image, return the data as base64 string.
+    /// If data is in Files, return the data as string.
+    /// </returns>
     public readonly string DataToString()
     {
         return DataType switch
         {
             DataType.Text => Data as string,
-            DataType.Image => Data is not Image im ? Icon.ToBase64() : im.ToBase64(),
+            DataType.Image => Data is not BitmapImage img ? Icon.ToBase64() : img.ToBase64(),
             DataType.Files => Data is string[] t ? string.Join('\n', t) : Data as string,
-            _ => throw new NotImplementedException(
-                "Data to string for type not in Text, Image, Files are not implemented now."
-            ),  // don't process others
+            _ => null
         } ?? string.Empty;
     }
 
-    // TODO: Change to BitmapImage.
-    public readonly Image? DataToImage()
+    /// <summary>
+    /// Get the data as image. If the data is not in Image, return null.
+    /// </summary>
+    /// <returns>
+    /// If data is in Image, return the data as BitmapImage.
+    /// If data is not in Image, return null.
+    /// </returns>
+    public readonly BitmapImage? DataToImage()
     {
         return DataType switch
         {
             DataType.Text => null,
-            DataType.Image => Data as Image,
+            DataType.Image => Data as BitmapImage,
             DataType.Files => null,
-            _ => throw new NotImplementedException(
-                "Data to image for type not in Text, Image, Files are not implemented now."
-            ),  // don't process others
+            _ => null
         };
+    }
+
+    public static ClipboardData FromRecord(Record record)
+    {
+        var type = (DataType)record.DataType;
+        var clipboardData = new ClipboardData
+        {
+            HashId = record.HashId,
+            Data = null!,
+            Text = record.Text,
+            Title = record.Title,
+            SenderApp = record.SenderApp,
+            CachedImagePath = record.CachedImagePath,
+            DataType = type,
+            Score = record.Score,
+            InitScore = record.InitScore,
+            CreateTime = record._createTime,
+            Pinned = record.Pinned,
+        };
+        switch (type)
+        {
+            case DataType.Text:
+                clipboardData.Data = record.DataMd5;
+                break;
+            case DataType.Image:
+                clipboardData.Data = record.DataMd5.ToBitmapImage();
+                break;
+            case DataType.Files:
+                clipboardData.Data = record.DataMd5.Split('\n');
+                break;
+            default:
+                break;
+        }
+        return clipboardData;
     }
 
     public static bool operator ==(ClipboardData a, ClipboardData b) => a.Equals(b);

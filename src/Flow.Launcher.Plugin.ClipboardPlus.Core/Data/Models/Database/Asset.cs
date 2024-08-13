@@ -17,6 +17,17 @@ public class Asset
     /// </summary>
     public required string DataMd5 { get; set; }
 
+    public static Asset FromClipboardData(ClipboardData data)
+    {
+        var dataB64 = data.DataToString();
+        var dataMd5 = dataB64.GetMd5();
+        return new Asset
+        {
+            DataB64 = dataB64,
+            DataMd5 = dataMd5,
+        };
+    }
+
     public static bool operator ==(Asset a, Asset b) => a.Equals(b);
 
     public static bool operator !=(Asset a, Asset b) => !a.Equals(b);

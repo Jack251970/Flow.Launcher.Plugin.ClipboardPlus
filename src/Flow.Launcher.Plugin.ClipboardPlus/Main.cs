@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using WindowsInput;
+using Clipboard = System.Windows.Clipboard;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus;
 
@@ -282,7 +283,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             Text = "",
             Title = "",
             DataType = e.DataType,
-            Data = e.Content,
+            // TODO: Fix trick for converting System.Drawing.Image.
+            Data = e.Content is System.Drawing.Image img ? img.ToBitmapImage() : e.Content,
             SenderApp = e.SourceApplication.Name,
             CachedImagePath = string.Empty,
             Score = CurrentScore + 1,
@@ -380,7 +382,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
 
         // restore records
-        var records = await DatabaseHelper.GetAllRecordAsync();
+        var records = await DatabaseHelper.GetAllRecordsAsync();
         if (records.Count > 0)
         {
             RecordsList = records;
@@ -500,7 +502,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private static void CopyToClipboard(ClipboardData clipboardData)
     {
         // TODO: Add support for files.
-        System.Windows.Forms.Clipboard.SetDataObject(clipboardData.Data);
+        Clipboard.SetDataObject(clipboardData.Data);
     }
 
     private void RemoveFromList(ClipboardData clipboardData, bool needEsc = false)

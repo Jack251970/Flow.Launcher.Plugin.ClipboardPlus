@@ -98,7 +98,7 @@ public class PreviewViewModel : BaseModel
             case DataType.Image:
                 PreviewText = string.Empty;
                 // TODO: Add support for cached image path loading.
-                PreviewImage = ClipboardData.DataToImage()?.ToBitmapImage();
+                PreviewImage = ClipboardData.DataToImage();
                 break;
             default:
                 break;

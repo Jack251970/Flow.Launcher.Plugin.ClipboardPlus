@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using Image = System.Drawing.Image;
+using System.Windows.Media.Imaging;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Test;
 
@@ -16,7 +16,9 @@ public partial class MainWindow : Window
 
     private readonly static string _defaultIconPath = "Images/clipboard.png";
 
-    private readonly Image _defaultImage = new Bitmap(_defaultIconPath);
+    private readonly static string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+    private readonly BitmapImage _defaultImage = new(new Uri(Path.Combine(_baseDirectory, _defaultIconPath), UriKind.Absolute));
 
     public MainWindow()
     {
@@ -37,6 +39,7 @@ public partial class MainWindow : Window
 
         // Preview panels
         PreviewTextTabItem.Content = new PreviewPanel(ClipboardPlus, GetRandomClipboardData(DataType.Text));
+        // TODO: Test image.Save() method
         PreviewImageTabItem.Content = new PreviewPanel(ClipboardPlus, GetRandomClipboardData(DataType.Image));
         PreviewFilesTabItem.Content = new PreviewPanel(ClipboardPlus, GetRandomClipboardData(DataType.Files));
     }
@@ -74,5 +77,32 @@ public partial class MainWindow : Window
             data.Data = new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10) };
         }
         return data;
+    }
+
+    public static BitmapImage? LoadBitmapImageByPath(string path)
+    {
+        try
+        {
+            if (!File.Exists(path))
+            {
+                return null;
+            }
+            BitmapImage bi = new BitmapImage();
+            using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
+            {
+                using (BinaryReader br = new BinaryReader(stream))
+                {
+                    byte[] bytes = br.ReadBytes((int)stream.Length);
+                    bi.BeginInit();
+                    bi.StreamSource = new MemoryStream(bytes);
+                    bi.EndInit();
+                }
+            }
+            return bi;
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
     }
 }

@@ -136,11 +136,9 @@ public class DatabaseHelper : IDisposable
     {
         Connection.Open();
         // insert assets
-        var dataB64 = data.DataToString();
-        var dataMd5 = dataB64.GetMd5();
         var assets = new List<Asset>
         {
-            new() { DataB64 = dataB64, DataMd5 = dataMd5 },
+            Asset.FromClipboardData(data)
         };
         await Connection.ExecuteAsync(SqlInsertAssets, assets);
         // insert record
@@ -152,7 +150,7 @@ public class DatabaseHelper : IDisposable
 
     public async Task DeleteOneRecordAsync(ClipboardData clipboardData)
     {
-        var dataMd5 = clipboardData.DataToString().GetMd5();
+        var dataMd5 = clipboardData.DataMd5;
         var count = await Connection.QueryFirstAsync<int>(
             SqlSelectRecordCountByMd5,
             new { DataMd5 = dataMd5 }
@@ -194,10 +192,10 @@ public class DatabaseHelper : IDisposable
         await CloseIfNotKeepAsync();
     }
 
-    public async Task<LinkedList<ClipboardData>> GetAllRecordAsync()
+    public async Task<LinkedList<ClipboardData>> GetAllRecordsAsync()
     {
         var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
-        LinkedList<ClipboardData> allRecord = new(results.Select(Record.ToClipboardData));
+        LinkedList<ClipboardData> allRecord = new(results.Select(ClipboardData.FromRecord));
         await CloseIfNotKeepAsync();
         return allRecord;
     }
