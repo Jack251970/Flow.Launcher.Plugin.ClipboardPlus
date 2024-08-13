@@ -20,7 +20,7 @@ public class Asset
     public static Asset FromClipboardData(ClipboardData data)
     {
         var dataB64 = data.DataToString();
-        var dataMd5 = dataB64.GetMd5();
+        var dataMd5 = StringUtils.GetMd5(dataB64);
         return new Asset
         {
             DataB64 = dataB64,

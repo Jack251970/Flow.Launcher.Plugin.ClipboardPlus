@@ -17,7 +17,7 @@ public struct ClipboardData : IEquatable<ClipboardData>
     /// <summary>
     /// MD5 hash of the data, also used to identify the data.
     /// </summary>
-    public readonly string DataMd5 => DataToString().GetMd5();
+    public readonly string DataMd5 => StringUtils.GetMd5(DataToString());
 
     /// <summary>
     /// Display text for the data.

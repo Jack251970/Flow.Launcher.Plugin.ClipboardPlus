@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Utils;
@@ -26,6 +27,9 @@ public static partial class StringUtils
         var collection = EnRegex().Matches(s);
         return collection.Count;
     }
+
+    [GeneratedRegex("[\\S]+")]
+    private static partial Regex EnRegex();
 
     public static int CountWordsCn(string s)
     {
@@ -128,6 +132,19 @@ public static partial class StringUtils
             (ch >= 0x1F700 && ch <= 0x1F77F);   // Alchemical Symbols
     }
 
-    [GeneratedRegex("[\\S]+")]
-    private static partial Regex EnRegex();
+    public static string GetMd5(string s)
+    {
+        byte[] inputBytes = Encoding.UTF8.GetBytes(s);
+        byte[] hash = MD5.HashData(inputBytes);
+        var hex = hash.Select(i => i.ToString("X2"));
+        return string.Join("", hex);
+    }
+
+    public static string GetSha256(string s)
+    {
+        byte[] inputBytes = Encoding.UTF8.GetBytes(s);
+        var hash = SHA256.HashData(inputBytes);
+        var hex = hash.Select(i => i.ToString("X2"));
+        return string.Join("", hex);
+    }
 }
