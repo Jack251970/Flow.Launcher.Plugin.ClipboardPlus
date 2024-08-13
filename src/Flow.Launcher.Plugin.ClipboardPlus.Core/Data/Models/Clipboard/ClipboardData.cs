@@ -123,11 +123,22 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// </returns>
     public static ClipboardData FromRecord(Record record)
     {
+        static object StringToData(DataType type, string base64)
+        {
+            return type switch
+            {
+                DataType.Text => base64,
+                DataType.Image => base64.ToBitmapImage(),
+                DataType.Files => base64.Split('\n'),
+                _ => null!
+            };
+        }
+
         var type = (DataType)record.DataType;
-        var clipboardData = new ClipboardData
+        return new ClipboardData
         {
             HashId = record.HashId,
-            Data = null!,
+            Data = StringToData(type, record.DataMd5B64),
             SenderApp = record.SenderApp,
             CachedImagePath = record.CachedImagePath,
             DataType = type,
@@ -136,22 +147,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             CreateTime = record._createTime,
             Pinned = record.Pinned,
         };
-        switch (type)
-        {
-            case DataType.Text:
-                clipboardData.Data = record.DataMd5B64;
-                break;
-            case DataType.Image:
-                clipboardData.Data = record.DataMd5B64.ToBitmapImage();
-                break;
-            case DataType.Files:
-                clipboardData.Data = record.DataMd5B64.Split('\n');
-                break;
-            default:
-                break;
         }
-        return clipboardData;
-    }
 
     /// <summary>
     /// Get display title for the data.
