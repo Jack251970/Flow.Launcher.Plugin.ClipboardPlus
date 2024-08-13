@@ -283,7 +283,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             Pinned = false,
             CreateTime = now,
         };
-        CurrentScore++;
 
         // process clipboard data
         if (e.DataType == DataType.Image && Settings.CacheImages)
@@ -319,6 +318,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             RecordsList.RemoveLast();
         }
         Context.API.LogDebug(ClassName, "Processing clipboard change finished");
+
+        CurrentScore++;
     }
 
     #endregion
