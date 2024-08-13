@@ -119,14 +119,14 @@ public class DatabaseHelper : IDisposable
 
     public async Task InitializeDatabaseAsync()
     {
-        await HandleOpenCloseAsync(() =>
+        await HandleOpenCloseAsync(async () =>
         {
             // check if `record` exists
             var name = Connection.QueryFirstOrDefault<string>(SqlSelectRecordTable);
             if (name != "record")
             {
                 // if not exists, create `record` and `assets` table
-                Connection.Execute(SqlCreateDatabase);
+                await Connection.ExecuteAsync(SqlCreateDatabase);
             }
         });
     }
@@ -185,6 +185,7 @@ public class DatabaseHelper : IDisposable
         await HandleOpenCloseAsync(async () =>
         {
             await Connection.ExecuteAsync(SqlDeleteAllRecords);
+            await Connection.ExecuteAsync(SqlCreateDatabase);
         });
     }
 
@@ -280,13 +281,6 @@ public class DatabaseHelper : IDisposable
     {
         await OpenAsync();
         await func();
-        await CloseIfNotKeepAsync();
-    }
-
-    private async Task HandleOpenCloseAsync(Action action)
-    {
-        await OpenAsync();
-        action();
         await CloseIfNotKeepAsync();
     }
 
