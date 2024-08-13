@@ -20,6 +20,8 @@ public partial class MainWindow : Window
 
     private readonly BitmapImage _defaultImage = new(new Uri(Path.Combine(_baseDirectory, _defaultIconPath), UriKind.Absolute));
 
+    private readonly static string _imageSavePath = @"D:\clipboard.png";
+
     public MainWindow()
     {
         InitializeComponent();
@@ -39,8 +41,17 @@ public partial class MainWindow : Window
 
         // Preview panels
         PreviewTextTabItem.Content = new PreviewPanel(ClipboardPlus, GetRandomClipboardData(DataType.Text));
-        // TODO: Test image.Save() method
-        PreviewImageTabItem.Content = new PreviewPanel(ClipboardPlus, GetRandomClipboardData(DataType.Image));
+        var grid1 = new Grid();
+        grid1.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        grid1.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        var button1 = new Button() { Content = $"Click to save image to {_imageSavePath}" };
+        button1.Click += Button_Click1;
+        Grid.SetRow(button1, 0);
+        var previewPanel = new PreviewPanel(ClipboardPlus, GetRandomClipboardData(DataType.Image));
+        Grid.SetRow(previewPanel, 1);
+        grid1.Children.Add(button1);
+        grid1.Children.Add(previewPanel);
+        PreviewImageTabItem.Content = grid1;
         PreviewFilesTabItem.Content = new PreviewPanel(ClipboardPlus, GetRandomClipboardData(DataType.Files));
     }
 
@@ -49,6 +60,11 @@ public partial class MainWindow : Window
         var newCulture = ClipboardPlus.CultureInfo.Name == "en-US" ? "zh-CN" : "en-US";
         var newCultureInfo = new CultureInfo(newCulture);
         ClipboardPlus.OnCultureInfoChanged(newCultureInfo);
+    }
+
+    private void Button_Click1(object sender, RoutedEventArgs e)
+    {
+        _defaultImage.Save(_imageSavePath);
     }
 
     private ClipboardData GetRandomClipboardData(DataType type)
@@ -77,32 +93,5 @@ public partial class MainWindow : Window
             data.Data = new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10) };
         }
         return data;
-    }
-
-    public static BitmapImage? LoadBitmapImageByPath(string path)
-    {
-        try
-        {
-            if (!File.Exists(path))
-            {
-                return null;
-            }
-            BitmapImage bi = new BitmapImage();
-            using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
-            {
-                using (BinaryReader br = new BinaryReader(stream))
-                {
-                    byte[] bytes = br.ReadBytes((int)stream.Length);
-                    bi.BeginInit();
-                    bi.StreamSource = new MemoryStream(bytes);
-                    bi.EndInit();
-                }
-            }
-            return bi;
-        }
-        catch (Exception ex)
-        {
-            return null;
-        }
     }
 }
