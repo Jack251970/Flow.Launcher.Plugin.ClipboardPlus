@@ -174,6 +174,7 @@ public class DatabaseHelperTest
         );
         await helper.CreateDatabaseAsync();
         await helper.AddOneRecordAsync(exampleTextRecord);
+        exampleTextRecord.HashId = string.Empty;
         await helper.DeleteOneRecordAsync(exampleTextRecord);
         var c = await helper.GetAllRecordsAsync();
         Assert.Empty(c);

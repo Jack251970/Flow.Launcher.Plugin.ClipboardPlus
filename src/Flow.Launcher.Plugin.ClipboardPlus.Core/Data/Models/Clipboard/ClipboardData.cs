@@ -111,6 +111,16 @@ public struct ClipboardData : IEquatable<ClipboardData>
         };
     }
 
+    /// <summary>
+    /// Convert the record to a clipboard data for selecting.
+    /// DataMd5B64 is the base64 encoded data.
+    /// </summary>
+    /// <param name="data">
+    /// The record to convert.
+    /// </param>
+    /// <returns>
+    /// The clipboard data converted from the record.
+    /// </returns>
     public static ClipboardData FromRecord(Record record)
     {
         var type = (DataType)record.DataType;
@@ -131,13 +141,13 @@ public struct ClipboardData : IEquatable<ClipboardData>
         switch (type)
         {
             case DataType.Text:
-                clipboardData.Data = record.DataMd5;
+                clipboardData.Data = record.DataMd5B64;
                 break;
             case DataType.Image:
-                clipboardData.Data = record.DataMd5.ToBitmapImage();
+                clipboardData.Data = record.DataMd5B64.ToBitmapImage();
                 break;
             case DataType.Files:
-                clipboardData.Data = record.DataMd5.Split('\n');
+                clipboardData.Data = record.DataMd5B64.Split('\n');
                 break;
             default:
                 break;

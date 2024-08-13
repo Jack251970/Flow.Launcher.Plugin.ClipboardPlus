@@ -29,7 +29,7 @@ public class DatabaseHelper : IDisposable
         CREATE TABLE "record" (
             "id"	                INTEGER NOT NULL UNIQUE,
             "hash_id"	            TEXT UNIQUE,
-            "data_md5"	            TEXT,
+            "data_md5_b64"	        TEXT,
             "text"	                TEXT,
             "title"	                TEXT,
             "sender_app"	        TEXT,
@@ -40,7 +40,7 @@ public class DatabaseHelper : IDisposable
             "create_time"	        TEXT,
             "pinned"	            INTEGER,
             PRIMARY                 KEY("id" AUTOINCREMENT),
-            FOREIGN                 KEY("data_md5") REFERENCES "assets"("data_md5") ON DELETE CASCADE
+            FOREIGN                 KEY("data_md5_b64") REFERENCES "assets"("data_md5") ON DELETE CASCADE
         );
         """;
 
@@ -48,16 +48,16 @@ public class DatabaseHelper : IDisposable
         "INSERT OR IGNORE INTO assets(data_b64, data_md5) VALUES (@DataB64, @DataMd5);";
     private readonly string SqlInsertRecord =
         @"INSERT OR IGNORE INTO record(
-            hash_id, data_md5, text, title, sender_app, cached_image_path, 
+            hash_id, data_md5_b64, text, title, sender_app, cached_image_path, 
             data_type, score, init_score, create_time, pinned) 
         VALUES (
-            @HashId, @DataMd5, @Text, @Title, @SenderApp, @CachedImagePath, 
+            @HashId, @DataMd5B64, @Text, @Title, @SenderApp, @CachedImagePath, 
             @DataType, @Score, @InitScore, @CreateTime, @Pinned);";
 
     private readonly string SqlSelectRecordCountByMd5 =
-        "SELECT COUNT() FROM record WHERE data_md5=@DataMd5;";
+        "SELECT COUNT() FROM record WHERE data_md5_b64=@DataMd5;";
     private readonly string SqlDeleteRecordAssets1 =
-        "DELETE FROM record WHERE hash_id=@HashId OR data_md5=@DataMd5;";
+        "DELETE FROM record WHERE hash_id=@HashId OR data_md5_b64=@DataMd5;";
     private readonly string SqlDeleteRecordAssets2 =
         "PRAGMA foreign_keys = ON; DELETE FROM assets WHERE data_md5=@DataMd5;";
 
@@ -69,12 +69,12 @@ public class DatabaseHelper : IDisposable
 
     private readonly string SqlSelectAllRecord =
         """
-        SELECT r.id as Id, a.data_b64 as DataMd5, r.text as Text, r.title as Title,
+        SELECT r.id as Id, a.data_b64 as DataMd5B64, r.text as Text, r.title as Title,
             r.sender_app as SenderApp, r.cached_image_path as CachedImagePath,
             r.data_type as DataType, r.score as Score, r.init_score as InitScore,
             r.create_time as CreateTime, r.pinned as Pinned, r.hash_id as HashId
         FROM record r
-        LEFT JOIN assets a ON r.data_md5=a.data_md5;
+        LEFT JOIN assets a ON r.data_md5_b64=a.data_md5;
         """;
 
     private readonly string SqlDeleteRecordByKeepTime =
@@ -121,92 +121,105 @@ public class DatabaseHelper : IDisposable
 
     public async Task CreateDatabaseAsync()
     {
-        Connection.Open();
-        // check if `record` exists
-        var name = Connection.QueryFirstOrDefault<string>(SqlSelectRecordTable);
-        if (name != "record")
+        await HandleOpenCloseAsync(() =>
         {
-            // if not exists, create `record` and `assets` table
-            Connection.Execute(SqlCreateDatabase);
-            await CloseIfNotKeepAsync();
-        }
+            // check if `record` exists
+            var name = Connection.QueryFirstOrDefault<string>(SqlSelectRecordTable);
+            if (name != "record")
+            {
+                // if not exists, create `record` and `assets` table
+                Connection.Execute(SqlCreateDatabase);
+            }
+        });
     }
 
     public async Task AddOneRecordAsync(ClipboardData data)
     {
-        Connection.Open();
-        // insert assets
-        var assets = new List<Asset>
+        await HandleOpenCloseAsync(async () =>
         {
-            Asset.FromClipboardData(data)
-        };
-        await Connection.ExecuteAsync(SqlInsertAssets, assets);
-        // insert record
-        // note: you must insert record after data
-        var record = Record.FromClipboardData(data);
-        await Connection.ExecuteAsync(SqlInsertRecord, record);
-        await CloseIfNotKeepAsync();
+            // insert assets
+            var assets = new List<Asset>
+            {
+                Asset.FromClipboardData(data)
+            };
+            await Connection.ExecuteAsync(SqlInsertAssets, assets);
+            // insert record
+            // note: you must insert record after data
+            var record = Record.FromClipboardData(data);
+            await Connection.ExecuteAsync(SqlInsertRecord, record);
+        });
     }
 
     public async Task DeleteOneRecordAsync(ClipboardData clipboardData)
     {
-        var dataMd5 = clipboardData.DataMd5;
-        var count = await Connection.QueryFirstAsync<int>(
-            SqlSelectRecordCountByMd5,
-            new { DataMd5 = dataMd5 }
-        );
-        // count > 1  means there are more than one record in table `record`
-        // depends on corresponding record in table `assets`, in this condition,
-        // we only delete record in table `record`
-        if (count > 1)
+        await HandleOpenCloseAsync(async () =>
         {
-            await Connection.ExecuteAsync(
-                SqlDeleteRecordAssets1,
-                new { clipboardData.HashId, DataMd5 = dataMd5 }
-            );
-        }
-        // otherwise, no record depends on assets, directly delete records
-        // both in `record` and `assets` using foreign key constraint,
-        // i.e., ON DELETE CASCADE
-        else
-        {
-            await Connection.ExecuteAsync(
-                SqlDeleteRecordAssets2,
+            var dataMd5 = clipboardData.DataMd5;
+            var count = await Connection.QueryFirstAsync<int>(
+                SqlSelectRecordCountByMd5,
                 new { DataMd5 = dataMd5 }
             );
-        }
-        await CloseIfNotKeepAsync();
+            // count > 1 means there are more than one record in table `record`
+            // depends on corresponding record in table `assets`, in this condition,
+            // we only delete record in table `record`
+            if (count > 1)
+            {
+                await Connection.ExecuteAsync(
+                    SqlDeleteRecordAssets1,
+                    new { clipboardData.HashId, DataMd5 = dataMd5 }
+                );
+            }
+            // otherwise, no record depends on assets, directly delete records
+            // both in `record` and `assets` using foreign key constraint,
+            // i.e., ON DELETE CASCADE
+            else
+            {
+                await Connection.ExecuteAsync(
+                    SqlDeleteRecordAssets2,
+                    new { DataMd5 = dataMd5 }
+                );
+            }
+        });
     }
 
     public async Task DeleteAllRecordsAsync()
     {
-        await Connection.ExecuteAsync(SqlDeleteAllRecords);
-        await CreateDatabaseAsync();
+        await HandleOpenCloseAsync(async () =>
+        {
+            await Connection.ExecuteAsync(SqlDeleteAllRecords);
+        });
     }
 
     public async Task PinOneRecordAsync(ClipboardData data)
     {
-        // update record
-        var record = new { Pin = data.Pinned, data.HashId };
-        await Connection.ExecuteAsync(SqlUpdateRecordPinned, record);
-        await CloseIfNotKeepAsync();
+        await HandleOpenCloseAsync(async () =>
+        {
+            var record = new { Pin = data.Pinned, data.HashId };
+            await Connection.ExecuteAsync(SqlUpdateRecordPinned, record);
+            await CloseIfNotKeepAsync();
+        });
     }
 
     public async Task<LinkedList<ClipboardData>> GetAllRecordsAsync()
     {
-        var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
-        LinkedList<ClipboardData> allRecord = new(results.Select(ClipboardData.FromRecord));
-        await CloseIfNotKeepAsync();
-        return allRecord;
+        return await HandleOpenCloseAsync(async () =>
+        {
+            // query all records
+            var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
+            LinkedList<ClipboardData> allRecord = new(results.Select(ClipboardData.FromRecord));
+            return allRecord;
+        });
     }
 
     public async Task DeleteRecordByKeepTimeAsync(int dataType, int keepTime)
     {
-        await Connection.ExecuteAsync(
-            SqlDeleteRecordByKeepTime,
-            new { KeepTime = keepTime, DataType = dataType }
-        );
-        await CloseIfNotKeepAsync();
+        await HandleOpenCloseAsync(async () =>
+        {
+            await Connection.ExecuteAsync(
+                SqlDeleteRecordByKeepTime,
+                new { KeepTime = keepTime, DataType = dataType }
+            );
+        });
     }
 
     #endregion
@@ -251,6 +264,32 @@ public class DatabaseHelper : IDisposable
         {
             await Connection.CloseAsync();
         }
+    }
+
+    #endregion
+
+    #region Extension functions
+
+    private async Task<T> HandleOpenCloseAsync<T>(Func<Task<T>> func)
+    {
+        await OpenAsync();
+        var result = await func();
+        await CloseIfNotKeepAsync();
+        return result;
+    }
+
+    private async Task HandleOpenCloseAsync(Func<Task> func)
+    {
+        await OpenAsync();
+        await func();
+        await CloseIfNotKeepAsync();
+    }
+
+    private async Task HandleOpenCloseAsync(Action action)
+    {
+        await OpenAsync();
+        action();
+        await CloseIfNotKeepAsync();
     }
 
     #endregion

@@ -14,8 +14,9 @@ public class Record
 
     /// <summary>
     /// MD5 hash of the data, also used to identify the data.
+    /// Or base64 encoded data for storing the data.
     /// </summary>
-    public string DataMd5 { get; set; } = string.Empty;
+    public string DataMd5B64 { get; set; } = string.Empty;
 
     /// <summary>
     /// Display text for the data.
@@ -67,12 +68,22 @@ public class Record
         set => _createTime = DateTime.Parse(value);
     }
 
+    /// <summary>
+    /// Convert the clipboard data to a record for inserting.
+    /// DataMd5B64 is the MD5 hash of the data.
+    /// </summary>
+    /// <param name="data">
+    /// The clipboard data to convert.
+    /// </param>
+    /// <returns>
+    /// The record converted from the clipboard data.
+    /// </returns>
     public static Record FromClipboardData(ClipboardData data)
     {
         var record = new Record
         {
             HashId = data.HashId,
-            DataMd5 = data.DataMd5,
+            DataMd5B64 = data.DataMd5,
             Text = data.Text,
             Title = data.Title,
             SenderApp = data.SenderApp,
