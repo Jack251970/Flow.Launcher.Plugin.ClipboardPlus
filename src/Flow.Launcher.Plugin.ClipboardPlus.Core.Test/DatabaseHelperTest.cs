@@ -33,17 +33,16 @@ public class DatabaseHelperTest
             DataType.Files => new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10), StringUtils.RandomString(10) },
             _ => null!
         };
-        var data = new ClipboardData(dataContent)
+        var encrypt = rand.NextDouble() > 0.5;
+        var data = new ClipboardData(dataContent, type, encrypt)
         {
             HashId = StringUtils.GetGuid(),
-            DataType = type,
             SenderApp = StringUtils.RandomString(5) + ".exe",
             CachedImagePath = string.Empty,
             Score = rand.Next(1000),
             InitScore = rand.Next(1000),
             Pinned = false,
-            CreateTime = DateTime.Now,
-            Encrypt = false
+            CreateTime = DateTime.Now
         };
         return data;
     }

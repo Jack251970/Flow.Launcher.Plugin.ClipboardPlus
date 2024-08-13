@@ -49,7 +49,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// <summary>
     /// Type of the data.
     /// </summary>
-    public required DataType DataType;
+    private readonly DataType dataType;
+    public readonly DataType DataType => dataType;
 
     /// <summary>
     /// Score of the record for ranking.
@@ -74,7 +75,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// <summary>
     /// Whether the string is encrypted.
     /// </summary>
-    public required bool Encrypt;
+    private readonly bool encrypt;
+    public readonly bool Encrypt => encrypt;
 
     /// <summary>
     /// Pin symbol in unicode.
@@ -83,18 +85,25 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
 
     #region Constructors
 
-    public ClipboardData(object obj)
+    public ClipboardData(object data, DataType dataType, bool encrypt)
     {
-        data = obj;
+        this.data = data;
+        this.dataType = dataType;
+        this.encrypt = encrypt;
         dataMd5 = StringUtils.GetMd5(DataToString()!);
-        currentCultureInfo = CultureInfo.CurrentCulture;
+    }
+
+    // TODO: Remove.
+    public ClipboardData(object content)
+    {
+        data = content;
+        dataMd5 = StringUtils.GetMd5(DataToString()!);
     }
 
     public ClipboardData()
     {
         data = null!;
         dataMd5 = string.Empty;
-        currentCultureInfo = CultureInfo.CurrentCulture;
     }
 
     #endregion
@@ -172,17 +181,15 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             };
         }
 
-        return new ClipboardData(StringToData(record))
+        return new ClipboardData(StringToData(record), (DataType)record.DataType, record.Encrypt)
         {
             HashId = record.HashId,
             SenderApp = record.SenderApp,
             CachedImagePath = record.CachedImagePath,
-            DataType = (DataType)record.DataType,
             Score = record.Score,
             InitScore = record.InitScore,
             CreateTime = record.createTime,
             Pinned = record.Pinned,
-            Encrypt = record.Encrypt
         };
     }
 
@@ -191,7 +198,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// <summary>
     /// Cached culture info for the data.
     /// </summary>
-    private CultureInfo currentCultureInfo;
+    private CultureInfo currentCultureInfo = CultureInfo.CurrentCulture;
 
     /// <summary>
     /// Get display title for the data.

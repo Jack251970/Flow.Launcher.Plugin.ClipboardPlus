@@ -104,18 +104,17 @@ public partial class MainWindow : Window
         // init clipboard data
         var now = DateTime.Now;
         // TODO: Fix trick for converting System.Drawing.Image.
-        var clipboardData = new ClipboardData(e.Content is System.Drawing.Image img ? img.ToBitmapImage() : e.Content)
+        var data = e.Content is System.Drawing.Image img ? img.ToBitmapImage() : e.Content;
+        var clipboardData = new ClipboardData(data, e.DataType, false)
         {
             HashId = StringUtils.GetGuid(),
-            DataType = e.DataType,
             // TODO: Fix trick for converting System.Drawing.Image.
             SenderApp = e.SourceApplication.Name,
             CachedImagePath = string.Empty,
             Score = 1,
             InitScore = 1,
             Pinned = false,
-            CreateTime = now,
-            Encrypt = false
+            CreateTime = now
         };
 
         TextBlock1.Text = $"ClipboardChangedEventArgs\n" +
@@ -156,17 +155,16 @@ public partial class MainWindow : Window
             DataType.Files => new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10), StringUtils.RandomString(10) },
             _ => null!
         };
-        var data = new ClipboardData(dataContent)
+        var encrypt = rand.NextDouble() > 0.5;
+        var data = new ClipboardData(dataContent, type, encrypt)
         {
             HashId = StringUtils.GetGuid(),
-            DataType = type,
             SenderApp = StringUtils.RandomString(5) + ".exe",
             CachedImagePath = string.Empty,
             Score = rand.Next(1000),
             InitScore = rand.Next(1000),
             Pinned = false,
-            CreateTime = DateTime.Now,
-            Encrypt = true
+            CreateTime = DateTime.Now
         };
         return data;
     }
