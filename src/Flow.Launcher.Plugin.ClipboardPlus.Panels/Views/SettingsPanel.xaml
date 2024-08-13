@@ -170,7 +170,6 @@
             Orientation="Horizontal">
             <Button
                 MinWidth="30"
-                Margin="0,0,3,0"
                 Command="{Binding FormatStringInsertCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_year}">
                 <Button.CommandParameter>
@@ -182,7 +181,7 @@
             </Button>
             <Button
                 MinWidth="30"
-                Margin="0,0,3,0"
+                Margin="5,0,0,0"
                 Command="{Binding FormatStringInsertCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_month}">
                 <Button.CommandParameter>
@@ -194,7 +193,7 @@
             </Button>
             <Button
                 MinWidth="30"
-                Margin="0,0,3,0"
+                Margin="5,0,0,0"
                 Command="{Binding FormatStringInsertCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_day}">
                 <Button.CommandParameter>
@@ -206,7 +205,7 @@
             </Button>
             <Button
                 MinWidth="30"
-                Margin="0,0,3,0"
+                Margin="5,0,0,0"
                 Command="{Binding FormatStringInsertCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_hour}">
                 <Button.CommandParameter>
@@ -218,7 +217,7 @@
             </Button>
             <Button
                 MinWidth="30"
-                Margin="0,0,3,0"
+                Margin="5,0,0,0"
                 Command="{Binding FormatStringInsertCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_minute}">
                 <Button.CommandParameter>
@@ -230,7 +229,7 @@
             </Button>
             <Button
                 MinWidth="30"
-                Margin="0,0,3,0"
+                Margin="5,0,0,0"
                 Command="{Binding FormatStringInsertCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_second}">
                 <Button.CommandParameter>
@@ -242,7 +241,7 @@
             </Button>
             <Button
                 MinWidth="30"
-                Margin="0,0,0,0"
+                Margin="5,0,0,0"
                 Command="{Binding FormatStringInsertCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_app}">
                 <Button.CommandParameter>
