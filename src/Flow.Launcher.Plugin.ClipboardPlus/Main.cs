@@ -286,30 +286,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         CurrentScore++;
 
         // process clipboard data
-        switch (e.DataType)
+        if (e.DataType == DataType.Image && Settings.CacheImages)
         {
-            case DataType.Text:
-                Context.API.LogDebug(ClassName, "Processed text change");
-                break;
-            case DataType.Image:
-                if (Settings.CacheImages)
-                {
-                    var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
-                        clipboardData.SenderApp ?? Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app"));
-                    var imagePath = FileUtils.SaveImageCache(clipboardData, PathHelper.ImageCachePath, imageName);
-                    clipboardData.CachedImagePath = imagePath;
-                }
-                Context.API.LogDebug(ClassName, "Processed image change");
-                break;
-            case DataType.Files:
-                Context.API.LogDebug(ClassName, "Processed file change");
-                break;
-            case DataType.Other:
-                // Clipboard monitor for type not in Text, Image, Files are not implemented now.
-                Context.API.LogDebug(ClassName, "Other change listened, skip");
-                return;
-            default:
-                break;
+            var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
+                clipboardData.SenderApp ?? Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app"));
+            var imagePath = FileUtils.SaveImageCache(clipboardData, PathHelper.ImageCachePath, imageName);
+            clipboardData.CachedImagePath = imagePath;
         }
 
         // add to list and database if no repeat 
