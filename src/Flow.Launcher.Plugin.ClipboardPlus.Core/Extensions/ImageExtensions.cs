@@ -1,5 +1,4 @@
-﻿using System.Text;
-using System.Drawing.Imaging;
+﻿using System.Drawing.Imaging;
 using System.Windows.Media.Imaging;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Extensions;
@@ -22,14 +21,10 @@ public static class ImageExtensions
         return im;
     }
 
-    public static string ToString(this Image img, StringType type = StringType.Default)
+    public static string ToBase64(this Image img)
     {
         var bytes = img.ToBytes();
-        return type switch
-        {
-            StringType.Base64 => Convert.ToBase64String(bytes),
-            _ => Encoding.UTF8.GetString(bytes)
-        };
+        return Convert.ToBase64String(bytes);
     }
 
     private static byte[] ToBytes(this Image img)
@@ -53,14 +48,10 @@ public static class ImageExtensions
         return Image.FromStream(m);
     }
 
-    public static string ToString(this BitmapImage image, StringType type = StringType.Default)
+    public static string ToBase64(this BitmapImage image)
     {
         var bytes = image.ToBytes();
-        return type switch
-        {
-            StringType.Base64 => Convert.ToBase64String(bytes),
-            _ => Encoding.UTF8.GetString(bytes)
-        };
+        return Convert.ToBase64String(bytes);
     }
 
     public static void Save(this BitmapImage img, string path)
@@ -86,14 +77,10 @@ public static class ImageExtensions
 
     #region System.String
 
-    public static BitmapImage ToBitmapImage(this string base64, StringType type = StringType.Default)
+    public static BitmapImage ToBitmapImage(this string base64)
     {
         using var m = new MemoryStream();
-        byte[] bytes = type switch
-        {
-            StringType.Base64 => Convert.FromBase64String(base64),
-            _ => Encoding.UTF8.GetBytes(base64)
-        };
+        var bytes = Convert.FromBase64String(base64);
         m.Write(bytes, 0, bytes.Length);
         m.Seek(0, SeekOrigin.Begin);
         var im = new BitmapImage();
@@ -105,13 +92,9 @@ public static class ImageExtensions
         return im;
     }
 
-    public static Image ToImage(this string base64, StringType type = StringType.Default)
+    public static Image ToImage(this string base64)
     {
-        byte[] bytes = type switch
-        {
-            StringType.Base64 => Convert.FromBase64String(base64),
-            _ => Encoding.UTF8.GetBytes(base64)
-        };
+        var bytes = Convert.FromBase64String(base64);
         using var stream = new MemoryStream(bytes);
         return new Bitmap(stream);
     }

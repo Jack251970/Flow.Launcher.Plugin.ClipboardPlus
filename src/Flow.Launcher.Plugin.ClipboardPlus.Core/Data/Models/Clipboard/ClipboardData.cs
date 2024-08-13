@@ -123,7 +123,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         return DataType switch
         {
             DataType.Text => Data as string ?? string.Empty,
-            DataType.Image => (Data is not BitmapImage img ? Icon.ToString(t) : img.ToString(t)) ?? string.Empty,
+            DataType.Image => (Data is not BitmapImage img ? Icon.ToBase64() : img.ToBase64()) ?? string.Empty,
             DataType.Files => (Data is string[] s ? string.Join('\n', s) : Data as string)?? string.Empty,
             _ => null
         };
@@ -175,7 +175,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             return record.DataType switch
             {
                 0 => s,
-                1 => s.ToBitmapImage(t),
+                1 => s.ToBitmapImage(),
                 2 => s.Split('\n'),
                 _ => null!
             };
