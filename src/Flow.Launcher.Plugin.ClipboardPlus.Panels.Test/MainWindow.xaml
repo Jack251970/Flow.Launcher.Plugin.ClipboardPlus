@@ -8,7 +8,7 @@
     xmlns:panels="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.Views;assembly=Flow.Launcher.Plugin.ClipboardPlus.Panels"
     Title="MainWindow"
     Width="800"
-    Height="500"
+    Height="600"
     mc:Ignorable="d">
     <Grid>
         <TabControl SelectedIndex="0">
@@ -17,14 +17,17 @@
             <TabItem x:Name="PreviewImageTabItem" Header="Preview Image" />
             <TabItem x:Name="PreviewFilesTabItem" Header="Preview Files" />
             <TabItem Header="Clipboard Monitor">
-                <Grid>
+                <Grid HorizontalAlignment="Center">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <TextBlock x:Name="TextBlock1" Grid.Row="0" />
-                    <TextBlock x:Name="TextBlock2" Grid.Row="1" />
+                    <TextBlock
+                        x:Name="TextBlock2"
+                        Grid.Row="1"
+                        Text="Wait something copyed to clipboard..." />
                     <TextBlock x:Name="TextBlock3" Grid.Row="2" />
                 </Grid>
             </TabItem>

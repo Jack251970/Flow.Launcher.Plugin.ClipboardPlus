@@ -127,7 +127,6 @@ public partial class MainWindow : Window
         TextBlock3.Text = $"ClipboardData\n" +
             $"DataMd5: {clipboardData.DataMd5}\n" +
             $"DataToString: {clipboardData.DataToString()}\n" +
-            $"DataToImage: {clipboardData.DataToImage()}\n" +
             $"Title: {clipboardData.GetTitle(CultureInfo.CurrentCulture)}\n" +
             $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
@@ -160,7 +159,7 @@ public partial class MainWindow : Window
             HashId = StringUtils.GetGuid(),
             DataType = type,
             SenderApp = StringUtils.RandomString(5) + ".exe",
-            CachedImagePath = _defaultIconPath,
+            CachedImagePath = string.Empty,
             Score = rand.Next(1000),
             InitScore = rand.Next(1000),
             Pinned = false,

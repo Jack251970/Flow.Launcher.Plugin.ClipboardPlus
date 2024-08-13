@@ -79,7 +79,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     public ClipboardData(object obj)
     {
         data = obj;
-        dataMd5 = StringUtils.GetMd5(DataToString());
+        dataMd5 = StringUtils.GetMd5(DataToString()!);
         currentCultureInfo = CultureInfo.CurrentCulture;
     }
 
@@ -91,38 +91,48 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     }
 
     /// <summary>
-    /// Get the data as string. If the data is not in Text, Image, Files, return empty string.
+    /// Get the data as string.
     /// </summary>
     /// <returns>
-    /// If data is in Text, return the data as string.
-    /// If data is in Image, return the data as base64 string.
-    /// If data is in Files, return the data as string.
+    /// If data type is Text, return the data as string.
+    /// If data type is Image, return the data as base64 string.
+    /// If data type is Files, return the data as string.
+    /// If the data type is not in Text, Image, Files, return null.
     /// </returns>
-    public readonly string DataToString()
+    public readonly string? DataToString()
     {
         return DataType switch
         {
-            DataType.Text => Data as string,
-            DataType.Image => Data is not BitmapImage img ? Icon.ToBase64() : img.ToBase64(),
-            DataType.Files => Data is string[] t ? string.Join('\n', t) : Data as string,
+            DataType.Text => Data as string ?? string.Empty,
+            DataType.Image => (Data is not BitmapImage img ? Icon.ToBase64() : img.ToBase64()) ?? string.Empty,
+            DataType.Files => (Data is string[] t ? string.Join('\n', t) : Data as string )?? string.Empty,
             _ => null
-        } ?? string.Empty;
+        };
     }
 
     /// <summary>
-    /// Get the data as image. If the data is not in Image, return null.
+    /// Get the data as image.
     /// </summary>
     /// <returns>
-    /// If data is in Image, return the data as BitmapImage.
-    /// If data is not in Image, return null.
+    /// If data type is Text or Files, return the icon as BitmapImage.
+    /// If data type is Image, return the data or cached image as BitmapImage.
+    /// If the data type is not in Text, Image, Files, return null.
     /// </returns>
     public readonly BitmapImage? DataToImage()
     {
+        // If the data is not a BitmapImage, try to load the cached image.
+        BitmapImage? img;
+        img = Data as BitmapImage;
+        if (img == null && !string.IsNullOrEmpty(CachedImagePath) && File.Exists(CachedImagePath))
+        {
+            img = new BitmapImage(new Uri(CachedImagePath, UriKind.Absolute));
+        }
+        // If the data is still null, return the icon.
         return DataType switch
         {
-            DataType.Text => null,
-            DataType.Image => Data as BitmapImage,
-            DataType.Files => null,
+            DataType.Text => Icon,
+            DataType.Image => img ?? Icon,
+            DataType.Files => Icon,
             _ => null
         };
     }

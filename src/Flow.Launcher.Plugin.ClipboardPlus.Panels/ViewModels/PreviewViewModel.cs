@@ -92,12 +92,11 @@ public class PreviewViewModel : BaseModel
         {
             case DataType.Text:
             case DataType.Files:
-                PreviewText = ClipboardData.DataToString();
+                PreviewText = ClipboardData.DataToString() ?? string.Empty;
                 PreviewImage = null;
                 break;
             case DataType.Image:
                 PreviewText = string.Empty;
-                // TODO: Add support for cached image path loading.
                 PreviewImage = ClipboardData.DataToImage();
                 break;
             default:
