@@ -103,6 +103,7 @@ public partial class MainWindow : Window
 
         // init clipboard data
         var now = DateTime.Now;
+        // TODO: Fix trick for converting System.Drawing.Image.
         var clipboardData = new ClipboardData(e.Content is System.Drawing.Image img ? img.ToBitmapImage() : e.Content)
         {
             HashId = StringUtils.GetGuid(),
@@ -114,6 +115,7 @@ public partial class MainWindow : Window
             InitScore = 1,
             Pinned = false,
             CreateTime = now,
+            Encrypt = false
         };
 
         TextBlock1.Text = $"ClipboardChangedEventArgs\n" +
@@ -164,6 +166,7 @@ public partial class MainWindow : Window
             InitScore = rand.Next(1000),
             Pinned = false,
             CreateTime = DateTime.Now,
+            Encrypt = true
         };
         return data;
     }

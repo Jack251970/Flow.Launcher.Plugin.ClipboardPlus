@@ -72,9 +72,16 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     public required DateTime CreateTime;
 
     /// <summary>
+    /// Whether the string is encrypted.
+    /// </summary>
+    public required bool Encrypt;
+
+    /// <summary>
     /// Pin symbol in unicode.
     /// </summary>
     private const string PinUnicode = "📌";
+
+    #region Constructors
 
     public ClipboardData(object obj)
     {
@@ -89,6 +96,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         dataMd5 = string.Empty;
         currentCultureInfo = CultureInfo.CurrentCulture;
     }
+
+    #endregion
 
     /// <summary>
     /// Get the data as string.
@@ -171,6 +180,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             InitScore = record.InitScore,
             CreateTime = record.createTime,
             Pinned = record.Pinned,
+            Encrypt = record.Encrypt
         };
     }
 

@@ -15,19 +15,6 @@ public class DatabaseHelperTest
 
     private readonly BitmapImage _defaultImage = new(new Uri(Path.Combine(_baseDirectory, _defaultIconPath), UriKind.Absolute));
 
-    private readonly ClipboardData TestRecord =
-        new("Test Data")
-        {
-            HashId = StringUtils.GetGuid(),
-            DataType = DataType.Text,
-            SenderApp = "Source.exe",
-            CachedImagePath = _defaultIconPath,
-            Score = 241,
-            InitScore = 1,
-            Pinned = false,
-            CreateTime = DateTime.Now,
-        };
-
     private readonly ITestOutputHelper _testOutputHelper;
 
     public DatabaseHelperTest(ITestOutputHelper testOutputHelper)
@@ -51,11 +38,12 @@ public class DatabaseHelperTest
             HashId = StringUtils.GetGuid(),
             DataType = type,
             SenderApp = StringUtils.RandomString(5) + ".exe",
-            CachedImagePath = _defaultIconPath,
+            CachedImagePath = string.Empty,
             Score = rand.Next(1000),
             InitScore = rand.Next(1000),
             Pinned = false,
             CreateTime = DateTime.Now,
+            Encrypt = false
         };
         return data;
     }

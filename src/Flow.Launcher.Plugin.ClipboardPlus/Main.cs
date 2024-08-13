@@ -282,6 +282,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             InitScore = CurrentScore + 1,
             Pinned = false,
             CreateTime = now,
+            Encrypt = Settings.Encrypt
         };
 
         // process clipboard data

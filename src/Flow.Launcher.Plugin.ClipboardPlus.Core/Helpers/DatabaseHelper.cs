@@ -37,6 +37,7 @@ public class DatabaseHelper : IDisposable
             "init_score"	        INTEGER,
             "create_time"	        TEXT,
             "pinned"	            INTEGER,
+            "encrypt"               INTEGER,
             PRIMARY                 KEY("id" AUTOINCREMENT),
             FOREIGN                 KEY("data_md5_b64") REFERENCES "assets"("data_md5") ON DELETE CASCADE
         );
@@ -47,10 +48,10 @@ public class DatabaseHelper : IDisposable
     private readonly string SqlInsertRecord =
         @"INSERT OR IGNORE INTO record(
             hash_id, data_md5_b64, sender_app, cached_image_path, 
-            data_type, score, init_score, create_time, pinned) 
+            data_type, score, init_score, create_time, pinned, encrypt) 
         VALUES (
             @HashId, @DataMd5B64, @SenderApp, @CachedImagePath, 
-            @DataType, @Score, @InitScore, @CreateTime, @Pinned);";
+            @DataType, @Score, @InitScore, @CreateTime, @Pinned, @Encrypt);";
 
     private readonly string SqlSelectRecordCountByMd5 =
         "SELECT COUNT() FROM record WHERE data_md5_b64=@DataMd5;";
@@ -69,7 +70,7 @@ public class DatabaseHelper : IDisposable
         """
         SELECT r.id as Id, a.data_b64 as DataMd5B64, r.sender_app as SenderApp, 
             r.cached_image_path as CachedImagePath, r.data_type as DataType, 
-            r.score as Score, r.init_score as InitScore,
+            r.score as Score, r.init_score as InitScore, r.encrypt as Encrypt,
             r.create_time as CreateTime, r.pinned as Pinned, r.hash_id as HashId
         FROM record r
         LEFT JOIN assets a ON r.data_md5_b64=a.data_md5;

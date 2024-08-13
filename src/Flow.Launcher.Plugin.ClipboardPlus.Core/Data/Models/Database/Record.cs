@@ -59,6 +59,11 @@ public class Record
     }
 
     /// <summary>
+    /// Whether the string is encrypted.
+    /// </summary>
+    public bool Encrypt { get; set; }
+
+    /// <summary>
     /// Convert the clipboard data to a record for inserting.
     /// DataMd5B64 is the MD5 hash of the data.
     /// </summary>
