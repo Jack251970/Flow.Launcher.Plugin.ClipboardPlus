@@ -33,6 +33,11 @@ public interface ISettings
     public string CacheFormat { get; set; }
 
     /// <summary>
+    /// Whether to encrypt records
+    /// </summary>
+    public bool Encrypt { get; set; }
+
+    /// <summary>
     /// Whether to keep text records
     /// </summary>
     public bool KeepText { get; set; }

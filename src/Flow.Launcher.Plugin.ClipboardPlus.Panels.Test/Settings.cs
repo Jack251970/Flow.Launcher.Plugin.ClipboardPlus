@@ -20,6 +20,8 @@ public class Settings : ISettings
 
     public string CacheFormat { get; set; } = "yyyy-MM-dd-hhmmss-app";
 
+    public bool Encrypt { get; set; } = false;
+
     public bool KeepText { get; set; } = false;
 
     public KeepTime TextKeepTime { get; set; } = 0;
