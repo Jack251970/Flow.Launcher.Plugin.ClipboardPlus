@@ -134,17 +134,23 @@ public static partial class StringUtils
 
     public static string GetMd5(string s)
     {
-        byte[] inputBytes = Encoding.UTF8.GetBytes(s);
-        byte[] hash = MD5.HashData(inputBytes);
+        var inputBytes = Encoding.UTF8.GetBytes(s);
+        var hash = MD5.HashData(inputBytes);
         var hex = hash.Select(i => i.ToString("X2"));
         return string.Join("", hex);
     }
 
     public static string GetSha256(string s)
     {
-        byte[] inputBytes = Encoding.UTF8.GetBytes(s);
+        var inputBytes = Encoding.UTF8.GetBytes(s);
         var hash = SHA256.HashData(inputBytes);
         var hex = hash.Select(i => i.ToString("X2"));
         return string.Join("", hex);
+    }
+
+    public static string GetBase64(string s)
+    {
+        var inputBytes = Encoding.UTF8.GetBytes(s);
+        return Convert.ToBase64String(inputBytes);
     }
 }
