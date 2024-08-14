@@ -10,7 +10,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_success">Success</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard">Copy to clipboard:&#x20;</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_fail">Fail</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_data_invalid">Copy data are invalid!</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_text_data_invalid">Copied text is empty!</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_image_data_invalid">Error in copied image!</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_files_data_invalid">Copied files do not exist!</system:String>
 
     <!--  Main  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_title">Clear all records</system:String>

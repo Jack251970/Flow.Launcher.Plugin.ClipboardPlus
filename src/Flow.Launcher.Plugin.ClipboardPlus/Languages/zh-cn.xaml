@@ -10,7 +10,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_success">成功</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard">复制到剪贴板：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_fail">失败</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_data_invalid">复制数据无效！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_text_data_invalid">复制的文字为空！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_image_data_invalid">复制的图像存在错误！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_files_data_invalid">复制的文件不存在！</system:String>
 
     <!--  Main  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_title">清除所有记录</system:String>

@@ -466,10 +466,14 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private void CopyToClipboard(ClipboardData clipboardData)
     {
         var validObject = clipboardData.DataToValid();
+        var dataType = clipboardData.DataType;
         if (validObject is not null)
         {
-            switch (clipboardData.DataType)
+            switch (dataType)
             {
+                case DataType.Text:
+                    Clipboard.SetText((string)validObject);
+                    break;
                 case DataType.Image:
                     Clipboard.SetImage((BitmapSource)validObject);
                     break;
@@ -479,7 +483,14 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     Clipboard.SetFileDropList(paths);
                     break;
                 default:
-                    Clipboard.SetText((string)validObject);
+                    try
+                    {
+                        Clipboard.SetDataObject(validObject);
+                    }
+                    catch(Exception e)
+                    {
+                        Context.API.LogException(ClassName, $"Copy to clipboard failed: {clipboardData}", e);
+                    }
                     break;
             }
             Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
@@ -488,8 +499,21 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
         else
         {
-            Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
-                Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_data_invalid"));
+            switch (dataType)
+            {
+                case DataType.Text:
+                    Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
+                    break;
+                case DataType.Image:
+                    Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_image_data_invalid"));
+                    break;
+                case DataType.Files:
+                    Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_files_data_invalid"));
+                    break;
+            }
         }
     }
 
