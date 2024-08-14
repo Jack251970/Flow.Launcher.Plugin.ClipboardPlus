@@ -590,8 +590,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         if (disposing)
         {
             Context.API.LogWarn(ClassName, $"Enter dispose");
-            Clipboard.Flush();
-            Context.API.LogDebug(ClassName, $"Flushed Clipboard");
+            try
+            {
+                Clipboard.Flush();
+                Context.API.LogDebug(ClassName, $"Flushed Clipboard");
+            }
+            catch (Exception) {}
             if (DatabaseHelper != null)
             {
                 DatabaseHelper?.Dispose();
