@@ -14,7 +14,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// <summary>
     /// Clipboard data of the record.
     /// If type is Text, the data is in string.
-    /// If type is Image, the data is in BitmapImage.
+    /// If type is Image, the data is in BitmapSource.
     /// If type is Files, the data is in string[].
     /// </summary>
     private readonly object data;
