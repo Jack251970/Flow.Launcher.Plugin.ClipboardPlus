@@ -93,16 +93,11 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         dataMd5 = StringUtils.GetMd5(DataToString()!);
     }
 
-    // TODO: Remove.
-    public ClipboardData(object content)
-    {
-        data = content;
-        dataMd5 = StringUtils.GetMd5(DataToString()!);
-    }
-
     public ClipboardData()
     {
         data = null!;
+        dataType = DataType.Other;
+        encrypt = false;
         dataMd5 = string.Empty;
     }
 
@@ -119,14 +114,14 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// </returns>
     public readonly string? DataToString()
     {
-        var t = GetStringType(Encrypt);
-        return DataType switch
+        var str = DataType switch
         {
             DataType.Text => Data as string ?? string.Empty,
             DataType.Image => (Data is not BitmapImage img ? Icon.ToBase64() : img.ToBase64()) ?? string.Empty,
             DataType.Files => (Data is string[] s ? string.Join('\n', s) : Data as string)?? string.Empty,
             _ => null
         };
+        return str;
     }
 
     /// <summary>
@@ -170,13 +165,12 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     {
         static object StringToData(Record record)
         {
-            var t = GetStringType(record.Encrypt);
-            var s = record.DataMd5B64;
+            var str = record.DataMd5B64;
             return record.DataType switch
             {
-                0 => s,
-                1 => s.ToBitmapImage(),
-                2 => s.Split('\n'),
+                0 => str,
+                1 => str.ToBitmapImage(),
+                2 => str.Split('\n'),
                 _ => null!
             };
         }
@@ -192,8 +186,6 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             Pinned = record.Pinned,
         };
     }
-
-    private static StringType GetStringType(bool encrypt) => encrypt ? StringType.Base64 : StringType.Default;
 
     /// <summary>
     /// Cached culture info for the data.
