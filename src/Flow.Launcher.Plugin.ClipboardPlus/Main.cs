@@ -57,6 +57,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         if (query.FirstSearch == Settings.ClearKeyword)
         {
             // clear actions results
+            // TODO: Fix ranking issue.
             results.AddRange(
                 new[]
                 {
