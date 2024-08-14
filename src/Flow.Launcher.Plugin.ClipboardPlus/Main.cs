@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using WindowsInput;
+using Image = System.Drawing.Image;
 using Clipboard = System.Windows.Clipboard;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus;
@@ -274,7 +275,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
         // init clipboard data
         var now = DateTime.Now;
-        var data = e.Content is System.Drawing.Image img ? img.ToBitmapImage() : e.Content;
+        var data = e.Content is Image img ? img.ToBitmapImage() : e.Content;
         var clipboardData = new ClipboardData(data, e.DataType, Settings.EncryptData)
         {
             HashId = StringUtils.GetGuid(),
