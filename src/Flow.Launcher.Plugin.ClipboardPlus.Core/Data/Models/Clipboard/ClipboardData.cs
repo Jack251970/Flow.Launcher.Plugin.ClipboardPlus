@@ -117,7 +117,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// If data type is Text, return the data as string.
     /// If data type is Image, return the data as base64 string.
     /// If data type is Files, return the data as string.
-    /// If the data type is not in Text, Image, Files, return null.
+    /// Else return null.
     /// </returns>
     public readonly string? DataToString(bool encrypt)
     {
@@ -140,8 +140,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// </summary>
     /// <returns>
     /// If data type is Text or Files, return the icon as BitmapSource.
-    /// If data type is Image, return the data or cached image as BitmapSource.
-    /// If the data type is not in Text, Image, Files, return null.
+    /// If data type is Image, return the data, cached image or icon as BitmapSource.
+    /// Else return null.
     /// </returns>
     public readonly BitmapSource? DataToImage()
     {
