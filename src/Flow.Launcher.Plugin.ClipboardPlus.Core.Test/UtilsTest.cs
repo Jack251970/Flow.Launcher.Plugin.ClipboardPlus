@@ -68,10 +68,11 @@ public class UtilsTest
 
     [Theory]
     [InlineData("Test")]
-    [InlineData("Test1")]
+    [InlineData("你好")]
+    [InlineData("📌")]
     public void TestEncrypt(string s)
     {
-        var key = StringUtils.GetGuid();
+        var key = StringUtils.GenerateAESKey();
         _testOutputHelper.WriteLine(key);
         var e = StringUtils.Encrypt(s, key);
         _testOutputHelper.WriteLine(e);

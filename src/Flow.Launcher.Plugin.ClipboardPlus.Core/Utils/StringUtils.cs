@@ -6,6 +6,8 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Utils;
 
 public static partial class StringUtils
 {
+    #region Random string
+
     private static readonly Random _random = new();
 
     public static string RandomString(int length)
@@ -15,6 +17,10 @@ public static partial class StringUtils
             Enumerable.Repeat(chars, length).Select(s => s[_random.Next(s.Length)]).ToArray()
         );
     }
+
+    #endregion
+
+    #region Count words
 
     public static int CountWords(string s)
     {
@@ -28,19 +34,27 @@ public static partial class StringUtils
         return collection.Count;
     }
 
-    [GeneratedRegex("[\\S]+")]
-    private static partial Regex EnRegex();
-
     public static int CountWordsCn(string s)
     {
         var nCn = (Encoding.UTF8.GetByteCount(s) - s.Length) / 2;
         return nCn;
     }
 
+    [GeneratedRegex("[\\S]+")]
+    private static partial Regex EnRegex();
+
+    #endregion
+
+    #region Guid string
+
     public static string GetGuid()
     {
-        return Guid.NewGuid().ToString("N");
+        return Guid.NewGuid().ToString("D");
     }
+
+    #endregion
+
+    #region Format string
 
     public static string FormatImageName(string format, DateTime dateTime, string appname = "Flow.Launcher.exe")
     {
@@ -54,6 +68,10 @@ public static partial class StringUtils
             .Replace("app", appname);
         return imageName;
     }
+
+    #endregion
+
+    #region Length compression
 
     public static string CompressString(string str, int en_length)
     {
@@ -132,6 +150,10 @@ public static partial class StringUtils
             (ch >= 0x1F700 && ch <= 0x1F77F);   // Alchemical Symbols
     }
 
+    #endregion
+
+    #region Hash string
+
     public static string GetMd5(string s)
     {
         var inputBytes = Encoding.UTF8.GetBytes(s);
@@ -146,6 +168,21 @@ public static partial class StringUtils
         var hash = SHA256.HashData(inputBytes);
         var hex = hash.Select(i => i.ToString("X2"));
         return string.Join("", hex);
+    }
+
+    #endregion
+
+    #region Encrypt & Decrypt
+
+    /// <summary>
+    /// Generate a random AES key
+    /// </summary>
+    /// <returns>
+    /// The AES key with length 32
+    /// </returns>
+    public static string GenerateAESKey()
+    {
+        return Guid.NewGuid().ToString("N");
     }
 
     /// <summary>
@@ -205,4 +242,6 @@ public static partial class StringUtils
         var decryptedBytes = ms.ToArray();
         return Encoding.UTF8.GetString(decryptedBytes);
     }
+
+    #endregion
 }
