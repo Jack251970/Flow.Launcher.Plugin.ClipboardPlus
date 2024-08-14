@@ -74,6 +74,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
 
     /// <summary>
     /// Whether the string is encrypted.
+    /// Note: Currently don't support encrypting image data.
     /// </summary>
     private readonly bool encryptData;
     public readonly bool EncryptData => encryptData;
@@ -89,7 +90,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     {
         this.data = data;
         this.dataType = dataType;
-        this.encryptData = encryptData;
+        this.encryptData = dataType != DataType.Image && encryptData;
         dataMd5 = StringUtils.GetMd5(DataToString(true)!);
     }
 
@@ -124,7 +125,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             DataType.Files => (Data is string[] s ? string.Join('\n', s) : Data as string)?? string.Empty,
             _ => null
         };
-        if (!string.IsNullOrEmpty(str) && encrypt && EncryptData && DataType != DataType.Image)
+        if (!string.IsNullOrEmpty(str) && encrypt && EncryptData)
         {
             str = StringUtils.Encrypt(str, StringUtils.EncryptKey);
         }
@@ -172,7 +173,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     {
         static object StringToData(string str, DataType type, bool encrypt)
         {
-            if (!string.IsNullOrEmpty(str) && encrypt && type != DataType.Image)
+            if (!string.IsNullOrEmpty(str) && encrypt)
             {
                 str = StringUtils.Decrypt(str, StringUtils.EncryptKey);
             }

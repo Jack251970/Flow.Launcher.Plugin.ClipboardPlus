@@ -86,6 +86,7 @@ public class Record
             InitScore = data.InitScore,
             CreateTime = data.CreateTime.ToString("O"),
             Pinned = data.Pinned,
+            EncryptData = data.EncryptData
         };
         return record;
     }
