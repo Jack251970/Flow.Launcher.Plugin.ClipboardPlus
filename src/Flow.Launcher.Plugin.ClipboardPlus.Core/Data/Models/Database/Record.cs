@@ -61,7 +61,7 @@ public class Record
     /// <summary>
     /// Whether the string is encrypted.
     /// </summary>
-    public bool Encrypt { get; set; }
+    public bool EncryptData { get; set; }
 
     /// <summary>
     /// Convert the clipboard data to a record for inserting.

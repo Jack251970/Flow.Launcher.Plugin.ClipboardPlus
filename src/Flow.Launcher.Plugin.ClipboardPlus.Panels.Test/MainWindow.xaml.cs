@@ -51,7 +51,7 @@ public partial class MainWindow : Window
         var label1 = new Label() { Content = $"Title: {dataText.GetTitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {dataText.GetText(CultureInfo.CurrentCulture)}\n" +
             $"Subtitle: {dataText.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
-            $"Encrypt: {dataText.Encrypt}\n" };
+            $"Encrypt: {dataText.EncryptData}\n" };
         Grid.SetRow(label1, 1);
         grid1.Children.Add(previewPanel1);
         grid1.Children.Add(label1);
@@ -71,7 +71,7 @@ public partial class MainWindow : Window
         var label2 = new Label() { Content = $"Title: {dataImage.GetTitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {dataImage.GetText(CultureInfo.CurrentCulture)}\n" +
             $"Subtitle: {dataImage.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
-            $"Encrypt: {dataImage.Encrypt}" };
+            $"Encrypt: {dataImage.EncryptData}" };
         Grid.SetRow(label2, 2);
         grid2.Children.Add(button2);
         grid2.Children.Add(previewPanel2);
@@ -88,7 +88,7 @@ public partial class MainWindow : Window
         var label3 = new Label() { Content = $"Title: {dataFiles.GetTitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {dataFiles.GetText(CultureInfo.CurrentCulture)}\n" +
             $"Subtitle: {dataFiles.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
-            $"Encrypt: {dataFiles.Encrypt}" };
+            $"Encrypt: {dataFiles.EncryptData}" };
         Grid.SetRow(label3, 1);
         grid3.Children.Add(previewPanel3);
         grid3.Children.Add(label3);

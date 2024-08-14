@@ -75,8 +75,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// <summary>
     /// Whether the string is encrypted.
     /// </summary>
-    private readonly bool encrypt;
-    public readonly bool Encrypt => encrypt;
+    private readonly bool encryptData;
+    public readonly bool EncryptData => encryptData;
 
     /// <summary>
     /// Pin symbol in unicode.
@@ -85,11 +85,11 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
 
     #region Constructors
 
-    public ClipboardData(object data, DataType dataType, bool encrypt)
+    public ClipboardData(object data, DataType dataType, bool encryptData)
     {
         this.data = data;
         this.dataType = dataType;
-        this.encrypt = encrypt;
+        this.encryptData = encryptData;
         dataMd5 = StringUtils.GetMd5(DataToString(true)!);
     }
 
@@ -97,7 +97,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     {
         data = null!;
         dataType = DataType.Other;
-        encrypt = false;
+        encryptData = false;
         dataMd5 = string.Empty;
     }
 
@@ -124,7 +124,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             DataType.Files => (Data is string[] s ? string.Join('\n', s) : Data as string)?? string.Empty,
             _ => null
         };
-        if (!string.IsNullOrEmpty(str) && encrypt && Encrypt && DataType != DataType.Image)
+        if (!string.IsNullOrEmpty(str) && encrypt && EncryptData && DataType != DataType.Image)
         {
             str = StringUtils.Encrypt(str, StringUtils.EncryptKey);
         }
@@ -170,11 +170,9 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// </returns>
     public static ClipboardData FromRecord(Record record)
     {
-        static object StringToData(Record record)
+        static object StringToData(string str, DataType type, bool encrypt)
         {
-            var type = (DataType)record.DataType;
-            var str = record.DataMd5B64;
-            if (!string.IsNullOrEmpty(str) && record.Encrypt && type != DataType.Image)
+            if (!string.IsNullOrEmpty(str) && encrypt && type != DataType.Image)
             {
                 str = StringUtils.Decrypt(str, StringUtils.EncryptKey);
             }
@@ -187,7 +185,10 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             };
         }
 
-        return new ClipboardData(StringToData(record), (DataType)record.DataType, record.Encrypt)
+        var data = record.DataMd5B64;
+        var type = (DataType)record.DataType;
+        var encrypt = record.EncryptData;
+        return new ClipboardData(StringToData(data, type, encrypt), type, encrypt)
         {
             HashId = record.HashId,
             SenderApp = record.SenderApp,
