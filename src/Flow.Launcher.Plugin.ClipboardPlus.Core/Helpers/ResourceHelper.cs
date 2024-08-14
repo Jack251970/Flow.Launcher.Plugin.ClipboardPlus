@@ -40,6 +40,7 @@ public static class ResourceHelper
     public static GlyphInfo ClearGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE894");
     public static GlyphInfo ListGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uEA37");
     public static GlyphInfo DatabaseGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uEE94");
+    public static GlyphInfo UnpinGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE77A");
     public static GlyphInfo ErrorGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE783");
 
     public static GlyphInfo CopyGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE8C8");
@@ -50,7 +51,6 @@ public static class ResourceHelper
     #region Methods
 
     private static GlyphInfo PinGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE718");
-    private static GlyphInfo UnpinGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE77A");
 
     public static GlyphInfo GetPinGlyph(bool pinned)
     {

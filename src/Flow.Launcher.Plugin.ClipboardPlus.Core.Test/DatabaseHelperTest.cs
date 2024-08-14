@@ -228,4 +228,45 @@ public class DatabaseHelperTest
         }
         Assert.Equal(validNum, c.Count);
     }
+
+    [Fact]
+    public async Task TestDeleteUnpinnedRecord()
+    {
+        var helper = new DatabaseHelper(
+            "TestDb",
+            mode: SqliteOpenMode.Memory,
+            cache: SqliteCacheMode.Private
+        );
+        await helper.InitializeDatabaseAsync();
+        var pinnedNum = 0;
+        var unpinnedNum = 0;
+        _testOutputHelper.WriteLine("Add Data");
+        for (int i = 0; i < 10; i++)
+        {
+            var pinned = _random.NextDouble() > 0.5;
+            var exampleTextRecord = GetRandomClipboardData();
+            exampleTextRecord.Pinned = pinned;
+            await helper.AddOneRecordAsync(exampleTextRecord);
+            if (pinned)
+            {
+                pinnedNum++;
+                _testOutputHelper.WriteLine($"Pinned{pinnedNum}: {exampleTextRecord}");
+            }
+            else
+            {
+                unpinnedNum++;
+                _testOutputHelper.WriteLine($"Unpinned{unpinnedNum}: {exampleTextRecord}");
+            }
+        }
+        await helper.DeleteUnpinnedRecordsAsync();
+        var c = await helper.GetAllRecordsAsync();
+        _testOutputHelper.WriteLine("After Delete Unpinned Data");
+        var num = 0;
+        foreach (var record in c)
+        {
+            num++;
+            _testOutputHelper.WriteLine($"{num}: {record}");
+        }
+        Assert.Equal(pinnedNum, c.Count);
+    }
 }

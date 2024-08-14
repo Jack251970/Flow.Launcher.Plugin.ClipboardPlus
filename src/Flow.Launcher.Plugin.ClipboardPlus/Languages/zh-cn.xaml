@@ -19,6 +19,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_title">清除列表与数据库</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_subtitle">从列表和数据库清除所有记录</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle">从列表和数据库清除了{0}条记录！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_title">清除未固定记录</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_subtitle">从列表和数据库清除所有未固定记录</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_msg_subtitle">从列表和数据库清除了{0}条未固定记录！</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_title">清除无效记录</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_subtitle">从列表和数据库清除所有无效记录</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle">从列表和数据库清除了{0}条无效记录！</system:String>

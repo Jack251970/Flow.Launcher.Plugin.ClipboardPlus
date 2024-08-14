@@ -19,6 +19,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_title">Clear in both list and database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_subtitle">Clear all records in both list and database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle">Clear {0} records in both list and database!</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_title">Clear unpinned records</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_subtitle">Clear unpinned records in both list and database</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_msg_subtitle">Clear {0} unpinned records in both list and database!</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_title">Clear invalid records</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_subtitle">Clear invalid records in both list and database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle">Clear {0} invalid records in both list and database!</system:String>

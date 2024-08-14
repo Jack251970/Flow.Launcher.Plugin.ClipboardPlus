@@ -11,18 +11,21 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_fail">失敗</system:String>
 
     <!--  Main  -->
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">清除记录</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">点击以清除记录</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_title">清除列表</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_subtitle">从列表中清除所有记录</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle">从列表中清除了{0}条记录！</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_title">清除列表与数据库</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_subtitle">从列表和数据库清除所有记录</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle">从列表和数据库清除了{0}条记录！</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_title">清除无效记录</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_subtitle">从列表和数据库清除所有无效记录</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle">从列表和数据库清除了{0}条无效记录！</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle">沒有可清除的記錄！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">清除記録</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">點擊以清除記録</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_title">清除列錶</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_subtitle">從列錶中清除所有記録</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle">從列錶中清除瞭{0}條記録！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_title">清除列錶與數據庫</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_subtitle">從列錶和數據庫清除所有記録</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle">從列錶和數據庫清除瞭{0}條記録！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_title">清除未固定記録</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_subtitle">從列錶和數據庫清除所有未固定記録</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_msg_subtitle">從列錶和數據庫清除瞭{0}條未固定記録！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_title">清除無傚記録</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_subtitle">從列錶和數據庫清除所有無傚記録</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle">從列錶和數據庫清除瞭{0}條無傚記録！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle">沒有可清除的記録！</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_title">複製</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">複製記録至剪切闆</system:String>

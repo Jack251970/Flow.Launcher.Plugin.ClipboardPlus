@@ -66,7 +66,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_subtitle"),
                         IcoPath = PathHelper.ListIconPath,
                         Glyph = ResourceHelper.ListGlyph,
-                        Score = 3,
+                        Score = 4,
                         Action = _ =>
                         {
                             var number = DeleteAllRecordsFromList();
@@ -91,7 +91,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_subtitle"),
                         IcoPath = PathHelper.DatabaseIconPath,
                         Glyph = ResourceHelper.DatabaseGlyph,
-                        Score = 2,
+                        Score = 3,
                         AsyncAction = async _ =>
                         {
                             var number = await DeleteAllRecordsFromListDatabaseAsync();
@@ -100,6 +100,31 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                                     string.Format(
                                         Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle"), number));
+                                return true;
+                            }
+                            else
+                            {
+                                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
+                                return false;
+                            }
+                        }
+                    },
+                    new Result
+                    {
+                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_title"),
+                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_subtitle"),
+                        IcoPath = PathHelper.UnpinIcon1Path,
+                        Glyph = ResourceHelper.UnpinGlyph,
+                        Score = 2,
+                        AsyncAction = async _ =>
+                        {
+                            var number = await DeleteUnpinnedRecordsFromListDatabaseAsync();
+                            if (number != 0)
+                            {
+                                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                    string.Format(
+                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_msg_subtitle"), number));
                                 return true;
                             }
                             else
@@ -418,6 +443,26 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         RecordsList.Clear();
         await DatabaseHelper.DeleteAllRecordsAsync();
         CurrentScore = 1;
+        return number;
+    }
+
+    private async Task<int> DeleteUnpinnedRecordsFromListDatabaseAsync()
+    {
+        var unpinnedRecords = RecordsList.Where(r => !r.Pinned).ToArray();
+        var number = unpinnedRecords.Length;
+        foreach (var record in unpinnedRecords)
+        {
+            RecordsList.Remove(record);
+        }
+        await DatabaseHelper.DeleteUnpinnedRecordsAsync();
+        if (RecordsList.Any())
+        {
+            CurrentScore = RecordsList.Max(r => r.InitScore) + 1;
+        }
+        else
+        {
+            CurrentScore = 1;
+        }
         return number;
     }
 

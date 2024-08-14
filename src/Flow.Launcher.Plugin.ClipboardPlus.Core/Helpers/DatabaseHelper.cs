@@ -82,6 +82,9 @@ public class DatabaseHelper : IDisposable
         AND data_type=@DataType;
         """;
 
+    private readonly string SqlDeleteUnpinnedRecords =
+        "DELETE FROM record WHERE pinned=0;";
+
     #endregion
 
     #endregion
@@ -210,6 +213,14 @@ public class DatabaseHelper : IDisposable
             {
                 await DeleteOneRecordByClipboardData(record);
             }
+        });
+    }
+
+    public async Task DeleteUnpinnedRecordsAsync()
+    {
+        await HandleOpenCloseAsync(async () =>
+        {
+            await Connection.ExecuteAsync(SqlDeleteUnpinnedRecords);
         });
     }
 
