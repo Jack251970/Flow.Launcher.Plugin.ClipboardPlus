@@ -56,11 +56,6 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     public readonly DataType DataType => dataType;
 
     /// <summary>
-    /// Score of the record for ranking.
-    /// </summary>
-    public readonly int Score => Pinned ? MaxScore : InitScore;
-
-    /// <summary>
     /// Initial score of the record for pinning feature.
     /// </summary>
     public required int InitScore;

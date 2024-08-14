@@ -66,7 +66,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_subtitle"),
                         IcoPath = PathHelper.ListIconPath,
                         Glyph = ResourceHelper.ListGlyph,
-                        Score = 100,
+                        Score = 3,
                         Action = _ =>
                         {
                             var number = DeleteAllRecordsFromList();
@@ -91,7 +91,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_subtitle"),
                         IcoPath = PathHelper.DatabaseIconPath,
                         Glyph = ResourceHelper.DatabaseGlyph,
-                        Score = 10,
+                        Score = 2,
                         AsyncAction = async _ =>
                         {
                             var number = await DeleteAllRecordsFromListDatabaseAsync();
@@ -140,13 +140,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
         else
         {
-            // records results
-            var records = query.Search.Trim().Length == 0
-                ? RecordsList.ToArray()
-                : RecordsList.Where(i => !string.IsNullOrEmpty(i.GetText(CultureInfo)) && i.GetText(CultureInfo).ToLower().Contains(query.Search.Trim().ToLower())).ToArray();
-            results.AddRange(records.Select(GetResultFromClipboardData));
-            Context.API.LogDebug(ClassName, "Added records successfully");
-            // clear results
+            // clear action
             results.Add(
                 new Result
                 {
@@ -154,7 +148,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_subtitle"),
                     IcoPath = PathHelper.ClearIconPath,
                     Glyph = ResourceHelper.ClearGlyph,
-                    Score = int.MaxValue,
+                    Score = SettingsViewModel.MaximumMaxRecords + 1,
                     Action = _ =>
                     {
                         Context.API.ChangeQuery($"{query.ActionKeyword} {Settings.ClearKeyword} ", true);
@@ -162,6 +156,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     },
                 }
             );
+            // records results
+            var records = query.Search.Trim().Length == 0
+                ? RecordsList.ToArray()
+                : RecordsList.Where(i => !string.IsNullOrEmpty(i.GetText(CultureInfo)) && i.GetText(CultureInfo).ToLower().Contains(query.Search.Trim().ToLower())).ToArray();
+            results.AddRange(records.Select(GetResultFromClipboardData));
+            Context.API.LogDebug(ClassName, "Added records successfully");
         }
         return results;
     }
@@ -528,7 +528,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 score = Encoding.UTF8.GetBytes(clipboardData.SenderApp[..last]).Sum(i => i);
                 break;
             default:
-                score = clipboardData.Score;
+                score = clipboardData.Pinned ? SettingsViewModel.MaximumMaxRecords : clipboardData.InitScore;
                 break;
         }
 
