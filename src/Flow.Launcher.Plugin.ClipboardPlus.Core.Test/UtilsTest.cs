@@ -72,7 +72,7 @@ public class UtilsTest
     [InlineData("📌")]
     public void TestEncrypt(string s)
     {
-        var key = StringUtils.GenerateAESKey();
+        var key = StringUtils.GenerateEncryptKey();
         _testOutputHelper.WriteLine(key);
         var e = StringUtils.Encrypt(s, key);
         _testOutputHelper.WriteLine(e);

@@ -15,11 +15,14 @@ public class DatabaseHelperTest
 
     private readonly BitmapImage _defaultImage = new(new Uri(Path.Combine(_baseDirectory, _defaultIconPath), UriKind.Absolute));
 
+    private readonly static string _encryptKey = StringUtils.GenerateEncryptKey();
+
     private readonly ITestOutputHelper _testOutputHelper;
 
     public DatabaseHelperTest(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
+        StringUtils.InitEncryptKey(_encryptKey);
     }
 
     public ClipboardData GetRandomClipboardData()
@@ -75,8 +78,17 @@ public class DatabaseHelperTest
         );
         await helper.InitializeDatabaseAsync();
         await helper.AddOneRecordAsync(exampleTextRecord);
-        var c = (await helper.GetAllRecordsAsync()).First();
-        Assert.Equal(c, exampleTextRecord);
+        var c = await helper.GetAllRecordsAsync();
+        var find = false;
+        foreach (var record in c)
+        {
+            if (record.HashId == exampleTextRecord.HashId)
+            {
+                find = true;
+                Assert.Equal(exampleTextRecord, record);
+            }
+        }
+        Assert.True(find);
         await helper.CloseAsync();
     }
 

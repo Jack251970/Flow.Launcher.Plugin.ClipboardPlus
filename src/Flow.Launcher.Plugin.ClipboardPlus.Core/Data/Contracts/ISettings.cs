@@ -38,6 +38,11 @@ public interface ISettings
     public bool Encrypt { get; set; }
 
     /// <summary>
+    /// Key to use for encryption
+    /// </summary>
+    public string EncryptKey { get; set; }
+
+    /// <summary>
     /// Whether to keep text records
     /// </summary>
     public bool KeepText { get; set; }

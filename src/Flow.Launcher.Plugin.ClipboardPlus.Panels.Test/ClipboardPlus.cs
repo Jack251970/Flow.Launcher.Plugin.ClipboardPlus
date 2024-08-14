@@ -12,6 +12,7 @@ internal class ClipboardPlus : IClipboardPlus
     public ClipboardPlus()
     {
         Settings = new Settings();
+        StringUtils.InitEncryptKey(Settings.EncryptKey);
     }
 
     public ISettings LoadSettingJsonStorage()

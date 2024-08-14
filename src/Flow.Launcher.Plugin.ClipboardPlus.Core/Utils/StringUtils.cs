@@ -174,13 +174,27 @@ public static partial class StringUtils
 
     #region Encrypt & Decrypt
 
+    private static string encryptKey = null!;
+    public static string EncryptKey => encryptKey;
+
+    /// <summary>
+    /// Initialize the AES key for encryption and decryption
+    /// </summary>
+    /// <param name="key">
+    /// The key to encrypt and decrypt the string, length must be 32
+    /// </param>
+    public static void InitEncryptKey(string key)
+    {
+        encryptKey ??= key;
+    }
+
     /// <summary>
     /// Generate a random AES key
     /// </summary>
     /// <returns>
     /// The AES key with length 32
     /// </returns>
-    public static string GenerateAESKey()
+    public static string GenerateEncryptKey()
     {
         return Guid.NewGuid().ToString("N");
     }

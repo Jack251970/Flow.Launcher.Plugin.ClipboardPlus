@@ -22,7 +22,7 @@ public partial class MainWindow : Window
 
     private readonly static string _imageSavePath = @"D:\clipboard.png";
 
-    private ClipboardMonitor ClipboardMonitor = new() { ObserveLastEntry = false };
+    private readonly ClipboardMonitor ClipboardMonitor = new() { ObserveLastEntry = false };
 
     public MainWindow()
     {
@@ -50,7 +50,8 @@ public partial class MainWindow : Window
         Grid.SetRow(previewPanel1, 0);
         var label1 = new Label() { Content = $"Title: {dataText.GetTitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {dataText.GetText(CultureInfo.CurrentCulture)}\n" +
-            $"Subtitle: {dataText.GetSubtitle(CultureInfo.CurrentCulture)}" };
+            $"Subtitle: {dataText.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
+            $"Encrypt: {dataText.Encrypt}\n" };
         Grid.SetRow(label1, 1);
         grid1.Children.Add(previewPanel1);
         grid1.Children.Add(label1);
@@ -69,7 +70,8 @@ public partial class MainWindow : Window
         Grid.SetRow(previewPanel2, 1);
         var label2 = new Label() { Content = $"Title: {dataImage.GetTitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {dataImage.GetText(CultureInfo.CurrentCulture)}\n" +
-            $"Subtitle: {dataImage.GetSubtitle(CultureInfo.CurrentCulture)}" };
+            $"Subtitle: {dataImage.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
+            $"Encrypt: {dataImage.Encrypt}" };
         Grid.SetRow(label2, 2);
         grid2.Children.Add(button2);
         grid2.Children.Add(previewPanel2);
@@ -85,7 +87,8 @@ public partial class MainWindow : Window
         Grid.SetRow(previewPanel3, 0);
         var label3 = new Label() { Content = $"Title: {dataFiles.GetTitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {dataFiles.GetText(CultureInfo.CurrentCulture)}\n" +
-            $"Subtitle: {dataFiles.GetSubtitle(CultureInfo.CurrentCulture)}" };
+            $"Subtitle: {dataFiles.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
+            $"Encrypt: {dataFiles.Encrypt}" };
         Grid.SetRow(label3, 1);
         grid3.Children.Add(previewPanel3);
         grid3.Children.Add(label3);
@@ -105,7 +108,7 @@ public partial class MainWindow : Window
         var now = DateTime.Now;
         // TODO: Fix trick for converting System.Drawing.Image.
         var data = e.Content is System.Drawing.Image img ? img.ToBitmapImage() : e.Content;
-        var clipboardData = new ClipboardData(data, e.DataType, false)
+        var clipboardData = new ClipboardData(data, e.DataType, true)
         {
             HashId = StringUtils.GetGuid(),
             // TODO: Fix trick for converting System.Drawing.Image.
@@ -127,7 +130,8 @@ public partial class MainWindow : Window
             $"ClipboardImage: {ClipboardMonitor.ClipboardImage}";
         TextBlock3.Text = $"ClipboardData\n" +
             $"DataMd5: {clipboardData.DataMd5}\n" +
-            $"DataToString: {clipboardData.DataToString()}\n" +
+            $"DataToString: {clipboardData.DataToString(false)}\n" +
+            $"DataToString(Encrypted): {clipboardData.DataToString(true)}\n" +
             $"Title: {clipboardData.GetTitle(CultureInfo.CurrentCulture)}\n" +
             $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
@@ -150,20 +154,21 @@ public partial class MainWindow : Window
         var rand = new Random();
         object dataContent = type switch
         {
-            DataType.Text => StringUtils.RandomString(10),
+            DataType.Text => "Hello, world!",
             DataType.Image => _defaultImage,
-            DataType.Files => new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10), StringUtils.RandomString(10) },
+            DataType.Files => new string[] { "D:\\a.txt", "D:\\b.docx", "D:\\c" },
             _ => null!
         };
         var encrypt = rand.NextDouble() > 0.5;
+        var pinned = rand.NextDouble() > 0.5;
         var data = new ClipboardData(dataContent, type, encrypt)
         {
             HashId = StringUtils.GetGuid(),
-            SenderApp = StringUtils.RandomString(5) + ".exe",
+            SenderApp = "Flow.Launcher.exe",
             CachedImagePath = string.Empty,
-            Score = rand.Next(1000),
-            InitScore = rand.Next(1000),
-            Pinned = false,
+            Score = 1,
+            InitScore = 1,
+            Pinned = pinned,
             CreateTime = DateTime.Now
         };
         return data;

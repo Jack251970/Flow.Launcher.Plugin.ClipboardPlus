@@ -90,7 +90,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         this.data = data;
         this.dataType = dataType;
         this.encrypt = encrypt;
-        dataMd5 = StringUtils.GetMd5(DataToString()!);
+        dataMd5 = StringUtils.GetMd5(DataToString(true)!);
     }
 
     public ClipboardData()
@@ -106,13 +106,16 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// <summary>
     /// Get the data as string.
     /// </summary>
+    /// <param name="encrypt">
+    /// Whether to encrypt the data.
+    /// </param>
     /// <returns>
     /// If data type is Text, return the data as string.
     /// If data type is Image, return the data as base64 string.
     /// If data type is Files, return the data as string.
     /// If the data type is not in Text, Image, Files, return null.
     /// </returns>
-    public readonly string? DataToString()
+    public readonly string? DataToString(bool encrypt)
     {
         var str = DataType switch
         {
@@ -121,6 +124,10 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             DataType.Files => (Data is string[] s ? string.Join('\n', s) : Data as string)?? string.Empty,
             _ => null
         };
+        if (!string.IsNullOrEmpty(str) && encrypt && Encrypt && DataType != DataType.Image)
+        {
+            str = StringUtils.Encrypt(str, StringUtils.EncryptKey);
+        }
         return str;
     }
 
@@ -165,12 +172,17 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     {
         static object StringToData(Record record)
         {
+            var type = (DataType)record.DataType;
             var str = record.DataMd5B64;
-            return record.DataType switch
+            if (!string.IsNullOrEmpty(str) && record.Encrypt && type != DataType.Image)
             {
-                0 => str,
-                1 => str.ToBitmapImage(),
-                2 => str.Split('\n'),
+                str = StringUtils.Decrypt(str, StringUtils.EncryptKey);
+            }
+            return type switch
+            {
+                DataType.Text => str,
+                DataType.Image => str.ToBitmapImage(),
+                DataType.Files => str.Split('\n'),
                 _ => null!
             };
         }

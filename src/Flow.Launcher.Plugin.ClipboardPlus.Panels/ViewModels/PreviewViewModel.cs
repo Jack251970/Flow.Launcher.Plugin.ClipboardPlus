@@ -92,7 +92,7 @@ public class PreviewViewModel : BaseModel
         {
             case DataType.Text:
             case DataType.Files:
-                PreviewText = ClipboardData.DataToString() ?? string.Empty;
+                PreviewText = ClipboardData.DataToString(false) ?? string.Empty;
                 PreviewImage = null;
                 break;
             case DataType.Image:

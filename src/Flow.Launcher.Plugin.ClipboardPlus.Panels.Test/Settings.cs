@@ -22,6 +22,8 @@ public class Settings : ISettings
 
     public bool Encrypt { get; set; } = false;
 
+    public string EncryptKey { get; set; } = StringUtils.GenerateEncryptKey();
+
     public bool KeepText { get; set; } = false;
 
     public KeepTime TextKeepTime { get; set; } = 0;

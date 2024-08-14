@@ -129,6 +129,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         Context.API.LogDebug(ClassName, "Init settings successfully");
         Context.API.LogInfo(ClassName, $"{Settings}");
 
+        // init encrypt key
+        StringUtils.InitEncryptKey(Settings.EncryptKey);
+
         // init database & records
         var fileExists = File.Exists(PathHelper.DatabasePath);
         DatabaseHelper = new DatabaseHelper(PathHelper.DatabasePath);

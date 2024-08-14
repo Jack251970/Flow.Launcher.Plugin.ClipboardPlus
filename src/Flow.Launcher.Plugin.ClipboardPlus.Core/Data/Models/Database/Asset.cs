@@ -21,7 +21,7 @@ public class Asset
     {
         return new Asset
         {
-            DataB64 = data.DataToString()!,
+            DataB64 = data.DataToString(true)!,
             DataMd5 = data.DataMd5,
         };
     }
