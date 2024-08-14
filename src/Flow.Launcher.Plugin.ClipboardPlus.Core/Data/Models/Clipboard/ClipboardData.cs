@@ -124,7 +124,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         var str = DataType switch
         {
             DataType.Text => Data as string ?? string.Empty,
-            DataType.Image => (Data is not BitmapSource img ? Icon.ToBase64() : img.ToBase64()) ?? string.Empty,
+            DataType.Image => Data is BitmapSource img ? img.ToBase64() : string.Empty,
             DataType.Files => (Data is string[] s ? string.Join('\n', s) : Data as string)?? string.Empty,
             _ => null
         };
