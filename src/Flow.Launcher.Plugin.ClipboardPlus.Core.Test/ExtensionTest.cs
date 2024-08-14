@@ -35,10 +35,10 @@ public class ExtensionTest
         var s = f.ReadToEnd();
         var img = new Bitmap(@"Images\clipboard.png");
         var s1 = img.ToBase64();
-        Image img1 = s1.ToImage();
+        Image img1 = s1.ToImage()!;
         var bm = new BitmapImage(new Uri(Path.Combine(_baseDirectory, @"Images\clipboard.png"), UriKind.Absolute));
         var s2 = bm.ToBase64();
-        var bm1 = img1.ToBitmapImage();
+        var bm1 = img1!.ToBitmapImage();
         var s3 = bm1.ToBase64();
     }
 

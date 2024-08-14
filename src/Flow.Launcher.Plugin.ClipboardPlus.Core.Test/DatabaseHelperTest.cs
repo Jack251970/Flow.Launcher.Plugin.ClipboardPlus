@@ -9,11 +9,15 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Test;
 
 public class DatabaseHelperTest
 {
+    private readonly static Random _random = new();
+
     private readonly static string _defaultIconPath = "Images/clipboard.png";
 
     private readonly static string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-    private readonly BitmapImage _defaultImage = new(new Uri(Path.Combine(_baseDirectory, _defaultIconPath), UriKind.Absolute));
+    private readonly static string _defaultImagePath = Path.Combine(_baseDirectory, _defaultIconPath);
+
+    private readonly BitmapImage _defaultImage = new(new Uri(_defaultImagePath, UriKind.Absolute));
 
     private readonly static string _encryptKey = StringUtils.GenerateEncryptKey();
 
@@ -25,25 +29,38 @@ public class DatabaseHelperTest
         StringUtils.InitEncryptKey(_encryptKey);
     }
 
-    public ClipboardData GetRandomClipboardData()
+    public ClipboardData GetRandomClipboardData(bool valid = true)
     {
-        var rand = new Random();
-        var type = (DataType)rand.Next(3);
-        object dataContent = type switch
+        var type = (DataType)_random.Next(3);
+        object dataContent;
+        if (valid)
         {
-            DataType.Text => StringUtils.RandomString(10),
-            DataType.Image => _defaultImage,
-            DataType.Files => new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10), StringUtils.RandomString(10) },
-            _ => null!
-        };
-        var encrypt = rand.NextDouble() > 0.5;
+            dataContent = type switch
+            {
+                DataType.Text => StringUtils.RandomString(10),
+                DataType.Image => _defaultImage,
+                DataType.Files => new string[] { _baseDirectory, _defaultImagePath },
+                _ => null!
+            };
+        }
+        else
+        {
+            dataContent = type switch
+            {
+                DataType.Text => string.Empty,
+                DataType.Image => string.Empty,
+                DataType.Files => new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10), StringUtils.RandomString(10) },
+                _ => null!
+            };
+        }
+        var encrypt = _random.NextDouble() > 0.5;
         var data = new ClipboardData(dataContent, type, encrypt)
         {
             HashId = StringUtils.GetGuid(),
             SenderApp = StringUtils.RandomString(5) + ".exe",
             CachedImagePath = string.Empty,
-            Score = rand.Next(1000),
-            InitScore = rand.Next(1000),
+            Score = _random.Next(1000),
+            InitScore = _random.Next(1000),
             Pinned = false,
             CreateTime = DateTime.Now
         };
@@ -56,7 +73,7 @@ public class DatabaseHelperTest
         var helper = new DatabaseHelper(
             "TestDb",
             mode: SqliteOpenMode.Memory,
-            cache: SqliteCacheMode.Shared
+            cache: SqliteCacheMode.Private
         );
         _testOutputHelper.WriteLine(helper.Connection.ConnectionString);
         await helper.InitializeDatabaseAsync();
@@ -74,7 +91,7 @@ public class DatabaseHelperTest
         var helper = new DatabaseHelper(
             "TestDb",
             mode: SqliteOpenMode.Memory,
-            cache: SqliteCacheMode.Shared
+            cache: SqliteCacheMode.Private
         );
         await helper.InitializeDatabaseAsync();
         await helper.AddOneRecordAsync(exampleTextRecord);
@@ -103,7 +120,7 @@ public class DatabaseHelperTest
         var helper = new DatabaseHelper(
             "TestDb",
             mode: SqliteOpenMode.Memory,
-            cache: SqliteCacheMode.Shared
+            cache: SqliteCacheMode.Private
         );
         await helper.InitializeDatabaseAsync();
         var now = DateTime.Now;
@@ -143,7 +160,7 @@ public class DatabaseHelperTest
         var helper = new DatabaseHelper(
             "TestDb",
             mode: SqliteOpenMode.Memory,
-            cache: SqliteCacheMode.Shared
+            cache: SqliteCacheMode.Private
         );
         await helper.InitializeDatabaseAsync();
         await helper.AddOneRecordAsync(exampleTextRecord);
@@ -162,7 +179,7 @@ public class DatabaseHelperTest
         var helper = new DatabaseHelper(
             "TestDb",
             mode: SqliteOpenMode.Memory,
-            cache: SqliteCacheMode.Shared
+            cache: SqliteCacheMode.Private
         );
         await helper.InitializeDatabaseAsync();
         await helper.AddOneRecordAsync(exampleTextRecord);
@@ -171,5 +188,45 @@ public class DatabaseHelperTest
         var c = await helper.GetAllRecordsAsync();
         Assert.Empty(c);
         await helper.CloseAsync();
+    }
+
+    [Fact]
+    public async Task TestDeleteInvalidRecord()
+    {
+        var helper = new DatabaseHelper(
+            "TestDb",
+            mode: SqliteOpenMode.Memory,
+            cache: SqliteCacheMode.Private
+        );
+        await helper.InitializeDatabaseAsync();
+        var validNum = 0;
+        var invalidNum = 0;
+        _testOutputHelper.WriteLine("Add Data");
+        for (int i = 0; i < 10; i++)
+        {
+            var valid = _random.NextDouble() > 0.5;
+            var exampleTextRecord = GetRandomClipboardData(valid);
+            await helper.AddOneRecordAsync(exampleTextRecord);
+            if (valid)
+            {
+                validNum++;
+                _testOutputHelper.WriteLine($"Valid{validNum}: {exampleTextRecord}");
+            }
+            else
+            {
+                invalidNum++;
+                _testOutputHelper.WriteLine($"Invalid{invalidNum}: {exampleTextRecord}");
+            }
+        }
+        await helper.DeleteInvalidRecordAsync();
+        var c = await helper.GetAllRecordsAsync();
+        _testOutputHelper.WriteLine("After Delete Invalid Data");
+        var num = 0;
+        foreach (var record in c)
+        {
+            num++;
+            _testOutputHelper.WriteLine($"{num}: {record}");
+        }
+        Assert.Equal(validNum, c.Count);
     }
 }

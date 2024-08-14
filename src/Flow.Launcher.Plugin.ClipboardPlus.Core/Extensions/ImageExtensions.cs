@@ -123,8 +123,12 @@ public static class ImageExtensions
 
     #region System.String
 
-    public static BitmapImage ToBitmapImage(this string base64)
+    public static BitmapImage? ToBitmapImage(this string base64)
     {
+        if (string.IsNullOrEmpty(base64))
+        {
+            return null;
+        }
         using var m = new MemoryStream();
         var bytes = Convert.FromBase64String(base64);
         m.Write(bytes, 0, bytes.Length);
@@ -138,8 +142,12 @@ public static class ImageExtensions
         return im;
     }
 
-    public static Image ToImage(this string base64)
+    public static Image? ToImage(this string base64)
     {
+        if (string.IsNullOrEmpty(base64))
+        {
+            return null;
+        }
         var bytes = Convert.FromBase64String(base64);
         using var stream = new MemoryStream(bytes);
         return new Bitmap(stream);

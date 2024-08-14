@@ -96,7 +96,7 @@ public class DatabaseHelper : IDisposable
 
     public DatabaseHelper(
         string databasePath,
-        SqliteCacheMode cache = SqliteCacheMode.Shared,
+        SqliteCacheMode cache = SqliteCacheMode.Default,
         SqliteOpenMode mode = SqliteOpenMode.ReadWriteCreate,
         bool keepConnection = true
     )
@@ -153,31 +153,7 @@ public class DatabaseHelper : IDisposable
     {
         await HandleOpenCloseAsync(async () =>
         {
-            var dataMd5 = clipboardData.DataMd5;
-            var count = await Connection.QueryFirstAsync<int>(
-                SqlSelectRecordCountByMd5,
-                new { DataMd5 = dataMd5 }
-            );
-            // count > 1 means there are more than one record in table `record`
-            // depends on corresponding record in table `assets`, in this condition,
-            // we only delete record in table `record`
-            if (count > 1)
-            {
-                await Connection.ExecuteAsync(
-                    SqlDeleteRecordAssets1,
-                    new { clipboardData.HashId, DataMd5 = dataMd5 }
-                );
-            }
-            // otherwise, no record depends on assets, directly delete records
-            // both in `record` and `assets` using foreign key constraint,
-            // i.e., ON DELETE CASCADE
-            else
-            {
-                await Connection.ExecuteAsync(
-                    SqlDeleteRecordAssets2,
-                    new { DataMd5 = dataMd5 }
-                );
-            }
+            await DeleteRecordByClipboardData(clipboardData);
         });
     }
 
@@ -220,6 +196,50 @@ public class DatabaseHelper : IDisposable
                 new { KeepTime = keepTime, DataType = dataType }
             );
         });
+    }
+
+    public async Task DeleteInvalidRecordAsync()
+    {
+        await HandleOpenCloseAsync(async () =>
+        {
+            // query all records
+            var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
+            LinkedList<ClipboardData> allRecord = new(results.Select(ClipboardData.FromRecord));
+            var invalidRecords = allRecord.Where(x => !x.IsValid);
+            foreach (var record in invalidRecords)
+            {
+                await DeleteRecordByClipboardData(record);
+            }
+        });
+    }
+
+    private async Task DeleteRecordByClipboardData(ClipboardData clipboardData)
+    {
+        var dataMd5 = clipboardData.DataMd5;
+        var count = await Connection.QueryFirstAsync<int>(
+            SqlSelectRecordCountByMd5,
+            new { DataMd5 = dataMd5 }
+        );
+        // count > 1 means there are more than one record in table `record`
+        // depends on corresponding record in table `assets`, in this condition,
+        // we only delete record in table `record`
+        if (count > 1)
+        {
+            await Connection.ExecuteAsync(
+                SqlDeleteRecordAssets1,
+                new { clipboardData.HashId, DataMd5 = dataMd5 }
+            );
+        }
+        // otherwise, no record depends on assets, directly delete records
+        // both in `record` and `assets` using foreign key constraint,
+        // i.e., ON DELETE CASCADE
+        else
+        {
+            await Connection.ExecuteAsync(
+                SqlDeleteRecordAssets2,
+                new { DataMd5 = dataMd5 }
+            );
+        }
     }
 
     #endregion

@@ -18,9 +18,10 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// If type is Text, the data is in string.
     /// If type is Image, the data is in BitmapSource.
     /// If type is Files, the data is in string[].
+    /// Else the data is null.
     /// </summary>
-    private readonly object data;
-    public readonly object Data => data;
+    private readonly object? data;
+    public readonly object? Data => data!;
 
     /// <summary>
     /// MD5 hash of the data, also used to identify the data.
@@ -81,11 +82,16 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     private readonly bool encryptData;
     public readonly bool EncryptData => encryptData;
 
+    /// <summary>
+    /// Whether the data is valid.
+    /// </summary>
+    public readonly bool IsValid => DataToValid() != null;
+
     #endregion
 
     #region Constructors
 
-    public ClipboardData(object data, DataType dataType, bool encryptData)
+    public ClipboardData(object? data, DataType dataType, bool encryptData)
     {
         this.data = data;
         this.dataType = dataType;
@@ -221,7 +227,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// </returns>
     public static ClipboardData FromRecord(Record record)
     {
-        static object StringToData(string str, DataType type, bool encrypt)
+        static object? StringToData(string str, DataType type, bool encrypt)
         {
             if (!string.IsNullOrEmpty(str) && encrypt)
             {
@@ -232,7 +238,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
                 DataType.Text => str,
                 DataType.Image => str.ToBitmapImage(),
                 DataType.Files => str.Split('\n'),
-                _ => null!
+                _ => null
             };
         }
 
