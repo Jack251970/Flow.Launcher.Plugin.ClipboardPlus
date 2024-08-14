@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
@@ -35,6 +36,10 @@ public class SettingsViewModel : BaseModel
 
     private void OpenCacheImageFolder(object? parameter)
     {
+        if (!Directory.Exists(PathHelper.ImageCachePath))
+        {
+            Directory.CreateDirectory(PathHelper.ImageCachePath);
+        }
         Context?.API.OpenDirectory(PathHelper.ImageCachePath);
     }
 
