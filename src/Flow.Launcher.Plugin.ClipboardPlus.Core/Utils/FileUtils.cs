@@ -40,4 +40,11 @@ public static class FileUtils
             Directory.Delete(imageCachePath, true);
         }
     }
+
+    public static bool Exists(string path)
+    {
+        var isFile = File.Exists(path);
+        var isDirectory = Directory.Exists(path);
+        return isFile || isDirectory;
+    }
 }

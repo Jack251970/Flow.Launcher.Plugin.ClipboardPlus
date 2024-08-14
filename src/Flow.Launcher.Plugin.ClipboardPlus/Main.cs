@@ -7,8 +7,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using WindowsInput;
 using Clipboard = System.Windows.Clipboard;
+using StringCollection = System.Collections.Specialized.StringCollection;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus;
 
@@ -408,8 +410,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         CopyToClipboard(clipboardData);
                         break;
                 }
-                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard"), 
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), 36));
                 return true;
             },
         };
@@ -463,10 +463,44 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region Clipboard Actions
 
-    private static void CopyToClipboard(ClipboardData clipboardData)
+    private void CopyToClipboard(ClipboardData clipboardData)
     {
-        // TODO: Add support for files.
-        Clipboard.SetDataObject(clipboardData.Data);
+        switch (clipboardData.DataType)
+        {
+            case DataType.Text:
+                var stringToCopy = clipboardData.Data as string;
+                if (string.IsNullOrEmpty(stringToCopy))
+                {
+                    return;
+                }
+                Clipboard.SetText(stringToCopy);
+                break;
+            case DataType.Image:
+                if (clipboardData.Data is not BitmapSource imageToCopy)
+                {
+                    return;
+                }
+                Clipboard.SetImage(imageToCopy);
+                break;
+            case DataType.Files:
+                if (clipboardData.Data is not string[] filesToCopy)
+                {
+                    return;
+                }
+                var validFiles = filesToCopy.Where(FileUtils.Exists).ToArray();
+                if (validFiles.Length == 0)
+                {
+                    return;
+                }
+                var paths = new StringCollection();
+                paths.AddRange(validFiles);
+                Clipboard.SetFileDropList(paths);
+                break;
+            default:
+                return;
+        }
+        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard"),
+            StringUtils.CompressString(clipboardData.GetText(CultureInfo), 36));
     }
 
     private void RemoveFromList(ClipboardData clipboardData, bool needEsc = false)
