@@ -7,7 +7,10 @@
     <!--  General  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_name">Clipboard+</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">Easily manage your clipboard history with support for text, images, and files</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard">Copy to clipboard</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_success">Success</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard">Copy to clipboard:&#x20;</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_fail">Fail</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_data_invalid">Copy data are invalid!</system:String>
 
     <!--  Main  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_title">Clear all records</system:String>

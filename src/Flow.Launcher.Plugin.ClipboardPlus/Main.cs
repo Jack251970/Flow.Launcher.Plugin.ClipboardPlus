@@ -465,42 +465,32 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private void CopyToClipboard(ClipboardData clipboardData)
     {
-        switch (clipboardData.DataType)
+        var validObject = clipboardData.DataToValid();
+        if (validObject is not null)
         {
-            case DataType.Text:
-                var stringToCopy = clipboardData.Data as string;
-                if (string.IsNullOrEmpty(stringToCopy))
-                {
-                    return;
-                }
-                Clipboard.SetText(stringToCopy);
-                break;
-            case DataType.Image:
-                if (clipboardData.Data is not BitmapSource imageToCopy)
-                {
-                    return;
-                }
-                Clipboard.SetImage(imageToCopy);
-                break;
-            case DataType.Files:
-                if (clipboardData.Data is not string[] filesToCopy)
-                {
-                    return;
-                }
-                var validFiles = filesToCopy.Where(FileUtils.Exists).ToArray();
-                if (validFiles.Length == 0)
-                {
-                    return;
-                }
-                var paths = new StringCollection();
-                paths.AddRange(validFiles);
-                Clipboard.SetFileDropList(paths);
-                break;
-            default:
-                return;
+            switch (clipboardData.DataType)
+            {
+                case DataType.Image:
+                    Clipboard.SetImage((BitmapSource)validObject);
+                    break;
+                case DataType.Files:
+                    var paths = new StringCollection();
+                    paths.AddRange((string[])validObject);
+                    Clipboard.SetFileDropList(paths);
+                    break;
+                default:
+                    Clipboard.SetText((string)validObject);
+                    break;
+            }
+            Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
+                StringUtils.CompressString(clipboardData.GetText(CultureInfo), 54));
         }
-        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard"),
-            StringUtils.CompressString(clipboardData.GetText(CultureInfo), 36));
+        else
+        {
+            Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_data_invalid"));
+        }
     }
 
     private void RemoveFromList(ClipboardData clipboardData, bool needEsc = false)
@@ -576,6 +566,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         if (disposing)
         {
             Context.API.LogWarn(ClassName, $"Enter dispose");
+            Clipboard.Flush();
+            Context.API.LogDebug(ClassName, $"Flushed Clipboard");
             if (DatabaseHelper != null)
             {
                 DatabaseHelper?.Dispose();

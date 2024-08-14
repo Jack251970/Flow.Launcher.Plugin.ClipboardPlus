@@ -162,6 +162,49 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         };
     }
 
+    /// <summary>
+    /// Get the data as valid object.
+    /// </summary>
+    /// <returns>
+    /// If data type is Text, return the data as valid string.
+    /// If data type is Image, return the data as BitmapSource.
+    /// If data type is Files, return the data as string[] with valid files.
+    /// Else return null.
+    /// </returns>
+    public readonly object? DataToValid()
+    {
+        switch (DataType)
+        {
+            case DataType.Text:
+                var stringToCopy = Data as string;
+                if (string.IsNullOrEmpty(stringToCopy))
+                {
+                    break;
+                }
+                return stringToCopy;
+            case DataType.Image:
+                if (Data is not BitmapSource imageToCopy)
+                {
+                    break;
+                }
+                return imageToCopy;
+            case DataType.Files:
+                if (Data is not string[] filesToCopy)
+                {
+                    break;
+                }
+                var validFiles = filesToCopy.Where(FileUtils.Exists).ToArray();
+                if (validFiles.Length == 0)
+                {
+                    break;
+                }
+                return validFiles;
+            default:
+                break;
+        }
+        return null;
+    }
+
     #endregion
 
     #region Convert Methods
