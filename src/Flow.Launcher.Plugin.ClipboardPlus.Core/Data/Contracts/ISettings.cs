@@ -35,7 +35,7 @@ public interface ISettings
     /// <summary>
     /// Whether to encrypt records
     /// </summary>
-    public bool Encrypt { get; set; }
+    public bool EncryptData { get; set; }
 
     /// <summary>
     /// Key to use for encryption

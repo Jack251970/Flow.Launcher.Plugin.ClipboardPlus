@@ -50,6 +50,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_format_app">應用</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format_preview">預覽：</system:String>
 
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_encrypt_data">加密數據：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_text">保存文本：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_images">保存圖片：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_files">保存文件：</system:String>

@@ -20,7 +20,7 @@ public class Settings : ISettings
 
     public string CacheFormat { get; set; } = "yyyy-MM-dd-hhmmss-app";
 
-    public bool Encrypt { get; set; } = false;
+    public bool EncryptData { get; set; } = false;
 
     public string EncryptKey { get; set; } = StringUtils.GenerateEncryptKey();
 

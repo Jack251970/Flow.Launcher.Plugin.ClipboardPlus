@@ -30,6 +30,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -282,16 +283,25 @@
             BorderBrush="{DynamicResource Color03B}"
             BorderThickness="1" />
 
-        <!--  Keep Text  -->
+        <!--  Encrypt Data  -->
         <CheckBox
             Grid.Row="10"
+            Grid.Column="0"
+            Margin="10,5,5,5"
+            VerticalAlignment="Center"
+            Content="{DynamicResource flowlauncher_plugin_clipboardplus_encrypt_data}"
+            IsChecked="{Binding EncryptData, Mode=TwoWay}" />
+
+        <!--  Keep Text  -->
+        <CheckBox
+            Grid.Row="11"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Content="{DynamicResource flowlauncher_plugin_clipboardplus_keep_text}"
             IsChecked="{Binding KeepText, Mode=TwoWay}" />
         <ComboBox
-            Grid.Row="10"
+            Grid.Row="11"
             Grid.Column="1"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
@@ -302,14 +312,14 @@
 
         <!--  Keep Images  -->
         <CheckBox
-            Grid.Row="11"
+            Grid.Row="12"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Content="{DynamicResource flowlauncher_plugin_clipboardplus_keep_images}"
             IsChecked="{Binding KeepImages, Mode=TwoWay}" />
         <ComboBox
-            Grid.Row="11"
+            Grid.Row="12"
             Grid.Column="1"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
@@ -320,14 +330,14 @@
 
         <!--  Keep Files  -->
         <CheckBox
-            Grid.Row="12"
+            Grid.Row="13"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Content="{DynamicResource flowlauncher_plugin_clipboardplus_keep_files}"
             IsChecked="{Binding KeepFiles, Mode=TwoWay}" />
         <ComboBox
-            Grid.Row="12"
+            Grid.Row="13"
             Grid.Column="1"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"

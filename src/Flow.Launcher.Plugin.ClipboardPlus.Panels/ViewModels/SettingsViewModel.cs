@@ -242,6 +242,20 @@ public class SettingsViewModel : BaseModel
 
     #region Keep Time
 
+    #region Encrypt Data
+
+    public bool EncryptData
+    {
+        get => Settings.EncryptData;
+        set
+        {
+            Settings.EncryptData = value;
+            OnPropertyChanged();
+        }
+    }
+
+    #endregion
+
     #region Text
 
     public bool KeepText
