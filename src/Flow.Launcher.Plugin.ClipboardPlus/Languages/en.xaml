@@ -50,7 +50,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_format_app">App</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format_preview">Preview:</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_encrypt_data">Encrypt data:</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_encrypt_data">Encrypt data</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_text">Keep text:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_images">Keep images:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_files">Keep files:</system:String>
