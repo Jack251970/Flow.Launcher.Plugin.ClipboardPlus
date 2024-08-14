@@ -24,6 +24,8 @@ public partial class MainWindow : Window
 
     private readonly ClipboardMonitor ClipboardMonitor = new() { ObserveLastEntry = false };
 
+    private int _count = 0;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -117,7 +119,8 @@ public partial class MainWindow : Window
             CreateTime = now
         };
 
-        TextBlock1.Text = $"ClipboardChangedEventArgs\n" +
+        TextBlock1.Text = $"Count: {_count}\n\n" +
+            $"ClipboardChangedEventArgs\n" +
             $"DataType: {e.DataType}\n" +
             $"SourceApplication: {e.SourceApplication.Name}\n" +
             $"Content: {e.Content}";
@@ -132,6 +135,8 @@ public partial class MainWindow : Window
             $"Title: {clipboardData.GetTitle(CultureInfo.CurrentCulture)}\n" +
             $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
+
+        _count++;
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
