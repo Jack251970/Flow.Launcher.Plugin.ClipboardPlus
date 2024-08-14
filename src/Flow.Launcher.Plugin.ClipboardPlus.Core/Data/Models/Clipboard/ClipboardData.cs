@@ -303,14 +303,16 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// The display subtitle for the data.
     /// </returns>
     private string subtitle = null!;
+    private bool pinned = false;
     public string GetSubtitle(CultureInfo cultureInfo)
     {
-        if (subtitle == null || currentCultureInfo != cultureInfo)
+        if (subtitle == null || currentCultureInfo != cultureInfo || pinned != Pinned)
         {
             var dispSubtitle = $"{CreateTime.ToString(cultureInfo)}: {SenderApp}";
             dispSubtitle = Pinned ? $"{PinUnicode}{dispSubtitle}" : dispSubtitle;
             subtitle = dispSubtitle;
             currentCultureInfo = cultureInfo;
+            pinned = Pinned;
         }
         return subtitle;
     }
