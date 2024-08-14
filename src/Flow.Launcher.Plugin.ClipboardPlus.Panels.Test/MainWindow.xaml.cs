@@ -99,7 +99,7 @@ public partial class MainWindow : Window
 
     private void OnClipboardChange(object? sender, ClipboardMonitor.ClipboardChangedEventArgs e)
     {
-        if (e.Content is null)
+        if (e.Content is null || e.DataType == DataType.Other)
         {
             return;
         }

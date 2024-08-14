@@ -268,7 +268,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private async void OnClipboardChange(object? sender, ClipboardMonitor.ClipboardChangedEventArgs e)
     {
         Context.API.LogDebug(ClassName, "Clipboard changed");
-        if (e.Content is null)
+        if (e.Content is null || e.DataType == DataType.Other)
         {
             return;
         }
