@@ -22,6 +22,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_title">清除无效记录</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_subtitle">从列表和数据库清除所有无效记录</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle">从列表和数据库清除了{0}条无效记录！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle">没有可清除的记录！</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_title">复制</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">复制记录至剪切板</system:String>
