@@ -2,6 +2,8 @@
 
 public class Record
 {
+    #region Public Properties
+
     /// <summary>
     /// Primary key of the record.
     /// </summary>
@@ -63,6 +65,10 @@ public class Record
     /// </summary>
     public bool EncryptData { get; set; }
 
+    #endregion
+
+    #region Convert Methods
+
     /// <summary>
     /// Convert the clipboard data to a record for inserting.
     /// DataMd5B64 is the MD5 hash of the data.
@@ -90,6 +96,8 @@ public class Record
         };
         return record;
     }
+
+    #endregion
 
     public static bool operator ==(Record a, Record b) => a.Equals(b);
 

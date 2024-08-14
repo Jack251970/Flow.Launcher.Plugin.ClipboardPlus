@@ -2,7 +2,8 @@
 
 public static class EnumExtensions
 {
-    // Keep time
+    #region Keep Time
+
     private static readonly Dictionary<KeepTime, int> KeepTimeDict =
         new(
             new List<KeyValuePair<KeepTime, int>>()
@@ -24,4 +25,6 @@ public static class EnumExtensions
         var k = KeepTimeDict.ContainsKey(idx) ? idx : 0;
         return KeepTimeDict[k];
     }
+
+    #endregion
 }

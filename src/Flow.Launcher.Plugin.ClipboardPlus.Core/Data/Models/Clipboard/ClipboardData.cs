@@ -6,6 +6,8 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
 public partial struct ClipboardData : IEquatable<ClipboardData>
 {
+    #region Public Properties
+
     /// <summary>
     /// Hash id of the data, used to identify the data.
     /// </summary>
@@ -79,10 +81,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     private readonly bool encryptData;
     public readonly bool EncryptData => encryptData;
 
-    /// <summary>
-    /// Pin symbol in unicode.
-    /// </summary>
-    private const string PinUnicode = "📌";
+    #endregion
 
     #region Constructors
 
@@ -103,6 +102,10 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     }
 
     #endregion
+
+    #region Function Methods
+
+    #region Parse Data
 
     /// <summary>
     /// Get the data as string.
@@ -159,6 +162,10 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         };
     }
 
+    #endregion
+
+    #region Convert Methods
+
     /// <summary>
     /// Convert the record to a clipboard data for selecting.
     /// DataMd5B64 is the base64 encoded data.
@@ -201,10 +208,19 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         };
     }
 
+    #endregion
+
+    #region Display Information
+
     /// <summary>
     /// Cached culture info for the data.
     /// </summary>
     private CultureInfo currentCultureInfo = CultureInfo.CurrentCulture;
+
+    /// <summary>
+    /// Pin symbol in unicode.
+    /// </summary>
+    private const string PinUnicode = "📌";
 
     /// <summary>
     /// Get display title for the data.
@@ -225,6 +241,9 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         }
         return title;
     }
+
+    [GeneratedRegex("(\\r|\\n|\\t|\\v)")]
+    private static partial Regex MyRegex();
 
     /// <summary>
     /// Get display subtitle for the data.
@@ -274,6 +293,10 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         return text;
     }
 
+    #endregion
+
+    #endregion
+
     public static bool operator ==(ClipboardData a, ClipboardData b) => a.Equals(b);
 
     public static bool operator !=(ClipboardData a, ClipboardData b) => !a.Equals(b);
@@ -304,7 +327,4 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     {
         return $"ClipboardData(Type: {DataType}, Text: {GetText(CultureInfo.CurrentCulture)}, CreateTime: {CreateTime})";
     }
-
-    [GeneratedRegex("(\\r|\\n|\\t|\\v)")]
-    private static partial Regex MyRegex();
 }

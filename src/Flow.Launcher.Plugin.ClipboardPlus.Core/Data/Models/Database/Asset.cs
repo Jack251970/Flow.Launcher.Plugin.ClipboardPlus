@@ -2,6 +2,8 @@
 
 public class Asset
 {
+    #region Public Properties
+
     /// <summary>
     /// Primary key of the asset.
     /// </summary>
@@ -17,6 +19,10 @@ public class Asset
     /// </summary>
     public required string DataMd5 { get; set; }
 
+    #endregion
+
+    #region Convert Methods
+
     public static Asset FromClipboardData(ClipboardData data)
     {
         return new Asset
@@ -25,6 +31,8 @@ public class Asset
             DataMd5 = data.DataMd5,
         };
     }
+
+    #endregion
 
     public static bool operator ==(Asset a, Asset b) => a.Equals(b);
 

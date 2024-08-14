@@ -6,7 +6,7 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Utils;
 
 public static partial class StringUtils
 {
-    #region Random string
+    #region Random String
 
     private static readonly Random _random = new();
 
@@ -20,7 +20,7 @@ public static partial class StringUtils
 
     #endregion
 
-    #region Count words
+    #region Count Words
 
     public static int CountWords(string s)
     {
@@ -45,7 +45,7 @@ public static partial class StringUtils
 
     #endregion
 
-    #region Guid string
+    #region Guid String
 
     public static string GetGuid()
     {
@@ -54,7 +54,7 @@ public static partial class StringUtils
 
     #endregion
 
-    #region Format string
+    #region Format String
 
     public static string FormatImageName(string format, DateTime dateTime, string appname = "Flow.Launcher.exe")
     {
@@ -71,7 +71,7 @@ public static partial class StringUtils
 
     #endregion
 
-    #region Length compression
+    #region Length Compression
 
     public static string CompressString(string str, int en_length)
     {
@@ -152,7 +152,7 @@ public static partial class StringUtils
 
     #endregion
 
-    #region Hash string
+    #region Hash String
 
     public static string GetMd5(string s)
     {
