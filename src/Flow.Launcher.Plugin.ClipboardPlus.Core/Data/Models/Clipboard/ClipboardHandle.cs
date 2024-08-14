@@ -4,10 +4,13 @@
  * license, but MIT license shown in nuget package so I copied them here
  */
 
-using System.Text;
-using System.Diagnostics;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Media.Imaging;
+using Clipboard = System.Windows.Clipboard;
+using DataFormats = System.Windows.DataFormats;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
@@ -142,7 +145,7 @@ public partial class ClipboardHandle : Form
                 && dataObj.GetDataPresent(DataFormats.Bitmap)
             )
             {
-                var capturedImage = dataObj.GetData(DataFormats.Bitmap) as Image;
+                var capturedImage = dataObj.GetData(DataFormats.Bitmap) as BitmapSource;
                 ClipboardMonitorInstance.ClipboardImage = capturedImage;
 
                 ClipboardMonitorInstance.Invoke(

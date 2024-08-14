@@ -5,6 +5,7 @@
  */
 
 using System.Runtime.InteropServices;
+using System.Windows.Media.Imaging;
 using Timer = System.Windows.Forms.Timer;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
@@ -68,7 +69,7 @@ public class ClipboardMonitor : IDisposable
 
     public List<string> ClipboardFiles { get; internal set; } = new();
 
-    public Image? ClipboardImage { get; internal set; }
+    public BitmapSource? ClipboardImage { get; internal set; }
 
     public static string HandleCaption { get; set; } = string.Empty;
 
@@ -142,7 +143,6 @@ public class ClipboardMonitor : IDisposable
             _handle = null!;
             _observableFormats = null!;
             ClipboardFiles = null!;
-            ClipboardImage?.Dispose();
             ClipboardImage = null!;
         }
     }
