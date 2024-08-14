@@ -66,7 +66,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_subtitle"),
                         IcoPath = PathHelper.ListIconPath,
                         Glyph = ResourceHelper.ListGlyph,
-                        Score = 3,
+                        Score = 100,
                         Action = _ =>
                         {
                             var number = DeleteAllRecordsFromList();
@@ -91,7 +91,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_subtitle"),
                         IcoPath = PathHelper.DatabaseIconPath,
                         Glyph = ResourceHelper.DatabaseGlyph,
-                        Score = 2,
+                        Score = 10,
                         AsyncAction = async _ =>
                         {
                             var number = await DeleteAllRecordsFromListDatabaseAsync();
