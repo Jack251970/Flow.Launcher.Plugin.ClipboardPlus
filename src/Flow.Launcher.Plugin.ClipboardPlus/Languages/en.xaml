@@ -8,19 +8,20 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_name">Clipboard+</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">Easily manage your clipboard history with support for text, images, and files</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_success">Success</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard">Copy to clipboard:&#x20;</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_fail">Fail</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_text_data_invalid">Copied text is empty!</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_image_data_invalid">Error in copied image!</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_files_data_invalid">Copied files do not exist!</system:String>
 
     <!--  Main  -->
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_title">Clear all records</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_subtitle">Click to clear all records</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">Clear records</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">Click to clear records</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_title">Clear in list</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_subtitle">Clear all records in list</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle">Clear {0} records in list!</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_title">Clear in both list and database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_subtitle">Clear all records in both list and database</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle">Clear {0} records in both list and database!</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_title">Clear invalid records</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_subtitle">Clear invalid records in both list and database</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle">Clear {0} invalid records in both list and database!</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_title">Copy</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">Copy this record to clipboard</system:String>
@@ -32,6 +33,11 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_subtitle">Delete this record in both list and database</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_unknown_app">unknown</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard">Copy to clipboard:&#x20;</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_text_data_invalid">Copied text is empty!</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_image_data_invalid">Error in copied image!</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_files_data_invalid">Copied files do not exist!</system:String>
 
     <!--  Preview  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_words_count_prefix">Words count:&#x20;</system:String>

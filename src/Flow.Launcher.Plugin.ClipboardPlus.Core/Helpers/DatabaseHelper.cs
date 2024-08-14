@@ -205,6 +205,7 @@ public class DatabaseHelper : IDisposable
             // query all records
             var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
             LinkedList<ClipboardData> allRecord = new(results.Select(ClipboardData.FromRecord));
+            // delete invalid records
             var invalidRecords = allRecord.Where(x => !x.IsValid);
             foreach (var record in invalidRecords)
             {

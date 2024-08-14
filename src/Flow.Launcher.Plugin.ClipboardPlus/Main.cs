@@ -66,11 +66,18 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_subtitle"),
                         IcoPath = PathHelper.ListIconPath,
                         Glyph = ResourceHelper.ListGlyph,
-                        Score = 2,
+                        Score = 3,
                         Action = _ =>
                         {
-                            RecordsList.Clear();
-                            return true;
+                            var number = DeleteAllRecordsFromList();
+                            if (number != 0)
+                            {
+                                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                    string.Format(
+                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle"), number));
+                                return true;
+                            }
+                            return false;
                         },
                     },
                     new Result
@@ -79,13 +86,38 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_subtitle"),
                         IcoPath = PathHelper.DatabaseIconPath,
                         Glyph = ResourceHelper.DatabaseGlyph,
+                        Score = 2,
+                        AsyncAction = async _ =>
+                        {
+                            var number = await DeleteAllRecordsFromListDatabaseAsync();
+                            if (number != 0)
+                            {
+                                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                    string.Format(
+                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle"), number));
+                                return true;
+                            }
+                            return false;
+                        }
+                    },
+                    new Result
+                    {
+                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_title"),
+                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_subtitle"),
+                        IcoPath = PathHelper.ErrorIconPath,
+                        Glyph = ResourceHelper.ErrorGlyph,
                         Score = 1,
                         AsyncAction = async _ =>
                         {
-                            RecordsList.Clear();
-                            await DatabaseHelper.DeleteAllRecordsAsync();
-                            CurrentScore = 1;
-                            return true;
+                            var number = await DeleteInvalidRecordsFromListDatabaseAsync();
+                            if (number != 0)
+                            {
+                                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                    string.Format(
+                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle"), number));
+                                return true;
+                            }
+                            return false;
                         }
                     }
                 }
@@ -103,8 +135,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             results.Add(
                 new Result
                 {
-                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_title"),
-                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_subtitle"),
+                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_title"),
+                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_subtitle"),
                     IcoPath = PathHelper.ClearIconPath,
                     Glyph = ResourceHelper.ClearGlyph,
                     Score = Settings.MaxRecords + 1,
@@ -140,7 +172,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         await DatabaseHelper.InitializeDatabaseAsync();
         if (fileExists)
         {
-            await InitRecordsFromDatabase();
+            await InitRecordsFromDatabaseAsync();
         }
         Context.API.LogDebug(ClassName, "Init database successfully");
 
@@ -156,7 +188,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     public async Task ReloadDataAsync()
     {
         // reload records
-        await InitRecordsFromDatabase();
+        await InitRecordsFromDatabaseAsync();
     }
 
     #endregion
@@ -327,9 +359,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #endregion
 
-    #region Database Functions
+    #region List & Database
 
-    private async Task InitRecordsFromDatabase()
+    private async Task InitRecordsFromDatabaseAsync()
     {
         // clear expired records
         try
@@ -357,6 +389,42 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             CurrentScore = records.Max(r => r.Score);
         }
         Context.API.LogWarn(ClassName, "Restored records successfully");
+    }
+
+    private int DeleteAllRecordsFromList()
+    {
+        var number = RecordsList.Count;
+        RecordsList.Clear();
+        return number;
+    }
+
+    private async Task<int> DeleteAllRecordsFromListDatabaseAsync()
+    {
+        var number = RecordsList.Count;
+        RecordsList.Clear();
+        await DatabaseHelper.DeleteAllRecordsAsync();
+        CurrentScore = 1;
+        return number;
+    }
+
+    private async Task<int> DeleteInvalidRecordsFromListDatabaseAsync()
+    {
+        var invalidRecords = RecordsList.Where(r => r.DataToValid() is null).ToArray();
+        var number = invalidRecords.Length;
+        foreach (var record in invalidRecords)
+        {
+            RecordsList.Remove(record);
+            await DatabaseHelper.DeleteOneRecordAsync(record);
+        }
+        if (RecordsList.Any())
+        {
+            CurrentScore = RecordsList.Max(r => r.Score) + 1;
+        }
+        else
+        {
+            CurrentScore = 1;
+        }
+        return number;
     }
 
     #endregion

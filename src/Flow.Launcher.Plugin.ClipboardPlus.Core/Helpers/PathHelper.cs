@@ -35,6 +35,7 @@ public static class PathHelper
             ClearIconPath = Path.Combine(IconPath, "clear.png");
             ListIconPath = Path.Combine(IconPath, "list.png");
             DatabaseIconPath = Path.Combine(IconPath, "database.png");
+            ErrorIconPath = Path.Combine(IconPath, "error.png");
             TextIconPath = Path.Combine(IconPath, "text.png");
             ImageIconPath = Path.Combine(IconPath, "image.png");
             FileIconPath = Path.Combine(IconPath, "file.png");
@@ -64,6 +65,7 @@ public static class PathHelper
     public static string ClearIconPath { get; private set; } = string.Empty;
     public static string ListIconPath { get; private set; } = string.Empty;
     public static string DatabaseIconPath { get; private set; } = string.Empty;
+    public static string ErrorIconPath { get; private set; } = string.Empty;
     public static string TextIconPath { get; private set; } = string.Empty;
     public static string ImageIconPath { get; private set; } = string.Empty;
     public static string FileIconPath { get; private set; } = string.Empty;
