@@ -6,7 +6,7 @@ public static class FileUtils
 {
     public static string SaveImageCache(ClipboardData clipboardData, string imageCachePath, string name)
     {
-        if (clipboardData.Data is not BitmapImage img)
+        if (clipboardData.Data is not BitmapSource img)
         {
             return string.Empty;
         }

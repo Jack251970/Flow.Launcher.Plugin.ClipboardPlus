@@ -275,11 +275,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
         // init clipboard data
         var now = DateTime.Now;
-        var data = e.Content is Image img ? img.ToBitmapImage() : e.Content;
-        var clipboardData = new ClipboardData(data, e.DataType, Settings.EncryptData)
+        var clipboardData = new ClipboardData(e.Content, e.DataType, Settings.EncryptData)
         {
             HashId = StringUtils.GetGuid(),
-            // TODO: Fix trick for converting System.Drawing.Image.
             SenderApp = e.SourceApplication.Name,
             CachedImagePath = string.Empty,
             Score = CurrentScore + 1,

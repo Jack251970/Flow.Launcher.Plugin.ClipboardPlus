@@ -106,12 +106,9 @@ public partial class MainWindow : Window
 
         // init clipboard data
         var now = DateTime.Now;
-        // TODO: Fix trick for converting System.Drawing.Image.
-        var data = e.Content is System.Drawing.Image img ? img.ToBitmapImage() : e.Content;
-        var clipboardData = new ClipboardData(data, e.DataType, true)
+        var clipboardData = new ClipboardData(e.Content, e.DataType, true)
         {
             HashId = StringUtils.GetGuid(),
-            // TODO: Fix trick for converting System.Drawing.Image.
             SenderApp = e.SourceApplication.Name,
             CachedImagePath = string.Empty,
             Score = 1,

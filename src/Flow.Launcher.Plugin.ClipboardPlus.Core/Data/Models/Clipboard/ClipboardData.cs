@@ -121,7 +121,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         var str = DataType switch
         {
             DataType.Text => Data as string ?? string.Empty,
-            DataType.Image => (Data is not BitmapImage img ? Icon.ToBase64() : img.ToBase64()) ?? string.Empty,
+            DataType.Image => (Data is not BitmapSource img ? Icon.ToBase64() : img.ToBase64()) ?? string.Empty,
             DataType.Files => (Data is string[] s ? string.Join('\n', s) : Data as string)?? string.Empty,
             _ => null
         };
@@ -136,15 +136,15 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// Get the data as image.
     /// </summary>
     /// <returns>
-    /// If data type is Text or Files, return the icon as BitmapImage.
-    /// If data type is Image, return the data or cached image as BitmapImage.
+    /// If data type is Text or Files, return the icon as BitmapSource.
+    /// If data type is Image, return the data or cached image as BitmapSource.
     /// If the data type is not in Text, Image, Files, return null.
     /// </returns>
-    public readonly BitmapImage? DataToImage()
+    public readonly BitmapSource? DataToImage()
     {
         // If the data is not a BitmapImage, try to load the cached image.
-        BitmapImage? img;
-        img = Data as BitmapImage;
+        BitmapSource? img;
+        img = Data as BitmapSource;
         if (img == null && !string.IsNullOrEmpty(CachedImagePath) && File.Exists(CachedImagePath))
         {
             img = new BitmapImage(new Uri(CachedImagePath, UriKind.Absolute));
