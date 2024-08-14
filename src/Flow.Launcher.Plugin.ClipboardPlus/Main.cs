@@ -383,7 +383,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             foreach (var pair in Settings.KeepTimePairs)
             {
                 Context.API.LogInfo(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
-                await DatabaseHelper.DeleteRecordByKeepTimeAsync(
+                await DatabaseHelper.DeleteRecordsByKeepTimeAsync(
                     (int)pair.Item1,
                     pair.Item2.ToKeepTime()
                 );

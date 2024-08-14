@@ -20,7 +20,7 @@ public class DatabaseHelper : IDisposable
     private readonly string SqlSelectRecordTable = "SELECT name from sqlite_master WHERE name='record';";
     private readonly string SqlCreateDatabase =
         """
-        CREATE TABLE assets (
+        CREATE TABLE asset (
             id	                    INTEGER NOT NULL UNIQUE,
             data_b64	            TEXT,
             data_md5                TEXT UNIQUE ,
@@ -38,12 +38,12 @@ public class DatabaseHelper : IDisposable
             "pinned"	            INTEGER,
             "encrypt_data"          INTEGER,
             PRIMARY                 KEY("id" AUTOINCREMENT),
-            FOREIGN                 KEY("data_md5_b64") REFERENCES "assets"("data_md5") ON DELETE CASCADE
+            FOREIGN                 KEY("data_md5_b64") REFERENCES "asset"("data_md5") ON DELETE CASCADE
         );
         """;
 
-    private readonly string SqlInsertAssets =
-        "INSERT OR IGNORE INTO assets(data_b64, data_md5) VALUES (@DataB64, @DataMd5);";
+    private readonly string SqlInsertAsset =
+        "INSERT OR IGNORE INTO asset(data_b64, data_md5) VALUES (@DataB64, @DataMd5);";
     private readonly string SqlInsertRecord =
         @"INSERT OR IGNORE INTO record(
             hash_id, data_md5_b64, sender_app, cached_image_path, 
@@ -54,13 +54,13 @@ public class DatabaseHelper : IDisposable
 
     private readonly string SqlSelectRecordCountByMd5 =
         "SELECT COUNT() FROM record WHERE data_md5_b64=@DataMd5;";
-    private readonly string SqlDeleteRecordAssets1 =
+    private readonly string SqlDeleteRecordAsset1 =
         "DELETE FROM record WHERE hash_id=@HashId OR data_md5_b64=@DataMd5;";
-    private readonly string SqlDeleteRecordAssets2 =
-        "PRAGMA foreign_keys = ON; DELETE FROM assets WHERE data_md5=@DataMd5;";
+    private readonly string SqlDeleteRecordAsset2 =
+        "PRAGMA foreign_keys = ON; DELETE FROM asset WHERE data_md5=@DataMd5;";
 
     private readonly string SqlDeleteAllRecords =
-        "DROP TABLE IF EXISTS record; DROP TABLE IF EXISTS assets; VACUUM;";
+        "DROP TABLE IF EXISTS record; DROP TABLE IF EXISTS asset; VACUUM;";
 
     private readonly string SqlUpdateRecordPinned =
         "UPDATE record SET pinned=@Pin WHERE hash_id=@HashId;";
@@ -72,7 +72,7 @@ public class DatabaseHelper : IDisposable
             r.init_score as InitScore, r.encrypt_data as EncryptData,
             r.create_time as CreateTime, r.pinned as Pinned, r.hash_id as HashId
         FROM record r
-        LEFT JOIN assets a ON r.data_md5_b64=a.data_md5;
+        LEFT JOIN asset a ON r.data_md5_b64=a.data_md5;
         """;
 
     private readonly string SqlDeleteRecordByKeepTime =
@@ -125,7 +125,7 @@ public class DatabaseHelper : IDisposable
             var name = Connection.QueryFirstOrDefault<string>(SqlSelectRecordTable);
             if (name != "record")
             {
-                // if not exists, create `record` and `assets` table
+                // if not exists, create `record` and `asset` table
                 await Connection.ExecuteAsync(SqlCreateDatabase);
             }
         });
@@ -135,12 +135,12 @@ public class DatabaseHelper : IDisposable
     {
         await HandleOpenCloseAsync(async () =>
         {
-            // insert assets
+            // insert asset
             var assets = new List<Asset>
             {
                 Asset.FromClipboardData(data)
             };
-            await Connection.ExecuteAsync(SqlInsertAssets, assets);
+            await Connection.ExecuteAsync(SqlInsertAsset, assets);
             // insert record
             // note: you must insert record after data
             var record = Record.FromClipboardData(data);
@@ -152,7 +152,7 @@ public class DatabaseHelper : IDisposable
     {
         await HandleOpenCloseAsync(async () =>
         {
-            await DeleteRecordByClipboardData(clipboardData);
+            await DeleteOneRecordByClipboardData(clipboardData);
         });
     }
 
@@ -186,7 +186,7 @@ public class DatabaseHelper : IDisposable
         });
     }
 
-    public async Task DeleteRecordByKeepTimeAsync(int dataType, int keepTime)
+    public async Task DeleteRecordsByKeepTimeAsync(int dataType, int keepTime)
     {
         await HandleOpenCloseAsync(async () =>
         {
@@ -197,7 +197,7 @@ public class DatabaseHelper : IDisposable
         });
     }
 
-    public async Task DeleteInvalidRecordAsync()
+    public async Task DeleteInvalidRecordsAsync()
     {
         await HandleOpenCloseAsync(async () =>
         {
@@ -208,12 +208,12 @@ public class DatabaseHelper : IDisposable
             var invalidRecords = allRecord.Where(x => !x.IsValid);
             foreach (var record in invalidRecords)
             {
-                await DeleteRecordByClipboardData(record);
+                await DeleteOneRecordByClipboardData(record);
             }
         });
     }
 
-    private async Task DeleteRecordByClipboardData(ClipboardData clipboardData)
+    private async Task DeleteOneRecordByClipboardData(ClipboardData clipboardData)
     {
         var dataMd5 = clipboardData.DataMd5;
         var count = await Connection.QueryFirstAsync<int>(
@@ -221,22 +221,22 @@ public class DatabaseHelper : IDisposable
             new { DataMd5 = dataMd5 }
         );
         // count > 1 means there are more than one record in table `record`
-        // depends on corresponding record in table `assets`, in this condition,
+        // depends on corresponding record in table `asset`, in this condition,
         // we only delete record in table `record`
         if (count > 1)
         {
             await Connection.ExecuteAsync(
-                SqlDeleteRecordAssets1,
+                SqlDeleteRecordAsset1,
                 new { clipboardData.HashId, DataMd5 = dataMd5 }
             );
         }
-        // otherwise, no record depends on assets, directly delete records
-        // both in `record` and `assets` using foreign key constraint,
+        // otherwise, no record depends on `asset`, directly delete records
+        // both in `record` and `asset` using foreign key constraint,
         // i.e., ON DELETE CASCADE
         else
         {
             await Connection.ExecuteAsync(
-                SqlDeleteRecordAssets2,
+                SqlDeleteRecordAsset2,
                 new { DataMd5 = dataMd5 }
             );
         }

@@ -76,9 +76,9 @@ public class DatabaseHelperTest
         );
         _testOutputHelper.WriteLine(helper.Connection.ConnectionString);
         await helper.InitializeDatabaseAsync();
-        var sql = @"SELECT name from sqlite_master WHERE name IN ('record', 'assets') ORDER BY name ASC;";
+        var sql = @"SELECT name from sqlite_master WHERE name IN ('record', 'asset') ORDER BY name ASC;";
         var r = helper.Connection.Query(sql).AsList();
-        Assert.True(r.Count == 2 && r[0].name == "assets" && r[1].name == "record");
+        Assert.True(r.Count == 2 && r[0].name == "asset" && r[1].name == "record");
         await helper.CloseAsync();
     }
 
@@ -137,7 +137,7 @@ public class DatabaseHelperTest
         }
         // helper.Connection.BackupDatabase(new SqliteConnection("Data Source=a.db"));
 
-        await helper.DeleteRecordByKeepTimeAsync(type, keepTime);
+        await helper.DeleteRecordsByKeepTimeAsync(type, keepTime);
 
         var recordsAfterDelete = await helper.GetAllRecordsAsync();
         foreach (var record in recordsAfterDelete.Where(r => r.DataType == (DataType)type))
@@ -217,7 +217,7 @@ public class DatabaseHelperTest
                 _testOutputHelper.WriteLine($"Invalid{invalidNum}: {exampleTextRecord}");
             }
         }
-        await helper.DeleteInvalidRecordAsync();
+        await helper.DeleteInvalidRecordsAsync();
         var c = await helper.GetAllRecordsAsync();
         _testOutputHelper.WriteLine("After Delete Invalid Data");
         var num = 0;
