@@ -75,6 +75,52 @@ public static class ImageExtensions
 
     #endregion
 
+    #region System.Windows.Media.Imaging.BitmapSource
+
+    public static BitmapImage ToBitmapImage(this BitmapSource source)
+    {
+        var encoder = new PngBitmapEncoder();
+        var frame = BitmapFrame.Create(source);
+        encoder.Frames.Add(frame);
+        using var m = new MemoryStream();
+        encoder.Save(m);
+        m.Seek(0, SeekOrigin.Begin);
+        var im = new BitmapImage();
+        im.BeginInit();
+        im.CacheOption = BitmapCacheOption.OnLoad;
+        im.StreamSource = m;
+        im.EndInit();
+        im.Freeze();
+        return im;
+    }
+
+    public static string ToBase64(this BitmapSource source)
+    {
+        var bytes = source.ToBytes();
+        return Convert.ToBase64String(bytes);
+    }
+
+    public static void Save(this BitmapSource source, string path)
+    {
+        var encoder = new PngBitmapEncoder();
+        var frame = BitmapFrame.Create(source);
+        encoder.Frames.Add(frame);
+        using var stream = new FileStream(path, FileMode.Create);
+        encoder.Save(stream);
+    }
+
+    private static byte[] ToBytes(this BitmapSource source)
+    {
+        var encoder = new PngBitmapEncoder();
+        var frame = BitmapFrame.Create(source);
+        encoder.Frames.Add(frame);
+        using var stream = new MemoryStream();
+        encoder.Save(stream);
+        return stream.ToArray();
+    }
+
+    #endregion
+
     #region System.String
 
     public static BitmapImage ToBitmapImage(this string base64)
