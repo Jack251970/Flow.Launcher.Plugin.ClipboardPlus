@@ -36,11 +36,6 @@ public class Record
     public int DataType { get; set; }
 
     /// <summary>
-    /// Score of the record for ranking.
-    /// </summary>
-    public int Score { get; set; }
-
-    /// <summary>
     /// Initial score of the record for pinning feature.
     /// </summary>
     public int InitScore { get; set; }
@@ -88,7 +83,6 @@ public class Record
             SenderApp = data.SenderApp,
             CachedImagePath = data.CachedImagePath,
             DataType = (int)data.DataType,
-            Score = data.Score,
             InitScore = data.InitScore,
             CreateTime = data.CreateTime.ToString("O"),
             Pinned = data.Pinned,

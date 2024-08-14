@@ -113,7 +113,6 @@ public partial class MainWindow : Window
             HashId = StringUtils.GetGuid(),
             SenderApp = e.SourceApplication.Name,
             CachedImagePath = string.Empty,
-            Score = 1,
             InitScore = 1,
             Pinned = false,
             CreateTime = now
@@ -168,7 +167,6 @@ public partial class MainWindow : Window
             HashId = StringUtils.GetGuid(),
             SenderApp = "Flow.Launcher.exe",
             CachedImagePath = string.Empty,
-            Score = 1,
             InitScore = 1,
             Pinned = pinned,
             CreateTime = DateTime.Now

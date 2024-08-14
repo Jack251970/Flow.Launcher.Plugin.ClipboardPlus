@@ -59,9 +59,8 @@ public class DatabaseHelperTest
             HashId = StringUtils.GetGuid(),
             SenderApp = StringUtils.RandomString(5) + ".exe",
             CachedImagePath = string.Empty,
-            Score = _random.Next(1000),
-            InitScore = _random.Next(1000),
             Pinned = false,
+            InitScore = _random.Next(1000),
             CreateTime = DateTime.Now
         };
         return data;

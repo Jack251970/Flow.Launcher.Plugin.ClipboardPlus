@@ -58,7 +58,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// <summary>
     /// Score of the record for ranking.
     /// </summary>
-    public required int Score;
+    public readonly int Score => Pinned ? MaxScore : InitScore;
 
     /// <summary>
     /// Initial score of the record for pinning feature.
@@ -86,6 +86,11 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// Whether the data is valid.
     /// </summary>
     public readonly bool IsValid => DataToValid() != null;
+
+    /// <summary>
+    /// Maximum score for pinning feature.
+    /// </summary>
+    private const int MaxScore = int.MaxValue - 1;
 
     #endregion
 
@@ -250,7 +255,6 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             HashId = record.HashId,
             SenderApp = record.SenderApp,
             CachedImagePath = record.CachedImagePath,
-            Score = record.Score,
             InitScore = record.InitScore,
             CreateTime = record.createTime,
             Pinned = record.Pinned,

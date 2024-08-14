@@ -154,7 +154,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_subtitle"),
                     IcoPath = PathHelper.ClearIconPath,
                     Glyph = ResourceHelper.ClearGlyph,
-                    Score = Settings.MaxRecords + 1,
+                    Score = int.MaxValue,
                     Action = _ =>
                     {
                         Context.API.ChangeQuery($"{query.ActionKeyword} {Settings.ClearKeyword} ", true);
@@ -328,7 +328,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             HashId = StringUtils.GetGuid(),
             SenderApp = e.SourceApplication.Name,
             CachedImagePath = string.Empty,
-            Score = CurrentScore + 1,
             InitScore = CurrentScore + 1,
             Pinned = false,
             CreateTime = now
@@ -401,7 +400,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         if (records.Count > 0)
         {
             RecordsList = records;
-            CurrentScore = records.Max(r => r.Score);
+            CurrentScore = records.Max(r => r.InitScore);
         }
         Context.API.LogWarn(ClassName, "Restored records successfully");
     }
@@ -433,7 +432,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
         if (RecordsList.Any())
         {
-            CurrentScore = RecordsList.Max(r => r.Score) + 1;
+            CurrentScore = RecordsList.Max(r => r.InitScore) + 1;
         }
         else
         {
@@ -513,12 +512,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private int GetNewScoreByOrderBy(ClipboardData clipboardData)
     {
-        if (clipboardData.Pinned)
-        {
-            // TODO: Change this under the clear action.
-            return int.MaxValue;
-        }
-
         var orderBy = Settings.RecordOrder;
         int score = 0;
         switch (orderBy)
@@ -624,7 +617,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private async void PinOneRecord(ClipboardData clipboardData, bool needEsc = false)
     {
         clipboardData.Pinned = !clipboardData.Pinned;
-        clipboardData.Score = clipboardData.Pinned ? int.MaxValue : clipboardData.InitScore;
         RecordsList.Remove(clipboardData);
         RecordsList.AddLast(clipboardData);
         await DatabaseHelper.PinOneRecordAsync(clipboardData);
