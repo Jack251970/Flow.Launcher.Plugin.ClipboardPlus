@@ -42,6 +42,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private LinkedList<ClipboardData> RecordsList = new();
     private int CurrentScore = 1;
 
+    // Score interval
+    // Note: Get scores of the items further apart to make sure the ranking seqence of items is correct.
+    // https://github.com/Flow-Launcher/Flow.Launcher/issues/2904
+    private const int ScoreInterval = 500;
+
     #endregion
 
     #region IAsyncPlugin Interface
@@ -57,7 +62,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         if (query.FirstSearch == Settings.ClearKeyword)
         {
             // clear actions results
-            // TODO: Fix ranking issue.
             results.AddRange(
                 new[]
                 {
@@ -67,7 +71,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_subtitle"),
                         IcoPath = PathHelper.ListIconPath,
                         Glyph = ResourceHelper.ListGlyph,
-                        Score = 4,
+                        Score = 4 * ScoreInterval,
                         Action = _ =>
                         {
                             var number = DeleteAllRecordsFromList();
@@ -92,7 +96,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_subtitle"),
                         IcoPath = PathHelper.DatabaseIconPath,
                         Glyph = ResourceHelper.DatabaseGlyph,
-                        Score = 3,
+                        Score = 3 * ScoreInterval,
                         AsyncAction = async _ =>
                         {
                             var number = await DeleteAllRecordsFromListDatabaseAsync();
@@ -117,7 +121,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_subtitle"),
                         IcoPath = PathHelper.UnpinIcon1Path,
                         Glyph = ResourceHelper.UnpinGlyph,
-                        Score = 2,
+                        Score = 2 * ScoreInterval,
                         AsyncAction = async _ =>
                         {
                             var number = await DeleteUnpinnedRecordsFromListDatabaseAsync();
@@ -142,7 +146,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_subtitle"),
                         IcoPath = PathHelper.ErrorIconPath,
                         Glyph = ResourceHelper.ErrorGlyph,
-                        Score = 1,
+                        Score = ScoreInterval,
                         AsyncAction = async _ =>
                         {
                             var number = await DeleteInvalidRecordsFromListDatabaseAsync();
@@ -174,7 +178,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_subtitle"),
                     IcoPath = PathHelper.ClearIconPath,
                     Glyph = ResourceHelper.ClearGlyph,
-                    Score = SettingsViewModel.MaximumMaxRecords + 1,
+                    Score = SettingsViewModel.MaximumMaxRecords + ScoreInterval,
                     Action = _ =>
                     {
                         Context.API.ChangeQuery($"{query.ActionKeyword}{Plugin.Query.TermSeparator}{Settings.ClearKeyword} ", true);
@@ -263,7 +267,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_subtitle"),
                     IcoPath = PathHelper.CopyIconPath,
                     Glyph = ResourceHelper.CopyGlyph,
-                    Score = 3,
+                    Score = 3 * ScoreInterval,
                     Action = _ =>
                     {
                         CopyToClipboard(clipboardData);
@@ -276,7 +280,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_subtitle"),
                     IcoPath = PathHelper.GetPinIconPath(pinned),
                     Glyph = ResourceHelper.GetPinGlyph(pinned),
-                    Score = 2,
+                    Score = 2 * ScoreInterval,
                     Action = _ =>
                     {
                         PinOneRecord(clipboardData, true);
@@ -289,7 +293,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_delete_subtitle"),
                     IcoPath = PathHelper.DeleteIconPath,
                     Glyph = ResourceHelper.DeleteGlyph,
-                    Score = 1,
+                    Score = ScoreInterval,
                     Action = _ =>
                     {
                         RemoveFromListDatabase(clipboardData, true);
@@ -579,8 +583,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 score = clipboardData.InitScore;
                 break;
             case RecordOrder.DataType:
-                score = (int)clipboardData.DataType;
-                score += 1;
+                score = ((int)clipboardData.DataType + 1) * ScoreInterval;
                 break;
             case RecordOrder.SourceApplication:
                 var last = int.Min(clipboardData.SenderApp.Length, 10);
