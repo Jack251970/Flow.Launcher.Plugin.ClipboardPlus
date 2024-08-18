@@ -177,7 +177,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     Score = SettingsViewModel.MaximumMaxRecords + 1,
                     Action = _ =>
                     {
-                        Context.API.ChangeQuery($"{query.ActionKeyword} {Settings.ClearKeyword} ", true);
+                        Context.API.ChangeQuery($"{query.ActionKeyword}{Plugin.Query.TermSeparator}{Settings.ClearKeyword} ", true);
                         return false;
                     },
                 }
