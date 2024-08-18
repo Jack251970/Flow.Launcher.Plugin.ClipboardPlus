@@ -95,6 +95,11 @@ public class SettingsViewModel : BaseModel
 
     public const int MaximumMaxRecords = 100000;
 
+    public int MaxRecordsMaximum
+    {
+        get => MaximumMaxRecords;
+    }
+
     public int MaxRecords
     {
         get => Settings.MaxRecords;

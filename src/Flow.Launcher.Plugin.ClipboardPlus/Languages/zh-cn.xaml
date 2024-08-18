@@ -71,7 +71,6 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_files">保存文件：</system:String>
 
     <!--  Enum  -->
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_score">分数</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">创建时间</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_source_application">源应用</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_data_type">数据类型</system:String>

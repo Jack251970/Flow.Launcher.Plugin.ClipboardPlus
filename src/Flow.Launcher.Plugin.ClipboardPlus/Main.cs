@@ -15,7 +15,7 @@ using StringCollection = System.Collections.Specialized.StringCollection;
 namespace Flow.Launcher.Plugin.ClipboardPlus;
 
 public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPluginI18n,
-    ISavable, ISettingProvider, IClipboardPlus, IDisposable
+    IResultUpdated, ISavable, ISettingProvider, IClipboardPlus, IDisposable
 {
     #region Properties
 
@@ -182,6 +182,14 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     },
                 }
             );
+
+            // update results
+            ResultsUpdated?.Invoke(this, new ResultUpdatedEventArgs
+            {
+                Results = results,
+                Query = query
+            });
+
             // records results
             var records = query.Search.Trim().Length == 0
                 ? RecordsList.ToArray()
@@ -313,6 +321,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         CultureInfo = cultureInfo;
         CultureInfoChanged?.Invoke(this, cultureInfo);
     }
+
+    #endregion
+
+    #region IResultUpdated Interface
+
+    public event ResultUpdatedEventHandler? ResultsUpdated;
 
     #endregion
 
@@ -558,26 +572,24 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private int GetNewScoreByOrderBy(ClipboardData clipboardData)
     {
-        var orderBy = Settings.RecordOrder;
         int score = 0;
-        switch (orderBy)
+        switch (Settings.RecordOrder)
         {
             case RecordOrder.CreateTime:
-                var ctime = new DateTimeOffset(clipboardData.CreateTime);
-                score = Convert.ToInt32(ctime.ToUnixTimeSeconds().ToString()[^9..]);
+                score = clipboardData.InitScore;
                 break;
             case RecordOrder.DataType:
                 score = (int)clipboardData.DataType;
+                score += 1;
                 break;
             case RecordOrder.SourceApplication:
                 var last = int.Min(clipboardData.SenderApp.Length, 10);
                 score = Encoding.UTF8.GetBytes(clipboardData.SenderApp[..last]).Sum(i => i);
                 break;
             default:
-                score = clipboardData.Pinned ? SettingsViewModel.MaximumMaxRecords : clipboardData.InitScore;
                 break;
         }
-
+        score = clipboardData.Pinned ? SettingsViewModel.MaximumMaxRecords : score;
         return score;
     }
 

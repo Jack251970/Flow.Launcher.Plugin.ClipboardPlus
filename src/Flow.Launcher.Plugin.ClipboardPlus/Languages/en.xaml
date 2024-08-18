@@ -71,7 +71,6 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_files">Keep files:</system:String>
 
     <!--  Enum  -->
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_score">Score</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">Create time</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_source_application">Source application</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_data_type">Data type</system:String>

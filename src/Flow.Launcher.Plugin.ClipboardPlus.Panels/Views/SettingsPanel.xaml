@@ -68,7 +68,7 @@
             Margin="10,5,0,5"
             HorizontalAlignment="Left"
             VerticalContentAlignment="Center"
-            Maximum="100000"
+            Maximum="{Binding MaxRecordsMaximum, Mode=OneTime}"
             Minimum="100"
             Value="{Binding MaxRecords, Mode=TwoWay}" />
 

@@ -12,7 +12,7 @@ public class Settings : ISettings
 
     public int MaxRecords { get; set; } = 10000;
 
-    public RecordOrder RecordOrder { get; set; } = RecordOrder.Score;
+    public RecordOrder RecordOrder { get; set; } = RecordOrder.CreateTime;
 
     public ClickAction ClickAction { get; set; } = ClickAction.Copy;
 
