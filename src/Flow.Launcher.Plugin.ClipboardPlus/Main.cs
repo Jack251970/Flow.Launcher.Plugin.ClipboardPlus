@@ -678,7 +678,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         RecordsList.Remove(clipboardData);
         RecordsList.AddLast(clipboardData);
         await DatabaseHelper.PinOneRecordAsync(clipboardData);
-        // TODO: Ask Flow-Launcher for a better way to refresh the query.
+        // TODO: Fix bug here to refresh the query.
         if (needEsc)
         {
             new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
