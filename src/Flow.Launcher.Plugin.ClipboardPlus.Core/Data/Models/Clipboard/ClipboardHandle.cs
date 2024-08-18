@@ -127,18 +127,19 @@ public partial class ClipboardHandle : Form
 
     private void OnDrawClipboardChanged()
     {
-        // If clipboard-monitoring is enabled, proceed to listening.
-        if (!Ready || !ClipboardMonitorInstance.MonitorClipboard)
-        {
-            return;
-        }
-        var dataObj = TaskUtils.SafeDo(Clipboard.GetDataObject, 100, 5);
-        if (dataObj is null)
-        {
-            return;
-        }
         try
         {
+            // If clipboard-monitoring is enabled, proceed to listening.
+            if (!Ready || !ClipboardMonitorInstance.MonitorClipboard)
+            {
+                return;
+            }
+            var dataObj = TaskUtils.Do(Clipboard.GetDataObject, 100, 5);
+            if (dataObj is null)
+            {
+                return;
+            }
+
             // Determines whether a file/files have been cut/copied.
             if (
                 ClipboardMonitorInstance.ObservableFormats.Images
@@ -257,6 +258,12 @@ public partial class ClipboardHandle : Form
             // this exception when run in a production environment.
         }
         catch (NullReferenceException) { }
+        catch (COMException)
+        {
+            // Sometimes the clipboard is locked and cannot be accessed.
+            // System.Runtime.InteropServices.COMException (0x800401D0)
+            // OpenClipboard Failed (0x800401D0 (CLIPBRD_E_CANT_OPEN))
+        }
     }
 
     #endregion
