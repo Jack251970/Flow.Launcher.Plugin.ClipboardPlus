@@ -376,6 +376,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         RecordsList.AddFirst(clipboardData);
         Context.API.LogDebug(ClassName, "Added to list");
 
+        // update score
+        CurrentScore++;
+
         // add to database if needed
         var needAddDatabase =
             Settings.KeepText && clipboardData.DataType == DataType.Text
@@ -392,9 +395,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             RecordsList.RemoveLast();
         }
-
-        // update score
-        CurrentScore++;
     }
 
     #endregion
