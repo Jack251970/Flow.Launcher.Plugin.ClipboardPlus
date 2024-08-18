@@ -651,38 +651,42 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private void RemoveFromList(ClipboardData clipboardData, bool needEsc = false)
+    private void RemoveFromList(ClipboardData clipboardData, bool requery)
     {
         RecordsList.Remove(clipboardData);
-        if (needEsc)
+        if (requery)
         {
-            new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
+            ReQuery();
         }
-        Context.API.ReQuery(false);
     }
 
-    private async void RemoveFromListDatabase(ClipboardData clipboardData, bool needEsc = false)
+    private async void RemoveFromListDatabase(ClipboardData clipboardData, bool requery)
     {
         RecordsList.Remove(clipboardData);
         await DatabaseHelper.DeleteOneRecordAsync(clipboardData);
-        if (needEsc)
+        if (requery)
         {
-            new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
+            ReQuery();
         }
-        Context.API.ReQuery(false);
     }
 
-    private async void PinOneRecord(ClipboardData clipboardData, bool needEsc = false)
+    private async void PinOneRecord(ClipboardData clipboardData, bool requery)
     {
         clipboardData.Pinned = !clipboardData.Pinned;
         RecordsList.Remove(clipboardData);
         RecordsList.AddLast(clipboardData);
         await DatabaseHelper.PinOneRecordAsync(clipboardData);
-        // TODO: Fix bug here to refresh the query.
-        if (needEsc)
+        if (requery)
         {
-            new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
+            ReQuery();
         }
+    }
+
+    private async void ReQuery()
+    {
+        // TODO: Ask Flow-Launcher for a better way to refresh the query.
+        new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
+        await Task.Delay(100);
         Context.API.ReQuery(false);
     }
 
