@@ -38,13 +38,13 @@
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_unknown_app">unknown</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard">Copy to clipboard:&#x20;</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard" xml:space="preserve">Copy to clipboard: </system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_text_data_invalid">Copied text is empty!</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_image_data_invalid">Error in copied image!</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_files_data_invalid">Copied files do not exist!</system:String>
 
     <!--  Preview  -->
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_words_count_prefix">Words count:&#x20;</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_words_count_prefix" xml:space="preserve">Words count: </system:String>
 
     <!--  Settings  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword">Clear keyword:</system:String>
