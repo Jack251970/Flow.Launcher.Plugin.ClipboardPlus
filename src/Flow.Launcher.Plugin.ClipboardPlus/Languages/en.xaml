@@ -30,9 +30,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_title">Copy</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">Copy this record to clipboard</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_title">Pin</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_subtitle">Pin this record in list</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_subtitle">Pin this record in list and database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_title">Unpin</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_subtitle">Unpin this record in list</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_subtitle">Unpin this record in list and database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_title">Delete</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_subtitle">Delete this record in both list and database</system:String>
 

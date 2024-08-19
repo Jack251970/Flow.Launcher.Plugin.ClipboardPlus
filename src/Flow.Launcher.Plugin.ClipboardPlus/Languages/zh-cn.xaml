@@ -30,9 +30,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_title">复制</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">复制记录至剪切板</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_title">固定</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_subtitle">固定记录至列表</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_subtitle">固定记录至列表和数据库</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_title">取消固定</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_subtitle">从列表中取消固定</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_subtitle">从列表和数据库中取消固定</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_title">删除</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_subtitle">从列表和数据库删除记录</system:String>
 

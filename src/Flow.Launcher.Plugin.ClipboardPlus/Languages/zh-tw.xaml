@@ -30,9 +30,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_title">複製</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">複製記録至剪切闆</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_title">固定</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_subtitle">固定記録至列錶</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_subtitle">固定記録至列錶和數據庫</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_title">取消固定</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_subtitle">從列錶中取消固定</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_subtitle">從列錶和數據庫中取消固定</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_title">刪除</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_subtitle">從列錶和數據庫刪除記録</system:String>
 
