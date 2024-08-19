@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
 
@@ -341,6 +342,74 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             currentCultureInfo = cultureInfo;
         }
         return text;
+    }
+
+    #endregion
+
+    #region Score
+
+    /// <summary>
+    /// Cached record order for the data.
+    /// </summary>
+    private RecordOrder currentRecordOrder = RecordOrder.CreateTime;
+
+    /// <summary>
+    /// Maximum score for the data.
+    /// </summary>
+    public const int MaximumScore = 1000000000;
+
+    /// <summary>
+    /// Score interval for different data types.
+    /// </summary>
+    private const int TextScore = 400000000;
+    private const int ImageScore = 300000000;
+    private const int FilesScore = 200000000;
+    private const int OtherScore = 100000000;
+
+    /// <summary>
+    /// Get the score of the data.
+    /// </summary>
+    /// <param name="order">
+    /// The order of the data.
+    /// </param>
+    /// <returns>
+    /// The score of the data.
+    /// </returns>
+    private int score = -1;
+    public int GetScore(RecordOrder recordOrder)
+    {
+        if (score == -1 || recordOrder != currentRecordOrder)
+        {
+            if (Pinned)
+            {
+                score = MaximumScore;
+                return score;
+            }
+
+            switch (recordOrder)
+            {
+                case RecordOrder.CreateTime:
+                    score = InitScore;
+                    break;
+                case RecordOrder.DataType:
+                    score = DataType switch
+                    {
+                        DataType.Text => TextScore,
+                        DataType.Image => ImageScore,
+                        DataType.Files => FilesScore,
+                        _ => OtherScore,
+                    };
+                    break;
+                case RecordOrder.SourceApplication:
+                    var last = int.Min(SenderApp.Length, 10);
+                    score = Encoding.UTF8.GetBytes(SenderApp[..last]).Sum(i => i);
+                    break;
+                default:
+                    return 0;
+            }
+            currentRecordOrder = recordOrder;
+        }
+        return score;
     }
 
     #endregion

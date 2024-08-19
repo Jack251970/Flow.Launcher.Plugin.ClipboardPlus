@@ -93,7 +93,7 @@ public class SettingsViewModel : BaseModel
 
     #region Max Records
 
-    public const int MaximumMaxRecords = 100000;
+    private const int MaximumMaxRecords = 100000;
 
     public int MaxRecordsMaximum
     {

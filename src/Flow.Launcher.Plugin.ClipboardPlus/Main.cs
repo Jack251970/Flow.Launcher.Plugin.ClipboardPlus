@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -45,7 +44,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     // Score interval
     // Note: Get scores of the items further apart to make sure the ranking seqence of items is correct.
     // https://github.com/Flow-Launcher/Flow.Launcher/issues/2904
-    private const int ScoreInterval = 500;
+    private const int ScoreInterval = 10000;
+    private const int ClearActionScore = ClipboardData.MaximumScore + 2 * ScoreInterval;
 
     #endregion
 
@@ -178,7 +178,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_subtitle"),
                     IcoPath = PathHelper.ClearIconPath,
                     Glyph = ResourceHelper.ClearGlyph,
-                    Score = SettingsViewModel.MaximumMaxRecords + ScoreInterval,
+                    Score = ClearActionScore,
                     Action = _ =>
                     {
                         Context.API.ChangeQuery($"{query.ActionKeyword}{Plugin.Query.TermSeparator}{Settings.ClearKeyword} ", true);
@@ -372,7 +372,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             HashId = StringUtils.GetGuid(),
             SenderApp = e.SourceApplication.Name,
             CachedImagePath = string.Empty,
-            InitScore = CurrentScore + 1,
+            InitScore = CurrentScore + ScoreInterval,
             Pinned = false,
             CreateTime = now
         };
@@ -395,7 +395,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         Context.API.LogDebug(ClassName, "Added to list");
 
         // update score
-        CurrentScore++;
+        CurrentScore += ScoreInterval;
 
         // add to database if needed
         var needAddDatabase =
@@ -476,7 +476,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         await DatabaseHelper.DeleteUnpinnedRecordsAsync();
         if (RecordsList.Any())
         {
-            CurrentScore = RecordsList.Max(r => r.InitScore) + 1;
+            CurrentScore = RecordsList.Max(r => r.InitScore);
         }
         else
         {
@@ -496,7 +496,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
         if (RecordsList.Any())
         {
-            CurrentScore = RecordsList.Max(r => r.InitScore) + 1;
+            CurrentScore = RecordsList.Max(r => r.InitScore);
         }
         else
         {
@@ -519,7 +519,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             Icon = () => clipboardData.Icon,
             Glyph = clipboardData.Glyph,
             CopyText = clipboardData.GetText(CultureInfo),
-            Score = GetNewScoreByOrderBy(clipboardData),
+            Score = clipboardData.GetScore(Settings.RecordOrder),
             TitleToolTip = clipboardData.GetText(CultureInfo),
             ContextData = clipboardData,
             PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, clipboardData)),
@@ -572,28 +572,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             );
             Context.API.VisibilityChanged -= Paste_VisibilityChanged;
         }
-    }
-
-    private int GetNewScoreByOrderBy(ClipboardData clipboardData)
-    {
-        var score = 0;
-        switch (Settings.RecordOrder)
-        {
-            case RecordOrder.CreateTime:
-                score = clipboardData.InitScore;
-                break;
-            case RecordOrder.DataType:
-                score = ((int)clipboardData.DataType + 1) * ScoreInterval;
-                break;
-            case RecordOrder.SourceApplication:
-                var last = int.Min(clipboardData.SenderApp.Length, 10);
-                score = Encoding.UTF8.GetBytes(clipboardData.SenderApp[..last]).Sum(i => i);
-                break;
-            default:
-                break;
-        }
-        score = clipboardData.Pinned ? SettingsViewModel.MaximumMaxRecords : score;
-        return score;
     }
 
     #endregion
