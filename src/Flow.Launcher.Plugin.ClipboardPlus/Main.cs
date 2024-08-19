@@ -39,7 +39,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     // Records list & Score
     private LinkedList<ClipboardData> RecordsList = new();
-    private int CurrentScore = 1;
+    private int CurrentScore = 0;
 
     // Score interval
     // Note: Get scores of the items further apart to make sure the ranking seqence of items is correct.
@@ -511,6 +511,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private Result GetResultFromClipboardData(ClipboardData clipboardData)
     {
+        if (clipboardData.Pinned)
+        {
+            Context.API.LogInfo(ClassName, $"Pinned record: {clipboardData}");
+            var score = clipboardData.GetScore(Settings.RecordOrder);
+            Context.API.LogInfo(ClassName, $"Pinned record score: {score}");
+        }
         return new Result
         {
             Title = clipboardData.GetTitle(CultureInfo),

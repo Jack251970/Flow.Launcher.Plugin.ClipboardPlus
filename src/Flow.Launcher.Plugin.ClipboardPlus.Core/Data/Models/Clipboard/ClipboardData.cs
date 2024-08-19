@@ -378,14 +378,12 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     private int score = -1;
     public int GetScore(RecordOrder recordOrder)
     {
-        if (score == -1 || recordOrder != currentRecordOrder)
+        if (Pinned)
         {
-            if (Pinned)
-            {
-                score = MaximumScore;
-                return score;
-            }
-
+            return MaximumScore;
+        }
+        else if (score == -1 || recordOrder != currentRecordOrder)
+        {
             switch (recordOrder)
             {
                 case RecordOrder.CreateTime:
