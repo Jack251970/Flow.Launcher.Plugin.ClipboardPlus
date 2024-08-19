@@ -8,13 +8,12 @@ It can help you manage your clipboard history and customizing copy rules with su
 
 ## Features
 
-- Preview panel, support images
 - Copy & delete & pin record
-- Cache images supported
-- Manually save images
-- Persistent & Keep time settings
-- Clear records in list or database
-- Words count
+- Cache images to folder
+- Manage records in list and database
+- Preview panel for text, images, and files
+- Persistent keep records in database
+- Words count for text
 
 ## Screenshots
 
@@ -22,8 +21,6 @@ It can help you manage your clipboard history and customizing copy rules with su
 ![screenshot2](./images/screenshot2.png)
 ![screenshot3](./images/screenshot3.png)
 ![screenshot4](./images/screenshot4.png)
-![screenshot5](./images/screenshot5.png)
-![screenshot5](./images/screenshot6.png)
 
 ## Installation
 
@@ -46,8 +43,6 @@ Sorry, the plugin store is not available yet.
 
 ## Usage
 
-![settings](./images/plugin_settings.png)
-
 The default action keyword is `cbp`, you can change it in the FlowLauncher.
 
 Click `Copy` or directly the `search result` to copy the current data to clipboard, click `Delete` to delete the record.
@@ -65,11 +60,10 @@ saving large images via `KeepImage` to database may block query for a little whi
 
 ## Todo
 
-- [X] Light / Dark Support
-- [X] Multi-language support
 - [ ] Text Type Classification
 - [ ] Image Type Classification
 - [ ] File Type Classification
+- [ ] Customize Copy Rules
 
 ## Reference
 
