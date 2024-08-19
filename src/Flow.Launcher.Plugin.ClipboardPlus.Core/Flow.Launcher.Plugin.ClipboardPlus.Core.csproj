@@ -3,7 +3,7 @@
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Version>1.0.3</Version>
+        <Version>1.0.4</Version>
         <UseWindowsForms>true</UseWindowsForms>
         <TargetFramework>net7.0-windows</TargetFramework>
         <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
