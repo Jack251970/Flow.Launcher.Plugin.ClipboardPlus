@@ -4,7 +4,7 @@
 
 This plugin is a clipboard manager for [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher).
 
-It can help you manage your clipboard history with support for text, images, and files.
+It can help you manage your clipboard history and customizing copy rules with support for text, images, and files.
 
 ## Features
 

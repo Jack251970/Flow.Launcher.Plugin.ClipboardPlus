@@ -6,7 +6,7 @@
 
     <!--  General  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_name">Clipboard+</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">Easily manage your clipboard history with support for text, images, and files</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">Easily manage your clipboard history and customizing copy rules with support for text, images, and files</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_success">Success</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_fail">Fail</system:String>
 
