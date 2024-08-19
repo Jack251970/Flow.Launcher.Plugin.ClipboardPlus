@@ -61,7 +61,8 @@ public class DatabaseHelperTest
             CachedImagePath = string.Empty,
             Pinned = false,
             InitScore = _random.Next(1000),
-            CreateTime = DateTime.Now
+            CreateTime = DateTime.Now,
+            Saved = true
         };
         return data;
     }

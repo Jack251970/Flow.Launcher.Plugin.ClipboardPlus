@@ -79,6 +79,11 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     public readonly bool EncryptData => encryptData;
 
     /// <summary>
+    /// Whether the data is saved to database.
+    /// </summary>
+    public required bool Saved;
+
+    /// <summary>
     /// Whether the data is valid.
     /// </summary>
     public readonly bool IsValid => DataToValid() != null;
@@ -86,7 +91,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// <summary>
     /// Maximum score for pinning feature.
     /// </summary>
-    private const int MaxScore = int.MaxValue - 1;
+    public const int MaximumScore = 1000000000;
 
     #endregion
 
@@ -254,6 +259,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             InitScore = record.InitScore,
             CreateTime = record.createTime,
             Pinned = record.Pinned,
+            Saved = true
         };
     }
 
@@ -352,11 +358,6 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// Cached record order for the data.
     /// </summary>
     private RecordOrder currentRecordOrder = RecordOrder.CreateTime;
-
-    /// <summary>
-    /// Maximum score for the data.
-    /// </summary>
-    public const int MaximumScore = 1000000000;
 
     /// <summary>
     /// Score interval for different data types.

@@ -115,7 +115,8 @@ public partial class MainWindow : Window
             CachedImagePath = string.Empty,
             InitScore = 1,
             Pinned = false,
-            CreateTime = now
+            CreateTime = now,
+            Saved = false
         };
 
         TextBlock1.Text = $"Count: {_count}\n\n" +
@@ -169,7 +170,8 @@ public partial class MainWindow : Window
             CachedImagePath = string.Empty,
             InitScore = 1,
             Pinned = pinned,
-            CreateTime = DateTime.Now
+            CreateTime = DateTime.Now,
+            Saved = false
         };
         return data;
     }

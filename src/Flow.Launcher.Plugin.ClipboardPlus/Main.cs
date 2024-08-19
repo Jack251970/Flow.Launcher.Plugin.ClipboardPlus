@@ -45,7 +45,17 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     // Note: Get scores of the items further apart to make sure the ranking seqence of items is correct.
     // https://github.com/Flow-Launcher/Flow.Launcher/issues/2904
     private const int ScoreInterval = 10000;
+
+    #region Scores
+
+    private const int ScoreInterval1 = 1 * ScoreInterval;
+    private const int ScoreInterval2 = 2 * ScoreInterval;
+    private const int ScoreInterval3 = 3 * ScoreInterval;
+    private const int ScoreInterval4 = 4 * ScoreInterval;
+
     private const int ClearActionScore = ClipboardData.MaximumScore + 2 * ScoreInterval;
+
+    #endregion
 
     #endregion
 
@@ -71,7 +81,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_subtitle"),
                         IcoPath = PathHelper.ListIconPath,
                         Glyph = ResourceHelper.ListGlyph,
-                        Score = 4 * ScoreInterval,
+                        Score = ScoreInterval4,
                         Action = _ =>
                         {
                             var number = DeleteAllRecordsFromList();
@@ -96,7 +106,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_subtitle"),
                         IcoPath = PathHelper.DatabaseIconPath,
                         Glyph = ResourceHelper.DatabaseGlyph,
-                        Score = 3 * ScoreInterval,
+                        Score = ScoreInterval3,
                         AsyncAction = async _ =>
                         {
                             var number = await DeleteAllRecordsFromListDatabaseAsync();
@@ -121,7 +131,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_subtitle"),
                         IcoPath = PathHelper.UnpinIcon1Path,
                         Glyph = ResourceHelper.UnpinGlyph,
-                        Score = 2 * ScoreInterval,
+                        Score = ScoreInterval2,
                         AsyncAction = async _ =>
                         {
                             var number = await DeleteUnpinnedRecordsFromListDatabaseAsync();
@@ -146,7 +156,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_subtitle"),
                         IcoPath = PathHelper.ErrorIconPath,
                         Glyph = ResourceHelper.ErrorGlyph,
-                        Score = ScoreInterval,
+                        Score = ScoreInterval1,
                         AsyncAction = async _ =>
                         {
                             var number = await DeleteInvalidRecordsFromListDatabaseAsync();
@@ -267,7 +277,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_subtitle"),
                     IcoPath = PathHelper.CopyIconPath,
                     Glyph = ResourceHelper.CopyGlyph,
-                    Score = 3 * ScoreInterval,
+                    Score = ScoreInterval4,
                     Action = _ =>
                     {
                         CopyToClipboard(clipboardData);
@@ -280,7 +290,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_subtitle"),
                     IcoPath = PathHelper.GetPinIconPath(pinned),
                     Glyph = ResourceHelper.GetPinGlyph(pinned),
-                    Score = 2 * ScoreInterval,
+                    Score = ScoreInterval2,
                     Action = _ =>
                     {
                         PinOneRecord(clipboardData, true);
@@ -293,7 +303,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_delete_subtitle"),
                     IcoPath = PathHelper.DeleteIconPath,
                     Glyph = ResourceHelper.DeleteGlyph,
-                    Score = ScoreInterval,
+                    Score = ScoreInterval1,
                     Action = _ =>
                     {
                         RemoveFromListDatabase(clipboardData, true);
@@ -302,6 +312,25 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 },
             }
         );
+        var saved = clipboardData.Saved;
+        if (!clipboardData.Saved)
+        {
+            Context.API.LogInfo(ClassName, $"Clipboard data: {clipboardData}, Saved: {clipboardData.Saved}");
+            results.Add(new Result
+            {
+                Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_save_title"),
+                SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_save_subtitle"),
+                IcoPath = PathHelper.DatabaseIconPath,
+                Glyph = ResourceHelper.DatabaseGlyph,
+                Score = ScoreInterval3,
+                Action = _ =>
+                {
+                    SaveToDatabase(clipboardData, true);
+                    return false;
+                }
+            });
+        }
+        Context.API.LogInfo(ClassName, $"Clipboard data: {clipboardData}, Saved: {clipboardData.Saved}");
         return results;
     }
 
@@ -367,18 +396,23 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
         // init clipboard data
         var now = DateTime.Now;
-        var clipboardData = new ClipboardData(e.Content, e.DataType, Settings.EncryptData)
+        var dataType = e.DataType;
+        var saved = Settings.KeepText && dataType == DataType.Text
+            || Settings.KeepImages && dataType == DataType.Image
+            || Settings.KeepFiles && dataType == DataType.Files;
+        var clipboardData = new ClipboardData(e.Content, dataType, Settings.EncryptData)
         {
             HashId = StringUtils.GetGuid(),
             SenderApp = e.SourceApplication.Name,
             CachedImagePath = string.Empty,
             InitScore = CurrentScore + ScoreInterval,
             Pinned = false,
-            CreateTime = now
+            CreateTime = now,
+            Saved = saved
         };
 
         // process clipboard data
-        if (e.DataType == DataType.Image && Settings.CacheImages)
+        if (dataType == DataType.Image && Settings.CacheImages)
         {
             var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
                 clipboardData.SenderApp ?? Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app"));
@@ -397,12 +431,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         // update score
         CurrentScore += ScoreInterval;
 
-        // add to database if needed
-        var needAddDatabase =
-            Settings.KeepText && clipboardData.DataType == DataType.Text
-            || Settings.KeepImages && clipboardData.DataType == DataType.Image
-            || Settings.KeepFiles && clipboardData.DataType == DataType.Files;
-        if (needAddDatabase)
+        // save to database if needed
+        if (saved)
         {
             await DatabaseHelper.AddOneRecordAsync(clipboardData);
         }
@@ -584,6 +614,21 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region Clipboard Actions
 
+    private async void SaveToDatabase(ClipboardData clipboardData, bool requery)
+    {
+        if (!clipboardData.Saved)
+        {
+            clipboardData.Saved = true;
+            RecordsList.Remove(clipboardData);
+            RecordsList.AddLast(clipboardData);
+            await DatabaseHelper.AddOneRecordAsync(clipboardData);
+            if (requery)
+            {
+                ReQuery();
+            }
+        }
+    }
+
     private void CopyToClipboard(ClipboardData clipboardData)
     {
         var validObject = clipboardData.DataToValid();
@@ -671,7 +716,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private async void ReQuery()
     {
-        // TODO: Ask Flow-Launcher for a better way to refresh the query.
+        // TODO: Ask Flow-Launcher for a better way to exit the context menu.
         new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
         await Task.Delay(100);
         Context.API.ReQuery(false);
