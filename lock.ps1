@@ -1,0 +1,1 @@
+dotnet restore --use-lock-file
