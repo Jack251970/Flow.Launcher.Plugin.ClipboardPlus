@@ -10,7 +10,7 @@
     d:DataContext="{d:DesignInstance viewModels:PreviewViewModel}"
     mc:Ignorable="d">
 
-    <Grid MinHeight="380" HorizontalAlignment="Center">
+    <Grid MinHeight="360" HorizontalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -32,7 +32,6 @@
         <ScrollViewer
             Grid.Row="0"
             Grid.Column="0"
-            MaxHeight="400"
             Padding="5"
             HorizontalAlignment="Center"
             HorizontalContentAlignment="Left"
