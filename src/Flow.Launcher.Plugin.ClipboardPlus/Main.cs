@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.IO;
@@ -10,7 +11,6 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using WindowsInput;
 using Clipboard = System.Windows.Clipboard;
-using StringCollection = System.Collections.Specialized.StringCollection;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus;
 
@@ -576,7 +576,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private int GetNewScoreByOrderBy(ClipboardData clipboardData)
     {
-        int score = 0;
+        var score = 0;
         switch (Settings.RecordOrder)
         {
             case RecordOrder.CreateTime:
