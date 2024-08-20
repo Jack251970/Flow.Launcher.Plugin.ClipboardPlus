@@ -134,7 +134,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         this.data = data;
         this.dataType = dataType;
         this.encryptData = dataType != DataType.Image && encryptData;
-        dataMd5 = StringUtils.GetMd5(DataToString(true)!);
+        dataMd5 = StringUtils.GetMd5(DataToString(false)!);
     }
 
     public ClipboardData()
