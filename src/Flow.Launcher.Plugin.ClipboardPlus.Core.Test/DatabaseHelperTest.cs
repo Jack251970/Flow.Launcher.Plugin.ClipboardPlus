@@ -29,7 +29,15 @@ public class DatabaseHelperTest
         StringUtils.InitEncryptKey(_encryptKey);
     }
 
-    public ClipboardData GetRandomClipboardData(bool valid = true)
+    #region GetRandomClipboardData
+
+    public ClipboardData GetRandomClipboardData() => GetRandomClipboardData(DateTime.Now, true);
+
+    public ClipboardData GetRandomClipboardData(DateTime? createTime = null!) => GetRandomClipboardData(createTime ?? DateTime.Now, true);
+
+    public ClipboardData GetRandomClipboardData(bool valid = true) => GetRandomClipboardData(DateTime.Now, valid);
+
+    public ClipboardData GetRandomClipboardData(DateTime createTime, bool valid)
     {
         var type = (DataType)_random.Next(3);
         object dataContent;
@@ -58,14 +66,15 @@ public class DatabaseHelperTest
         {
             HashId = StringUtils.GetGuid(),
             SenderApp = StringUtils.RandomString(5) + ".exe",
-            CachedImagePath = string.Empty,
-            Pinned = false,
             InitScore = _random.Next(1000),
-            CreateTime = DateTime.Now,
+            CreateTime = createTime,
+            Pinned = false,
             Saved = true
         };
         return data;
     }
+
+    #endregion
 
     [Fact]
     public async Task TestCreateDatabase()
@@ -132,14 +141,11 @@ public class DatabaseHelperTest
         var spans = Enumerable.Range(0, 5000).Skip(12).Select(i => TimeSpan.FromHours(i));
         foreach (var s in spans)
         {
-            var tmpRecord = GetRandomClipboardData();
-            tmpRecord.CreateTime = ctime + s;
+            var tmpRecord = GetRandomClipboardData(ctime + s);
             await helper.AddOneRecordAsync(tmpRecord);
         }
         // helper.Connection.BackupDatabase(new SqliteConnection("Data Source=a.db"));
-
         await helper.DeleteRecordsByKeepTimeAsync(type, keepTime);
-
         var recordsAfterDelete = await helper.GetAllRecordsAsync();
         foreach (var record in recordsAfterDelete.Where(r => r.DataType == (DataType)type))
         {
@@ -183,7 +189,6 @@ public class DatabaseHelperTest
         );
         await helper.InitializeDatabaseAsync();
         await helper.AddOneRecordAsync(exampleTextRecord);
-        exampleTextRecord.HashId = string.Empty;
         await helper.DeleteOneRecordAsync(exampleTextRecord);
         var c = await helper.GetAllRecordsAsync();
         Assert.Empty(c);

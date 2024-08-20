@@ -404,10 +404,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             HashId = StringUtils.GetGuid(),
             SenderApp = e.SourceApplication.Name,
-            CachedImagePath = string.Empty,
             InitScore = CurrentScore + ScoreInterval,
-            Pinned = false,
             CreateTime = now,
+            Pinned = false,
             Saved = saved
         };
 

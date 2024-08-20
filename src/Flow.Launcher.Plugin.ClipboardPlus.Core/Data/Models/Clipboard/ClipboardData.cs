@@ -9,10 +9,17 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
 {
     #region Public Properties
 
+    #region Data Properties
+
     /// <summary>
     /// Hash id of the data, used to identify the data.
     /// </summary>
-    public required string HashId;
+    private readonly string hashId = string.Empty;
+    public required readonly string HashId
+    {
+        get => hashId;
+        init => hashId = value;
+    }
 
     /// <summary>
     /// Clipboard data of the record.
@@ -31,9 +38,56 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     public readonly string DataMd5 => dataMd5;
 
     /// <summary>
+    /// Type of the data.
+    /// </summary>
+    private readonly DataType dataType;
+    public readonly DataType DataType => dataType;
+
+    /// <summary>
+    /// Whether the string is encrypted.
+    /// Note: Currently don't support encrypting image data.
+    /// </summary>
+    private readonly bool encryptData;
+    public readonly bool EncryptData => encryptData;
+
+    /// <summary>
     /// Sender application of the data.
     /// </summary>
-    public required string SenderApp;
+    private readonly string senderApp = string.Empty;
+    public required readonly string SenderApp
+    {
+        get => senderApp;
+        init => senderApp = value;
+    }
+
+    /// <summary>
+    /// Initial score of the record for pinning feature.
+    /// </summary>
+    private readonly int initScore;
+    public required readonly int InitScore
+    {
+        get => initScore;
+        init => initScore = value;
+    }
+
+    /// <summary>
+    /// Create time of the record.
+    /// </summary>
+    private readonly DateTime createTime;
+    public required readonly DateTime CreateTime
+    {
+        get => createTime;
+        init => createTime = value;
+    }
+
+    /// <summary>
+    /// Path of the cached image for preview.
+    /// </summary>
+    public string CachedImagePath { get; set; } = string.Empty;
+
+    #endregion
+
+    #region Icon & Glyph
 
     /// <summary>
     /// Icon representing the type of the data.
@@ -45,21 +99,9 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// </summary>
     public readonly GlyphInfo Glyph => ResourceHelper.GetGlyph(DataType);
 
-    /// <summary>
-    /// Path of the cached image for preview.
-    /// </summary>
-    public required string CachedImagePath;
+    #endregion
 
-    /// <summary>
-    /// Type of the data.
-    /// </summary>
-    private readonly DataType dataType;
-    public readonly DataType DataType => dataType;
-
-    /// <summary>
-    /// Initial score of the record for pinning feature.
-    /// </summary>
-    public required int InitScore;
+    #region Pin & Save
 
     /// <summary>
     /// Whether the record is pinned.
@@ -67,21 +109,11 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     public required bool Pinned;
 
     /// <summary>
-    /// Create time of the record.
-    /// </summary>
-    public required DateTime CreateTime;
-
-    /// <summary>
-    /// Whether the string is encrypted.
-    /// Note: Currently don't support encrypting image data.
-    /// </summary>
-    private readonly bool encryptData;
-    public readonly bool EncryptData => encryptData;
-
-    /// <summary>
     /// Whether the data is saved to database.
     /// </summary>
     public required bool Saved;
+
+    #endregion
 
     /// <summary>
     /// Whether the data is valid.
@@ -123,7 +155,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// Get the data as string.
     /// </summary>
     /// <param name="encrypt">
-    /// Whether to encrypt the data.
+    /// Whether to encrypt the data following the setting.
     /// </param>
     /// <returns>
     /// If data type is Text, return the data as string.
@@ -255,9 +287,9 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         {
             HashId = record.HashId,
             SenderApp = record.SenderApp,
-            CachedImagePath = record.CachedImagePath,
             InitScore = record.InitScore,
             CreateTime = record.createTime,
+            CachedImagePath = record.CachedImagePath,
             Pinned = record.Pinned,
             Saved = true
         };
