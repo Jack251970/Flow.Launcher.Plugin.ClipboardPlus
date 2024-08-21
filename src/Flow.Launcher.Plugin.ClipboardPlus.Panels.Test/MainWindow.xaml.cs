@@ -96,6 +96,8 @@ public partial class MainWindow : Window
         grid3.Children.Add(label3);
         PreviewFilesTabItem.Content = grid3;
 
+        // Clipboard monitor
+        TextBlock2.TextWrapping = TextWrapping.Wrap;
         ClipboardMonitor.ClipboardChanged += OnClipboardChange;
     }
 
@@ -118,13 +120,14 @@ public partial class MainWindow : Window
             Saved = false
         };
 
-        TextBlock1.Text = $"Count: {_count}\n\n" +
+        TextBlock1.Text = $"Count: {_count}\n" +
             $"ClipboardChangedEventArgs\n" +
             $"DataType: {e.DataType}\n" +
             $"SourceApplication: {e.SourceApplication.Name}\n" +
             $"Content: {e.Content}";
         TextBlock2.Text = $"ClipboardMonitor\n" +
             $"ClipboardText: {ClipboardMonitor.ClipboardText}\n" +
+            $"ClipboardRtfText: {ClipboardMonitor.ClipboardRtfText}\n" +
             $"ClipboardFiles: {ClipboardMonitor.ClipboardFiles}\n" +
             $"ClipboardImage: {ClipboardMonitor.ClipboardImage}";
         TextBlock3.Text = $"ClipboardData\n" +
@@ -134,6 +137,15 @@ public partial class MainWindow : Window
             $"Title: {clipboardData.GetTitle(CultureInfo.CurrentCulture)}\n" +
             $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
+
+        if (string.IsNullOrEmpty(ClipboardMonitor.ClipboardRtfText))
+        {
+            RichTextBox.SetUnicodeText(ClipboardMonitor.ClipboardText);
+        }
+        else
+        {
+            RichTextBox.SetRichText(ClipboardMonitor.ClipboardRtfText);
+        }
 
         _count++;
     }
