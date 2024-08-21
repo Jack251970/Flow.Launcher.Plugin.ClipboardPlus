@@ -37,7 +37,7 @@ public class BuildContext : FrostingContext
     public Lazy<SolutionParserResult> DefaultSln { get; set; }
     public const string DeployFramework = "net7.0-windows";
     public string PublishDir = ".dist";
-    public string PublishVersion = "";
+    public string PublishVersion = string.Empty;
     public string BuildFor = "win-x64"; // win-x64 win-x86
 
     public BuildContext(ICakeContext context)

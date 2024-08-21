@@ -198,7 +198,7 @@ public partial class ClipboardHandle : Form
                 {
                     ClipboardMonitorInstance.ClipboardObject = dataObj;
                     var txt = dataObj.GetData(DataFormats.UnicodeText) as string;
-                    ClipboardMonitorInstance.ClipboardText = txt ?? "";
+                    ClipboardMonitorInstance.ClipboardText = txt ?? string.Empty;
 
                     ClipboardMonitorInstance.Invoke(
                         dataObj,

@@ -29,7 +29,7 @@ public static partial class StringUtils
 
     public static int CountWordsEn(string s)
     {
-        s = string.Join("", s.Where(c => c < 0x4E00));
+        s = string.Join(string.Empty, s.Where(c => c < 0x4E00));
         var collection = EnRegex().Matches(s);
         return collection.Count;
     }
@@ -159,7 +159,7 @@ public static partial class StringUtils
         var inputBytes = Encoding.UTF8.GetBytes(s);
         var hash = MD5.HashData(inputBytes);
         var hex = hash.Select(i => i.ToString("X2"));
-        return string.Join("", hex);
+        return string.Join(string.Empty, hex);
     }
 
     public static string GetSha256(string s)
@@ -167,7 +167,7 @@ public static partial class StringUtils
         var inputBytes = Encoding.UTF8.GetBytes(s);
         var hash = SHA256.HashData(inputBytes);
         var hex = hash.Select(i => i.ToString("X2"));
-        return string.Join("", hex);
+        return string.Join(string.Empty, hex);
     }
 
     #endregion

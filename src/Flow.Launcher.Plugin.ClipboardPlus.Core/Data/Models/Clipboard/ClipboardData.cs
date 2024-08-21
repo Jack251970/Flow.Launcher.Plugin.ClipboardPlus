@@ -323,7 +323,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     {
         if (title == null || currentCultureInfo != cultureInfo)
         {
-            title = MyRegex().Replace(GetText(cultureInfo).Trim(), "");
+            title = MyRegex().Replace(GetText(cultureInfo).Trim(), string.Empty);
             currentCultureInfo = cultureInfo;
         }
         return title;
