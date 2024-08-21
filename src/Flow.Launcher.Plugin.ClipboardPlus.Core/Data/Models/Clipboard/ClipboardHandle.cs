@@ -171,7 +171,22 @@ public partial class ClipboardHandle : Form
             )
             {
                 var capturedText = dataObj.GetData(DataFormats.UnicodeText) as string;
-                ClipboardMonitorInstance.ClipboardText = capturedText ?? "";
+                var capturedRtfData = dataObj.GetData(DataFormats.Rtf);
+                if (capturedRtfData is string capturedRtfText)
+                {
+                    ClipboardMonitorInstance.ClipboardRtfText = capturedRtfText;
+                }
+                else if (capturedRtfData is MemoryStream capturedRtfStream)
+                {
+                    using var reader = new StreamReader(capturedRtfStream);
+                    capturedRtfText = reader.ReadToEnd();
+                    ClipboardMonitorInstance.ClipboardRtfText = capturedRtfText;
+                }
+                else
+                {
+                    ClipboardMonitorInstance.ClipboardRtfText = string.Empty;
+                }
+                ClipboardMonitorInstance.ClipboardText = capturedText ?? string.Empty;
 
                 ClipboardMonitorInstance.Invoke(
                     capturedText,

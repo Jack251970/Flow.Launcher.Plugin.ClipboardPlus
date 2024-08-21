@@ -63,6 +63,8 @@ public class ClipboardMonitor : IDisposable
 
     public string ClipboardText { get; internal set; } = string.Empty;
 
+    public string ClipboardRtfText { get; internal set; } = string.Empty;
+
     public object? ClipboardObject { get; internal set; }
 
     public string ClipboardFile { get; internal set; } = string.Empty;
