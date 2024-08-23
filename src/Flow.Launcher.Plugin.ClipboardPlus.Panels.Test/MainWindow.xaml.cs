@@ -138,6 +138,7 @@ public partial class MainWindow : Window
             $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
 
+        TextBox.Text = ClipboardMonitor.ClipboardText;
         if (string.IsNullOrEmpty(ClipboardMonitor.ClipboardRtfText))
         {
             RichTextBox.SetUnicodeText(ClipboardMonitor.ClipboardText);

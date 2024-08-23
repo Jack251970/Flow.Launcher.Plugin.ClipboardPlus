@@ -23,6 +23,7 @@
                         <RowDefinition Height="2*" />
                         <RowDefinition Height="2*" />
                         <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <TextBlock x:Name="TextBlock1" Grid.Row="0" />
                     <TextBlock x:Name="TextBlock2" Grid.Row="1" />
@@ -30,14 +31,8 @@
                         x:Name="TextBlock3"
                         Grid.Row="2"
                         Text="Wait something copyed to clipboard..." />
-                    <RichTextBox
-                        x:Name="RichTextBox"
-                        Grid.Row="3"
-                        Focusable="True"
-                        HorizontalScrollBarVisibility="Disabled"
-                        IsReadOnly="False"
-                        IsUndoEnabled="True"
-                        VerticalScrollBarVisibility="Disabled" />
+                    <local:AutoSelectTextBox x:Name="TextBox" Grid.Row="3" />
+                    <local:AutoSelectRichTextBox x:Name="RichTextBox" Grid.Row="4" />
                 </Grid>
             </TabItem>
         </TabControl>
