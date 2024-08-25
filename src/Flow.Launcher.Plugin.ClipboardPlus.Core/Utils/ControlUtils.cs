@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Windows.Documents;
 using RichTextBox = System.Windows.Controls.RichTextBox;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Utils;
@@ -14,8 +15,13 @@ public static class ControlUtils
 
         // Clear the existing contents
         richTextBox.Document.Blocks.Clear();
-        // Load the Unicode text into the RichTextBox
-        richTextBox.AppendText(uniText);
+
+        // Create a new Paragraph and add the Unicode text to it
+        var paragraph = new Paragraph();
+        paragraph.Inlines.Add(new Run(uniText));
+
+        // Add the Paragraph to the RichTextBox
+        richTextBox.Document.Blocks.Add(paragraph);
     }
 
     public static void SetRichText(this RichTextBox richTextBox, string rtfText)
