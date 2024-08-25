@@ -12,11 +12,11 @@ internal class AutoSelectRichTextBox : RichTextBox
         IsReadOnly = false;
         IsUndoEnabled = true;
         VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-        GotFocus += RichTextBox_GotFocus;
     }
 
-    private void RichTextBox_GotFocus(object sender, RoutedEventArgs e)
+    protected override void OnGotFocus(RoutedEventArgs e)
     {
-        Dispatcher.Invoke(SelectAll);
+        base.OnGotFocus(e);
+        SelectAll();
     }
 }
