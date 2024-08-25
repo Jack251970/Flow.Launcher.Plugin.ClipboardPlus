@@ -1,16 +1,17 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Test;
+namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.UserControls;
 
-internal class AutoSelectRichTextBox : RichTextBox
+public class AutoSelectTextBox : TextBox
 {
-    public AutoSelectRichTextBox()
+    public AutoSelectTextBox()
     {
         Focusable = true;
         HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
         IsReadOnly = false;
         IsUndoEnabled = true;
+        TextAlignment = TextAlignment.Left;
         VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
     }
 
