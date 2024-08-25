@@ -47,13 +47,13 @@ public class PreviewViewModel : BaseModel
         ? Visibility.Visible
         : Visibility.Collapsed;
 
-    private string _previewText = string.Empty;
-    public string PreviewText
+    private string _previewUnicodeText = string.Empty;
+    public string PreviewUnicodeText
     {
-        get => _previewText;
+        get => _previewUnicodeText;
         set
         {
-            _previewText = value;
+            _previewUnicodeText = value;
             RefreshStatus();
             OnPropertyChanged();
         }
@@ -81,7 +81,7 @@ public class PreviewViewModel : BaseModel
     private void RefreshStatus()
     {
         PreviewStatus = Context.GetTranslation("flowlauncher_plugin_clipboardplus_words_count_prefix") +
-            StringUtils.CountWords(PreviewText);
+            StringUtils.CountWords(PreviewUnicodeText);
     }
 
     #endregion
@@ -92,11 +92,9 @@ public class PreviewViewModel : BaseModel
         {
             case DataType.Text:
             case DataType.Files:
-                PreviewText = ClipboardData.DataToString(false) ?? string.Empty;
-                PreviewImage = null;
+                PreviewUnicodeText = ClipboardData.DataToString(false) ?? string.Empty;
                 break;
             case DataType.Image:
-                PreviewText = string.Empty;
                 PreviewImage = ClipboardData.DataToImage();
                 break;
             default:

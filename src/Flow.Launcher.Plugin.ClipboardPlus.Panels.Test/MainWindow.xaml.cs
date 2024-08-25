@@ -141,11 +141,11 @@ public partial class MainWindow : Window
         TextBox.Text = ClipboardMonitor.ClipboardText;
         if (string.IsNullOrEmpty(ClipboardMonitor.ClipboardRtfText))
         {
-            RichTextBox.SetUnicodeText(ClipboardMonitor.ClipboardText);
+            RichTextBox.UnicodeText = ClipboardMonitor.ClipboardText;
         }
         else
         {
-            RichTextBox.SetRichText(ClipboardMonitor.ClipboardRtfText);
+            RichTextBox.RichText = ClipboardMonitor.ClipboardRtfText;
         }
 
         _count++;

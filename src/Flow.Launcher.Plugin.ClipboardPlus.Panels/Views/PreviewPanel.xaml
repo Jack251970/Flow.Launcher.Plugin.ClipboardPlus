@@ -38,11 +38,11 @@
             HorizontalScrollBarVisibility="Auto"
             VerticalScrollBarVisibility="Auto"
             Visibility="{Binding TextPreviewVisibility, Mode=OneTime}">
-            <userControls:PreviewTextBox
+            <userControls:AutoSelectRichTextBox
                 MinWidth="320"
                 Margin="5"
                 Padding="5"
-                Text="{Binding PreviewText, Mode=TwoWay}" />
+                UnicodeText="{Binding PreviewUnicodeText, Mode=OneWay}" />
         </ScrollViewer>
 
         <!--  Status Preview  -->
