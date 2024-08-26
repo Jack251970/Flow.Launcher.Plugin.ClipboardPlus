@@ -126,6 +126,6 @@ public class Record
 
     public override string ToString()
     {
-        return $"Record(Type: {DataType}, DataMd5B64: {DataMd5B64}, CreateTime: {CreateTime})";
+        return $"Record(Type: {DataType}, DataMd5B64: {DataMd5B64}, Encrypt: {EncryptData}, CreateTime: {CreateTime})";
     }
 }

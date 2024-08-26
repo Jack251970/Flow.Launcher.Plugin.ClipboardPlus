@@ -48,7 +48,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// Note: Currently don't support encrypting image data.
     /// </summary>
     private readonly bool encryptData;
-    public readonly bool EncryptData => encryptData;
+    public readonly bool EncryptData => encryptData && dataType != DataType.Image;
 
     /// <summary>
     /// Sender application of the data.
@@ -133,7 +133,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     {
         this.data = data;
         this.dataType = dataType;
-        this.encryptData = dataType != DataType.Image && encryptData;
+        this.encryptData = encryptData;
         dataMd5 = StringUtils.GetMd5(DataToString(false)!);
     }
 
@@ -154,7 +154,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// <summary>
     /// Get the data as string.
     /// </summary>
-    /// <param name="encrypt">
+    /// <param name="encryptData">
     /// Whether to encrypt the data following the setting.
     /// </param>
     /// <returns>
@@ -163,16 +163,16 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// If data type is Files, return the data as string.
     /// Else return null.
     /// </returns>
-    public readonly string? DataToString(bool encrypt)
+    public readonly string? DataToString(bool encryptData)
     {
         var str = DataType switch
         {
             DataType.Text => Data as string ?? string.Empty,
             DataType.Image => Data is BitmapSource img ? img.ToBase64() : string.Empty,
-            DataType.Files => (Data is string[] s ? string.Join('\n', s) : Data as string)?? string.Empty,
+            DataType.Files => (Data is string[] s ? string.Join('\n', s) : Data as string) ?? string.Empty,
             _ => null
         };
-        if (!string.IsNullOrEmpty(str) && encrypt && EncryptData)
+        if (encryptData && (!string.IsNullOrEmpty(str)) && EncryptData)
         {
             str = StringUtils.Encrypt(str, StringUtils.EncryptKey);
         }
@@ -265,9 +265,9 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// </returns>
     public static ClipboardData FromRecord(Record record)
     {
-        static object? StringToData(string str, DataType type, bool encrypt)
+        static object? StringToData(string str, DataType type, bool encryptData)
         {
-            if (!string.IsNullOrEmpty(str) && encrypt)
+            if (!string.IsNullOrEmpty(str) && encryptData)
             {
                 str = StringUtils.Decrypt(str, StringUtils.EncryptKey);
             }
@@ -445,6 +445,24 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
 
     #endregion
 
+    #region Clone
+
+    public readonly ClipboardData Clone()
+    {
+        return new ClipboardData(Data, DataType, EncryptData)
+        {
+            HashId = StringUtils.GetGuid(),
+            SenderApp = SenderApp,
+            InitScore = InitScore,
+            CreateTime = CreateTime,
+            CachedImagePath = CachedImagePath,
+            Pinned = Pinned,
+            Saved = Saved
+        };
+    }
+
+    #endregion
+
     #endregion
 
     public static bool operator ==(ClipboardData a, ClipboardData b) => a.Equals(b);
@@ -475,6 +493,6 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
 
     public override string ToString()
     {
-        return $"ClipboardData(Type: {DataType}, Text: {GetText(CultureInfo.CurrentCulture)}, CreateTime: {CreateTime})";
+        return $"ClipboardData(Type: {DataType}, Text: {GetText(CultureInfo.CurrentCulture)}, Encrypt: {EncryptData}, CreateTime: {CreateTime})";
     }
 }

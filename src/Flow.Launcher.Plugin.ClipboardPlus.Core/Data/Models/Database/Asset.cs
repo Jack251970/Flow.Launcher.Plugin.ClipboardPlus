@@ -17,7 +17,7 @@ public class Asset
     /// <summary>
     /// MD5 hash of the data, used to identify the asset.
     /// </summary>
-    public required string DataMd5 { get; set; }
+    public required string HashId { get; set; }
 
     #endregion
 
@@ -28,7 +28,7 @@ public class Asset
         return new Asset
         {
             DataB64 = data.DataToString(true)!,
-            DataMd5 = data.DataMd5,
+            HashId = data.HashId,
         };
     }
 
@@ -49,16 +49,16 @@ public class Asset
 
     public bool Equals(Asset b)
     {
-        return DataMd5 == b.DataMd5;
+        return HashId == b.HashId;
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(DataMd5);
+        return HashCode.Combine(HashId);
     }
 
     public override string ToString()
     {
-        return $"Asset(DataMd5: {DataMd5})";
+        return $"Asset(DataB64: {DataB64}, HashId: {HashId})";
     }
 }

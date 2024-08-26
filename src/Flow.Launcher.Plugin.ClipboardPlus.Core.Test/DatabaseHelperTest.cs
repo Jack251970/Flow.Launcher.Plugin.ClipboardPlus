@@ -31,9 +31,9 @@ public class DatabaseHelperTest
 
     #region GetRandomClipboardData
 
-    public ClipboardData GetRandomClipboardData() => GetRandomClipboardData(DateTime.Now, true);
+    public ClipboardData GetRandomClipboardData() => GetRandomClipboardData(DateTime.Now, false);
 
-    public ClipboardData GetRandomClipboardData(DateTime? createTime = null!) => GetRandomClipboardData(createTime ?? DateTime.Now, true);
+    public ClipboardData GetRandomClipboardData(DateTime? createTime = null!) => GetRandomClipboardData(createTime ?? DateTime.Now, false);
 
     public ClipboardData GetRandomClipboardData(bool valid = true) => GetRandomClipboardData(DateTime.Now, valid);
 
@@ -142,11 +142,17 @@ public class DatabaseHelperTest
         foreach (var s in spans)
         {
             var tmpRecord = GetRandomClipboardData(ctime + s);
-            await helper.AddOneRecordAsync(tmpRecord);
+            await helper.AddOneRecordAsync(tmpRecord, (str) => _testOutputHelper.WriteLine($"{str}"));
+            // test dulplicated data
+            if (_random.NextDouble() > 0.99)
+            {
+                var cloneRecord = tmpRecord.Clone();
+                await helper.AddOneRecordAsync(cloneRecord, (str) => _testOutputHelper.WriteLine($"{str}"));
+            }
         }
         // helper.Connection.BackupDatabase(new SqliteConnection("Data Source=a.db"));
         await helper.DeleteRecordsByKeepTimeAsync(type, keepTime);
-        var recordsAfterDelete = await helper.GetAllRecordsAsync();
+        var recordsAfterDelete = await helper.GetAllRecordsAsync((str) => _testOutputHelper.WriteLine($"{str}"));
         foreach (var record in recordsAfterDelete.Where(r => r.DataType == (DataType)type))
         {
             var expTime = record.CreateTime + TimeSpan.FromHours(keepTime);

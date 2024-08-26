@@ -23,7 +23,7 @@ public class DatabaseHelper : IDisposable
         CREATE TABLE asset (
             id	                    INTEGER NOT NULL UNIQUE,
             data_b64	            TEXT,
-            data_md5                TEXT UNIQUE ,
+            hash_id                 TEXT UNIQUE,
             PRIMARY                 KEY("id" AUTOINCREMENT)
         );
         CREATE TABLE "record" (
@@ -38,12 +38,12 @@ public class DatabaseHelper : IDisposable
             "pinned"	            INTEGER,
             "encrypt_data"          INTEGER,
             PRIMARY                 KEY("id" AUTOINCREMENT),
-            FOREIGN                 KEY("data_md5_b64") REFERENCES "asset"("data_md5") ON DELETE CASCADE
+            FOREIGN                 KEY("hash_id") REFERENCES "asset"("hash_id") ON DELETE CASCADE
         );
         """;
 
     private readonly string SqlInsertAsset =
-        "INSERT OR IGNORE INTO asset(data_b64, data_md5) VALUES (@DataB64, @DataMd5);";
+        "INSERT OR IGNORE INTO asset(data_b64, hash_id) VALUES (@DataB64, @HashId);";
     private readonly string SqlInsertRecord =
         @"INSERT OR IGNORE INTO record(
             hash_id, data_md5_b64, sender_app, cached_image_path, 
@@ -53,11 +53,11 @@ public class DatabaseHelper : IDisposable
             @DataType, @InitScore, @CreateTime, @Pinned, @EncryptData);";
 
     private readonly string SqlSelectRecordCountByMd5 =
-        "SELECT COUNT() FROM record WHERE data_md5_b64=@DataMd5;";
+        "SELECT COUNT() FROM record WHERE hash_id=@HashId;";
     private readonly string SqlDeleteRecordAsset1 =
-        "DELETE FROM record WHERE hash_id=@HashId OR data_md5_b64=@DataMd5;";
+        "DELETE FROM record WHERE hash_id=@HashId;";
     private readonly string SqlDeleteRecordAsset2 =
-        "PRAGMA foreign_keys = ON; DELETE FROM asset WHERE data_md5=@DataMd5;";
+        "PRAGMA foreign_keys = ON; DELETE FROM asset WHERE hash_id=@HashId;";
 
     private readonly string SqlDeleteAllRecords =
         "DROP TABLE IF EXISTS record; DROP TABLE IF EXISTS asset; VACUUM;";
@@ -72,7 +72,7 @@ public class DatabaseHelper : IDisposable
             r.init_score as InitScore, r.encrypt_data as EncryptData,
             r.create_time as CreateTime, r.pinned as Pinned, r.hash_id as HashId
         FROM record r
-        LEFT JOIN asset a ON r.data_md5_b64=a.data_md5;
+        LEFT JOIN asset a ON r.hash_id=a.hash_id;
         """;
 
     private readonly string SqlDeleteRecordByKeepTime =
@@ -134,7 +134,11 @@ public class DatabaseHelper : IDisposable
         });
     }
 
+#if DEBUG
+    public async Task AddOneRecordAsync(ClipboardData data, Action<string>? action = null)
+#else
     public async Task AddOneRecordAsync(ClipboardData data)
+#endif
     {
         await HandleOpenCloseAsync(async () =>
         {
@@ -147,6 +151,12 @@ public class DatabaseHelper : IDisposable
             // insert record
             // note: you must insert record after data
             var record = Record.FromClipboardData(data);
+#if DEBUG
+            if (record.DataType == (int)DataType.Files && record.EncryptData == true)
+            {
+                action?.Invoke($"{data}\n{record}\n{assets[0]}");
+            }
+#endif
             await Connection.ExecuteAsync(SqlInsertRecord, record);
         });
     }
@@ -178,12 +188,29 @@ public class DatabaseHelper : IDisposable
         });
     }
 
+#if DEBUG
+    public async Task<LinkedList<ClipboardData>> GetAllRecordsAsync(Action<string>? action = null)
+#else
     public async Task<LinkedList<ClipboardData>> GetAllRecordsAsync()
+#endif
     {
         return await HandleOpenCloseAsync(async () =>
         {
             // query all records
             var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
+#if DEBUG
+            foreach (var record in results)
+            {
+                try
+                {
+                    var _ = ClipboardData.FromRecord(record);
+                }
+                catch (Exception)
+                {
+                    action?.Invoke($"Exception: {record}");
+                }
+            }
+#endif
             LinkedList<ClipboardData> allRecord = new(results.Select(ClipboardData.FromRecord));
             return allRecord;
         });
@@ -226,10 +253,10 @@ public class DatabaseHelper : IDisposable
 
     private async Task DeleteOneRecordByClipboardData(ClipboardData clipboardData)
     {
-        var dataMd5 = clipboardData.DataMd5;
+        var hashId = clipboardData.HashId;
         var count = await Connection.QueryFirstAsync<int>(
             SqlSelectRecordCountByMd5,
-            new { DataMd5 = dataMd5 }
+            new { HashId = hashId }
         );
         // count > 1 means there are more than one record in table `record`
         // depends on corresponding record in table `asset`, in this condition,
@@ -238,7 +265,7 @@ public class DatabaseHelper : IDisposable
         {
             await Connection.ExecuteAsync(
                 SqlDeleteRecordAsset1,
-                new { clipboardData.HashId, DataMd5 = dataMd5 }
+                new { clipboardData.HashId }
             );
         }
         // otherwise, no record depends on `asset`, directly delete records
@@ -248,7 +275,7 @@ public class DatabaseHelper : IDisposable
         {
             await Connection.ExecuteAsync(
                 SqlDeleteRecordAsset2,
-                new { DataMd5 = dataMd5 }
+                new { HashId = hashId }
             );
         }
     }
