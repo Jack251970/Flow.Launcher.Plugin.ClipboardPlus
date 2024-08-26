@@ -397,7 +397,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         // init clipboard data
         var now = DateTime.Now;
         var dataType = e.DataType;
-        var saved = Settings.KeepText && dataType == DataType.Text
+        var saved = Settings.KeepText && dataType == DataType.UnicodeText
+            || Settings.KeepText && dataType == DataType.RichText
             || Settings.KeepImages && dataType == DataType.Image
             || Settings.KeepFiles && dataType == DataType.Files;
         var clipboardData = new ClipboardData(e.Content, dataType, Settings.EncryptData)
@@ -417,6 +418,10 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 clipboardData.SenderApp ?? Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app"));
             var imagePath = FileUtils.SaveImageCache(clipboardData, PathHelper.ImageCachePath, imageName);
             clipboardData.CachedImagePath = imagePath;
+        }
+        if (dataType == DataType.RichText)
+        {
+            clipboardData.UnicodeText = ClipboardMonitor.ClipboardText;
         }
 
         // add to list and database if no repeat 
@@ -636,8 +641,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             switch (dataType)
             {
-                case DataType.Text:
+                case DataType.UnicodeText:
                     Clipboard.SetText((string)validObject);
+                    break;
+                case DataType.RichText:
+                    // TODO
                     break;
                 case DataType.Image:
                     Clipboard.SetImage((BitmapSource)validObject);
@@ -666,7 +674,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             switch (dataType)
             {
-                case DataType.Text:
+                case DataType.UnicodeText:
+                case DataType.RichText:
                     Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                         Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
                     break;

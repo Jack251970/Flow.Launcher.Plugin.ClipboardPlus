@@ -57,6 +57,11 @@ public class Record
     /// </summary>
     public string CachedImagePath { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Text in unicode format.
+    /// </summary>
+    public string UnicodeText { get; set; } = string.Empty;
+
     #endregion
 
     #region Pin
@@ -95,6 +100,7 @@ public class Record
             CreateTime = data.CreateTime.ToString("O"),
             CachedImagePath = data.CachedImagePath,
             Pinned = data.Pinned,
+            UnicodeText = data.UnicodeText
         };
         return record;
     }

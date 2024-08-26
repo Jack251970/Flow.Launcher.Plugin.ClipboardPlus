@@ -13,7 +13,8 @@
     <Grid>
         <TabControl SelectedIndex="0">
             <TabItem x:Name="PreviewSettingsTabItem" Header="Settings" />
-            <TabItem x:Name="PreviewTextTabItem" Header="Preview Text" />
+            <TabItem x:Name="PreviewUnicodeTextTabItem" Header="Preview Unicode Text" />
+            <TabItem x:Name="PreviewRichTextTabItem" Header="Preview Rich Text" />
             <TabItem x:Name="PreviewImageTabItem" Header="Preview Image" />
             <TabItem x:Name="PreviewFilesTabItem" Header="Preview Files" />
             <TabItem Header="Clipboard Monitor">

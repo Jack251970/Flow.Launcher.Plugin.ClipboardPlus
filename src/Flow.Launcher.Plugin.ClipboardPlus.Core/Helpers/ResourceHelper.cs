@@ -22,7 +22,8 @@ public static class ResourceHelper
     {
         return type switch
         {
-            DataType.Text => TextIcon,
+            DataType.UnicodeText => TextIcon,
+            DataType.RichText => TextIcon,
             DataType.Files => FilesIcon,
             DataType.Image => ImageIcon,
             _ => AppIcon
@@ -66,7 +67,8 @@ public static class ResourceHelper
     {
         return type switch
         {
-            DataType.Text => TextGlyph,
+            DataType.UnicodeText => TextGlyph,
+            DataType.RichText => TextGlyph,
             DataType.Files => FilesGlyph,
             DataType.Image => ImageGlyph,
             _ => UnknownGlyph

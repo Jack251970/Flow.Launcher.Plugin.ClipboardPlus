@@ -31,13 +31,15 @@ public static class ControlUtils
             return;
         }
 
-        using var stream = new MemoryStream();
         // Convert the RTF string to a byte array and write it to the MemoryStream
+        using var stream = new MemoryStream();
         byte[] rtfBytes = Encoding.UTF8.GetBytes(rtfText);
         stream.Write(rtfBytes, 0, rtfBytes.Length);
         stream.Position = 0;
+
         // Clear the existing contents
         richTextBox.Document.Blocks.Clear();
+
         // Load the RTF into the RichTextBox
         richTextBox.Selection.Load(stream, DataFormats.Rtf);
     }

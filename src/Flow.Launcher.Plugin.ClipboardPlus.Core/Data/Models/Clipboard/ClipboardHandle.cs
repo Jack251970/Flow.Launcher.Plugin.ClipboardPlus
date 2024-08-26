@@ -167,11 +167,14 @@ public partial class ClipboardHandle : Form
                 && (
                     dataObj.GetDataPresent(DataFormats.Text)
                     || dataObj.GetDataPresent(DataFormats.UnicodeText)
+                    || dataObj.GetDataPresent(DataFormats.Rtf)
                 )
             )
             {
                 var capturedText = dataObj.GetData(DataFormats.UnicodeText) as string;
                 var capturedRtfData = dataObj.GetData(DataFormats.Rtf);
+
+                var unicodeText = false;
                 if (capturedRtfData is string capturedRtfText)
                 {
                     ClipboardMonitorInstance.ClipboardRtfText = capturedRtfText;
@@ -185,20 +188,38 @@ public partial class ClipboardHandle : Form
                 else
                 {
                     ClipboardMonitorInstance.ClipboardRtfText = string.Empty;
+                    unicodeText = true;
                 }
                 ClipboardMonitorInstance.ClipboardText = capturedText ?? string.Empty;
 
-                ClipboardMonitorInstance.Invoke(
-                    capturedText,
-                    DataType.Text,
-                    new SourceApplication(
-                        GetForegroundWindow(),
-                        ClipboardMonitorInstance.ForegroundWindowHandle(),
-                        GetApplicationName(),
-                        GetActiveWindowTitle(),
-                        GetApplicationPath()
-                    )
-                );
+                if (unicodeText)
+                {
+                    ClipboardMonitorInstance.Invoke(
+                        capturedText,
+                        DataType.UnicodeText,
+                        new SourceApplication(
+                            GetForegroundWindow(),
+                            ClipboardMonitorInstance.ForegroundWindowHandle(),
+                            GetApplicationName(),
+                            GetActiveWindowTitle(),
+                            GetApplicationPath()
+                        )
+                    );
+                }
+                else
+                {
+                    ClipboardMonitorInstance.Invoke(
+                        capturedRtfData,
+                        DataType.RichText,
+                        new SourceApplication(
+                            GetForegroundWindow(),
+                            ClipboardMonitorInstance.ForegroundWindowHandle(),
+                            GetApplicationName(),
+                            GetActiveWindowTitle(),
+                            GetApplicationPath()
+                        )
+                    );
+                }
             }
             else if (
                 ClipboardMonitorInstance.ObservableFormats.Files

@@ -39,13 +39,15 @@ public class DatabaseHelperTest
 
     public ClipboardData GetRandomClipboardData(DateTime createTime, bool valid)
     {
-        var type = (DataType)_random.Next(3);
+        var type = (DataType)_random.Next(4);
         object dataContent;
+        var randStr = StringUtils.RandomString(10);
         if (valid)
         {
             dataContent = type switch
             {
-                DataType.Text => StringUtils.RandomString(10),
+                DataType.UnicodeText => StringUtils.RandomString(10),
+                DataType.RichText => @"{\rtf\ansi{\fonttbl{\f0 Cascadia Mono;}}{\colortbl;\red43\green145\blue175;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue255;}\f0 \fs19 \cf1 \cb2 \highlight2 DataType\cf3 .\cf4 " + randStr + @"}",
                 DataType.Image => _defaultImage,
                 DataType.Files => new string[] { _baseDirectory, _defaultImagePath },
                 _ => null!
@@ -55,7 +57,8 @@ public class DatabaseHelperTest
         {
             dataContent = type switch
             {
-                DataType.Text => string.Empty,
+                DataType.UnicodeText => string.Empty,
+                DataType.RichText => string.Empty,
                 DataType.Image => string.Empty,
                 DataType.Files => new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10), StringUtils.RandomString(10) },
                 _ => null!
@@ -71,6 +74,10 @@ public class DatabaseHelperTest
             Pinned = false,
             Saved = true
         };
+        if (type == DataType.RichText)
+        {
+            data.UnicodeText = $"DataType.{randStr}";
+        }
         return data;
     }
 

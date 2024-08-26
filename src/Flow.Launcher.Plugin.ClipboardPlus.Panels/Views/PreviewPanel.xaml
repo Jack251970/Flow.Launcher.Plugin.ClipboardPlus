@@ -28,7 +28,7 @@
             Source="{Binding PreviewImage, Mode=OneWay}"
             Visibility="{Binding ImagePreviewVisibility, Mode=OneTime}" />
 
-        <!--  Text Preview  -->
+        <!--  Unicode Text Preview  -->
         <ScrollViewer
             Grid.Row="0"
             Grid.Column="0"
@@ -37,12 +37,29 @@
             HorizontalContentAlignment="Left"
             HorizontalScrollBarVisibility="Auto"
             VerticalScrollBarVisibility="Auto"
-            Visibility="{Binding TextPreviewVisibility, Mode=OneTime}">
+            Visibility="{Binding UnicodeTextPreviewVisibility, Mode=OneTime}">
+            <userControls:AutoSelectTextBox
+                MinWidth="320"
+                Margin="5"
+                Padding="5"
+                Text="{Binding PreviewUnicodeText, Mode=OneWay}" />
+        </ScrollViewer>
+
+        <!--  Rich Text Preview  -->
+        <ScrollViewer
+            Grid.Row="0"
+            Grid.Column="0"
+            Padding="5"
+            HorizontalAlignment="Center"
+            HorizontalContentAlignment="Left"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Auto"
+            Visibility="{Binding RichTextPreviewVisibility, Mode=OneTime}">
             <userControls:AutoSelectRichTextBox
                 MinWidth="320"
                 Margin="5"
                 Padding="5"
-                UnicodeText="{Binding PreviewUnicodeText, Mode=OneWay}" />
+                RichText="{Binding PreviewRichText, Mode=OneWay}" />
         </ScrollViewer>
 
         <!--  Status Preview  -->

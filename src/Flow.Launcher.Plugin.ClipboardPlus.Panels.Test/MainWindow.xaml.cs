@@ -43,11 +43,11 @@ public partial class MainWindow : Window
         grid.Children.Add(settingsPanel);
         PreviewSettingsTabItem.Content = grid;
 
-        // Preview text panel
+        // Preview unicode text panel
         var grid1 = new Grid();
         grid1.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         grid1.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        var dataText = GetRandomClipboardData(DataType.Text);
+        var dataText = GetRandomClipboardData(DataType.UnicodeText);
         var previewPanel1 = new PreviewPanel(ClipboardPlus, dataText);
         Grid.SetRow(previewPanel1, 0);
         var label1 = new Label() { Content = $"Title: {dataText.GetTitle(CultureInfo.CurrentCulture)}\n" +
@@ -57,7 +57,26 @@ public partial class MainWindow : Window
         Grid.SetRow(label1, 1);
         grid1.Children.Add(previewPanel1);
         grid1.Children.Add(label1);
-        PreviewTextTabItem.Content = grid1;
+        PreviewUnicodeTextTabItem.Content = grid1;
+
+        // Preview rich text panel
+        var grid4 = new Grid();
+        grid4.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        grid4.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+        var dataRichText = GetRandomClipboardData(DataType.RichText);
+        var previewPanel4 = new PreviewPanel(ClipboardPlus, dataRichText);
+        Grid.SetRow(previewPanel4, 0);
+        var label4 = new Label()
+        {
+            Content = $"Title: {dataRichText.GetTitle(CultureInfo.CurrentCulture)}\n" +
+            $"Text: {dataRichText.GetText(CultureInfo.CurrentCulture)}\n" +
+            $"Subtitle: {dataRichText.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
+            $"Encrypt: {dataRichText.EncryptData}"
+        };
+        Grid.SetRow(label4, 1);
+        grid4.Children.Add(previewPanel4);
+        grid4.Children.Add(label4);
+        PreviewRichTextTabItem.Content = grid4;
 
         // Preview image panel
         var grid2 = new Grid();
@@ -119,6 +138,10 @@ public partial class MainWindow : Window
             Pinned = false,
             Saved = false
         };
+        if (e.DataType == DataType.RichText)
+        {
+            clipboardData.UnicodeText = ClipboardMonitor.ClipboardText;
+        }
 
         TextBlock1.Text = $"Count: {_count}\n" +
             $"ClipboardChangedEventArgs\n" +
@@ -168,7 +191,8 @@ public partial class MainWindow : Window
         var rand = new Random();
         object dataContent = type switch
         {
-            DataType.Text => "Hello, world!",
+            DataType.UnicodeText => "Hello, world!",
+            DataType.RichText => @"{\rtf\ansi{\fonttbl{\f0 Cascadia Mono;}}{\colortbl;\red43\green145\blue175;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue255;}\f0 \fs19 \cf1 \cb2 \highlight2 DataType\cf3 .\cf4 Files}",
             DataType.Image => _defaultImage,
             DataType.Files => new string[] { "D:\\a.txt", "D:\\b.docx", "D:\\c" },
             _ => null!
@@ -184,6 +208,10 @@ public partial class MainWindow : Window
             Pinned = pinned,
             Saved = false
         };
+        if (type == DataType.RichText)
+        {
+            data.UnicodeText = "DataType.Files";
+        }
         return data;
     }
 }

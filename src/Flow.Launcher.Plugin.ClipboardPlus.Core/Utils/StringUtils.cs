@@ -1,6 +1,8 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Documents;
+using RichTextBox = System.Windows.Controls.RichTextBox;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Utils;
 
@@ -255,6 +257,34 @@ public static partial class StringUtils
         cs.FlushFinalBlock();
         var decryptedBytes = ms.ToArray();
         return Encoding.UTF8.GetString(decryptedBytes);
+    }
+
+    #endregion
+
+    #region Rich Text
+
+    public static string ConvertRtfToPlainText(string rtfString)
+    {
+        try
+        {
+            // Create a RichTextBox
+            var richTextBox = new RichTextBox();
+
+            // Load the RTF string into the RichTextBox
+            var range = new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd);
+
+            using (var stream = new MemoryStream(Encoding.Default.GetBytes(rtfString)))
+            {
+                range.Load(stream, DataFormats.Rtf);
+            }
+
+            // Extract and return the plain text
+            return range.Text.Trim();
+        }
+        catch (Exception)
+        {
+            return string.Empty;
+        }
     }
 
     #endregion

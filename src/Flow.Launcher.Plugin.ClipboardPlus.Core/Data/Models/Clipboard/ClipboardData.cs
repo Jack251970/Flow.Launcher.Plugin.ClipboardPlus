@@ -85,6 +85,12 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// </summary>
     public string CachedImagePath { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Text in unicode format.
+    /// Note: Only used for rich text.
+    /// </summary>
+    public string UnicodeText { get; set; } = string.Empty;
+
     #endregion
 
     #region Icon & Glyph
@@ -167,7 +173,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     {
         var str = DataType switch
         {
-            DataType.Text => Data as string ?? string.Empty,
+            DataType.UnicodeText => Data as string ?? string.Empty,
+            DataType.RichText => Data as string ?? string.Empty,
             DataType.Image => Data is BitmapSource img ? img.ToBase64() : string.Empty,
             DataType.Files => (Data is string[] s ? string.Join('\n', s) : Data as string) ?? string.Empty,
             _ => null
@@ -199,7 +206,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         // If the data is still null, return the icon.
         return DataType switch
         {
-            DataType.Text => Icon,
+            DataType.UnicodeText => Icon,
+            DataType.RichText => Icon,
             DataType.Image => img ?? Icon,
             DataType.Files => Icon,
             _ => null
@@ -219,13 +227,20 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     {
         switch (DataType)
         {
-            case DataType.Text:
+            case DataType.UnicodeText:
                 var stringToCopy = Data as string;
                 if (string.IsNullOrEmpty(stringToCopy))
                 {
                     break;
                 }
                 return stringToCopy;
+            case DataType.RichText:
+                var richTextToCopy = Data as string;
+                if (string.IsNullOrEmpty(richTextToCopy))
+                {
+                    break;
+                }
+                return richTextToCopy;
             case DataType.Image:
                 if (Data is not BitmapSource imageToCopy)
                 {
@@ -273,7 +288,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             }
             return type switch
             {
-                DataType.Text => str,
+                DataType.UnicodeText => str,
+                DataType.RichText => str,
                 DataType.Image => str.ToBitmapImage(),
                 DataType.Files => str.Split('\n'),
                 _ => null
@@ -291,7 +307,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             CreateTime = record.createTime,
             CachedImagePath = record.CachedImagePath,
             Pinned = record.Pinned,
-            Saved = true
+            Saved = true,
+            UnicodeText = record.UnicodeText
         };
     }
 
@@ -372,7 +389,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         {
             text = DataType switch
             {
-                DataType.Text => Data as string,
+                DataType.UnicodeText => Data as string,
+                DataType.RichText => UnicodeText,
                 DataType.Image => $"Image: {CreateTime.ToString(cultureInfo)}",
                 DataType.Files => Data is string[] t ? string.Join("\n", t.Take(2)) + "\n..." : Data as string,
                 _ => null
@@ -425,7 +443,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
                 case RecordOrder.DataType:
                     score = DataType switch
                     {
-                        DataType.Text => TextScore,
+                        DataType.UnicodeText => TextScore,
+                        DataType.RichText => TextScore,
                         DataType.Image => ImageScore,
                         DataType.Files => FilesScore,
                         _ => OtherScore,
@@ -457,7 +476,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             CreateTime = CreateTime,
             CachedImagePath = CachedImagePath,
             Pinned = Pinned,
-            Saved = Saved
+            Saved = Saved,
+            UnicodeText = UnicodeText
         };
     }
 

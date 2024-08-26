@@ -40,7 +40,8 @@ public class Settings : ISettings
     public List<Tuple<DataType, KeepTime>> KeepTimePairs => 
         new ()
         {
-            new(DataType.Text, TextKeepTime),
+            new(DataType.UnicodeText, TextKeepTime),
+            new(DataType.RichText, TextKeepTime),
             new(DataType.Image, ImagesKeepTime),
             new(DataType.Files, FilesKeepTime),
         };
