@@ -10,9 +10,14 @@ public class Asset
     public int Id { get; set; }
 
     /// <summary>
-    /// Base64 encoded data, used to store the asset.
+    /// Base64 encoded data.
     /// </summary>
     public required string DataB64 { get; set; }
+
+    /// <summary>
+    /// Base64 encoded unicode text.
+    /// </summary>
+    public required string UnicodeTextB64 { get; set; }
 
     /// <summary>
     /// MD5 hash of the data, used to identify the asset.
@@ -28,6 +33,7 @@ public class Asset
         return new Asset
         {
             DataB64 = data.DataToString(true)!,
+            UnicodeTextB64 = data.UnicodeTextToString(true)!,
             HashId = data.HashId,
         };
     }

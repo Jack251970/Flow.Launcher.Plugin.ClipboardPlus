@@ -23,6 +23,7 @@ public class DatabaseHelper : IDisposable
         CREATE TABLE asset (
             id	                    INTEGER NOT NULL UNIQUE,
             data_b64	            TEXT,
+            unicode_text_b64        TEXT,
             hash_id                 TEXT UNIQUE,
             PRIMARY                 KEY("id" AUTOINCREMENT)
         );
@@ -37,20 +38,26 @@ public class DatabaseHelper : IDisposable
             "create_time"	        TEXT,
             "pinned"	            INTEGER,
             "encrypt_data"          INTEGER,
+            "unicode_text"          TEXT,  
             PRIMARY                 KEY("id" AUTOINCREMENT),
             FOREIGN                 KEY("hash_id") REFERENCES "asset"("hash_id") ON DELETE CASCADE
         );
         """;
 
     private readonly string SqlInsertAsset =
-        "INSERT OR IGNORE INTO asset(data_b64, hash_id) VALUES (@DataB64, @HashId);";
+        @"INSERT OR IGNORE INTO asset(
+            data_b64, unicode_text_b64, hash_id)
+        VALUES (
+            @DataB64, @UnicodeTextB64, @HashId);";
     private readonly string SqlInsertRecord =
         @"INSERT OR IGNORE INTO record(
             hash_id, data_md5_b64, sender_app, cached_image_path, 
-            data_type, init_score, create_time, pinned, encrypt_data) 
+            data_type, init_score, create_time, pinned, encrypt_data,
+            unicode_text)
         VALUES (
             @HashId, @DataMd5B64, @SenderApp, @CachedImagePath, 
-            @DataType, @InitScore, @CreateTime, @Pinned, @EncryptData);";
+            @DataType, @InitScore, @CreateTime, @Pinned, @EncryptData,
+            '');";
 
     private readonly string SqlSelectRecordCountByMd5 =
         "SELECT COUNT() FROM record WHERE hash_id=@HashId;";
@@ -70,7 +77,8 @@ public class DatabaseHelper : IDisposable
         SELECT r.id as Id, a.data_b64 as DataMd5B64, r.sender_app as SenderApp, 
             r.cached_image_path as CachedImagePath, r.data_type as DataType, 
             r.init_score as InitScore, r.encrypt_data as EncryptData,
-            r.create_time as CreateTime, r.pinned as Pinned, r.hash_id as HashId
+            r.create_time as CreateTime, r.pinned as Pinned, r.hash_id as HashId,
+            a.unicode_text_b64 as UnicodeText
         FROM record r
         LEFT JOIN asset a ON r.hash_id=a.hash_id;
         """;

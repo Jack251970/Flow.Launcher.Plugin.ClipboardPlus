@@ -111,7 +111,7 @@ public class PreviewViewModel : BaseModel
                 PreviewUnicodeText = ClipboardData.DataToString(false) ?? string.Empty;
                 break;
             case DataType.RichText:
-                _previewUnicodeText = ClipboardData.UnicodeText;
+                _previewUnicodeText = ClipboardData.UnicodeTextToString(false) ?? string.Empty;
                 PreviewRichText = ClipboardData.DataToString(false) ?? string.Empty;
                 break;
             case DataType.Image:

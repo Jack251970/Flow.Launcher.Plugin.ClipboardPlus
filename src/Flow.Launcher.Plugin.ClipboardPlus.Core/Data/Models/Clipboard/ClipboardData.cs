@@ -187,6 +187,30 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     }
 
     /// <summary>
+    /// Get the unicode text as string.
+    /// </summary>
+    /// <param name="encryptData">
+    /// Whether to encrypt the data following the setting.
+    /// </param>
+    /// <returns>
+    /// If data type is Rich Text, return the data as string.
+    /// Else return null.
+    /// </returns>
+    public readonly string? UnicodeTextToString(bool encryptData)
+    {
+        var str = DataType switch
+        {
+            DataType.RichText => UnicodeText,
+            _ => null
+        };
+        if (encryptData && (!string.IsNullOrEmpty(str)) && EncryptData)
+        {
+            str = StringUtils.Encrypt(str, StringUtils.EncryptKey);
+        }
+        return str;
+    }
+
+    /// <summary>
     /// Get the data as image.
     /// </summary>
     /// <returns>
@@ -296,6 +320,15 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             };
         }
 
+        static string UnicodeTextToString(string str, bool encryptData)
+        {
+            if (!string.IsNullOrEmpty(str) && encryptData)
+            {
+                str = StringUtils.Decrypt(str, StringUtils.EncryptKey);
+            }
+            return str;
+        }
+
         var data = record.DataMd5B64;
         var type = (DataType)record.DataType;
         var encrypt = record.EncryptData;
@@ -308,7 +341,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             CachedImagePath = record.CachedImagePath,
             Pinned = record.Pinned,
             Saved = true,
-            UnicodeText = record.UnicodeText
+            UnicodeText = UnicodeTextToString(record.UnicodeText, encrypt)
         };
     }
 
