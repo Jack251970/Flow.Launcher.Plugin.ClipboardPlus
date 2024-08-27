@@ -322,7 +322,11 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
 
         static string UnicodeTextToString(string str, bool encryptData)
         {
-            if (!string.IsNullOrEmpty(str) && encryptData)
+            if (string.IsNullOrEmpty(str))
+            {
+                return string.Empty;
+            }
+            if (encryptData)
             {
                 str = StringUtils.Decrypt(str, StringUtils.EncryptKey);
             }
