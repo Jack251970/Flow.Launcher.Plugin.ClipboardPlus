@@ -288,6 +288,23 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
         return null;
     }
 
+    /// <summary>
+    /// Get the unicode text as valid object.
+    /// </summary>
+    /// <returns>
+    /// If data type is Rich Text, return the data as valid string.
+    /// Else return null.
+    /// </returns>
+    public readonly string? UnicodeTextToValid()
+    {
+        var stringToCopy = UnicodeText;
+        if (string.IsNullOrEmpty(stringToCopy))
+        {
+            return null;
+        }
+        return stringToCopy;
+    }
+
     #endregion
 
     #region Convert Methods

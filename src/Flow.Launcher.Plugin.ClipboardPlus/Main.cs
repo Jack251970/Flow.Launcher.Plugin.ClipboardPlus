@@ -6,11 +6,11 @@ using System.Linq;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using WindowsInput;
 using Clipboard = System.Windows.Clipboard;
-using System.Windows;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus;
 
@@ -53,6 +53,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private const int ScoreInterval2 = 2 * ScoreInterval;
     private const int ScoreInterval3 = 3 * ScoreInterval;
     private const int ScoreInterval4 = 4 * ScoreInterval;
+    private const int ScoreInterval5 = 5 * ScoreInterval;
 
     private const int ClearActionScore = ClipboardData.MaximumScore + 2 * ScoreInterval;
 
@@ -267,6 +268,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             return results;
         }
 
+        // Copy & Pin & Delete
         var pinned = clipboardData.Pinned;
         var pinStr = pinned ? "unpin" : "pin";
         results.AddRange(
@@ -278,7 +280,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_subtitle"),
                     IcoPath = PathHelper.CopyIconPath,
                     Glyph = ResourceHelper.CopyGlyph,
-                    Score = ScoreInterval4,
+                    Score = ScoreInterval5,
                     Action = _ =>
                     {
                         CopyToClipboard(clipboardData);
@@ -313,6 +315,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 },
             }
         );
+
+        // Save
         var saved = clipboardData.Saved;
         if (!clipboardData.Saved)
         {
@@ -331,7 +335,24 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 }
             });
         }
-        Context.API.LogInfo(ClassName, $"Clipboard data: {clipboardData}, Saved: {clipboardData.Saved}");
+
+        // Copy as plain text
+        if (clipboardData.DataType == DataType.RichText)
+        {
+            results.Add(new Result
+            {
+                Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_plain_text_title"),
+                SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_plain_text_subtitle"),
+                IcoPath = PathHelper.CopyIconPath,
+                Glyph = ResourceHelper.CopyGlyph,
+                Score = ScoreInterval4,
+                Action = _ =>
+                {
+                    CopyAsPlainTextToClipboard(clipboardData);
+                    return true;
+                }
+            });
+        }
         return results;
     }
 
@@ -687,6 +708,36 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 case DataType.Files:
                     Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                         Context.GetTranslation("flowlauncher_plugin_clipboardplus_files_data_invalid"));
+                    break;
+            }
+        }
+    }
+
+    private void CopyAsPlainTextToClipboard(ClipboardData clipboardData)
+    {
+        var validObject = clipboardData.UnicodeTextToValid();
+        var dataType = clipboardData.DataType;
+        if (validObject is not null)
+        {
+            switch (dataType)
+            {
+                case DataType.RichText:
+                    Clipboard.SetText(validObject);
+                    break;
+                default:
+                    break;
+            }
+            Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
+                StringUtils.CompressString(clipboardData.GetText(CultureInfo), 54));
+        }
+        else
+        {
+            switch (dataType)
+            {
+                case DataType.RichText:
+                    Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
                     break;
             }
         }
