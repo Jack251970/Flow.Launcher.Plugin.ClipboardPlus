@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using WindowsInput;
 using Clipboard = System.Windows.Clipboard;
+using System.Windows;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus;
 
@@ -642,10 +643,10 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             switch (dataType)
             {
                 case DataType.UnicodeText:
-                    Clipboard.SetText((string)validObject);
+                    Clipboard.SetText((string)validObject, TextDataFormat.UnicodeText);
                     break;
                 case DataType.RichText:
-                    // TODO
+                    Clipboard.SetText((string)validObject, TextDataFormat.Rtf);
                     break;
                 case DataType.Image:
                     Clipboard.SetImage((BitmapSource)validObject);
@@ -660,7 +661,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     {
                         Clipboard.SetDataObject(validObject);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         Context.API.LogException(ClassName, $"Copy to clipboard failed: {clipboardData}", e);
                     }
