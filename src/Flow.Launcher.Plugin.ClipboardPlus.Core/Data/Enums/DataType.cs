@@ -3,8 +3,8 @@
 public enum DataType
 {
     UnicodeText = 0,
-    RichText = 1,
-    Image = 2,
-    Files = 3,
-    Other = 4,
+    Image = 1,
+    Files = 2,
+    Other = 3,
+    RichText = 4,
 }
