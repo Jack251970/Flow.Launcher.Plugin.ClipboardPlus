@@ -38,7 +38,7 @@ public class DatabaseHelper : IDisposable
             "create_time"	        TEXT,
             "pinned"	            INTEGER,
             "encrypt_data"          INTEGER,
-            "unicode_text"          TEXT,  
+            "unicode_text"          TEXT,
             PRIMARY                 KEY("id" AUTOINCREMENT),
             FOREIGN                 KEY("hash_id") REFERENCES "asset"("hash_id") ON DELETE CASCADE
         );
