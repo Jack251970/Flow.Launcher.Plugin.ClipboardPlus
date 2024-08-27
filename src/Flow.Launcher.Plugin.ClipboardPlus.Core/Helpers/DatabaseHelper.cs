@@ -8,6 +8,12 @@ public class DatabaseHelper : IDisposable
 {
     #region Properties
 
+    #region Version
+
+    private readonly string DatabaseVersion = "1.0";
+
+    #endregion
+
     #region Connection
 
     public SqliteConnection Connection;
@@ -15,7 +21,33 @@ public class DatabaseHelper : IDisposable
 
     #endregion
 
+    #region Context
+
+    private PluginInitContext? Context;
+
+    #endregion
+
+    #region Class Name
+
+    private string ClassName => GetType().Name;
+
+    #endregion
+
     #region Commands Strings
+
+    private readonly string SqlSelectMetaTable = "SELECT name from sqlite_master WHERE name='meta';";
+    private readonly string SqlCreateMeta =
+        """
+        CREATE TABLE "meta" (
+            "key"	                TEXT NOT NULL UNIQUE,
+            "value"	                TEXT,
+            PRIMARY                 KEY("key")
+        );
+        """;
+
+    private readonly string SqlSelectVersion = "SELECT value FROM meta WHERE key = 'DatabaseVersion';";
+    private readonly string SqlUpdateVersion = "UPDATE meta SET value = @Version WHERE key = 'DatabaseVersion';";
+    private readonly string SqlInsertVersion = "INSERT INTO meta (key, value) VALUES ('DatabaseVersion', @Version);";
 
     private readonly string SqlSelectRecordTable = "SELECT name from sqlite_master WHERE name='record';";
     private readonly string SqlCreateDatabase =
@@ -99,16 +131,20 @@ public class DatabaseHelper : IDisposable
 
     #region Constructors
 
-    public DatabaseHelper(SqliteConnection connection)
+    public DatabaseHelper(
+        SqliteConnection connection, 
+        PluginInitContext? context = null)
     {
         Connection = connection;
+        Context = context;
     }
 
     public DatabaseHelper(
         string databasePath,
         SqliteCacheMode cache = SqliteCacheMode.Default,
         SqliteOpenMode mode = SqliteOpenMode.ReadWriteCreate,
-        bool keepConnection = true
+        bool keepConnection = true,
+        PluginInitContext? context = null
     )
     {
         var connectionString = new SqliteConnectionStringBuilder()
@@ -120,6 +156,7 @@ public class DatabaseHelper : IDisposable
         }.ToString();
         Connection = new SqliteConnection(connectionString);
         KeepConnection = keepConnection;
+        Context = context;
     }
 
     #endregion
@@ -128,16 +165,84 @@ public class DatabaseHelper : IDisposable
 
     #region Database Operations
 
+    #region Version Check & Handle
+
+    private string GetDatabaseVersionAsync()
+    {
+        var version = Connection.QueryFirstOrDefault<string>(SqlSelectVersion);
+        return version ?? "0.0";
+    }
+
+    private async Task SetDatabaseVersionAsync(string version)
+    {
+        var existingVersion = Connection.QueryFirstOrDefault<string>(SqlSelectVersion);
+        if (existingVersion != null)
+        {
+            await Connection.ExecuteAsync(SqlUpdateVersion, new { Version = version });
+        }
+        else
+        {
+            await Connection.ExecuteAsync(SqlInsertVersion, new { Version = version });
+        }
+    }
+
+    #region Version 0.0
+
+    private readonly string SqlDropTables =
+        """
+        DROP TABLE IF EXISTS record;
+        DROP TABLE IF EXISTS asset;
+        """;
+
+    #endregion
+
+    private async Task UpdateDatabase(string currentVersion)
+    {
+        try
+        {
+            switch (currentVersion)
+            {
+                default:  // 0.0
+                          // Drop existing `record` and `asset` tables
+                    await Connection.ExecuteAsync(SqlDropTables);
+                    // Recreate the tables with the updated schema
+                    await Connection.ExecuteAsync(SqlCreateDatabase);
+                    break;
+            }
+            await SetDatabaseVersionAsync(DatabaseVersion);
+        }
+        catch (Exception e)
+        {
+            Context?.API.LogException(ClassName, $"Update database to version {currentVersion} error!", e);
+        }
+    }
+
+    #endregion
+
     public async Task InitializeDatabaseAsync()
     {
         await HandleOpenCloseAsync(async () =>
         {
+            var currentVersion = GetDatabaseVersionAsync();
+            // check if `meta` exists
+            var name = Connection.QueryFirstOrDefault<string>(SqlSelectMetaTable);
+            if (name != "meta")
+            {
+                // if not exists, create `meta` table
+                await Connection.ExecuteAsync(SqlCreateMeta);
+                await SetDatabaseVersionAsync("0.0");
+            }
             // check if `record` exists
-            var name = Connection.QueryFirstOrDefault<string>(SqlSelectRecordTable);
+            name = Connection.QueryFirstOrDefault<string>(SqlSelectRecordTable);
             if (name != "record")
             {
                 // if not exists, create `record` and `asset` table
                 await Connection.ExecuteAsync(SqlCreateDatabase);
+            }
+            // update version
+            if (currentVersion != DatabaseVersion)
+            {
+                await UpdateDatabase(currentVersion);
             }
         });
     }

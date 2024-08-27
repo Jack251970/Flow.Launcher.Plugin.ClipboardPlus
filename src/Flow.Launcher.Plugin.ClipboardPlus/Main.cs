@@ -232,7 +232,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
         // init database & records
         var fileExists = File.Exists(PathHelper.DatabasePath);
-        DatabaseHelper = new DatabaseHelper(PathHelper.DatabasePath);
+        DatabaseHelper = new DatabaseHelper(PathHelper.DatabasePath, context: context);
         await DatabaseHelper.InitializeDatabaseAsync();
         if (fileExists)
         {
