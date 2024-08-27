@@ -223,7 +223,6 @@ public class DatabaseHelper : IDisposable
     {
         await HandleOpenCloseAsync(async () =>
         {
-            var currentVersion = GetDatabaseVersionAsync();
             // check if `meta` exists
             var name = Connection.QueryFirstOrDefault<string>(SqlSelectMetaTable);
             if (name != "meta")
@@ -240,6 +239,7 @@ public class DatabaseHelper : IDisposable
                 await Connection.ExecuteAsync(SqlCreateDatabase);
             }
             // update version
+            var currentVersion = GetDatabaseVersionAsync();
             if (currentVersion != DatabaseVersion)
             {
                 await UpdateDatabase(currentVersion);
