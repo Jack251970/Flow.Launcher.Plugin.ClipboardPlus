@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Views;
 
@@ -13,4 +14,30 @@ public partial class PreviewPanel : UserControl
         InitializeComponent();
         DataContext = ViewModel;
     }
+
+    #region Auto Select
+
+    private async void TextBox_GotFocus(object sender, RoutedEventArgs e)
+    {
+        await Dispatcher.InvokeAsync(() =>
+        {
+            if (sender is TextBox textBox)
+            {
+                textBox.SelectAll();
+            }
+        });
+    }
+
+    private async void RichTextBox_GotFocus(object sender, RoutedEventArgs e)
+    {
+        await Dispatcher.InvokeAsync(() =>
+        {
+            if (sender is RichTextBox richTextBox)
+            {
+                richTextBox.SelectAll();
+            }
+        });
+    }
+
+    #endregion
 }

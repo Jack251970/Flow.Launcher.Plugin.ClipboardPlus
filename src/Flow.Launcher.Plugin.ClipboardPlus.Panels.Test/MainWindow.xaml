@@ -32,8 +32,8 @@
                         x:Name="TextBlock3"
                         Grid.Row="2"
                         Text="Wait something copyed to clipboard..." />
-                    <usercontrol:AutoSelectTextBox x:Name="TextBox" Grid.Row="3" />
-                    <usercontrol:AutoSelectRichTextBox x:Name="RichTextBox" Grid.Row="4" />
+                    <TextBox x:Name="TextBox" Grid.Row="3" />
+                    <RichTextBox x:Name="RichTextBox" Grid.Row="4" />
                 </Grid>
             </TabItem>
         </TabControl>
