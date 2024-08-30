@@ -7,6 +7,7 @@
     xmlns:panels="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.Views;assembly=Flow.Launcher.Plugin.ClipboardPlus.Panels"
     xmlns:usercontrol="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.UserControls;assembly=Flow.Launcher.Plugin.ClipboardPlus.Panels"
     Title="MainWindow"
+    Closed="Window_Closed"
     Width="800"
     Height="600"
     mc:Ignorable="d">

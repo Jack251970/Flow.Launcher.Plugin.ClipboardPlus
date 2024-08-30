@@ -293,6 +293,12 @@ public partial class MainWindow : Window
         ClipboardMonitor.StartMonitoring();
     }
 
+    private void Window_Closed(object sender, EventArgs e)
+    {
+        ClipboardMonitor.ClipboardChanged -= OnClipboardChangeW;
+        ClipboardMonitor.Dispose();
+    }
+
     private void Button_Click(object sender, RoutedEventArgs e)
     {
         var newCulture = ClipboardPlus.CultureInfo.Name == "en-US" ? "zh-CN" : "en-US";
