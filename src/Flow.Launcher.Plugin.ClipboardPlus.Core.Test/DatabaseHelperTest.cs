@@ -39,7 +39,7 @@ public class DatabaseHelperTest
 
     public ClipboardData GetRandomClipboardData(DateTime createTime, bool valid)
     {
-        var type = (DataType)_random.Next(4);
+        var type = (DataType)_random.Next(3);
         object dataContent;
         var randStr = StringUtils.RandomString(10);
         if (valid)

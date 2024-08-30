@@ -158,6 +158,7 @@ public static partial class StringUtils
 
     public static string GetMd5(string s)
     {
+        s ??= string.Empty;
         var inputBytes = Encoding.UTF8.GetBytes(s);
         var hash = MD5.HashData(inputBytes);
         var hex = hash.Select(i => i.ToString("X2"));
@@ -166,6 +167,7 @@ public static partial class StringUtils
 
     public static string GetSha256(string s)
     {
+        s ??= string.Empty;
         var inputBytes = Encoding.UTF8.GetBytes(s);
         var hash = SHA256.HashData(inputBytes);
         var hex = hash.Select(i => i.ToString("X2"));
