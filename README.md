@@ -14,6 +14,7 @@ It can help you manage your clipboard history and customizing copy rules with su
 - Preview panel for text, images, and files
 - Persistent keep records in database
 - Words count for text
+- Customize copy rules
 
 ## Screenshots
 
@@ -39,7 +40,7 @@ It can help you manage your clipboard history and customizing copy rules with su
 
 ### Plugin Store
 
-Sorry, the plugin store is not available yet.
+1. Search `Clipboard+` in Flow Launcher Plugin Store and install
 
 ## Usage
 
@@ -57,13 +58,6 @@ This will save the data to the database, and you won't lose them when you exit t
 
 > Note: It is recommended to cache images using `CacheImages` option, 
 saving large images via `KeepImage` to database may block query for a little while.
-
-## Todo
-
-- [ ] Text Type Classification
-- [ ] Image Type Classification
-- [ ] File Type Classification
-- [ ] Customize Copy Rules
 
 ## Reference
 
