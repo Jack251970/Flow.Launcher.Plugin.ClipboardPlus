@@ -433,6 +433,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             Saved = saved
         };
 
+        // filter duplicate data
+        if (RecordsList.Count != 0 && RecordsList.First().DataEquals(clipboardData))
+        {
+            return;
+        }
+
         // process clipboard data
         if (dataType == DataType.Image && Settings.CacheImages)
         {
@@ -446,11 +452,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             clipboardData.UnicodeText = ClipboardMonitor.ClipboardText;
         }
 
-        // add to list and database if no repeat 
-        if (RecordsList.Any(record => record == clipboardData))
-        {
-            return;
-        }
+        // add to list and database if no repeat
         RecordsList.AddFirst(clipboardData);
         Context.API.LogDebug(ClassName, "Added to list");
 

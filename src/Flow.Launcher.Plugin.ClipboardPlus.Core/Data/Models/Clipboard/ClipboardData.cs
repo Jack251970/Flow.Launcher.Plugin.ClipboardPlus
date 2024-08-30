@@ -554,10 +554,16 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
 
     public readonly bool Equals(ClipboardData b)
     {
-        return DataMd5 == b.DataMd5 &&
+        return DataType == b.DataType && 
+            DataMd5 == b.DataMd5 &&
             SenderApp == b.SenderApp &&
-            DataType == b.DataType &&
             CreateTime == b.CreateTime;
+    }
+
+    public readonly bool DataEquals(ClipboardData b)
+    {
+        return DataType == b.DataType &&
+            DataMd5 == b.DataMd5;
     }
 
     public override readonly int GetHashCode()
