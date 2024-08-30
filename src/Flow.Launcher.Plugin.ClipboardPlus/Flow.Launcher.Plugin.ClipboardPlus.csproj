@@ -7,7 +7,6 @@
     <RepositoryUrl>https://github.com/Jack251970/Flow.Launcher.Plugin.ClipboardPlus</RepositoryUrl>
     <PackageTags>flow-launcher flow-plugin</PackageTags>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	  <UseWindowsForms>true</UseWindowsForms>
 	  <LangVersion>11</LangVersion>
 	  <Nullable>enable</Nullable>
 	  <TargetFramework>net7.0-windows</TargetFramework>

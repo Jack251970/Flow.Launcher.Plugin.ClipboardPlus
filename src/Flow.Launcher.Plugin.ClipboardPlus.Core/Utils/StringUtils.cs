@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Documents;
 using RichTextBox = System.Windows.Controls.RichTextBox;
 

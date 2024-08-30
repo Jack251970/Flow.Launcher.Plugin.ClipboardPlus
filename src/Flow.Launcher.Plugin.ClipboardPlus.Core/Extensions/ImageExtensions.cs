@@ -1,5 +1,4 @@
-﻿using System.Drawing.Imaging;
-using System.Windows.Media.Imaging;
+﻿using System.Windows.Media.Imaging;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Extensions;
 
@@ -7,7 +6,7 @@ public static class ImageExtensions
 {
     #region System.Drawing.Image
 
-    public static BitmapImage ToBitmapImage(this Image img)
+    /*public static BitmapImage ToBitmapImage(this Image img)
     {
         var stream = new MemoryStream();
         img.Save(stream, ImageFormat.Png);
@@ -32,13 +31,13 @@ public static class ImageExtensions
         using var m = new MemoryStream();
         img.Save(m, ImageFormat.Png);
         return m.ToArray();
-    }
+    }*/
 
     #endregion
 
     #region System.Windows.Media.Imaging.BitmapImage
 
-    public static Image ToImage(this BitmapImage image)
+    /*public static Image ToImage(this BitmapImage image)
     {
         using var m = new MemoryStream();
         var encoder = new PngBitmapEncoder();
@@ -46,7 +45,7 @@ public static class ImageExtensions
         encoder.Frames.Add(frame);
         encoder.Save(m);
         return Image.FromStream(m);
-    }
+    }*/
 
     public static string ToBase64(this BitmapImage image)
     {
@@ -142,7 +141,7 @@ public static class ImageExtensions
         return im;
     }
 
-    public static Image? ToImage(this string base64)
+    /*public static Image? ToImage(this string base64)
     {
         if (string.IsNullOrEmpty(base64))
         {
@@ -151,7 +150,7 @@ public static class ImageExtensions
         var bytes = Convert.FromBase64String(base64);
         using var stream = new MemoryStream(bytes);
         return new Bitmap(stream);
-    }
+    }*/
 
     #endregion
 }
