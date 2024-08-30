@@ -82,8 +82,11 @@ public class ClipboardHandleW : IDisposable
     /// </summary>
     public void StopMonitoring()
     {
-        RemoveClipboardFormatListener(_hwndSource.Handle);
-        _hwndSource.Dispose();
+        if (_hwndSource is not null)
+        {
+            RemoveClipboardFormatListener(_hwndSource.Handle);
+            _hwndSource.Dispose();
+        }
     }
 
     /// <summary>
