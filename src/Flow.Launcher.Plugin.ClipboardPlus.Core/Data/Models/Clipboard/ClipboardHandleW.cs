@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Clipboard = System.Windows.Clipboard;
 using DataFormats = System.Windows.DataFormats;
 
@@ -69,12 +70,25 @@ public class ClipboardHandleW : IDisposable
 
     #region Clipboard Monitor
 
+    // The thread that monitors the system clipboard.
+    // WPF requires the clipboard to be monitored on a separate thread.
+    private Thread? staThread;
+    private Dispatcher? dispatcher;
+
     /// <summary>
     /// Starts monitoring the system clipboard.
     /// </summary>
     public void StartMonitoring()
     {
-        CreateHiddenWindow();
+        staThread = new Thread(() =>
+        {
+            dispatcher = Dispatcher.CurrentDispatcher;
+            CreateHiddenWindow();
+            Dispatcher.Run(); // Start the message loop to keep the thread alive
+        });
+
+        staThread.SetApartmentState(ApartmentState.STA);
+        staThread.Start();
     }
 
     /// <summary>
@@ -82,6 +96,14 @@ public class ClipboardHandleW : IDisposable
     /// </summary>
     public void StopMonitoring()
     {
+        // Shut down the dispatcher to exit the message loop
+        dispatcher?.InvokeShutdown();
+        // Optionally, wait for the thread to exit
+        if (staThread != null && staThread.IsAlive)
+        {
+            staThread.Join();
+        }
+        // Dispose of the hidden window
         if (_hwndSource is not null)
         {
             RemoveClipboardFormatListener(_hwndSource.Handle);

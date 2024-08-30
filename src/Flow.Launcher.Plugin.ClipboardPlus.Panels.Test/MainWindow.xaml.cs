@@ -99,33 +99,36 @@ public partial class MainWindow : Window
             clipboardData.UnicodeText = ClipboardMonitor.ClipboardText;
         }
 
-        TextBlock1.Text = $"Count: {_count}\n" +
+        Dispatcher.Invoke(() =>
+        {
+            TextBlock1.Text = $"Count: {_count}\n" +
             $"ClipboardChangedEventArgs\n" +
             $"DataType: {e.DataType}\n" +
             $"SourceApplication: {e.SourceApplication.Name}\n" +
             $"Content: {e.Content}";
-        TextBlock2.Text = $"ClipboardMonitor\n" +
-            $"ClipboardText: {ClipboardMonitor.ClipboardText}\n" +
-            $"ClipboardRtfText: {ClipboardMonitor.ClipboardRtfText}\n" +
-            $"ClipboardFiles: {ClipboardMonitor.ClipboardFiles}\n" +
-            $"ClipboardImage: {ClipboardMonitor.ClipboardImage}";
-        TextBlock3.Text = $"ClipboardData\n" +
-            $"DataMd5: {clipboardData.DataMd5}\n" +
-            $"DataToString: {clipboardData.DataToString(false)}\n" +
-            $"DataToString(Encrypted): {clipboardData.DataToString(true)}\n" +
-            $"Title: {clipboardData.GetTitle(CultureInfo.CurrentCulture)}\n" +
-            $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
-            $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
+            TextBlock2.Text = $"ClipboardMonitor\n" +
+                $"ClipboardText: {ClipboardMonitor.ClipboardText}\n" +
+                $"ClipboardRtfText: {ClipboardMonitor.ClipboardRtfText}\n" +
+                $"ClipboardFiles: {ClipboardMonitor.ClipboardFiles}\n" +
+                $"ClipboardImage: {ClipboardMonitor.ClipboardImage}";
+            TextBlock3.Text = $"ClipboardData\n" +
+                $"DataMd5: {clipboardData.DataMd5}\n" +
+                $"DataToString: {clipboardData.DataToString(false)}\n" +
+                $"DataToString(Encrypted): {clipboardData.DataToString(true)}\n" +
+                $"Title: {clipboardData.GetTitle(CultureInfo.CurrentCulture)}\n" +
+                $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
+                $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
 
-        TextBox.Text = ClipboardMonitor.ClipboardText;
-        if (string.IsNullOrEmpty(ClipboardMonitor.ClipboardRtfText))
-        {
-            RichTextBox.SetUnicodeText(ClipboardMonitor.ClipboardText);
-        }
-        else
-        {
-            RichTextBox.SetRichText(ClipboardMonitor.ClipboardRtfText);
-        }
+            TextBox.Text = ClipboardMonitor.ClipboardText;
+            if (string.IsNullOrEmpty(ClipboardMonitor.ClipboardRtfText))
+            {
+                RichTextBox.SetUnicodeText(ClipboardMonitor.ClipboardText);
+            }
+            else
+            {
+                RichTextBox.SetRichText(ClipboardMonitor.ClipboardRtfText);
+            }
+        });
 
         _count++;
     }
@@ -304,7 +307,13 @@ public partial class MainWindow : Window
 
     private void Button_Click3(object sender, RoutedEventArgs e)
     {
-        ClipboardMonitor.StopMonitoring();
+        ClipboardMonitor.ClipboardChanged -= OnClipboardChangeW;
+        ClipboardMonitor.Dispose();
+        TextBlock1.Text = "";
+        TextBlock2.Text = "";
+        TextBlock3.Text = "Clipboard Monitor is Stopped.";
+        TextBox.Text = "";
+        RichTextBox.SetUnicodeText("");
     }
 
     #endregion
