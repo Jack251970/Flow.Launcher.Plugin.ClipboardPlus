@@ -123,36 +123,6 @@ public class ClipboardMonitor : IDisposable
         _handle.Close();
     }
 
-    #region IDisposable Interface
-
-    /// <summary>
-    /// Disposes of the clipboard-monitoring resources.
-    /// </summary>
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    // <summary>
-    /// Disposes all the resources associated with this component.
-    /// </summary>
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            _timer.Dispose();
-            _timer = null!;
-            _handle.Dispose();
-            _handle = null!;
-            _observableFormats = null!;
-            ClipboardFiles = null!;
-            ClipboardImage = null!;
-        }
-    }
-
-    #endregion
-
     #endregion
 
     #region Private
@@ -268,6 +238,37 @@ public class ClipboardMonitor : IDisposable
     }
 
     #endregion
+
+    #endregion
+
+    #region IDisposable Interface
+
+    private bool _disposed;
+
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _timer.Dispose();
+            _timer = null!;
+            _handle.Dispose();
+            _handle = null!;
+            _observableFormats = null!;
+            ClipboardFiles = null!;
+            ClipboardImage = null!;
+            _disposed = true;
+        }
+    }
 
     #endregion
 }

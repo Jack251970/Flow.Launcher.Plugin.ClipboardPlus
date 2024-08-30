@@ -811,8 +811,14 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region IDisposable Interface
 
+    private bool _disposed;
+
     public void Dispose()
     {
+        if (_disposed)
+        {
+            return;
+        }
         Dispose(true);
         GC.SuppressFinalize(this);
     }
@@ -842,6 +848,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             Settings = null!;
             RecordsList = null!;
             Context.API.LogWarn(ClassName, $"Finish dispose");
+            _disposed = true;
         }
     }
 

@@ -458,10 +458,18 @@ public class DatabaseHelper : IDisposable
 
     #endregion
 
+    #endregion
+
     #region IDisposable Interface
+
+    private bool _disposed;
 
     public void Dispose()
     {
+        if (_disposed)
+        {
+            return;
+        }
         Dispose(true);
         GC.SuppressFinalize(this);
     }
@@ -472,10 +480,9 @@ public class DatabaseHelper : IDisposable
         {
             Connection.Dispose();
             Connection = null!;
+            _disposed = true;
         }
     }
-
-    #endregion
 
     #endregion
 }

@@ -211,11 +211,17 @@ public class ClipboardMonitorW : IDisposable
 
     #region IDisposable
 
+    private bool _disposed;
+
     /// <summary>
     /// Disposes of the clipboard-monitoring resources.
     /// </summary>
     public void Dispose()
     {
+        if (_disposed)
+        {
+            return;
+        }
         Dispose(true);
         GC.SuppressFinalize(this);
     }
@@ -232,6 +238,7 @@ public class ClipboardMonitorW : IDisposable
             _observableFormats = null!;
             ClipboardFiles = null!;
             ClipboardImage = null!;
+            _disposed = true;
         }
     }
 
