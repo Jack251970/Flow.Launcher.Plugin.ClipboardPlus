@@ -8,23 +8,6 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
 public class SourceApplication
 {
-    /// <summary>
-    /// Creates a new <see cref="SourceApplication"/> class-instance.
-    /// </summary>
-    /// <param name="id">The application's ID.</param>
-    /// <param name="handle">The application's handle.</param>
-    /// <param name="name">The application's name.</param>
-    /// <param name="title">The application's title.</param>
-    /// <param name="path">The application's path.</param>
-    internal SourceApplication(int id, IntPtr handle, string name, string title, string path)
-    {
-        Id = id;
-        Name = name;
-        Path = path;
-        Title = title;
-        Handle = handle;
-    }
-
     #region Properties
 
     /// <summary>
@@ -51,6 +34,27 @@ public class SourceApplication
     /// Gets the application's absolute path.
     /// </summary>
     public string Path { get; }
+
+    #endregion
+
+    #region Constructor
+
+    /// <summary>
+    /// Creates a new <see cref="SourceApplication"/> class-instance.
+    /// </summary>
+    /// <param name="id">The application's ID.</param>
+    /// <param name="handle">The application's handle.</param>
+    /// <param name="name">The application's name.</param>
+    /// <param name="title">The application's title.</param>
+    /// <param name="path">The application's path.</param>
+    public SourceApplication(int id, IntPtr handle, string name, string title, string path)
+    {
+        Id = id;
+        Name = name;
+        Path = path;
+        Title = title;
+        Handle = handle;
+    }
 
     #endregion
 

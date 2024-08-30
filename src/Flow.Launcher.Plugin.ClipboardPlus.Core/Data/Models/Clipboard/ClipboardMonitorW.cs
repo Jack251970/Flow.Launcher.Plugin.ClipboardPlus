@@ -1,21 +1,16 @@
-﻿/*
- * ClipboardMonitor.cs is from https://github.com/Willy-Kimura/SharpClipboard
- * with some modification, the original source code doesn't provide a
- * license, but MIT license shown in nuget package so I copied them here
- */
-
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
-using Timer = System.Windows.Forms.Timer;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
-public class ClipboardMonitor : IDisposable
+/// <summary>
+/// ClipboardMonitorW is a class that monitors the clipboard
+/// </summary>
+public class ClipboardMonitorW : IDisposable
 {
     #region Fields
 
-    private Timer _timer = new();
-    private ClipboardHandle _handle = new();
+    private ClipboardHandleW _clipboardHandle = new();
     private ObservableDataFormats _observableFormats = new();
 
     private bool _monitorClipboard;
@@ -62,17 +57,11 @@ public class ClipboardMonitor : IDisposable
     #region Non-browsable
 
     public string ClipboardText { get; internal set; } = string.Empty;
-
     public string ClipboardRtfText { get; internal set; } = string.Empty;
-
-    public object? ClipboardObject { get; internal set; }
-
-    public string ClipboardFile { get; internal set; } = string.Empty;
-
-    public List<string> ClipboardFiles { get; internal set; } = new();
-
+    public object? ClipboardObject { get; internal set; } = null;
     public BitmapSource? ClipboardImage { get; internal set; }
-
+    public string ClipboardFile { get; internal set; } = string.Empty;
+    public List<string> ClipboardFiles { get; internal set; } = new();
     public static string HandleCaption { get; set; } = string.Empty;
 
     #endregion
@@ -81,7 +70,7 @@ public class ClipboardMonitor : IDisposable
 
     #region Constructors
 
-    public ClipboardMonitor()
+    public ClipboardMonitorW()
     {
         SetDefaults();
     }
@@ -109,7 +98,7 @@ public class ClipboardMonitor : IDisposable
     /// </summary>
     public void StartMonitoring()
     {
-        _handle.Show();
+        _clipboardHandle.StartMonitoring();
     }
 
     /// <summary>
@@ -118,38 +107,8 @@ public class ClipboardMonitor : IDisposable
     /// </summary>
     public void StopMonitoring()
     {
-        _handle.Close();
+        _clipboardHandle.StopMonitoring();
     }
-
-    #region IDisposable Interface
-
-    /// <summary>
-    /// Disposes of the clipboard-monitoring resources.
-    /// </summary>
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    // <summary>
-    /// Disposes all the resources associated with this component.
-    /// </summary>
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            _timer.Dispose();
-            _timer = null!;
-            _handle.Dispose();
-            _handle = null!;
-            _observableFormats = null!;
-            ClipboardFiles = null!;
-            ClipboardImage = null!;
-        }
-    }
-
-    #endregion
 
     #endregion
 
@@ -160,11 +119,7 @@ public class ClipboardMonitor : IDisposable
     /// </summary>
     private void SetDefaults()
     {
-        _handle.ClipboardMonitorInstance = this;
-
-        _timer.Enabled = true;
-        _timer.Interval = 1000;
-        _timer.Tick += OnLoad;
+        _clipboardHandle.ClipboardMonitorInstance = this;
 
         MonitorClipboard = true;
         ObserveLastEntry = true;
@@ -175,11 +130,12 @@ public class ClipboardMonitor : IDisposable
         ClipboardChanged?.Invoke(this, new ClipboardChangedEventArgs(content, type, source));
     }
 
-    /// <summary>
-    /// Gets the foreground or currently active window handle.
-    /// </summary>
+    #region Win32 Interop
+
     [DllImport("user32.dll")]
-    private static extern IntPtr GetForegroundWindow();
+    private static extern int GetForegroundWindow();
+
+    #endregion
 
     #endregion
 
@@ -251,21 +207,33 @@ public class ClipboardMonitor : IDisposable
 
     #endregion
 
-    #region Private
+    #endregion
+
+    #region IDisposable
 
     /// <summary>
-    /// This initiates a Timer that then begins the
-    /// clipboard-monitoring service. The Timer will
-    /// auto-shutdown once the service has started.
+    /// Disposes of the clipboard-monitoring resources.
     /// </summary>
-    private void OnLoad(object? sender, EventArgs e)
+    public void Dispose()
     {
-        _timer.Stop();
-        _timer.Enabled = false;
-        StartMonitoring();
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
-    #endregion
+    // <summary>
+    /// Disposes all the resources associated with this component.
+    /// </summary>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _clipboardHandle.Dispose();
+            _clipboardHandle = null!;
+            _observableFormats = null!;
+            ClipboardFiles = null!;
+            ClipboardImage = null!;
+        }
+    }
 
     #endregion
 }

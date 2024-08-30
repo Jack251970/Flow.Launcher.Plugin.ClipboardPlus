@@ -63,6 +63,7 @@ saving large images via `KeepImage` to database may block query for a little whi
 
 - [ICONS](https://icons8.com/icons)
 - [ClipboardR](https://github.com/rainyl/Flow.Launcher.Plugin.ClipboardR)
+- [SharpClipboard](https://github.com/Willy-Kimura/SharpClipboard)
 
 ## License
 

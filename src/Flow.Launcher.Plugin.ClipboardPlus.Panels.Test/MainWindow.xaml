@@ -25,6 +25,7 @@
                         <RowDefinition Height="2*" />
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <TextBlock x:Name="TextBlock1" Grid.Row="0" />
                     <TextBlock x:Name="TextBlock2" Grid.Row="1" />
@@ -34,6 +35,7 @@
                         Text="Wait something copyed to clipboard..." />
                     <TextBox x:Name="TextBox" Grid.Row="3" />
                     <RichTextBox x:Name="RichTextBox" Grid.Row="4" />
+                    <Button Content="Stop Monitor" Click="Button_Click3" Grid.Row="5"/>
                 </Grid>
             </TabItem>
         </TabControl>

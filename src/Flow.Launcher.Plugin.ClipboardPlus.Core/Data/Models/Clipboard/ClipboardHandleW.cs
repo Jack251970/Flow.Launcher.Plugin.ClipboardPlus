@@ -1,42 +1,21 @@
-﻿/*
- * ClipboardHandle.cs is from https://github.com/Willy-Kimura/SharpClipboard
- * with some modification, the original source code doesn't provide a
- * license, but MIT license shown in nuget package so I copied them here
- */
-
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Clipboard = System.Windows.Clipboard;
 using DataFormats = System.Windows.DataFormats;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
-public partial class ClipboardHandle : Form
+public class ClipboardHandleW : IDisposable
 {
-    #region Constructor
-
-    public ClipboardHandle()
-    {
-        InitializeComponent();
-
-        // [optional] Applies the default window title.
-        // This may only be necessary for forensic purposes.
-        ShowInTaskbar = false;
-        FormBorderStyle = FormBorderStyle.None;
-        Visible = false;
-        Opacity = 0d;
-        Size = new Size(1, 1);
-        Location = new Point(-10000, -10000);
-    }
-
-    #endregion
-
     #region Fields
 
     const int WM_CLIPBOARDUPDATE = 0x031D;
+
+    private HwndSource _hwndSource = null!;
 
     private bool _ready;
 
@@ -68,7 +47,7 @@ public partial class ClipboardHandle : Form
     }
 
     // instant in monitor
-    internal ClipboardMonitor ClipboardMonitorInstance { get; set; } = null!;
+    internal ClipboardMonitorW ClipboardMonitorInstance { get; set; } = null!;
 
     #endregion
 
@@ -91,40 +70,67 @@ public partial class ClipboardHandle : Form
     #region Clipboard Monitor
 
     /// <summary>
-    /// Modifications in this overriden method have
-    /// been added to disable viewing of the handle-
-    /// window in the Task Manager.
+    /// Starts monitoring the system clipboard.
     /// </summary>
-    protected override CreateParams CreateParams
+    public void StartMonitoring()
     {
-        get
-        {
-            var cp = base.CreateParams;
-            // Turn on WS_EX_TOOLWINDOW.
-            cp.ExStyle |= 0x80;
-            return cp;
-        }
+        CreateHiddenWindow();
     }
 
     /// <summary>
-    /// This is the main clipboard detection method.
-    /// Algorithmic customizations are most welcome.
+    /// Stops monitoring the system clipboard.
     /// </summary>
-    /// <param name="m">The processed window-reference message.</param>
-    protected override void WndProc(ref Message m)
+    public void StopMonitoring()
     {
-        Console.WriteLine(m.ToString());
-        switch (m.Msg)
-        {
-            case WM_CLIPBOARDUPDATE:
-                OnDrawClipboardChanged();
-                break;
-            default:
-                base.WndProc(ref m);
-                break;
-        }
+        RemoveClipboardFormatListener(_hwndSource.Handle);
+        _hwndSource.Dispose();
     }
 
+    /// <summary>
+    /// Creates a hidden window to monitor the system clipboard.
+    /// </summary>
+    private void CreateHiddenWindow()
+    {
+        var parameters = new HwndSourceParameters(GetType().Name)
+        {
+            Width = 1,
+            Height = 1,
+            PositionX = -10000,
+            PositionY = -10000,
+            WindowStyle = unchecked((int)(0x80000000 | 0x10000000)), // WS_POPUP | WS_VISIBLE
+            ExtendedWindowStyle = 0x00000080, // WS_EX_TOOLWINDOW
+            ParentWindow = IntPtr.Zero,
+            UsesPerPixelOpacity = false
+        };
+
+        _hwndSource = new HwndSource(parameters);
+        _hwndSource.AddHook(WndProc);
+
+        AddClipboardFormatListener(_hwndSource.Handle);
+        Ready = true;
+    }
+
+    /// <summary>
+    /// Handles the clipboard update event.
+    /// </summary>
+    /// <param name="hwnd"> Handle to the window that receives the message. </param>
+    /// <param name="msg"> The message. </param>
+    /// <param name="wParam"> Additional message information. </param>
+    /// <param name="lParam"> Additional message information. </param>
+    /// <param name="handled"> Whether the message was handled. </param>
+    /// <returns></returns>
+    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        if (msg == WM_CLIPBOARDUPDATE)
+        {
+            OnDrawClipboardChanged();
+        }
+        return IntPtr.Zero;
+    }
+
+    /// <summary>
+    /// Handles the clipboard data change event.
+    /// </summary>
     private void OnDrawClipboardChanged()
     {
         try
@@ -134,6 +140,8 @@ public partial class ClipboardHandle : Form
             {
                 return;
             }
+
+            // If the clipboard is empty, return.
             var dataObj = TaskUtils.Do(Clipboard.GetDataObject, 100, 5);
             if (dataObj is null)
             {
@@ -141,10 +149,8 @@ public partial class ClipboardHandle : Form
             }
 
             // Determines whether a file/files have been cut/copied.
-            if (
-                ClipboardMonitorInstance.ObservableFormats.Images
-                && dataObj.GetDataPresent(DataFormats.Bitmap)
-            )
+            if (ClipboardMonitorInstance.ObservableFormats.Images && 
+                dataObj.GetDataPresent(DataFormats.Bitmap))
             {
                 var capturedImage = dataObj.GetData(DataFormats.Bitmap) as BitmapSource;
                 ClipboardMonitorInstance.ClipboardImage = capturedImage;
@@ -161,15 +167,11 @@ public partial class ClipboardHandle : Form
                     )
                 );
             }
-            // Determines whether text has been cut/copied.
-            else if (
-                ClipboardMonitorInstance.ObservableFormats.Texts
-                && (
-                    dataObj.GetDataPresent(DataFormats.Text)
-                    || dataObj.GetDataPresent(DataFormats.UnicodeText)
-                    || dataObj.GetDataPresent(DataFormats.Rtf)
-                )
-            )
+            // Determines whether unicode text or rich text has been cut/copied.
+            else if (ClipboardMonitorInstance.ObservableFormats.Texts &&
+                (dataObj.GetDataPresent(DataFormats.Text) ||
+                dataObj.GetDataPresent(DataFormats.UnicodeText) ||
+                dataObj.GetDataPresent(DataFormats.Rtf)))
             {
                 var capturedText = dataObj.GetData(DataFormats.UnicodeText) as string;
                 var capturedRtfData = dataObj.GetData(DataFormats.Rtf);
@@ -221,10 +223,9 @@ public partial class ClipboardHandle : Form
                     );
                 }
             }
-            else if (
-                ClipboardMonitorInstance.ObservableFormats.Files
-                && dataObj.GetDataPresent(DataFormats.FileDrop)
-            )
+            // Determines whether a file has been cut/copied.
+            else if (ClipboardMonitorInstance.ObservableFormats.Files && 
+                dataObj.GetDataPresent(DataFormats.FileDrop))
             {
                 // If the 'capturedFiles' string array persists as null, then this means
                 // that the copied content is of a complex object type since the file-drop
@@ -268,11 +269,9 @@ public partial class ClipboardHandle : Form
                     );
                 }
             }
-            // Determines whether a complex object has been cut/copied.
-            else if (
-                ClipboardMonitorInstance.ObservableFormats.Others
-                && !dataObj.GetDataPresent(DataFormats.FileDrop)
-            )
+            // Determines whether an unknown object has been cut/copied.
+            else if (ClipboardMonitorInstance.ObservableFormats.Others &&
+                !dataObj.GetDataPresent(DataFormats.FileDrop))
             {
                 ClipboardMonitorInstance.Invoke(
                     dataObj,
@@ -293,7 +292,7 @@ public partial class ClipboardHandle : Form
             // Applications with Administrative privileges can however override
             // this exception when run in a production environment.
         }
-        catch (NullReferenceException) { }
+        catch (NullReferenceException) {}
         catch (COMException)
         {
             // Sometimes the clipboard is locked and cannot be accessed.
@@ -304,23 +303,9 @@ public partial class ClipboardHandle : Form
 
     #endregion
 
-    #region Helper Methods
-
-    public void StartMonitoring()
-    {
-        Show();
-    }
-
-    public void StopMonitoring()
-    {
-        Close();
-    }
-
     #endregion
 
-    #endregion
-
-    #region Source App Management
+    #region Souce App Management
 
     #region Win32 Externals
 
@@ -376,7 +361,7 @@ public partial class ClipboardHandle : Form
     private string GetActiveWindowTitle()
     {
         const int capacity = 256;
-        StringBuilder content = new StringBuilder(capacity);
+        StringBuilder content = new(capacity);
         IntPtr handle = IntPtr.Zero;
 
         try
@@ -397,20 +382,27 @@ public partial class ClipboardHandle : Form
 
     #endregion
 
-    #region Events
+    #region IDisposable
 
-    protected override void OnHandleCreated(EventArgs e)
+    /// <summary>
+    /// Disposes of the clipboard-monitoring resources.
+    /// </summary>
+    public void Dispose()
     {
-        // Start listening for clipboard changes.
-        TaskUtils.SafeDo(() => AddClipboardFormatListener(Handle), 100, 5);
-        Ready = true;
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
-    protected override void OnHandleDestroyed(EventArgs e)
+    // <summary>
+    /// Disposes all the resources associated with this component.
+    /// </summary>
+    protected virtual void Dispose(bool disposing)
     {
-        // Stop listening to clipboard changes.
-        TaskUtils.SafeDo(() => RemoveClipboardFormatListener(Handle), 100, 5);
-        base.OnHandleDestroyed(e);
+        if (disposing)
+        {
+            StopMonitoring();
+            GC.SuppressFinalize(this);
+        }
     }
 
     #endregion
