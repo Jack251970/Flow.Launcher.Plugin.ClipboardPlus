@@ -1,4 +1,7 @@
-﻿using System.Runtime.InteropServices;
+﻿// Copyright (c) 2024 Jack251970
+// Licensed under the Apache License. See the LICENSE.
+
+using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;

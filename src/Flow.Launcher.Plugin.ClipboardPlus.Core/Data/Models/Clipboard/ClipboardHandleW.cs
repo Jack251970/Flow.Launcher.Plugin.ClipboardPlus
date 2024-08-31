@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿// Copyright (c) 2024 Jack251970
+// Licensed under the Apache License. See the LICENSE.
+
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -10,7 +13,7 @@ using DataFormats = System.Windows.DataFormats;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
-public class ClipboardHandleW : IDisposable
+internal class ClipboardHandleW : IDisposable
 {
     #region Fields
 
