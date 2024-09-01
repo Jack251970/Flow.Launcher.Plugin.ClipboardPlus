@@ -151,7 +151,7 @@ internal class ClipboardHandleW : IDisposable
     {
         if (msg == WM_CLIPBOARDUPDATE)
         {
-            OnDrawClipboardChanged();
+            OnClipboardChanged();
         }
         return IntPtr.Zero;
     }
@@ -159,7 +159,7 @@ internal class ClipboardHandleW : IDisposable
     /// <summary>
     /// Handles the clipboard data change event.
     /// </summary>
-    private void OnDrawClipboardChanged()
+    private void OnClipboardChanged()
     {
         try
         {
