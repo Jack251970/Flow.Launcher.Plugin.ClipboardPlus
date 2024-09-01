@@ -22,6 +22,8 @@ It can help you manage your clipboard history and customizing copy rules with su
 ![screenshot2](./images/screenshot2.png)
 ![screenshot3](./images/screenshot3.png)
 ![screenshot4](./images/screenshot4.png)
+![screenshot3](./images/screenshot5.png)
+![screenshot4](./images/screenshot6.png)
 
 ## Installation
 
