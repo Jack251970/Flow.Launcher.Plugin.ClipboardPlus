@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -180,20 +181,25 @@ internal class ClipboardHandleW : IDisposable
             if (ClipboardMonitorInstance.ObservableFormats.Images && 
                 dataObj.GetDataPresent(DataFormats.Bitmap))
             {
-                var capturedImage = dataObj.GetData(DataFormats.Bitmap) as BitmapSource;
-                ClipboardMonitorInstance.ClipboardImage = capturedImage;
+                // Because the clipboard is accessed on a separate thread,
+                // the UI thread must be invoked to update the clipboard image.
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var capturedImage = dataObj.GetData(DataFormats.Bitmap) as BitmapSource;
+                    ClipboardMonitorInstance.ClipboardImage = capturedImage;
 
-                ClipboardMonitorInstance.Invoke(
-                    capturedImage,
-                    DataType.Image,
-                    new SourceApplication(
-                        GetForegroundWindow(),
-                        ClipboardMonitorInstance.ForegroundWindowHandle(),
-                        GetApplicationName(),
-                        GetActiveWindowTitle(),
-                        GetApplicationPath()
-                    )
-                );
+                    ClipboardMonitorInstance.Invoke(
+                        capturedImage,
+                        DataType.Image,
+                        new SourceApplication(
+                            GetForegroundWindow(),
+                            ClipboardMonitorInstance.ForegroundWindowHandle(),
+                            GetApplicationName(),
+                            GetActiveWindowTitle(),
+                            GetApplicationPath()
+                        )
+                    );
+                });
             }
             // Determines whether unicode text or rich text has been cut/copied.
             else if (ClipboardMonitorInstance.ObservableFormats.Texts &&
