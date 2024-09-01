@@ -35,7 +35,6 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-
         InitializeWindow();
     }
 
@@ -102,10 +101,10 @@ public partial class MainWindow : Window
         Dispatcher.Invoke(() =>
         {
             TextBlock1.Text = $"Count: {_count}\n" +
-            $"ClipboardChangedEventArgs\n" +
-            $"DataType: {e.DataType}\n" +
-            $"SourceApplication: {e.SourceApplication.Name}\n" +
-            $"Content: {e.Content}";
+                $"ClipboardChangedEventArgs\n" +
+                $"DataType: {e.DataType}\n" +
+                $"SourceApplication: {e.SourceApplication.Name}\n" +
+                $"Content: {e.Content}";
             TextBlock2.Text = $"ClipboardMonitor\n" +
                 $"ClipboardText: {ClipboardMonitor.ClipboardText}\n" +
                 $"ClipboardRtfText: {ClipboardMonitor.ClipboardRtfText}\n" +
@@ -127,6 +126,11 @@ public partial class MainWindow : Window
             else
             {
                 RichTextBox.SetRichText(ClipboardMonitor.ClipboardRtfText);
+            }
+
+            if (e.DataType is DataType.Image)
+            {
+                Image.Source = ClipboardMonitor.ClipboardImage ?? _defaultImage;
             }
         });
 

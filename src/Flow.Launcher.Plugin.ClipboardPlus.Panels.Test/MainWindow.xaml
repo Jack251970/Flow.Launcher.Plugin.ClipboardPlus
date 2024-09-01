@@ -7,9 +7,9 @@
     xmlns:panels="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.Views;assembly=Flow.Launcher.Plugin.ClipboardPlus.Panels"
     xmlns:usercontrol="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.UserControls;assembly=Flow.Launcher.Plugin.ClipboardPlus.Panels"
     Title="MainWindow"
-    Closed="Window_Closed"
     Width="800"
     Height="600"
+    Closed="Window_Closed"
     mc:Ignorable="d">
     <Grid>
         <TabControl SelectedIndex="0">
@@ -21,9 +21,10 @@
             <TabItem Header="Clipboard Monitor">
                 <Grid HorizontalAlignment="Center">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="2*" />
                         <RowDefinition Height="1*" />
-                        <RowDefinition Height="2*" />
-                        <RowDefinition Height="2*" />
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
@@ -36,7 +37,15 @@
                         Text="Wait something copyed to clipboard..." />
                     <TextBox x:Name="TextBox" Grid.Row="3" />
                     <RichTextBox x:Name="RichTextBox" Grid.Row="4" />
-                    <Button Content="Stop Monitor" Click="Button_Click3" Grid.Row="5"/>
+                    <Image
+                        x:Name="Image"
+                        Grid.Row="6"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                    <Button
+                        Grid.Row="5"
+                        Click="Button_Click3"
+                        Content="Stop Monitor" />
                 </Grid>
             </TabItem>
         </TabControl>
