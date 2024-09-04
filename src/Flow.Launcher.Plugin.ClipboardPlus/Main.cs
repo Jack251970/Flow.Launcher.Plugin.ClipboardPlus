@@ -50,8 +50,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     // Clipboard retry times
     private const int ClipboardRetryTimes = 5;
 
-    // Clipboard retry interval
-    private const int ClipboardRetryInterval = 100;
+    // Retry interval
+    private const int RetryInterval = 100;
 
     #region Scores
 
@@ -646,7 +646,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     {
         while (Context.API.IsMainWindowVisible())
         {
-            await Task.Delay(100);
+            await Task.Delay(RetryInterval);
         }
         new InputSimulator().Keyboard.ModifiedKeyStroke(
             VirtualKeyCode.CONTROL,
@@ -747,7 +747,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 {
                     return e;
                 }
-                await Task.Delay(ClipboardRetryInterval);
+                await Task.Delay(RetryInterval);
             }
         }
         return null;
@@ -807,7 +807,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 {
                     return e;
                 }
-                await Task.Delay(ClipboardRetryInterval);
+                await Task.Delay(RetryInterval);
             }
         }
         return null;
@@ -848,8 +848,29 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     {
         // TODO: Ask Flow-Launcher for a better way to exit the context menu.
         new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
-        await Task.Delay(100);
+        await Task.Delay(RetryInterval);
         Context.API.ReQuery(false);
+    }
+
+    private static async Task<Exception?> FlushClipboard()
+    {
+        for (int i = 0; i < ClipboardRetryTimes; i++)
+        {
+            try
+            {
+                Clipboard.Flush();
+                break;
+            }
+            catch (Exception e)
+            {
+                if (i == ClipboardRetryTimes - 1)
+                {
+                    return e;
+                }
+                await Task.Delay(RetryInterval);
+            }
+        }
+        return null;
     }
 
     #endregion
@@ -890,7 +911,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         GC.SuppressFinalize(this);
     }
 
-    protected virtual void Dispose(bool disposing)
+    protected async void Dispose(bool disposing)
     {
         if (disposing)
         {
@@ -899,21 +920,24 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             {
                 DatabaseHelper?.Dispose();
                 DatabaseHelper = null!;
-                Context.API.LogInfo(ClassName, $"Disposed DatabaseHelper");
+                Context.API.LogDebug(ClassName, $"Disposed DatabaseHelper");
             }
             ClipboardMonitor.ClipboardChanged -= OnClipboardChangeW;
             ClipboardMonitor.Dispose();
             ClipboardMonitor = null!;
-            Context.API.LogInfo(ClassName, $"Disposed ClipboardMonitor");
+            Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
             CultureInfoChanged = null;
             Settings = null!;
             RecordsList = null!;
-            try
+            var exception = await FlushClipboard();
+            if (exception == null)
             {
-                Clipboard.Flush();
-                Context.API.LogInfo(ClassName, $"Flushed Clipboard");
+                Context.API.LogDebug(ClassName, $"Flushed Clipboard");
             }
-            catch (Exception) { }
+            else
+            {
+                Context.API.LogException(ClassName, $"Flushed Clipboard failed", exception);
+            }
             Context.API.LogWarn(ClassName, $"Finish dispose");
             _disposed = true;
         }
