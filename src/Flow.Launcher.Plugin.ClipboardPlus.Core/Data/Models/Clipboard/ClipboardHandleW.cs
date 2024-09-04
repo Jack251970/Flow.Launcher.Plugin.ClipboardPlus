@@ -180,8 +180,7 @@ internal class ClipboardHandleW : IDisposable
             if (ClipboardMonitorInstance.ObservableFormats.Images && 
                 dataObj.GetDataPresent(DataFormats.Bitmap))
             {
-                // Because the clipboard is accessed on a separate thread,
-                // the UI thread must be invoked to update the clipboard image.
+                // Handle the image on the application dispatcher for UI actions.
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     var capturedImage = dataObj.GetData(DataFormats.Bitmap) as BitmapSource;
@@ -206,70 +205,118 @@ internal class ClipboardHandleW : IDisposable
                 dataObj.GetDataPresent(DataFormats.UnicodeText) ||
                 dataObj.GetDataPresent(DataFormats.Rtf)))
             {
+                // Don't handle getting the text on the application dispatcher because it will lose the data.
                 var capturedText = dataObj.GetData(DataFormats.UnicodeText) as string;
                 var capturedRtfData = dataObj.GetData(DataFormats.Rtf);
 
-                var unicodeText = false;
-                if (capturedRtfData is string capturedRtfText)
+                // Handle the text on the application dispatcher.
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    ClipboardMonitorInstance.ClipboardRtfText = capturedRtfText;
-                }
-                else if (capturedRtfData is MemoryStream capturedRtfStream)
-                {
-                    using var reader = new StreamReader(capturedRtfStream);
-                    capturedRtfText = reader.ReadToEnd();
-                    ClipboardMonitorInstance.ClipboardRtfText = capturedRtfText;
-                }
-                else
-                {
-                    ClipboardMonitorInstance.ClipboardRtfText = string.Empty;
-                    unicodeText = true;
-                }
-                ClipboardMonitorInstance.ClipboardText = capturedText ?? string.Empty;
+                    var unicodeText = false;
+                    if (capturedRtfData is string capturedRtfText)
+                    {
+                        ClipboardMonitorInstance.ClipboardRtfText = capturedRtfText;
+                    }
+                    else if (capturedRtfData is MemoryStream capturedRtfStream)
+                    {
+                        using var reader = new StreamReader(capturedRtfStream);
+                        capturedRtfText = reader.ReadToEnd();
+                        ClipboardMonitorInstance.ClipboardRtfText = capturedRtfText;
+                    }
+                    else
+                    {
+                        ClipboardMonitorInstance.ClipboardRtfText = string.Empty;
+                        unicodeText = true;
+                    }
+                    ClipboardMonitorInstance.ClipboardText = capturedText ?? string.Empty;
 
-                if (unicodeText)
-                {
-                    ClipboardMonitorInstance.Invoke(
-                        capturedText,
-                        DataType.UnicodeText,
-                        new SourceApplication(
-                            GetForegroundWindow(),
-                            ClipboardMonitorInstance.ForegroundWindowHandle(),
-                            GetApplicationName(),
-                            GetActiveWindowTitle(),
-                            GetApplicationPath()
-                        )
-                    );
-                }
-                else
-                {
-                    ClipboardMonitorInstance.Invoke(
-                        capturedRtfData,
-                        DataType.RichText,
-                        new SourceApplication(
-                            GetForegroundWindow(),
-                            ClipboardMonitorInstance.ForegroundWindowHandle(),
-                            GetApplicationName(),
-                            GetActiveWindowTitle(),
-                            GetApplicationPath()
-                        )
-                    );
-                }
+                    if (unicodeText)
+                    {
+                        ClipboardMonitorInstance.Invoke(
+                            capturedText,
+                            DataType.UnicodeText,
+                            new SourceApplication(
+                                GetForegroundWindow(),
+                                ClipboardMonitorInstance.ForegroundWindowHandle(),
+                                GetApplicationName(),
+                                GetActiveWindowTitle(),
+                                GetApplicationPath()
+                            )
+                        );
+                    }
+                    else
+                    {
+                        ClipboardMonitorInstance.Invoke(
+                            capturedRtfData,
+                            DataType.RichText,
+                            new SourceApplication(
+                                GetForegroundWindow(),
+                                ClipboardMonitorInstance.ForegroundWindowHandle(),
+                                GetApplicationName(),
+                                GetActiveWindowTitle(),
+                                GetApplicationPath()
+                            )
+                        );
+                    }
+                });
             }
             // Determines whether a file has been cut/copied.
             else if (ClipboardMonitorInstance.ObservableFormats.Files && 
                 dataObj.GetDataPresent(DataFormats.FileDrop))
             {
-                // If the 'capturedFiles' string array persists as null, then this means
-                // that the copied content is of a complex object type since the file-drop
-                // format is able to capture more-than-just-file content in the clipboard.
-                // Therefore assign the content its rightful type.
-                if (dataObj.GetData(DataFormats.FileDrop) is not string[] capturedFiles)
+                // Handle the file on the application dispatcher.
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    ClipboardMonitorInstance.ClipboardObject = dataObj;
-                    var txt = dataObj.GetData(DataFormats.UnicodeText) as string;
-                    ClipboardMonitorInstance.ClipboardText = txt ?? string.Empty;
+                    // If the 'capturedFiles' string array persists as null, then this means
+                    // that the copied content is of a complex object type since the file-drop
+                    // format is able to capture more-than-just-file content in the clipboard.
+                    // Therefore assign the content its rightful type.
+                    if (dataObj.GetData(DataFormats.FileDrop) is not string[] capturedFiles)
+                    {
+                        ClipboardMonitorInstance.ClipboardObject = dataObj;
+                        var txt = dataObj.GetData(DataFormats.UnicodeText) as string;
+                        ClipboardMonitorInstance.ClipboardText = txt ?? string.Empty;
 
+                        ClipboardMonitorInstance.Invoke(
+                            dataObj,
+                            DataType.Other,
+                            new SourceApplication(
+                                GetForegroundWindow(),
+                                ClipboardMonitorInstance.ForegroundWindowHandle(),
+                                GetApplicationName(),
+                                GetActiveWindowTitle(),
+                                GetApplicationPath()
+                            )
+                        );
+                    }
+                    else
+                    {
+                        // Clear all existing files before update.
+                        ClipboardMonitorInstance.ClipboardFiles.Clear();
+                        ClipboardMonitorInstance.ClipboardFiles.AddRange(capturedFiles);
+                        ClipboardMonitorInstance.ClipboardFile = capturedFiles[0];
+
+                        ClipboardMonitorInstance.Invoke(
+                            capturedFiles,
+                            DataType.Files,
+                            new SourceApplication(
+                                GetForegroundWindow(),
+                                ClipboardMonitorInstance.ForegroundWindowHandle(),
+                                GetApplicationName(),
+                                GetActiveWindowTitle(),
+                                GetApplicationPath()
+                            )
+                        );
+                    }
+                });
+            }
+            // Determines whether an unknown object has been cut/copied.
+            else if (ClipboardMonitorInstance.ObservableFormats.Others &&
+                !dataObj.GetDataPresent(DataFormats.FileDrop))
+            {
+                // Handle the object on the application dispatcher.
+                Application.Current.Dispatcher.Invoke(() =>
+                {
                     ClipboardMonitorInstance.Invoke(
                         dataObj,
                         DataType.Other,
@@ -281,42 +328,7 @@ internal class ClipboardHandleW : IDisposable
                             GetApplicationPath()
                         )
                     );
-                }
-                else
-                {
-                    // Clear all existing files before update.
-                    ClipboardMonitorInstance.ClipboardFiles.Clear();
-                    ClipboardMonitorInstance.ClipboardFiles.AddRange(capturedFiles);
-                    ClipboardMonitorInstance.ClipboardFile = capturedFiles[0];
-
-                    ClipboardMonitorInstance.Invoke(
-                        capturedFiles,
-                        DataType.Files,
-                        new SourceApplication(
-                            GetForegroundWindow(),
-                            ClipboardMonitorInstance.ForegroundWindowHandle(),
-                            GetApplicationName(),
-                            GetActiveWindowTitle(),
-                            GetApplicationPath()
-                        )
-                    );
-                }
-            }
-            // Determines whether an unknown object has been cut/copied.
-            else if (ClipboardMonitorInstance.ObservableFormats.Others &&
-                !dataObj.GetDataPresent(DataFormats.FileDrop))
-            {
-                ClipboardMonitorInstance.Invoke(
-                    dataObj,
-                    DataType.Other,
-                    new SourceApplication(
-                        GetForegroundWindow(),
-                        ClipboardMonitorInstance.ForegroundWindowHandle(),
-                        GetApplicationName(),
-                        GetActiveWindowTitle(),
-                        GetApplicationPath()
-                    )
-                );
+                });
             }
         }
         catch (AccessViolationException)
