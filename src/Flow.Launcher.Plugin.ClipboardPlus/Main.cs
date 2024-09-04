@@ -588,14 +588,17 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             TitleToolTip = clipboardData.GetText(CultureInfo),
             ContextData = clipboardData,
             PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, clipboardData)),
-            Action = _ =>
+            AsyncAction = async _ =>
             {
                 switch (Settings.ClickAction)
                 {
-                    case ClickAction.CopyPaste:
+                    case ClickAction.Copy:
                         CopyToClipboard(clipboardData);
-                        Context.API.VisibilityChanged += Paste_VisibilityChanged;
+                        break;
+                    case ClickAction.CopyPaste:
                         Context.API.HideMainWindow();
+                        CopyToClipboard(clipboardData);
+                        await WaitWindowHideAndSimulatePaste();
                         break;
                     case ClickAction.CopyDeleteList:
                         CopyToClipboard(clipboardData);
@@ -606,19 +609,18 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         RemoveFromListDatabase(clipboardData, false);
                         break;
                     case ClickAction.CopyPasteDeleteList:
-                        CopyToClipboard(clipboardData);
-                        Context.API.VisibilityChanged += Paste_VisibilityChanged;
                         Context.API.HideMainWindow();
+                        CopyToClipboard(clipboardData);
                         RemoveFromList(clipboardData, false);
+                        await WaitWindowHideAndSimulatePaste();
                         break;
                     case ClickAction.CopyPasteDeleteListDatabase:
-                        CopyToClipboard(clipboardData);
-                        Context.API.VisibilityChanged += Paste_VisibilityChanged;
                         Context.API.HideMainWindow();
+                        CopyToClipboard(clipboardData);
                         RemoveFromListDatabase(clipboardData, false);
+                        await WaitWindowHideAndSimulatePaste();
                         break;
                     default:
-                        CopyToClipboard(clipboardData);
                         break;
                 }
                 return true;
@@ -626,17 +628,16 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         };
     }
 
-    private async void Paste_VisibilityChanged(object sender, VisibilityChangedEventArgs args)
+    private async Task WaitWindowHideAndSimulatePaste()
     {
-        if (args.IsVisible == false)
+        while (Context.API.IsMainWindowVisible())
         {
             await Task.Delay(100);
-            new InputSimulator().Keyboard.ModifiedKeyStroke(
-                VirtualKeyCode.CONTROL,
-                VirtualKeyCode.VK_V
-            );
-            Context.API.VisibilityChanged -= Paste_VisibilityChanged;
         }
+        new InputSimulator().Keyboard.ModifiedKeyStroke(
+            VirtualKeyCode.CONTROL,
+            VirtualKeyCode.VK_V
+        );
     }
 
     #endregion
