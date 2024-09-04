@@ -665,33 +665,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         var dataType = clipboardData.DataType;
         if (validObject is not null)
         {
-            switch (dataType)
-            {
-                case DataType.UnicodeText:
-                    Clipboard.SetText((string)validObject, TextDataFormat.UnicodeText);
-                    break;
-                case DataType.RichText:
-                    Clipboard.SetText((string)validObject, TextDataFormat.Rtf);
-                    break;
-                case DataType.Image:
-                    Clipboard.SetImage((BitmapSource)validObject);
-                    break;
-                case DataType.Files:
-                    var paths = new StringCollection();
-                    paths.AddRange((string[])validObject);
-                    Clipboard.SetFileDropList(paths);
-                    break;
-                default:
-                    try
-                    {
-                        Clipboard.SetDataObject(validObject);
-                    }
-                    catch (Exception e)
-                    {
-                        Context.API.LogException(ClassName, $"Copy to clipboard failed: {clipboardData}", e);
-                    }
-                    break;
-            }
+            CopyToClipboard(dataType, validObject);
             Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
                 StringUtils.CompressString(clipboardData.GetText(CultureInfo), 54));
@@ -717,20 +691,44 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
+    private void CopyToClipboard(DataType dataType, object validObject)
+    {
+        switch (dataType)
+        {
+            case DataType.UnicodeText:
+                Clipboard.SetText((string)validObject);
+                break;
+            case DataType.RichText:
+                Clipboard.SetText((string)validObject, TextDataFormat.Rtf);
+                break;
+            case DataType.Image:
+                Clipboard.SetImage((BitmapSource)validObject);
+                break;
+            case DataType.Files:
+                var paths = new StringCollection();
+                paths.AddRange((string[])validObject);
+                Clipboard.SetFileDropList(paths);
+                break;
+            default:
+                try
+                {
+                    Clipboard.SetDataObject(validObject);
+                }
+                catch (Exception e)
+                {
+                    Context.API.LogException(ClassName, $"Copy to clipboard failed", e);
+                }
+                break;
+        }
+    }
+
     private void CopyAsPlainTextToClipboard(ClipboardData clipboardData)
     {
         var validObject = clipboardData.UnicodeTextToValid();
         var dataType = clipboardData.DataType;
         if (validObject is not null)
         {
-            switch (dataType)
-            {
-                case DataType.RichText:
-                    Clipboard.SetText(validObject);
-                    break;
-                default:
-                    break;
-            }
+            CopyAsPlainTextToClipboard(dataType, clipboardData);
             Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
                 StringUtils.CompressString(clipboardData.GetText(CultureInfo), 54));
@@ -744,6 +742,18 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
                     break;
             }
+        }
+    }
+
+    private void CopyAsPlainTextToClipboard(DataType dataType, object validObject)
+    {
+        switch (dataType)
+        {
+            case DataType.RichText:
+                Clipboard.SetText((string)validObject);
+                break;
+            default:
+                break;
         }
     }
 

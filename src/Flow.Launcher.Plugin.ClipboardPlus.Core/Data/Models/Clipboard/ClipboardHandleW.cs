@@ -90,7 +90,6 @@ internal class ClipboardHandleW : IDisposable
             CreateHiddenWindow();
             Dispatcher.Run(); // Start the message loop to keep the thread alive
         });
-
         staThread.SetApartmentState(ApartmentState.STA);
         staThread.Start();
     }
