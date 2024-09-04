@@ -450,7 +450,15 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
         if (dataType == DataType.RichText)
         {
-            clipboardData.UnicodeText = ClipboardMonitor.ClipboardText;
+            // due to some bugs, we need to convert rtf to plain text
+            if (string.IsNullOrEmpty(ClipboardMonitor.ClipboardText))
+            {
+                clipboardData.UnicodeText = StringUtils.ConvertRtfToPlainText(ClipboardMonitor.ClipboardRtfText);
+            }
+            else
+            {
+                clipboardData.UnicodeText = ClipboardMonitor.ClipboardText;
+            }
         }
 
         // add to list and database if no repeat
