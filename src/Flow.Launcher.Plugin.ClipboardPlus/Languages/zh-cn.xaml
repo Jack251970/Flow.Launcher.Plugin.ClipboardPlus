@@ -43,6 +43,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_unknown_app">unknown</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard">复制到剪贴板：</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception">复制到剪贴板错误！</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_text_data_invalid">复制的文字为空！</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_image_data_invalid">复制的图像存在错误！</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_files_data_invalid">复制的文件不存在！</system:String>

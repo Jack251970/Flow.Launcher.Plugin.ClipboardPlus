@@ -47,6 +47,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     // https://github.com/Flow-Launcher/Flow.Launcher/issues/2904
     private const int ScoreInterval = 10000;
 
+    // Clipboard retry times
+    private const int ClipboardRetryTimes = 5;
+
+    // Clipboard retry interval
+    private const int ClipboardRetryInterval = 100;
+
     #region Scores
 
     private const int ScoreInterval1 = 1 * ScoreInterval;
@@ -667,16 +673,25 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private void CopyToClipboard(ClipboardData clipboardData)
+    private async void CopyToClipboard(ClipboardData clipboardData)
     {
         var validObject = clipboardData.DataToValid();
         var dataType = clipboardData.DataType;
         if (validObject is not null)
         {
-            CopyToClipboard(dataType, validObject);
-            Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                StringUtils.CompressString(clipboardData.GetText(CultureInfo), 54));
+            var exception = await CopyToClipboard(dataType, validObject);
+            if (exception == null)
+            {
+                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), 54));
+            }
+            else
+            {
+                Context.API.LogException(ClassName, "Copy to clipboard failed", exception);
+                Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception"));
+            }
         }
         else
         {
@@ -699,47 +714,64 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private void CopyToClipboard(DataType dataType, object validObject)
+    private static async Task<Exception?> CopyToClipboard(DataType dataType, object validObject)
     {
-        switch (dataType)
+        for (int i = 0; i < ClipboardRetryTimes; i++)
         {
-            case DataType.UnicodeText:
-                Clipboard.SetText((string)validObject);
-                break;
-            case DataType.RichText:
-                Clipboard.SetText((string)validObject, TextDataFormat.Rtf);
-                break;
-            case DataType.Image:
-                Clipboard.SetImage((BitmapSource)validObject);
-                break;
-            case DataType.Files:
-                var paths = new StringCollection();
-                paths.AddRange((string[])validObject);
-                Clipboard.SetFileDropList(paths);
-                break;
-            default:
-                try
+            try
+            {
+                switch (dataType)
                 {
-                    Clipboard.SetDataObject(validObject);
-                }
-                catch (Exception e)
-                {
-                    Context.API.LogException(ClassName, $"Copy to clipboard failed", e);
+                    case DataType.UnicodeText:
+                        Clipboard.SetText((string)validObject);
+                        break;
+                    case DataType.RichText:
+                        Clipboard.SetText((string)validObject, TextDataFormat.Rtf);
+                        break;
+                    case DataType.Image:
+                        Clipboard.SetImage((BitmapSource)validObject);
+                        break;
+                    case DataType.Files:
+                        var paths = new StringCollection();
+                        paths.AddRange((string[])validObject);
+                        Clipboard.SetFileDropList(paths);
+                        break;
+                    default:
+                        break;
                 }
                 break;
+            }
+            catch (Exception e)
+            {
+                if (i == ClipboardRetryTimes - 1)
+                {
+                    return e;
+                }
+                await Task.Delay(ClipboardRetryInterval);
+            }
         }
+        return null;
     }
 
-    private void CopyAsPlainTextToClipboard(ClipboardData clipboardData)
+    private async void CopyAsPlainTextToClipboard(ClipboardData clipboardData)
     {
         var validObject = clipboardData.UnicodeTextToValid();
         var dataType = clipboardData.DataType;
         if (validObject is not null)
         {
-            CopyAsPlainTextToClipboard(dataType, clipboardData);
-            Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                StringUtils.CompressString(clipboardData.GetText(CultureInfo), 54));
+            var exception = await CopyAsPlainTextToClipboard(dataType, clipboardData);
+            if (exception == null)
+            {
+                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), 54));
+            }
+            else
+            {
+                Context.API.LogException(ClassName, "Copy to clipboard failed", exception);
+                Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception"));
+            }
         }
         else
         {
@@ -753,16 +785,32 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private void CopyAsPlainTextToClipboard(DataType dataType, object validObject)
+    private static async Task<Exception?> CopyAsPlainTextToClipboard(DataType dataType, object validObject)
     {
-        switch (dataType)
+        for (int i = 0; i < ClipboardRetryTimes; i++)
         {
-            case DataType.RichText:
-                Clipboard.SetText((string)validObject);
+            try
+            {
+                switch (dataType)
+                {
+                    case DataType.RichText:
+                        Clipboard.SetText((string)validObject);
+                        break;
+                    default:
+                        break;
+                }
                 break;
-            default:
-                break;
+            }
+            catch (Exception e)
+            {
+                if (i == ClipboardRetryTimes - 1)
+                {
+                    return e;
+                }
+                await Task.Delay(ClipboardRetryInterval);
+            }
         }
+        return null;
     }
 
     private void RemoveFromList(ClipboardData clipboardData, bool requery)
@@ -847,25 +895,25 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         if (disposing)
         {
             Context.API.LogWarn(ClassName, $"Enter dispose");
-            try
-            {
-                Clipboard.Flush();
-                Context.API.LogDebug(ClassName, $"Flushed Clipboard");
-            }
-            catch (Exception) {}
             if (DatabaseHelper != null)
             {
                 DatabaseHelper?.Dispose();
                 DatabaseHelper = null!;
-                Context.API.LogDebug(ClassName, $"Disposed DatabaseHelper");
+                Context.API.LogInfo(ClassName, $"Disposed DatabaseHelper");
             }
             ClipboardMonitor.ClipboardChanged -= OnClipboardChangeW;
             ClipboardMonitor.Dispose();
             ClipboardMonitor = null!;
-            Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
+            Context.API.LogInfo(ClassName, $"Disposed ClipboardMonitor");
             CultureInfoChanged = null;
             Settings = null!;
             RecordsList = null!;
+            try
+            {
+                Clipboard.Flush();
+                Context.API.LogInfo(ClassName, $"Flushed Clipboard");
+            }
+            catch (Exception) { }
             Context.API.LogWarn(ClassName, $"Finish dispose");
             _disposed = true;
         }
