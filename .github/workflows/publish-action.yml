@@ -35,7 +35,7 @@ jobs:
       - name: Publish
         uses: softprops/action-gh-release@v1
         with:
-          files: ".dist/ClipboardPlus*"
+          files: ".dist/Clipboard+*"
           tag_name: "v${{steps.version.outputs.prop}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

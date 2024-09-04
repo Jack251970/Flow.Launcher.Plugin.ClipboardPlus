@@ -199,7 +199,7 @@ public class PublishTask : FrostingTask<BuildContext>
 
         context.ZipCompress(
             rootPath: srcDir,
-            outputPath: $"{dstDir}/ClipboardPlus-v{context.PublishVersion}.zip",
+            outputPath: $"{dstDir}/Clipboard+-{context.PublishVersion}.zip",
             filePaths: files,
             level: 9
         );
