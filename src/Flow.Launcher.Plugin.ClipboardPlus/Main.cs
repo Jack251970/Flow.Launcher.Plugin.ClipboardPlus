@@ -693,7 +693,28 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         var dataType = clipboardData.DataType;
         if (validObject is not null)
         {
-            var exception = await CopyToClipboard(dataType, validObject);
+            var exception = await RetryAction(() =>
+            {
+                switch (dataType)
+                {
+                    case DataType.UnicodeText:
+                        Clipboard.SetText((string)validObject);
+                        break;
+                    case DataType.RichText:
+                        Clipboard.SetText((string)validObject, TextDataFormat.Rtf);
+                        break;
+                    case DataType.Image:
+                        Clipboard.SetImage((BitmapSource)validObject);
+                        break;
+                    case DataType.Files:
+                        var paths = new StringCollection();
+                        paths.AddRange((string[])validObject);
+                        Clipboard.SetFileDropList(paths);
+                        break;
+                    default:
+                        break;
+                }
+            });
             if (exception == null)
             {
                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
@@ -728,52 +749,18 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private static async Task<Exception?> CopyToClipboard(DataType dataType, object validObject)
-    {
-        for (int i = 0; i < ClipboardRetryTimes; i++)
-        {
-            try
-            {
-                switch (dataType)
-                {
-                    case DataType.UnicodeText:
-                        Clipboard.SetText((string)validObject);
-                        break;
-                    case DataType.RichText:
-                        Clipboard.SetText((string)validObject, TextDataFormat.Rtf);
-                        break;
-                    case DataType.Image:
-                        Clipboard.SetImage((BitmapSource)validObject);
-                        break;
-                    case DataType.Files:
-                        var paths = new StringCollection();
-                        paths.AddRange((string[])validObject);
-                        Clipboard.SetFileDropList(paths);
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            }
-            catch (Exception e)
-            {
-                if (i == ClipboardRetryTimes - 1)
-                {
-                    return e;
-                }
-                await Task.Delay(RetryInterval);
-            }
-        }
-        return null;
-    }
-
     private async void CopyAsPlainTextToClipboard(ClipboardData clipboardData)
     {
-        var validObject = clipboardData.UnicodeTextToValid();
         var dataType = clipboardData.DataType;
+        if (dataType != DataType.RichText)
+        {
+            return;
+        }
+
+        var validObject = clipboardData.UnicodeTextToValid();
         if (validObject is not null)
         {
-            var exception = await CopyAsPlainTextToClipboard(dataType, clipboardData);
+            var exception = await RetryAction(() => Clipboard.SetText(validObject));
             if (exception == null)
             {
                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
@@ -789,42 +776,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
         else
         {
-            switch (dataType)
-            {
-                case DataType.RichText:
-                    Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
-                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
-                    break;
-            }
+            Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
         }
-    }
-
-    private static async Task<Exception?> CopyAsPlainTextToClipboard(DataType dataType, object validObject)
-    {
-        for (int i = 0; i < ClipboardRetryTimes; i++)
-        {
-            try
-            {
-                switch (dataType)
-                {
-                    case DataType.RichText:
-                        Clipboard.SetText((string)validObject);
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            }
-            catch (Exception e)
-            {
-                if (i == ClipboardRetryTimes - 1)
-                {
-                    return e;
-                }
-                await Task.Delay(RetryInterval);
-            }
-        }
-        return null;
     }
 
     private void RemoveFromList(ClipboardData clipboardData, bool requery)
@@ -868,11 +822,16 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private static async Task<Exception?> FlushClipboard()
     {
+        return await RetryAction(Clipboard.Flush);
+    }
+
+    private static async Task<Exception?> RetryAction(Action action)
+    {
         for (int i = 0; i < ClipboardRetryTimes; i++)
         {
             try
             {
-                Clipboard.Flush();
+                action();
                 break;
             }
             catch (Exception e)
