@@ -24,7 +24,7 @@ public partial class MainWindow : Window
 
     private readonly static string _imageSavePath = @"D:\clipboard.png";
 
-    private readonly ClipboardMonitorW ClipboardMonitor = new() { ObserveLastEntry = false };
+    private readonly ClipboardMonitor ClipboardMonitor = new() { ObserveLastEntry = false };
 
     private int _count = 0;
 
@@ -36,6 +36,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         InitializeWindow();
+        InitializeClipboardMonitor();
     }
 
     #endregion
@@ -293,13 +294,17 @@ public partial class MainWindow : Window
 
         // Clipboard monitor
         TextBlock2.TextWrapping = TextWrapping.Wrap;
-        ClipboardMonitor.ClipboardChanged += OnClipboardChangeW;
+    }
+
+    private void InitializeClipboardMonitor()
+    {
+        ClipboardMonitor.ClipboardChanged += OnClipboardChange;
         ClipboardMonitor.StartMonitoring();
     }
 
     private void Window_Closed(object sender, EventArgs e)
     {
-        ClipboardMonitor.ClipboardChanged -= OnClipboardChangeW;
+        ClipboardMonitor.ClipboardChanged -= OnClipboardChange;
         ClipboardMonitor.Dispose();
     }
 
@@ -317,7 +322,7 @@ public partial class MainWindow : Window
 
     private void Button_Click3(object sender, RoutedEventArgs e)
     {
-        ClipboardMonitor.ClipboardChanged -= OnClipboardChangeW;
+        ClipboardMonitor.ClipboardChanged -= OnClipboardChange;
         ClipboardMonitor.Dispose();
         TextBlock1.Text = "";
         TextBlock2.Text = "";
