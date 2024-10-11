@@ -23,6 +23,11 @@ public interface ISettings
     public ClickAction ClickAction { get; set; }
 
     /// <summary>
+    /// Whether to put action items on the top of query list
+    /// </summary>
+    public bool ActionTop { get; set; }
+
+    /// <summary>
     /// Whether to cache images in local folder
     /// </summary>
     public bool CacheImages { get; set; }

@@ -63,8 +63,11 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private const int ScoreInterval5 = 5 * ScoreInterval;
     private const int ScoreInterval6 = 6 * ScoreInterval;
 
-    private const int CleanActionScore = ClipboardData.MaximumScore + 2 * ScoreInterval;
-    private const int ClearActionScore = ClipboardData.MaximumScore + 1 * ScoreInterval;
+    private const int TopActionScore1 = ClipboardData.MaximumScore + 2 * ScoreInterval;
+    private const int TopActionScore2 = ClipboardData.MaximumScore + 1 * ScoreInterval;
+
+    private const int BottomActionScore1 = 6000;
+    private const int BottomActionScore2 = 3000;
 
     #endregion
 
@@ -198,7 +201,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clean_subtitle"),
                 IcoPath = PathHelper.CleanIconPath,
                 Glyph = ResourceHelper.CleanGlyph,
-                Score = CleanActionScore,
+                Score = Settings.ActionTop ? TopActionScore1 : BottomActionScore1,
                 Action = _ =>
                 {
                     Clipboard.Clear();
@@ -213,7 +216,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_subtitle"),
                 IcoPath = PathHelper.ClearIconPath,
                 Glyph = ResourceHelper.ClearGlyph,
-                Score = ClearActionScore,
+                Score = Settings.ActionTop ? TopActionScore2 : BottomActionScore2,
                 Action = _ =>
                 {
                     Context.API.ChangeQuery($"{query.ActionKeyword}{Plugin.Query.TermSeparator}{Settings.ClearKeyword} ", true);

@@ -16,6 +16,8 @@ public class Settings : ISettings
 
     public ClickAction ClickAction { get; set; } = ClickAction.Copy;
 
+    public bool ActionTop { get; set; } = true;
+
     public bool CacheImages { get; set; } = false;
 
     public string CacheFormat { get; set; } = "yyyy-MM-dd-hhmmss-app";

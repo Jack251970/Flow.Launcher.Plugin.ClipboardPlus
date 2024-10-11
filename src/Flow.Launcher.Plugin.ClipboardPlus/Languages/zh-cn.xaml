@@ -62,6 +62,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_max_records">最大记录数：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">排序方式：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">点击动作：</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">动作置顶</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">缓存图片</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_open_cache_folder">打开缓存文件夹</system:String>

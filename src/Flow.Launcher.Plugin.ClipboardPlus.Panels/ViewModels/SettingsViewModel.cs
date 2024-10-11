@@ -202,6 +202,20 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
+    #region Action Top
+
+    public bool ActionTop
+    {
+        get => Settings.ActionTop;
+        set
+        {
+            Settings.ActionTop = value;
+            OnPropertyChanged();
+        }
+    }
+
+    #endregion
+
     #region Cache Images
 
     public bool CacheImages
