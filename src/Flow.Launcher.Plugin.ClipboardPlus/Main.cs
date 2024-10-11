@@ -757,7 +757,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             {
                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), 54));
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, validObject as string[]), 54));
             }
             else
             {
@@ -856,7 +856,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             {
                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), 54));
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, validObject as string[]), 54));
             }
             else
             {

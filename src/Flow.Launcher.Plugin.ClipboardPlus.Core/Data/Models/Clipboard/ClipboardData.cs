@@ -386,15 +386,19 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// <param name="cultureInfo">
     /// The culture info for the title.
     /// </param>
+    /// <param name="filePaths">
+    /// The valid file paths for the data.
+    /// If null, use the data directly.
+    /// </param>
     /// <returns>
     /// The display title for the data.
     /// </returns>
     private string title = null!;
-    public string GetTitle(CultureInfo cultureInfo)
+    public string GetTitle(CultureInfo cultureInfo, string[]? filePaths = null)
     {
         if (title == null || currentCultureInfo != cultureInfo)
         {
-            title = MyRegex().Replace(GetText(cultureInfo).Trim(), string.Empty);
+            title = MyRegex().Replace(GetText(cultureInfo, filePaths).Trim(), string.Empty);
             currentCultureInfo = cultureInfo;
         }
         return title;
@@ -433,11 +437,15 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
     /// <param name="cultureInfo">
     /// The culture info for the text.
     /// </param>
+    /// <param name="filePaths">
+    /// The valid file paths for the data.
+    /// If null, use the data directly.
+    /// </param>
     /// <returns>
     /// The display text for the data.
     /// </returns>
     private string text = null!;
-    public string GetText(CultureInfo cultureInfo)
+    public string GetText(CultureInfo cultureInfo, string[]? filePaths = null)
     {
         if (text == null || currentCultureInfo != cultureInfo)
         {
@@ -446,7 +454,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
                 DataType.UnicodeText => Data as string,
                 DataType.RichText => UnicodeText,
                 DataType.Image => $"Image: {CreateTime.ToString(cultureInfo)}",
-                DataType.Files => Data is string[] t ? string.Join("\n", t.Take(2)) + "\n..." : Data as string,
+                DataType.Files => (filePaths is null ? Data : filePaths) is string[] t ? string.Join("\n", t.Take(2)) + "\n..." : Data as string,
                 _ => null
             } ?? string.Empty;
             currentCultureInfo = cultureInfo;
@@ -573,6 +581,6 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
 
     public override string ToString()
     {
-        return $"ClipboardData(Type: {DataType}, Text: {GetText(CultureInfo.CurrentCulture)}, Encrypt: {EncryptData}, CreateTime: {CreateTime})";
+        return $"ClipboardData(Type: {DataType}, Text: {GetText(CultureInfo.CurrentCulture, null)}, Encrypt: {EncryptData}, CreateTime: {CreateTime})";
     }
 }
