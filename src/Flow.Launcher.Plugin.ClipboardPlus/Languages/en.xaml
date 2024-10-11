@@ -33,6 +33,10 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">Copy this record to clipboard</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_plain_text_title">Copy as plain text</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_plain_text_subtitle">Copy this record as plain text</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_asc_title">Copy by sorting paths ascendingly</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_asc_subtitle">Copy this record by sorting file paths ascendingly</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_desc_title">Copy by sorting paths descendingly</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_desc_subtitle">Copy this record by sorting file paths descendingly</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_save_title">Save</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_save_subtitle">Save this record to database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_title">Pin</system:String>

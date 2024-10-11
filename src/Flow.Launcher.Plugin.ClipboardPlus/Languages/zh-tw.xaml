@@ -33,6 +33,10 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">複製記録至剪切闆</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_plain_text_title">複製為純文本</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_plain_text_subtitle">複製記録為純文本</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_asc_title">以路徑上升排序方式複製</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_asc_subtitle">以文件路徑上升排序的方式複製</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_desc_title">以路徑下降排序方式複製</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_desc_subtitle">以文件路徑下降排序的方式複製</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_save_title">保存</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_save_subtitle">保存記錄至數據庫</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_title">固定</system:String>
