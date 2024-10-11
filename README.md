@@ -15,6 +15,8 @@ It can help you manage your clipboard history and customizing copy rules with su
 - Persistent keep records in database
 - Words count for text
 - Customize copy rules
+- Clean clipboard
+- Copy files by sorting names
 
 ## Screenshots
 
