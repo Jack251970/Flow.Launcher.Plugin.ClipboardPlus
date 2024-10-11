@@ -1,8 +1,8 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows;
 using System.Windows.Documents;
+using DataFormats = System.Windows.DataFormats;
 using RichTextBox = System.Windows.Controls.RichTextBox;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Utils;

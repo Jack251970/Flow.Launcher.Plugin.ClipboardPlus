@@ -6,6 +6,7 @@
         <Version>1.0.9</Version>
         <TargetFramework>net7.0-windows</TargetFramework>
         <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+        <UseWindowsForms>true</UseWindowsForms>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -21,6 +22,18 @@
       <PackageReference Include="Dapper" Version="2.1.35" />
       <PackageReference Include="Flow.Launcher.Plugin" Version="4.4.0" />
       <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.8" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Data\Models\Clipboard\ClipboardHandle.cs">
+        <SubType>Form</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Data\Models\Clipboard\ClipboardHandle.resx">
+        <SubType>Designer</SubType>
+      </EmbeddedResource>
     </ItemGroup>
 
 </Project>

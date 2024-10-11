@@ -36,7 +36,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     // Clipboard monitor instance
     // Warning: Do not init the instance in InitAsync function! This will cause issues.
-    private ClipboardMonitorW ClipboardMonitor = new() { ObserveLastEntry = false };
+    private ClipboardMonitor ClipboardMonitor = new() { ObserveLastEntry = false };
 
     // Records list & Score
     private LinkedList<ClipboardData> RecordsList = new();
@@ -248,7 +248,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         Context.API.LogDebug(ClassName, "Init database successfully");
 
         // init clipboard monitor
-        ClipboardMonitor.ClipboardChanged += OnClipboardChangeW;
+        ClipboardMonitor.ClipboardChanged += OnClipboardChange;
         ClipboardMonitor.StartMonitoring();
         Context.API.LogDebug(ClassName, "Init clipboard monitor successfully");
     }
@@ -415,7 +415,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region Clipboard Monitor
 
-    private async void OnClipboardChangeW(object? sender, ClipboardMonitorW.ClipboardChangedEventArgs e)
+    private async void OnClipboardChange(object? sender, ClipboardMonitor.ClipboardChangedEventArgs e)
     {
         Context.API.LogDebug(ClassName, "Clipboard changed");
         if (e.Content is null || e.DataType == DataType.Other)
@@ -922,7 +922,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 DatabaseHelper = null!;
                 Context.API.LogDebug(ClassName, $"Disposed DatabaseHelper");
             }
-            ClipboardMonitor.ClipboardChanged -= OnClipboardChangeW;
+            ClipboardMonitor.ClipboardChanged -= OnClipboardChange;
             ClipboardMonitor.Dispose();
             ClipboardMonitor = null!;
             Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");

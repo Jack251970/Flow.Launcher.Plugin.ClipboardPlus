@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -181,7 +180,7 @@ internal class ClipboardHandleW : IDisposable
                 dataObj.GetDataPresent(DataFormats.Bitmap))
             {
                 // Handle the image on the application dispatcher for UI actions.
-                Application.Current.Dispatcher.Invoke(() =>
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
                     var capturedImage = dataObj.GetData(DataFormats.Bitmap) as BitmapSource;
                     ClipboardMonitorInstance.ClipboardImage = capturedImage;
@@ -210,7 +209,7 @@ internal class ClipboardHandleW : IDisposable
                 var capturedRtfData = dataObj.GetData(DataFormats.Rtf);
 
                 // Handle the text on the application dispatcher.
-                Application.Current.Dispatcher.Invoke(() =>
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
                     var unicodeText = false;
                     if (capturedRtfData is string capturedRtfText)
@@ -265,7 +264,7 @@ internal class ClipboardHandleW : IDisposable
                 dataObj.GetDataPresent(DataFormats.FileDrop))
             {
                 // Handle the file on the application dispatcher.
-                Application.Current.Dispatcher.Invoke(() =>
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
                     // If the 'capturedFiles' string array persists as null, then this means
                     // that the copied content is of a complex object type since the file-drop
@@ -315,7 +314,7 @@ internal class ClipboardHandleW : IDisposable
                 !dataObj.GetDataPresent(DataFormats.FileDrop))
             {
                 // Handle the object on the application dispatcher.
-                Application.Current.Dispatcher.Invoke(() =>
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
                     ClipboardMonitorInstance.Invoke(
                         dataObj,
