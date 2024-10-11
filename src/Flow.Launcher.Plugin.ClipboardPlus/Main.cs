@@ -202,7 +202,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 Action = _ =>
                 {
                     Clipboard.Clear();
-                    return false;
+                    return true;
                 },
             });
 
