@@ -265,7 +265,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
         // init clipboard monitor
         ClipboardMonitor.ClipboardChanged += OnClipboardChange;
-        ClipboardMonitor.StartMonitoring();
         Context.API.LogDebug(ClassName, "Init clipboard monitor successfully");
     }
 
