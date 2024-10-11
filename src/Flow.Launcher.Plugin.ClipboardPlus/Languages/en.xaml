@@ -11,6 +11,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_fail">Fail</system:String>
 
     <!--  Main  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">Clean clipboard</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">Clean clipboard data</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">Clear records</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">Click to clear records</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_title">Clear in list</system:String>

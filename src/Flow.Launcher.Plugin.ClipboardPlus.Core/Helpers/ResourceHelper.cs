@@ -38,6 +38,7 @@ public static class ResourceHelper
 
     #region Properties
 
+    public static GlyphInfo CleanGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE894");
     public static GlyphInfo ClearGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE894");
     public static GlyphInfo ListGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uEA37");
     public static GlyphInfo DatabaseGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uEE94");

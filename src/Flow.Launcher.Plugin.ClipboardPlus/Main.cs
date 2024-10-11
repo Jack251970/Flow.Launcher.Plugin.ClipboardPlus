@@ -61,7 +61,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private const int ScoreInterval4 = 4 * ScoreInterval;
     private const int ScoreInterval5 = 5 * ScoreInterval;
 
-    private const int ClearActionScore = ClipboardData.MaximumScore + 2 * ScoreInterval;
+    private const int CleanActionScore = ClipboardData.MaximumScore + 2 * ScoreInterval;
+    private const int ClearActionScore = ClipboardData.MaximumScore + 1 * ScoreInterval;
 
     #endregion
 
@@ -188,22 +189,35 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
         else
         {
-            // clear action
-            results.Add(
-                new Result
+            // clean action
+            results.Add(new Result
+            {
+                Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clean_title"),
+                SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clean_subtitle"),
+                IcoPath = PathHelper.CleanIconPath,
+                Glyph = ResourceHelper.CleanGlyph,
+                Score = CleanActionScore,
+                Action = _ =>
                 {
-                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_title"),
-                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_subtitle"),
-                    IcoPath = PathHelper.ClearIconPath,
-                    Glyph = ResourceHelper.ClearGlyph,
-                    Score = ClearActionScore,
-                    Action = _ =>
-                    {
-                        Context.API.ChangeQuery($"{query.ActionKeyword}{Plugin.Query.TermSeparator}{Settings.ClearKeyword} ", true);
-                        return false;
-                    },
-                }
-            );
+                    Clipboard.Clear();
+                    return false;
+                },
+            });
+
+            // clear action
+            results.Add(new Result
+            {
+                Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_title"),
+                SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_subtitle"),
+                IcoPath = PathHelper.ClearIconPath,
+                Glyph = ResourceHelper.ClearGlyph,
+                Score = ClearActionScore,
+                Action = _ =>
+                {
+                    Context.API.ChangeQuery($"{query.ActionKeyword}{Plugin.Query.TermSeparator}{Settings.ClearKeyword} ", true);
+                    return false;
+                },
+            });
 
             // update results
             ResultsUpdated?.Invoke(this, new ResultUpdatedEventArgs
