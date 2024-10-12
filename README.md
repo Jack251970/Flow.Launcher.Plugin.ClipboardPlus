@@ -20,12 +20,31 @@ It can help you manage your clipboard history and customizing copy rules with su
 
 ## Screenshots
 
-![screenshot1](./images/screenshot1.png)
-![screenshot2](./images/screenshot2.png)
-![screenshot3](./images/screenshot3.png)
-![screenshot4](./images/screenshot4.png)
-![screenshot3](./images/screenshot5.png)
-![screenshot4](./images/screenshot6.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/screenshot1_dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="./images/screenshot1_light.png">
+  <img alt="Screenshot 1" src="./images/screenshot1_light.png">
+</picture>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/screenshot2_dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="./images/screenshot2_light.png">
+  <img alt="Screenshot 2" src="./images/screenshot2_light.png">
+</picture>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/screenshot3_dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="./images/screenshot3_light.png">
+  <img alt="Screenshot 3" src="./images/screenshot3_light.png">
+</picture>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/screenshot4_dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="./images/screenshot4_light.png">
+  <img alt="Screenshot 4" src="./images/screenshot4_light.png">
+</picture>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./images/screenshot5_dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="./images/screenshot5_light.png">
+  <img alt="Screenshot 5" src="./images/screenshot5_light.png">
+</picture>
 
 ## Installation
 
