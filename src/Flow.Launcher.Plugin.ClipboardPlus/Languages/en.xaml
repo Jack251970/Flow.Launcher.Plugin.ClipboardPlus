@@ -62,7 +62,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_max_records">Max records:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">Order by:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">Click action:</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">Action top</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">Set the action options (e.g., Clean clipboard) as topmost / bottommost in the query</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">Cache images</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_open_cache_folder">Open cache folder</system:String>
@@ -77,7 +77,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_format_app">App</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format_preview">Preview:</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_encrypt_data">Encrypt data</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_encrypt_data">Encrypt data in the database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_text">Keep text:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_images">Keep images:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_files">Keep files:</system:String>

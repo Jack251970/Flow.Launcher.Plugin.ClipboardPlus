@@ -62,7 +62,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_max_records">最大記録數：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">排序方式：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">點擊働作：</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">動作置頂</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">在查詢中置頂/置底操作選項（如清理剪切板）</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">緩存圖片</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_open_cache_folder">打開緩存文件夾</system:String>
@@ -77,7 +77,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_format_app">應用</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format_preview">預覽：</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_encrypt_data">加密數據</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_encrypt_data">加密數據庫的數據</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_text">保存文本：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_images">保存圖片：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_files">保存文件：</system:String>
