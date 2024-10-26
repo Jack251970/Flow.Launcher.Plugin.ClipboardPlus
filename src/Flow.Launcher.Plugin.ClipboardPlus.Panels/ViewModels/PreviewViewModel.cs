@@ -1,10 +1,11 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.ViewModels;
 
-public class PreviewViewModel : BaseModel
+public class PreviewViewModel : BaseModel, IDisposable
 {
     public IClipboardPlus ClipboardPlus { get; private set; }
 
@@ -129,6 +130,17 @@ public class PreviewViewModel : BaseModel
     private void ClipboardPlus_CultureInfoChanged(object? sender, CultureInfo cultureInfo)
     {
         RefreshStatus();
+    }
+
+    #endregion
+
+    #region IDisposable
+
+    public void Dispose()
+    {
+        ClipboardPlus = null!;
+        PreviewImage = null;
+        ClipboardPlus.CultureInfoChanged -= ClipboardPlus_CultureInfoChanged;
     }
 
     #endregion

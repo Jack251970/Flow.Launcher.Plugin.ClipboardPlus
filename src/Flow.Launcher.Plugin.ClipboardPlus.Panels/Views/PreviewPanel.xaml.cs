@@ -1,11 +1,12 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Views;
 
-public partial class PreviewPanel : UserControl
+public partial class PreviewPanel : UserControl, IDisposable
 {
-    public readonly PreviewViewModel ViewModel;
+    public PreviewViewModel ViewModel;
 
     public PreviewPanel(IClipboardPlus clipboardPlus, ClipboardData clipboardData)
     {
@@ -37,6 +38,19 @@ public partial class PreviewPanel : UserControl
                 richTextBox.SelectAll();
             }
         });
+    }
+
+    #endregion
+
+    #region IDisposable
+
+    public void Dispose()
+    {
+        if (ViewModel != null)
+        {
+            ViewModel.Dispose();
+            ViewModel = null!;
+        }
     }
 
     #endregion

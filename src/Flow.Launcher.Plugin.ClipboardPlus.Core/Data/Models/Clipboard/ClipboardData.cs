@@ -5,7 +5,7 @@ using System.Windows.Media.Imaging;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
-public partial struct ClipboardData : IEquatable<ClipboardData>
+public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
 {
     #region Public Properties
 
@@ -547,6 +547,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
 
     #endregion
 
+    #region IEquatable
+
     public static bool operator ==(ClipboardData a, ClipboardData b) => a.Equals(b);
 
     public static bool operator !=(ClipboardData a, ClipboardData b) => !a.Equals(b);
@@ -567,6 +569,22 @@ public partial struct ClipboardData : IEquatable<ClipboardData>
             SenderApp == b.SenderApp &&
             CreateTime == b.CreateTime;
     }
+
+    #endregion
+
+    #region IDisposable
+
+    public readonly void Dispose()
+    {
+        var data = Data as BitmapSource;
+        data?.Freeze();
+        if (Data is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
+    }
+
+    #endregion
 
     public readonly bool DataEquals(ClipboardData b)
     {

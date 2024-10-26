@@ -40,7 +40,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private ClipboardMonitor ClipboardMonitor = new() { ObserveLastEntry = false };
 
     // Records list & Score
-    private LinkedList<ClipboardData> RecordsList = new();
+    private LinkedList<ClipboardDataPair> RecordsList = new();
     private int CurrentScore = 0;
 
     // Score interval
@@ -234,7 +234,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             // records results
             var records = query.Search.Trim().Length == 0
                 ? RecordsList.ToArray()
-                : RecordsList.Where(i => !string.IsNullOrEmpty(i.GetText(CultureInfo)) && i.GetText(CultureInfo).ToLower().Contains(query.Search.Trim().ToLower())).ToArray();
+                : RecordsList.Where(i => !string.IsNullOrEmpty(i.ClipboardData.GetText(CultureInfo)) && i.ClipboardData.GetText(CultureInfo).ToLower().Contains(query.Search.Trim().ToLower())).ToArray();
             results.AddRange(records.Select(GetResultFromClipboardData));
             Context.API.LogDebug(ClassName, "Added records successfully");
         }
@@ -288,10 +288,11 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     public List<Result> LoadContextMenus(Result result)
     {
         var results = new List<Result>();
-        if (result.ContextData is not ClipboardData clipboardData)
+        if (result.ContextData is not ClipboardDataPair clipboardDataPair)
         {
             return results;
         }
+        var clipboardData = clipboardDataPair.ClipboardData;
 
         // Copy & Pin & Delete
         var pinned = clipboardData.Pinned;
@@ -308,7 +309,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Score = ScoreInterval6,
                     Action = _ =>
                     {
-                        CopyToClipboard(clipboardData);
+                        CopyToClipboard(clipboardDataPair);
                         return true;
                     }
                 },
@@ -321,7 +322,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Score = ScoreInterval2,
                     Action = _ =>
                     {
-                        PinOneRecord(clipboardData, true);
+                        PinOneRecord(clipboardDataPair, true);
                         return false;
                     }
                 },
@@ -334,7 +335,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Score = ScoreInterval1,
                     Action = _ =>
                     {
-                        RemoveFromListDatabase(clipboardData, true);
+                        RemoveFromListDatabase(clipboardDataPair, true);
                         return false;
                     }
                 },
@@ -355,7 +356,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 Score = ScoreInterval3,
                 Action = _ =>
                 {
-                    SaveToDatabase(clipboardData, true);
+                    SaveToDatabase(clipboardDataPair, true);
                     return false;
                 }
             });
@@ -493,7 +494,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         };
 
         // filter duplicate data
-        if (RecordsList.Count != 0 && RecordsList.First().DataEquals(clipboardData))
+        if (RecordsList.Count != 0 && RecordsList.First().ClipboardData.DataEquals(clipboardData))
         {
             return;
         }
@@ -520,7 +521,11 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
 
         // add to list and database if no repeat
-        RecordsList.AddFirst(clipboardData);
+        RecordsList.AddFirst(new ClipboardDataPair() 
+        { 
+            ClipboardData = clipboardData, 
+            PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, clipboardData)) 
+        });
         Context.API.LogDebug(ClassName, "Added to list");
 
         // update score
@@ -536,6 +541,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         // remove last record if needed
         if (RecordsList.Count >= Settings.MaxRecords)
         {
+            RecordsList.Last?.Value.Dispose();
             RecordsList.RemoveLast();
         }
     }
@@ -568,7 +574,12 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         var records = await DatabaseHelper.GetAllRecordsAsync();
         if (records.Count > 0)
         {
-            RecordsList = records;
+            var records1 = records.Select(record => new ClipboardDataPair()
+            {
+                ClipboardData = record,
+                PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, record))
+            });
+            RecordsList = new LinkedList<ClipboardDataPair>(records1);
             CurrentScore = records.Max(r => r.InitScore);
         }
         Context.API.LogWarn(ClassName, "Restored records successfully");
@@ -577,6 +588,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private int DeleteAllRecordsFromList()
     {
         var number = RecordsList.Count;
+        foreach (var record in RecordsList)
+        {
+            record.Dispose();
+        }
         RecordsList.Clear();
         return number;
     }
@@ -584,6 +599,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private async Task<int> DeleteAllRecordsFromListDatabaseAsync()
     {
         var number = RecordsList.Count;
+        foreach (var record in RecordsList)
+        {
+            record.Dispose();
+        }
         RecordsList.Clear();
         await DatabaseHelper.DeleteAllRecordsAsync();
         CurrentScore = 1;
@@ -592,16 +611,17 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     private async Task<int> DeleteUnpinnedRecordsFromListDatabaseAsync()
     {
-        var unpinnedRecords = RecordsList.Where(r => !r.Pinned).ToArray();
+        var unpinnedRecords = RecordsList.Where(r => !r.ClipboardData.Pinned).ToArray();
         var number = unpinnedRecords.Length;
         foreach (var record in unpinnedRecords)
         {
+            record.Dispose();
             RecordsList.Remove(record);
         }
         await DatabaseHelper.DeleteUnpinnedRecordsAsync();
         if (RecordsList.Any())
         {
-            CurrentScore = RecordsList.Max(r => r.InitScore);
+            CurrentScore = RecordsList.Max(r => r.ClipboardData.InitScore);
         }
         else
         {
@@ -612,16 +632,17 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     private async Task<int> DeleteInvalidRecordsFromListDatabaseAsync()
     {
-        var invalidRecords = RecordsList.Where(r => r.DataToValid() is null).ToArray();
+        var invalidRecords = RecordsList.Where(r => r.ClipboardData.DataToValid() is null).ToArray();
         var number = invalidRecords.Length;
         foreach (var record in invalidRecords)
         {
+            record.Dispose();
             RecordsList.Remove(record);
-            await DatabaseHelper.DeleteOneRecordAsync(record);
+            await DatabaseHelper.DeleteOneRecordAsync(record.ClipboardData);
         }
         if (RecordsList.Any())
         {
-            CurrentScore = RecordsList.Max(r => r.InitScore);
+            CurrentScore = RecordsList.Max(r => r.ClipboardData.InitScore);
         }
         else
         {
@@ -634,8 +655,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     #region Query Result
 
-    private Result GetResultFromClipboardData(ClipboardData clipboardData)
+    private Result GetResultFromClipboardData(ClipboardDataPair clipboardDataPair)
     {
+        var clipboardData = clipboardDataPair.ClipboardData;
         if (clipboardData.Pinned)
         {
             Context.API.LogInfo(ClassName, $"Pinned record: {clipboardData}");
@@ -652,38 +674,38 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             CopyText = clipboardData.GetText(CultureInfo),
             Score = clipboardData.GetScore(Settings.RecordOrder),
             TitleToolTip = clipboardData.GetText(CultureInfo),
-            ContextData = clipboardData,
-            PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, clipboardData)),
+            ContextData = clipboardDataPair,
+            PreviewPanel = clipboardDataPair.PreviewPanel,
             AsyncAction = async _ =>
             {
                 switch (Settings.ClickAction)
                 {
                     case ClickAction.Copy:
-                        CopyToClipboard(clipboardData);
+                        CopyToClipboard(clipboardDataPair);
                         break;
                     case ClickAction.CopyPaste:
                         Context.API.HideMainWindow();
-                        CopyToClipboard(clipboardData);
+                        CopyToClipboard(clipboardDataPair);
                         await WaitWindowHideAndSimulatePaste();
                         break;
                     case ClickAction.CopyDeleteList:
-                        CopyToClipboard(clipboardData);
-                        RemoveFromList(clipboardData, false);
+                        CopyToClipboard(clipboardDataPair);
+                        RemoveFromList(clipboardDataPair, false);
                         break;
                     case ClickAction.CopyDeleteListDatabase:
-                        CopyToClipboard(clipboardData);
-                        RemoveFromListDatabase(clipboardData, false);
+                        CopyToClipboard(clipboardDataPair);
+                        RemoveFromListDatabase(clipboardDataPair, false);
                         break;
                     case ClickAction.CopyPasteDeleteList:
                         Context.API.HideMainWindow();
-                        CopyToClipboard(clipboardData);
-                        RemoveFromList(clipboardData, false);
+                        CopyToClipboard(clipboardDataPair);
+                        RemoveFromList(clipboardDataPair, false);
                         await WaitWindowHideAndSimulatePaste();
                         break;
                     case ClickAction.CopyPasteDeleteListDatabase:
                         Context.API.HideMainWindow();
-                        CopyToClipboard(clipboardData);
-                        RemoveFromListDatabase(clipboardData, false);
+                        CopyToClipboard(clipboardDataPair);
+                        RemoveFromListDatabase(clipboardDataPair, false);
                         await WaitWindowHideAndSimulatePaste();
                         break;
                     default:
@@ -710,13 +732,14 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     #region Clipboard Actions
 
-    private async void SaveToDatabase(ClipboardData clipboardData, bool requery)
+    private async void SaveToDatabase(ClipboardDataPair clipboardDataPair, bool requery)
     {
+        var clipboardData = clipboardDataPair.ClipboardData;
         if (!clipboardData.Saved)
         {
             clipboardData.Saved = true;
-            RecordsList.Remove(clipboardData);
-            RecordsList.AddLast(clipboardData);
+            RecordsList.Remove(clipboardDataPair);
+            RecordsList.AddLast(clipboardDataPair);
             await DatabaseHelper.AddOneRecordAsync(clipboardData);
             if (requery)
             {
@@ -725,8 +748,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
     }
 
-    private async void CopyToClipboard(ClipboardData clipboardData)
+    private async void CopyToClipboard(ClipboardDataPair clipboardDataPair)
     {
+        var clipboardData = clipboardDataPair.ClipboardData;
         var validObject = clipboardData.DataToValid();
         var dataType = clipboardData.DataType;
         if (validObject is not null)
@@ -875,18 +899,21 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     [GeneratedRegex("\\d+")]
     private static partial Regex FilesComparisionRegex();
 
-    private void RemoveFromList(ClipboardData clipboardData, bool requery)
+    private void RemoveFromList(ClipboardDataPair clipboardDataPair, bool requery)
     {
-        RecordsList.Remove(clipboardData);
+        clipboardDataPair.Dispose();
+        RecordsList.Remove(clipboardDataPair);
         if (requery)
         {
             ReQuery();
         }
     }
 
-    private async void RemoveFromListDatabase(ClipboardData clipboardData, bool requery)
+    private async void RemoveFromListDatabase(ClipboardDataPair clipboardDataPair, bool requery)
     {
-        RecordsList.Remove(clipboardData);
+        var clipboardData = clipboardDataPair.ClipboardData;
+        clipboardDataPair.Dispose();
+        RecordsList.Remove(clipboardDataPair);
         await DatabaseHelper.DeleteOneRecordAsync(clipboardData);
         if (requery)
         {
@@ -894,11 +921,12 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
     }
 
-    private async void PinOneRecord(ClipboardData clipboardData, bool requery)
+    private async void PinOneRecord(ClipboardDataPair clipboardDataPair, bool requery)
     {
+        var clipboardData = clipboardDataPair.ClipboardData;
         clipboardData.Pinned = !clipboardData.Pinned;
-        RecordsList.Remove(clipboardData);
-        RecordsList.AddLast(clipboardData);
+        RecordsList.Remove(clipboardDataPair);
+        RecordsList.AddLast(clipboardDataPair);
         await DatabaseHelper.PinOneRecordAsync(clipboardData);
         if (requery)
         {
