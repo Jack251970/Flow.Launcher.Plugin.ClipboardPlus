@@ -46,11 +46,7 @@ public partial class PreviewPanel : UserControl, IDisposable
 
     public void Dispose()
     {
-        if (ViewModel != null)
-        {
-            ViewModel.Dispose();
-            ViewModel = null!;
-        }
+        ViewModel = null!;
     }
 
     #endregion
