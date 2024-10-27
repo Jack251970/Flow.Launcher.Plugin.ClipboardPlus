@@ -8,16 +8,31 @@ public class ClipboardDataPair : IDisposable
 
     public required Lazy<UserControl> PreviewPanel { get; set; }
 
+    private bool _disposed;
+
     public void Dispose()
     {
-        if (PreviewPanel.IsValueCreated)
+        if (_disposed)
         {
-            if (PreviewPanel.Value is IDisposable disposable)
-            {
-                disposable.Dispose();
-            }
+            return;
         }
-        PreviewPanel = null!;
-        ClipboardData.Dispose();
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            if (PreviewPanel.IsValueCreated)
+            {
+                if (PreviewPanel.Value is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+            }
+            PreviewPanel = null!;
+            ClipboardData.Dispose();
+        }
     }
 }

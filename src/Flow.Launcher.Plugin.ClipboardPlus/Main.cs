@@ -544,6 +544,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             RecordsList.Last?.Value.Dispose();
             RecordsList.RemoveLast();
         }
+
+        // collect garbage
+        GarbageCollect();
     }
 
     #endregion
@@ -593,6 +596,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             record.Dispose();
         }
         RecordsList.Clear();
+        GarbageCollect();
         return number;
     }
 
@@ -606,6 +610,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         RecordsList.Clear();
         await DatabaseHelper.DeleteAllRecordsAsync();
         CurrentScore = 1;
+        GarbageCollect();
         return number;
     }
 
@@ -627,6 +632,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         {
             CurrentScore = 1;
         }
+        GarbageCollect();
         return number;
     }
 
@@ -648,6 +654,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         {
             CurrentScore = 1;
         }
+        GarbageCollect();
         return number;
     }
 
@@ -907,6 +914,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         {
             ReQuery();
         }
+        GarbageCollect();
     }
 
     private async void RemoveFromListDatabase(ClipboardDataPair clipboardDataPair, bool requery)
@@ -919,6 +927,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         {
             ReQuery();
         }
+        GarbageCollect();
     }
 
     private async void PinOneRecord(ClipboardDataPair clipboardDataPair, bool requery)
@@ -1036,6 +1045,16 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             Context.API.LogWarn(ClassName, $"Finish dispose");
             _disposed = true;
         }
+    }
+
+    private static void GarbageCollect()
+    {
+        Task.Run(() =>
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+        });
     }
 
     #endregion

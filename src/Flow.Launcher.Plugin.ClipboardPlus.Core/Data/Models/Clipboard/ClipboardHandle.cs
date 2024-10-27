@@ -147,6 +147,7 @@ public partial class ClipboardHandle : Form
             )
             {
                 var capturedImage = dataObj.GetData(DataFormats.Bitmap) as BitmapSource;
+                capturedImage?.Freeze();
                 ClipboardMonitorInstance.ClipboardImage = capturedImage;
 
                 ClipboardMonitorInstance.Invoke(
