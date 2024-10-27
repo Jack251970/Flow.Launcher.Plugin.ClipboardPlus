@@ -47,6 +47,25 @@ public static class ImageExtensions
         return Image.FromStream(m);
     }*/
 
+    public static BitmapImage ToImage(this string filePath)
+    {
+        var bitmapImage = new BitmapImage();
+
+        using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        {
+            using var memoryStream = new MemoryStream();
+            fileStream.CopyTo(memoryStream);
+            memoryStream.Position = 0;
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapImage.StreamSource = memoryStream;
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+        }
+
+        return bitmapImage;
+    }
+
     public static string ToBase64(this BitmapImage image)
     {
         var bytes = image.ToBytes();

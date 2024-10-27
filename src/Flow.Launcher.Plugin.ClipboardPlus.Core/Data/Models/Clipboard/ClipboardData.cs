@@ -225,7 +225,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         img = Data as BitmapSource;
         if (img == null && !string.IsNullOrEmpty(CachedImagePath) && File.Exists(CachedImagePath))
         {
-            img = new BitmapImage(new Uri(CachedImagePath, UriKind.Absolute));
+            img = CachedImagePath.ToImage();
         }
         // If the data is still null, return the icon.
         return DataType switch
@@ -576,8 +576,6 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
 
     public readonly void Dispose()
     {
-        var data = Data as BitmapSource;
-        data?.Freeze();
         if (Data is IDisposable disposable)
         {
             disposable.Dispose();
