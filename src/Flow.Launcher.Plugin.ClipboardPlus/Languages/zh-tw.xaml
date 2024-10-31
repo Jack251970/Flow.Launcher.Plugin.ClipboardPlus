@@ -34,7 +34,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle">沒有可清除的記録！</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_title">複製</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">複製記録至剪切闆</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">以默認選項複製記録</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_plain_text_title">複製為純文本</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_plain_text_subtitle">複製記録為純文本</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_asc_title">以路徑上升排序方式複製</system:String>

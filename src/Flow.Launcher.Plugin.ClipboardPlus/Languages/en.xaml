@@ -34,7 +34,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle">There are no records that can be cleared!</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_title">Copy</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">Copy this record to clipboard</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">Copy this record with default option</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_plain_text_title">Copy as plain text</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_plain_text_subtitle">Copy this record as plain text</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_asc_title">Copy by sorting paths ascendingly</system:String>
