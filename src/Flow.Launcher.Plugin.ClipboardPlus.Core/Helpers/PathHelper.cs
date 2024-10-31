@@ -32,6 +32,8 @@ public static class PathHelper
 
             // icons paths
             AppIconPath = Path.Combine(IconPath, "clipboard.png");
+            ConnectIconPath = Path.Combine(IconPath, "connect.png");
+            DisconnectIconPath = Path.Combine(IconPath, "disconnect.png");
             CleanIconPath = Path.Combine(IconPath, "clean.png");
             ClearIconPath = Path.Combine(IconPath, "clear.png");
             ListIconPath = Path.Combine(IconPath, "list.png");
@@ -64,6 +66,8 @@ public static class PathHelper
 
     // icons paths
     public static string AppIconPath { get; private set; } = string.Empty;
+    public static string ConnectIconPath { get; private set; } = string.Empty;
+    public static string DisconnectIconPath { get; private set; } = string.Empty;
     public static string CleanIconPath { get; private set; } = string.Empty;
     public static string ClearIconPath { get; private set; } = string.Empty;
     public static string ListIconPath { get; private set; } = string.Empty;

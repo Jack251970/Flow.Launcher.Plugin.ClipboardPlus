@@ -38,6 +38,8 @@ public static class ResourceHelper
 
     #region Properties
 
+    public static GlyphInfo ConnectGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE703");
+    public static GlyphInfo DisconnectGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE703");
     public static GlyphInfo CleanGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE894");
     public static GlyphInfo ClearGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE894");
     public static GlyphInfo ListGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uEA37");

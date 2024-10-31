@@ -63,11 +63,13 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private const int ScoreInterval5 = 5 * ScoreInterval;
     private const int ScoreInterval6 = 6 * ScoreInterval;
 
-    private const int TopActionScore1 = ClipboardData.MaximumScore + 2 * ScoreInterval;
-    private const int TopActionScore2 = ClipboardData.MaximumScore + 1 * ScoreInterval;
+    private const int TopActionScore1 = ClipboardData.MaximumScore + 3 * ScoreInterval;
+    private const int TopActionScore2 = ClipboardData.MaximumScore + 2 * ScoreInterval;
+    private const int TopActionScore3 = ClipboardData.MaximumScore + 1 * ScoreInterval;
 
-    private const int BottomActionScore1 = 6000;
-    private const int BottomActionScore2 = 3000;
+    private const int BottomActionScore1 = 7500;
+    private const int BottomActionScore2 = 5000;
+    private const int BottomActionScore3 = 2500;
 
     #endregion
 
@@ -209,6 +211,40 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 },
             });
 
+            // connect & disconnect action
+            if (ClipboardMonitor.MonitorClipboard)
+            {
+                results.Add(new Result
+                {
+                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_disconnect_title"),
+                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_disconnect_subtitle"),
+                    IcoPath = PathHelper.DisconnectIconPath,
+                    Glyph = ResourceHelper.DisconnectGlyph,
+                    Score = Settings.ActionTop ? TopActionScore2 : BottomActionScore2,
+                    Action = _ =>
+                    {
+                        ClipboardMonitor.PauseMonitoring();
+                        return true;
+                    },
+                });
+            }
+            else
+            {
+                results.Add(new Result
+                {
+                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_connect_title"),
+                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_connect_subtitle"),
+                    IcoPath = PathHelper.ConnectIconPath,
+                    Glyph = ResourceHelper.ConnectGlyph,
+                    Score = Settings.ActionTop ? TopActionScore2 : BottomActionScore2,
+                    Action = _ =>
+                    {
+                        ClipboardMonitor.ResumeMonitoring();
+                        return true;
+                    },
+                });
+            }
+
             // clear action
             results.Add(new Result
             {
@@ -216,7 +252,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_subtitle"),
                 IcoPath = PathHelper.ClearIconPath,
                 Glyph = ResourceHelper.ClearGlyph,
-                Score = Settings.ActionTop ? TopActionScore2 : BottomActionScore2,
+                Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
                 Action = _ =>
                 {
                     Context.API.ChangeQuery($"{query.ActionKeyword}{Plugin.Query.TermSeparator}{Settings.ClearKeyword} ", true);

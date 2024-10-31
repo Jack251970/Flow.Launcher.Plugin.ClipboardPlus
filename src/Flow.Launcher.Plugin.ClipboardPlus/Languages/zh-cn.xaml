@@ -11,6 +11,10 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_fail">失败</system:String>
 
     <!--  Main  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_disconnect_title">取消连接剪贴版</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_disconnect_subtitle">从剪贴版取消连接以停止监视剪贴板数据</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_connect_title">连接剪贴板</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_connect_subtitle">连接到剪贴板以开始监视剪贴板数据</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">清理剪切板</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">清理剪切板数据</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">清除记录</system:String>
