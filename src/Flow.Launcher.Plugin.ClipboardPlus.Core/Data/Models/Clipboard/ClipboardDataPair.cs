@@ -33,6 +33,7 @@ public class ClipboardDataPair : IDisposable
             }
             PreviewPanel = null!;
             ClipboardData.Dispose();
+            _disposed = true;
         }
     }
 }
