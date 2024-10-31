@@ -344,7 +344,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Score = ScoreInterval6,
                     Action = _ =>
                     {
-                        CopyToClipboard(clipboardDataPair);
+                        CopyOriginallyToClipboard(clipboardDataPair);
                         return true;
                     }
                 }
@@ -733,30 +733,30 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 switch (Settings.ClickAction)
                 {
                     case ClickAction.Copy:
-                        CopyToClipboard(clipboardDataPair);
+                        CopyOriginallyToClipboard(clipboardDataPair);
                         break;
                     case ClickAction.CopyPaste:
                         Context.API.HideMainWindow();
-                        CopyToClipboard(clipboardDataPair);
+                        CopyOriginallyToClipboard(clipboardDataPair);
                         await WaitWindowHideAndSimulatePaste();
                         break;
                     case ClickAction.CopyDeleteList:
-                        CopyToClipboard(clipboardDataPair);
+                        CopyOriginallyToClipboard(clipboardDataPair);
                         RemoveFromList(clipboardDataPair, false);
                         break;
                     case ClickAction.CopyDeleteListDatabase:
-                        CopyToClipboard(clipboardDataPair);
+                        CopyOriginallyToClipboard(clipboardDataPair);
                         RemoveFromListDatabase(clipboardDataPair, false);
                         break;
                     case ClickAction.CopyPasteDeleteList:
                         Context.API.HideMainWindow();
-                        CopyToClipboard(clipboardDataPair);
+                        CopyOriginallyToClipboard(clipboardDataPair);
                         RemoveFromList(clipboardDataPair, false);
                         await WaitWindowHideAndSimulatePaste();
                         break;
                     case ClickAction.CopyPasteDeleteListDatabase:
                         Context.API.HideMainWindow();
-                        CopyToClipboard(clipboardDataPair);
+                        CopyOriginallyToClipboard(clipboardDataPair);
                         RemoveFromListDatabase(clipboardDataPair, false);
                         await WaitWindowHideAndSimulatePaste();
                         break;
@@ -800,7 +800,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
     }
 
-    private async void CopyToClipboard(ClipboardDataPair clipboardDataPair)
+    private async void CopyOriginallyToClipboard(ClipboardDataPair clipboardDataPair)
     {
         var clipboardData = clipboardDataPair.ClipboardData;
         var validObject = clipboardData.DataToValid();
@@ -897,24 +897,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     private async void CopyBySortingNameToClipboard(ClipboardData clipboardData, bool ascend)
     {
-        static string[] SortAscending(string[] strings)
-        {
-            return strings.OrderBy(path =>
-            {
-                var match = FilesComparisionRegex().Match(path);
-                return match.Success ? int.Parse(match.Value) : 0;
-            }).ToArray();
-        }
-
-        static string[] SortDescending(string[] strings)
-        {
-            return strings.OrderByDescending(path =>
-            {
-                var match = FilesComparisionRegex().Match(path);
-                return match.Success ? int.Parse(match.Value) : 0;
-            }).ToArray();
-        }
-
         var dataType = clipboardData.DataType;
         if (dataType != DataType.Files)
         {
@@ -946,6 +928,24 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
         }
+    }
+
+    private static string[] SortAscending(string[] strings)
+    {
+        return strings.OrderBy(path =>
+        {
+            var match = FilesComparisionRegex().Match(path);
+            return match.Success ? int.Parse(match.Value) : 0;
+        }).ToArray();
+    }
+
+    private static string[] SortDescending(string[] strings)
+    {
+        return strings.OrderByDescending(path =>
+        {
+            var match = FilesComparisionRegex().Match(path);
+            return match.Success ? int.Parse(match.Value) : 0;
+        }).ToArray();
     }
 
     [GeneratedRegex("\\d+")]
