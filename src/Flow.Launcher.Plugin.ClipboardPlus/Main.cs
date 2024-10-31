@@ -328,11 +328,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         {
             return results;
         }
+
         var clipboardData = clipboardDataPair.ClipboardData;
 
-        // Copy & Pin & Delete
-        var pinned = clipboardData.Pinned;
-        var pinStr = pinned ? "unpin" : "pin";
+        // Copy
         results.AddRange(
             new[]
             {
@@ -348,57 +347,11 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                         CopyToClipboard(clipboardDataPair);
                         return true;
                     }
-                },
-                new Result
-                {
-                    Title = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_title"),
-                    SubTitle = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_subtitle"),
-                    IcoPath = PathHelper.GetPinIconPath(pinned),
-                    Glyph = ResourceHelper.GetPinGlyph(pinned),
-                    Score = ScoreInterval2,
-                    Action = _ =>
-                    {
-                        PinOneRecord(clipboardDataPair, true);
-                        return false;
-                    }
-                },
-                new Result
-                {
-                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_delete_title"),
-                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_delete_subtitle"),
-                    IcoPath = PathHelper.DeleteIconPath,
-                    Glyph = ResourceHelper.DeleteGlyph,
-                    Score = ScoreInterval1,
-                    Action = _ =>
-                    {
-                        RemoveFromListDatabase(clipboardDataPair, true);
-                        return false;
-                    }
-                },
+                }
             }
         );
 
-        // Save
-        var saved = clipboardData.Saved;
-        if (!clipboardData.Saved)
-        {
-            Context.API.LogInfo(ClassName, $"Clipboard data: {clipboardData}, Saved: {clipboardData.Saved}");
-            results.Add(new Result
-            {
-                Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_save_title"),
-                SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_save_subtitle"),
-                IcoPath = PathHelper.DatabaseIconPath,
-                Glyph = ResourceHelper.DatabaseGlyph,
-                Score = ScoreInterval3,
-                Action = _ =>
-                {
-                    SaveToDatabase(clipboardDataPair, true);
-                    return false;
-                }
-            });
-        }
-
-        // Addition Options: Copy as plain text, Copy by sorting name
+        // Copy Addition Options
         if (clipboardData.DataType == DataType.RichText)
         {
             results.Add(new Result
@@ -449,6 +402,62 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 }
             );
         }
+
+        // Save
+        var saved = clipboardData.Saved;
+        if (!clipboardData.Saved)
+        {
+            Context.API.LogInfo(ClassName, $"Clipboard data: {clipboardData}, Saved: {clipboardData.Saved}");
+            results.Add(new Result
+            {
+                Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_save_title"),
+                SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_save_subtitle"),
+                IcoPath = PathHelper.DatabaseIconPath,
+                Glyph = ResourceHelper.DatabaseGlyph,
+                Score = ScoreInterval3,
+                Action = _ =>
+                {
+                    SaveToDatabase(clipboardDataPair, true);
+                    return false;
+                }
+            });
+        }
+
+        // Pin & Delete
+        var pinned = clipboardData.Pinned;
+        var pinStr = pinned ? "unpin" : "pin";
+        results.AddRange(
+            new[]
+            {
+                new Result
+                {
+                    Title = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_title"),
+                    SubTitle = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_subtitle"),
+                    IcoPath = PathHelper.GetPinIconPath(pinned),
+                    Glyph = ResourceHelper.GetPinGlyph(pinned),
+                    Score = ScoreInterval2,
+                    Action = _ =>
+                    {
+                        PinOneRecord(clipboardDataPair, true);
+                        return false;
+                    }
+                },
+                new Result
+                {
+                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_delete_title"),
+                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_delete_subtitle"),
+                    IcoPath = PathHelper.DeleteIconPath,
+                    Glyph = ResourceHelper.DeleteGlyph,
+                    Score = ScoreInterval1,
+                    Action = _ =>
+                    {
+                        RemoveFromListDatabase(clipboardDataPair, true);
+                        return false;
+                    }
+                },
+            }
+        );
+
         return results;
     }
 
