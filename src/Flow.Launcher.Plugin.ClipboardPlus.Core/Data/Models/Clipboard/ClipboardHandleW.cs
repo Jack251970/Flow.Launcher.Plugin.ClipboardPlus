@@ -17,7 +17,7 @@ internal class ClipboardHandleW : IDisposable
 {
     #region Fields
 
-    const int WM_CLIPBOARDUPDATE = 0x031D;
+    private const int WM_CLIPBOARDUPDATE = 0x031D;
 
     private HwndSource _hwndSource = null!;
 

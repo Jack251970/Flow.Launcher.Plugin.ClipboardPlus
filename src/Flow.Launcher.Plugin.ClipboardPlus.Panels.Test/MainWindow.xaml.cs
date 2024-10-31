@@ -322,13 +322,48 @@ public partial class MainWindow : Window
 
     private void Button_Click3(object sender, RoutedEventArgs e)
     {
+        ClipboardMonitor.ClipboardChanged += OnClipboardChange;
+        ClipboardMonitor.StartMonitoring();
+        TextBlock1.Text = "";
+        TextBlock2.Text = "";
+        TextBlock3.Text = "Wait something copyed to clipboard...";
+        TextBox.Text = "";
+        RichTextBox.SetUnicodeText("");
+    }
+
+    private void Button_Click4(object sender, RoutedEventArgs e)
+    {
+        ClipboardMonitor.PauseMonitoring();
+        TextBlock1.Text = "";
+        TextBlock2.Text = "";
+        TextBlock3.Text = "Clipboard monitor is paused.";
+        TextBox.Text = "";
+        RichTextBox.SetUnicodeText("");
+    }
+
+    private void Button_Click5(object sender, RoutedEventArgs e)
+    {
+        ClipboardMonitor.ResumeMonitoring();
+        TextBlock1.Text = "";
+        TextBlock2.Text = "";
+        TextBlock3.Text = "Wait something copyed to clipboard...";
+        TextBox.Text = "";
+        RichTextBox.SetUnicodeText("");
+    }
+
+    private void Button_Click6(object sender, RoutedEventArgs e)
+    {
         ClipboardMonitor.ClipboardChanged -= OnClipboardChange;
         ClipboardMonitor.Dispose();
         TextBlock1.Text = "";
         TextBlock2.Text = "";
-        TextBlock3.Text = "Clipboard Monitor is Stopped.";
+        TextBlock3.Text = "Clipboard monitor is Stopped.";
         TextBox.Text = "";
         RichTextBox.SetUnicodeText("");
+        Button1.IsEnabled = false;
+        Button2.IsEnabled = false;
+        Button3.IsEnabled = false;
+        Button4.IsEnabled = false;
     }
 
     #endregion

@@ -37,15 +37,40 @@
                         Text="Wait something copyed to clipboard..." />
                     <TextBox x:Name="TextBox" Grid.Row="3" />
                     <RichTextBox x:Name="RichTextBox" Grid.Row="4" />
+                    <Grid Grid.Row="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            x:Name="Button1"
+                            Grid.Column="0"
+                            Click="Button_Click3"
+                            Content="Start Monitor" />
+                        <Button
+                            x:Name="Button2"
+                            Grid.Column="1"
+                            Click="Button_Click4"
+                            Content="Pause Monitor" />
+                        <Button
+                            x:Name="Button3"
+                            Grid.Column="2"
+                            Click="Button_Click5"
+                            Content="Resume Monitor" />
+                        <Button
+                            x:Name="Button4"
+                            Grid.Column="3"
+                            Click="Button_Click6"
+                            Content="Stop Monitor" />
+                    </Grid>
                     <Image
                         x:Name="Image"
                         Grid.Row="6"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
-                    <Button
-                        Grid.Row="5"
-                        Click="Button_Click3"
-                        Content="Stop Monitor" />
+
                 </Grid>
             </TabItem>
         </TabControl>

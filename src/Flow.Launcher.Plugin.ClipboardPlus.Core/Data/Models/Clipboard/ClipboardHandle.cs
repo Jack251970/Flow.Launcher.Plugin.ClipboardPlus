@@ -36,7 +36,7 @@ public partial class ClipboardHandle : Form
 
     #region Fields
 
-    const int WM_CLIPBOARDUPDATE = 0x031D;
+    private const int WM_CLIPBOARDUPDATE = 0x031D;
 
     private bool _ready;
 
@@ -113,7 +113,6 @@ public partial class ClipboardHandle : Form
     /// <param name="m">The processed window-reference message.</param>
     protected override void WndProc(ref Message m)
     {
-        Console.WriteLine(m.ToString());
         switch (m.Msg)
         {
             case WM_CLIPBOARDUPDATE:
@@ -134,6 +133,8 @@ public partial class ClipboardHandle : Form
             {
                 return;
             }
+
+            // Retrieves the current clipboard data object.
             var dataObj = TaskUtils.Do(Clipboard.GetDataObject, 100, 5);
             if (dataObj is null)
             {

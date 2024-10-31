@@ -110,6 +110,22 @@ public class ClipboardMonitorW : IDisposable
     }
 
     /// <summary>
+    /// Pauses the clipboard-monitoring process.
+    /// </summary>
+    public void PauseMonitoring()
+    {
+        MonitorClipboard = false;
+    }
+
+    /// <summary>
+    /// Resumes the clipboard-monitoring process.
+    /// </summary>
+    public void ResumeMonitoring()
+    {
+        MonitorClipboard = true;
+    }
+
+    /// <summary>
     /// Ends the clipboard-monitoring process and
     /// shuts the system clipboard-access handle.
     /// </summary>
