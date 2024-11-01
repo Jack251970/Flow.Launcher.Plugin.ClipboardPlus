@@ -54,6 +54,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     // Retry interval
     private const int RetryInterval = 100;
 
+    // Max length of string
+    private const int StringMaxLength = 54;
+
     #region Scores
 
     private const int ScoreInterval1 = 1 * ScoreInterval;
@@ -952,7 +955,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             {
                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, validObject as string[]), 54));
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, validObject as string[]), StringMaxLength));
             }
             else
             {
@@ -999,7 +1002,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             {
                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), 54));
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), StringMaxLength));
             }
             else
             {
@@ -1048,7 +1051,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             {
                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), 54));
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), StringMaxLength));
             }
             else
             {
@@ -1084,7 +1087,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             {
                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, validObject as string[]), 54));
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, validObject as string[]), StringMaxLength));
             }
             else
             {
@@ -1132,7 +1135,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             {
                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, filePaths), 54));
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, filePaths), StringMaxLength));
             }
             else
             {
@@ -1171,7 +1174,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             {
                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, filePaths), 54));
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, filePaths), StringMaxLength));
             }
             else
             {
