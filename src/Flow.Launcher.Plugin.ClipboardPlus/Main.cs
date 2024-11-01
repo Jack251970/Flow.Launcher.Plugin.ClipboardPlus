@@ -62,6 +62,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private const int ScoreInterval4 = 4 * ScoreInterval;
     private const int ScoreInterval5 = 5 * ScoreInterval;
     private const int ScoreInterval6 = 6 * ScoreInterval;
+    private const int ScoreInterval7 = 7 * ScoreInterval;
+    private const int ScoreInterval8 = 8 * ScoreInterval;
+    private const int ScoreInterval9 = 9 * ScoreInterval;
 
     private const int TopActionScore1 = ClipboardData.MaximumScore + 3 * ScoreInterval;
     private const int TopActionScore2 = ClipboardData.MaximumScore + 2 * ScoreInterval;
@@ -331,7 +334,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
         var clipboardData = clipboardDataPair.ClipboardData;
 
-        // Copy
+        // Copy Default Option
         results.AddRange(
             new[]
             {
@@ -341,7 +344,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_subtitle"),
                     IcoPath = PathHelper.CopyIconPath,
                     Glyph = ResourceHelper.CopyGlyph,
-                    Score = ScoreInterval6,
+                    Score = ScoreInterval9,
                     Action = _ =>
                     {
                         CopyOriginallyToClipboard(clipboardDataPair);
@@ -352,55 +355,155 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         );
 
         // Copy Addition Options
-        if (clipboardData.DataType == DataType.RichText)
+        switch (clipboardData.DataType)
         {
-            results.Add(new Result
-            {
-                Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_plain_text_title"),
-                SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_plain_text_subtitle"),
-                IcoPath = PathHelper.CopyIconPath,
-                Glyph = ResourceHelper.CopyGlyph,
-                Score = ScoreInterval5,
-                Action = _ =>
+            case DataType.UnicodeText:
+                results.Add(new Result
                 {
-                    CopyAsPlainTextToClipboard(clipboardData);
-                    return true;
-                }
-            });
-        }
-        else if (clipboardData.DataType == DataType.Files)
-        {
-            results.AddRange(
-                new[]
-                {
-                    new Result
+                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_plain_text_title"),
+                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_plain_text_subtitle"),
+                    IcoPath = PathHelper.CopyIconPath,
+                    Glyph = ResourceHelper.CopyGlyph,
+                    Score = ScoreInterval8,
+                    Action = _ =>
                     {
-                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_sort_name_asc_title"),
-                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_sort_name_asc_subtitle"),
+                        CopyOriginallyToClipboard(clipboardDataPair);
+                        return true;
+                    }
+                });
+                break;
+            case DataType.RichText:
+                results.AddRange(
+                    new[]
+                    {
+                        new Result
+                        {
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_rich_text_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_rich_text_subtitle"),
+                            IcoPath = PathHelper.CopyIconPath,
+                            Glyph = ResourceHelper.CopyGlyph,
+                            Score = ScoreInterval8,
+                            Action = _ =>
+                            {
+                                CopyOriginallyToClipboard(clipboardDataPair);
+                                return true;
+                            }
+                        },
+                        new Result
+                        {
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_plain_text_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_plain_text_subtitle"),
+                            IcoPath = PathHelper.CopyIconPath,
+                            Glyph = ResourceHelper.CopyGlyph,
+                            Score = ScoreInterval7,
+                            Action = _ =>
+                            {
+                                CopyAsPlainTextToClipboard(clipboardDataPair);
+                                return true;
+                            }
+                        }
+                    }
+                );
+                break;
+            case DataType.Image:
+                results.AddRange(
+                    new[]
+                    {
+                        new Result
+                        {
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_image_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_image_subtitle"),
+                            IcoPath = PathHelper.CopyIconPath,
+                            Glyph = ResourceHelper.CopyGlyph,
+                            Score = ScoreInterval8,
+                            Action = _ =>
+                            {
+                                CopyOriginallyToClipboard(clipboardDataPair);
+                                return true;
+                            }
+                        },
+                        new Result
+                        {
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_image_file_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_image_file_subtitle"),
+                            IcoPath = PathHelper.CopyIconPath,
+                            Glyph = ResourceHelper.CopyGlyph,
+                            Score = ScoreInterval7,
+                            Action = _ =>
+                            {
+                                CopyImageFileToClipboard(clipboardDataPair);
+                                return true;
+                            }
+                        },
+                    }
+                );
+                break;
+            case DataType.Files:
+                results.AddRange(
+                    new[]
+                    {
+                        new Result
+                        {
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_files_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_files_subtitle"),
+                            IcoPath = PathHelper.CopyIconPath,
+                            Glyph = ResourceHelper.CopyGlyph,
+                            Score = ScoreInterval8,
+                            Action = _ =>
+                            {
+                                CopyOriginallyToClipboard(clipboardDataPair);
+                                return true;
+                            }
+                        },
+                        new Result
+                        {
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_sort_name_asc_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_sort_name_asc_subtitle"),
+                            IcoPath = PathHelper.CopyIconPath,
+                            Glyph = ResourceHelper.CopyGlyph,
+                            Score = ScoreInterval7,
+                            Action = _ =>
+                            {
+                                CopyBySortingNameToClipboard(clipboardDataPair, true);
+                                return true;
+                            }
+                        },
+                        new Result
+                        {
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_sort_name_desc_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_sort_name_desc_subtitle"),
+                            IcoPath = PathHelper.CopyIconPath,
+                            Glyph = ResourceHelper.CopyGlyph,
+                            Score = ScoreInterval6,
+                            Action = _ =>
+                            {
+                                CopyBySortingNameToClipboard(clipboardDataPair, false);
+                                return true;
+                            }
+                        }
+                    }
+                );
+
+                var validObject = clipboardData.DataToValid();
+                if (validObject is string[] filePaths && filePaths.Length == 1)
+                {
+                    results.Add(new Result
+                    {
+                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_file_content_title"),
+                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_file_content_subtitle"),
                         IcoPath = PathHelper.CopyIconPath,
                         Glyph = ResourceHelper.CopyGlyph,
                         Score = ScoreInterval5,
                         Action = _ =>
                         {
-                            CopyBySortingNameToClipboard(clipboardData, true);
+                            CopyFileContentToClipboard(clipboardDataPair, filePaths);
                             return true;
                         }
-                    },
-                    new Result
-                    {
-                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_sort_name_desc_title"),
-                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_sort_name_desc_subtitle"),
-                        IcoPath = PathHelper.CopyIconPath,
-                        Glyph = ResourceHelper.CopyGlyph,
-                        Score = ScoreInterval4,
-                        Action = _ =>
-                        {
-                            CopyBySortingNameToClipboard(clipboardData, false);
-                            return true;
-                        }
-                    }
+                    });
                 }
-            );
+                break;
+            default:
+                break;
         }
 
         // Save
@@ -863,8 +966,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
     }
 
-    private async void CopyAsPlainTextToClipboard(ClipboardData clipboardData)
+    private async void CopyAsPlainTextToClipboard(ClipboardDataPair clipboardDataPair)
     {
+        var clipboardData = clipboardDataPair.ClipboardData;
         var dataType = clipboardData.DataType;
         if (dataType != DataType.RichText)
         {
@@ -895,8 +999,58 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
     }
 
-    private async void CopyBySortingNameToClipboard(ClipboardData clipboardData, bool ascend)
+    private async void CopyImageFileToClipboard(ClipboardDataPair clipboardDataPair)
     {
+        var clipboardData = clipboardDataPair.ClipboardData;
+        var dataType = clipboardData.DataType;
+        if (dataType != DataType.Image)
+        {
+            return;
+        }
+
+        var cachePath = string.Empty;
+        if ((!string.IsNullOrEmpty(clipboardData.CachedImagePath)) && File.Exists(clipboardData.CachedImagePath))
+        {
+            cachePath = clipboardData.CachedImagePath;
+        }
+        else
+        {
+            cachePath = FileUtils.SaveImageCache(clipboardData, PathHelper.ImageCachePath, PathHelper.TempCacheImageName);
+        }
+
+        if (!string.IsNullOrEmpty(cachePath))
+        {
+            var exception = await RetryAction(() =>
+            {
+                var paths = new StringCollection
+            {
+                cachePath
+            };
+                Clipboard.SetFileDropList(paths);
+            });
+            if (exception == null)
+            {
+                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), 54));
+            }
+            else
+            {
+                Context.API.LogException(ClassName, "Copy to clipboard failed", exception);
+                Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception"));
+            }
+        }
+        else
+        {
+            Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                Context.GetTranslation("flowlauncher_plugin_clipboardplus_image_data_invalid"));
+        }
+    }
+
+    private async void CopyBySortingNameToClipboard(ClipboardDataPair clipboardDataPair, bool ascend)
+    {
+        var clipboardData = clipboardDataPair.ClipboardData;
         var dataType = clipboardData.DataType;
         if (dataType != DataType.Files)
         {
@@ -946,6 +1100,54 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             var match = FilesComparisionRegex().Match(path);
             return match.Success ? int.Parse(match.Value) : 0;
         }).ToArray();
+    }
+
+    private async void CopyFileContentToClipboard(ClipboardDataPair clipboardDataPair, string[] filePaths)
+    {
+        var clipboardData = clipboardDataPair.ClipboardData;
+        var filePath = filePaths.FirstOrDefault();
+        if (File.Exists(filePath))
+        {
+            var exception = await RetryAction(() =>
+            {
+                if (FileUtils.IsImageFile(filePath))
+                {
+                    var image = filePath.ToImage();
+                    Clipboard.SetImage(image);
+                }
+                else
+                {
+                    try
+                    {
+                        var text = File.ReadAllText(filePath);
+                        Clipboard.SetText(text);
+                    }
+                    catch(Exception e)
+                    {
+                        Context.API.LogException(ClassName, "Copy to clipboard failed", e);
+                        Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                            Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception"));
+                    }
+                }
+            });
+            if (exception == null)
+            {
+                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, filePaths), 54));
+            }
+            else
+            {
+                Context.API.LogException(ClassName, "Copy to clipboard failed", exception);
+                Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception"));
+            }
+        }
+        else
+        {
+            Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
+        }
     }
 
     [GeneratedRegex("\\d+")]

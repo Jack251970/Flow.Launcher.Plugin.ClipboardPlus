@@ -4,6 +4,8 @@ public static class PathHelper
 {
     #region Constants
 
+    public const string TempCacheImageName = "temp";
+
     private const string SettingsFile = "settings.json";
     private const string DatabaseFile = "ClipboardPlus.db";
 
@@ -24,6 +26,7 @@ public static class PathHelper
             {
                 Directory.CreateDirectory(ImageCachePath);
             }
+            FileUtils.ClearImageCache(ImageCachePath, TempCacheImageName);
             IconPath = Path.Combine(PluginPath, "Images");
 
             // data paths
