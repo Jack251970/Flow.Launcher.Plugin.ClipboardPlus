@@ -24,6 +24,9 @@ public class SettingsViewModel : BaseModel
         ClipboardPlus.CultureInfoChanged += ClipboardPlus_CultureInfoChanged;
         InitializeRecordOrderSelection();
         InitializeClickActionSelection();
+        InitializeDefaultRichTextCopyOptionSelection();
+        InitializeDefaultImageCopyOptionSelection();
+        InitializeDefaultFilesCopyOptionSelection();
         InitializeCacheFormatPreview();
         InitializeKeepTimeSelection();
     }
@@ -157,6 +160,20 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
+    #region Action Top
+
+    public bool ActionTop
+    {
+        get => Settings.ActionTop;
+        set
+        {
+            Settings.ActionTop = value;
+            OnPropertyChanged();
+        }
+    }
+
+    #endregion
+
     #region Click Actions
 
     private IReadOnlyList<EnumBindingModel<ClickAction>> _clickActions;
@@ -202,16 +219,137 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
-    #region Action Top
+    #region Default Rich Text Copy Option
 
-    public bool ActionTop
+    private IReadOnlyList<EnumBindingModel<DefaultRichTextCopyOption>> _defaultRichTextCopyOptions;
+    public IReadOnlyList<EnumBindingModel<DefaultRichTextCopyOption>> DefaultRichTextCopyOptions
     {
-        get => Settings.ActionTop;
+        get => _defaultRichTextCopyOptions;
         set
         {
-            Settings.ActionTop = value;
+            _defaultRichTextCopyOptions = value;
             OnPropertyChanged();
         }
+    }
+
+    private EnumBindingModel<DefaultRichTextCopyOption> _selectedDefaultRichTextCopyOption;
+    public EnumBindingModel<DefaultRichTextCopyOption> SelectedDefaultRichTextCopyOption
+    {
+        get => _selectedDefaultRichTextCopyOption;
+        set
+        {
+            _selectedDefaultRichTextCopyOption = value;
+            Settings.DefaultRichTextCopyOption = value.Value;
+            OnPropertyChanged();
+        }
+    }
+
+    [MemberNotNull(nameof(_defaultRichTextCopyOptions),
+        nameof(_selectedDefaultRichTextCopyOption))]
+    private void InitializeDefaultRichTextCopyOptionSelection()
+    {
+        _defaultRichTextCopyOptions = EnumBindingModel<DefaultRichTextCopyOption>.CreateList(Context);
+
+        _selectedDefaultRichTextCopyOption = _defaultRichTextCopyOptions.First(x => x.Value == Settings.DefaultRichTextCopyOption);
+    }
+
+    private void RefreshDefaultRichTextCopyOptions()
+    {
+        _defaultRichTextCopyOptions = EnumBindingModel<DefaultRichTextCopyOption>.CreateList(Context);
+
+        SelectedDefaultRichTextCopyOption = DefaultRichTextCopyOptions.First(x => x.Value == Settings.DefaultRichTextCopyOption);
+
+        OnPropertyChanged(nameof(DefaultRichTextCopyOptions));
+    }
+
+    #endregion
+
+    #region Default Image Copy Option
+
+    private IReadOnlyList<EnumBindingModel<DefaultImageCopyOption>> _defaultImageCopyOptions;
+    public IReadOnlyList<EnumBindingModel<DefaultImageCopyOption>> DefaultImageCopyOptions
+    {
+        get => _defaultImageCopyOptions;
+        set
+        {
+            _defaultImageCopyOptions = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private EnumBindingModel<DefaultImageCopyOption> _selectedDefaultImageCopyOption;
+    public EnumBindingModel<DefaultImageCopyOption> SelectedDefaultImageCopyOption
+    {
+        get => _selectedDefaultImageCopyOption;
+        set
+        {
+            _selectedDefaultImageCopyOption = value;
+            Settings.DefaultImageCopyOption = value.Value;
+            OnPropertyChanged();
+        }
+    }
+
+    [MemberNotNull(nameof(_defaultImageCopyOptions),
+        nameof(_selectedDefaultImageCopyOption))]
+    private void InitializeDefaultImageCopyOptionSelection()
+    {
+        _defaultImageCopyOptions = EnumBindingModel<DefaultImageCopyOption>.CreateList(Context);
+
+        _selectedDefaultImageCopyOption = _defaultImageCopyOptions.First(x => x.Value == Settings.DefaultImageCopyOption);
+    }
+
+    private void RefreshDefaultImageCopyOptions()
+    {
+        _defaultImageCopyOptions = EnumBindingModel<DefaultImageCopyOption>.CreateList(Context);
+
+        SelectedDefaultImageCopyOption = DefaultImageCopyOptions.First(x => x.Value == Settings.DefaultImageCopyOption);
+
+        OnPropertyChanged(nameof(DefaultImageCopyOptions));
+    }
+
+    #endregion
+
+    #region Default Files Copy Option
+
+    private IReadOnlyList<EnumBindingModel<DefaultFilesCopyOption>> _defaultFilesCopyOptions;
+    public IReadOnlyList<EnumBindingModel<DefaultFilesCopyOption>> DefaultFilesCopyOptions
+    {
+        get => _defaultFilesCopyOptions;
+        set
+        {
+            _defaultFilesCopyOptions = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private EnumBindingModel<DefaultFilesCopyOption> _selectedDefaultFilesCopyOption;
+    public EnumBindingModel<DefaultFilesCopyOption> SelectedDefaultFilesCopyOption
+    {
+        get => _selectedDefaultFilesCopyOption;
+        set
+        {
+            _selectedDefaultFilesCopyOption = value;
+            Settings.DefaultFilesCopyOption = value.Value;
+            OnPropertyChanged();
+        }
+    }
+
+    [MemberNotNull(nameof(_defaultFilesCopyOptions),
+        nameof(_selectedDefaultFilesCopyOption))]
+    private void InitializeDefaultFilesCopyOptionSelection()
+    {
+        _defaultFilesCopyOptions = EnumBindingModel<DefaultFilesCopyOption>.CreateList(Context);
+
+        _selectedDefaultFilesCopyOption = _defaultFilesCopyOptions.First(x => x.Value == Settings.DefaultFilesCopyOption);
+    }
+
+    private void RefreshDefaultFilesCopyOptions()
+    {
+        _defaultFilesCopyOptions = EnumBindingModel<DefaultFilesCopyOption>.CreateList(Context);
+
+        SelectedDefaultFilesCopyOption = DefaultFilesCopyOptions.First(x => x.Value == Settings.DefaultFilesCopyOption);
+
+        OnPropertyChanged(nameof(DefaultFilesCopyOptions));
     }
 
     #endregion
@@ -445,6 +583,9 @@ public class SettingsViewModel : BaseModel
     {
         RefreshRecordOrders();
         RefreshClickActions();
+        RefreshDefaultRichTextCopyOptions();
+        RefreshDefaultImageCopyOptions();
+        RefreshDefaultFilesCopyOptions();
         RefreshKeepTimes();
     }
 

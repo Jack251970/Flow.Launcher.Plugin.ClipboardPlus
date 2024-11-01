@@ -350,7 +350,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                     Score = ScoreInterval9,
                     Action = _ =>
                     {
-                        CopyOriginallyToClipboard(clipboardDataPair);
+                        CopyToClipboard(clipboardDataPair);
                         return true;
                     }
                 }
@@ -855,30 +855,30 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 switch (Settings.ClickAction)
                 {
                     case ClickAction.Copy:
-                        CopyOriginallyToClipboard(clipboardDataPair);
+                        CopyToClipboard(clipboardDataPair);
                         break;
                     case ClickAction.CopyPaste:
                         Context.API.HideMainWindow();
-                        CopyOriginallyToClipboard(clipboardDataPair);
+                        CopyToClipboard(clipboardDataPair);
                         await WaitWindowHideAndSimulatePaste();
                         break;
                     case ClickAction.CopyDeleteList:
-                        CopyOriginallyToClipboard(clipboardDataPair);
+                        CopyToClipboard(clipboardDataPair);
                         RemoveFromList(clipboardDataPair, false);
                         break;
                     case ClickAction.CopyDeleteListDatabase:
-                        CopyOriginallyToClipboard(clipboardDataPair);
+                        CopyToClipboard(clipboardDataPair);
                         RemoveFromListDatabase(clipboardDataPair, false);
                         break;
                     case ClickAction.CopyPasteDeleteList:
                         Context.API.HideMainWindow();
-                        CopyOriginallyToClipboard(clipboardDataPair);
+                        CopyToClipboard(clipboardDataPair);
                         RemoveFromList(clipboardDataPair, false);
                         await WaitWindowHideAndSimulatePaste();
                         break;
                     case ClickAction.CopyPasteDeleteListDatabase:
                         Context.API.HideMainWindow();
-                        CopyOriginallyToClipboard(clipboardDataPair);
+                        CopyToClipboard(clipboardDataPair);
                         RemoveFromListDatabase(clipboardDataPair, false);
                         await WaitWindowHideAndSimulatePaste();
                         break;
@@ -919,6 +919,83 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             {
                 ReQuery();
             }
+        }
+    }
+
+    private void CopyToClipboard(ClipboardDataPair clipboardDataPair)
+    {
+        var clipboardData = clipboardDataPair.ClipboardData;
+        var dataType = clipboardData.DataType;
+        switch (dataType)
+        {
+            case DataType.RichText:
+                switch (Settings.DefaultRichTextCopyOption)
+                {
+                    case DefaultRichTextCopyOption.Rtf:
+                        CopyOriginallyToClipboard(clipboardDataPair);
+                        break;
+                    case DefaultRichTextCopyOption.Plain:
+                        CopyAsPlainTextToClipboard(clipboardDataPair);
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case DataType.Image:
+                switch (Settings.DefaultImageCopyOption)
+                {
+                    case DefaultImageCopyOption.Image:
+                        CopyOriginallyToClipboard(clipboardDataPair);
+                        break;
+                    case DefaultImageCopyOption.File:
+                        CopyImageFileToClipboard(clipboardDataPair);
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case DataType.Files:
+                switch (Settings.DefaultFilesCopyOption)
+                {
+                    case DefaultFilesCopyOption.Files:
+                        CopyOriginallyToClipboard(clipboardDataPair);
+                        break;
+                    case DefaultFilesCopyOption.NameAsc:
+                        CopyBySortingNameToClipboard(clipboardDataPair, true);
+                        break;
+                    case DefaultFilesCopyOption.NameDesc:
+                        CopyBySortingNameToClipboard(clipboardDataPair, false);
+                        break;
+                    case DefaultFilesCopyOption.Path:
+                        var validObject = clipboardData.DataToValid();
+                        var filePaths = (validObject as string[])!;
+                        if (filePaths.Length == 1)
+                        {
+                            CopyFilePathToClipboard(clipboardDataPair, filePaths);
+                        }
+                        else
+                        {
+                            CopyOriginallyToClipboard(clipboardDataPair);
+                        }
+                        break;
+                    case DefaultFilesCopyOption.Content:
+                        var validObject1 = clipboardData.DataToValid();
+                        var filePaths1 = (validObject1 as string[])!;
+                        if (filePaths1.Length == 1)
+                        {
+                            CopyFileContentToClipboard(clipboardDataPair, filePaths1);
+                        }
+                        else
+                        {
+                            CopyOriginallyToClipboard(clipboardDataPair);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            default:
+                break;
         }
     }
 
