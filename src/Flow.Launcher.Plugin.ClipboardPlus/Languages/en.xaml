@@ -49,6 +49,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_asc_subtitle">Copy this record as files by sorting file paths ascendingly</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_desc_title">Copy as files by sorting paths descendingly</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_desc_subtitle">Copy this record as files by sorting file paths descendingly</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_title">Copy as file path</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_subtitle">Copy this record as file path</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_title">Copy as file content</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_subtitle">Copy this record as file content</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_save_title">Save</system:String>

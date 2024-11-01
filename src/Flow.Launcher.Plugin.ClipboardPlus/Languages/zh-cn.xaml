@@ -49,6 +49,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_asc_subtitle">以文件路径上升排序的方式复制为文件</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_desc_title">以路径下降排序方式复制为文件</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_desc_subtitle">以文件路径下降排序的方式复制为文件</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_title">复制为文件路径</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_subtitle">复制记录为文件路径</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_title">复制为文件内容</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_subtitle">复制记录为文件内容</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_save_title">保存</system:String>

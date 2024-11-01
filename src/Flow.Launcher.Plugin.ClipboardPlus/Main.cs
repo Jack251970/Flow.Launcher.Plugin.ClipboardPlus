@@ -487,17 +487,33 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 var validObject = clipboardData.DataToValid();
                 if (validObject is string[] filePaths && filePaths.Length == 1)
                 {
-                    results.Add(new Result
+                    results.AddRange(new[]
                     {
-                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_file_content_title"),
-                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_file_content_subtitle"),
-                        IcoPath = PathHelper.CopyIconPath,
-                        Glyph = ResourceHelper.CopyGlyph,
-                        Score = ScoreInterval5,
-                        Action = _ =>
+                        new Result
                         {
-                            CopyFileContentToClipboard(clipboardDataPair, filePaths);
-                            return true;
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_file_path_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_file_path_subtitle"),
+                            IcoPath = PathHelper.CopyIconPath,
+                            Glyph = ResourceHelper.CopyGlyph,
+                            Score = ScoreInterval5,
+                            Action = _ =>
+                            {
+                                CopyFilePathToClipboard(clipboardDataPair, filePaths);
+                                return true;
+                            }
+                        },
+                        new Result
+                        {
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_file_content_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_file_content_subtitle"),
+                            IcoPath = PathHelper.CopyIconPath,
+                            Glyph = ResourceHelper.CopyGlyph,
+                            Score = ScoreInterval4,
+                            Action = _ =>
+                            {
+                                CopyFileContentToClipboard(clipboardDataPair, filePaths);
+                                return true;
+                            }
                         }
                     });
                 }
@@ -1023,9 +1039,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             var exception = await RetryAction(() =>
             {
                 var paths = new StringCollection
-            {
-                cachePath
-            };
+                {
+                    cachePath
+                };
                 Clipboard.SetFileDropList(paths);
             });
             if (exception == null)
@@ -1102,6 +1118,36 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }).ToArray();
     }
 
+    [GeneratedRegex("\\d+")]
+    private static partial Regex FilesComparisionRegex();
+
+    private async void CopyFilePathToClipboard(ClipboardDataPair clipboardDataPair, string[] filePaths)
+    {
+        var clipboardData = clipboardDataPair.ClipboardData;
+        var filePath = filePaths.FirstOrDefault();
+        if (File.Exists(filePath))
+        {
+            var exception = await RetryAction(() => Clipboard.SetText(filePath));
+            if (exception == null)
+            {
+                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, filePaths), 54));
+            }
+            else
+            {
+                Context.API.LogException(ClassName, "Copy to clipboard failed", exception);
+                Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception"));
+            }
+        }
+        else
+        {
+            Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
+        }
+    }
+
     private async void CopyFileContentToClipboard(ClipboardDataPair clipboardDataPair, string[] filePaths)
     {
         var clipboardData = clipboardDataPair.ClipboardData;
@@ -1117,17 +1163,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 }
                 else
                 {
-                    try
-                    {
-                        var text = File.ReadAllText(filePath);
-                        Clipboard.SetText(text);
-                    }
-                    catch(Exception e)
-                    {
-                        Context.API.LogException(ClassName, "Copy to clipboard failed", e);
-                        Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
-                            Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception"));
-                    }
+                    var text = File.ReadAllText(filePath);
+                    Clipboard.SetText(text);
                 }
             });
             if (exception == null)
@@ -1149,9 +1186,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
         }
     }
-
-    [GeneratedRegex("\\d+")]
-    private static partial Regex FilesComparisionRegex();
 
     private void RemoveFromList(ClipboardDataPair clipboardDataPair, bool requery)
     {
