@@ -23,6 +23,21 @@ public interface ISettings
     public ClickAction ClickAction { get; set; }
 
     /// <summary>
+    /// Default copy option for rich text
+    /// </summary>
+    public DefaultRichTextCopyOption DefaultRichTextCopyOption { get; set; }
+
+    /// <summary>
+    /// Default copy option for images
+    /// </summary>
+    public DefaultImageCopyOption DefaultImageCopyOption { get; set; }
+
+    /// <summary>
+    /// Default copy option for files
+    /// </summary>
+    public DefaultFilesCopyOption DefaultFilesCopyOption { get; set; }
+
+    /// <summary>
     /// Whether to put action items on the top of query list
     /// </summary>
     public bool ActionTop { get; set; }

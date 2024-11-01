@@ -16,6 +16,12 @@ public class Settings : ISettings
 
     public ClickAction ClickAction { get; set; } = ClickAction.Copy;
 
+    public DefaultRichTextCopyOption DefaultRichTextCopyOption { get; set; }
+
+    public DefaultImageCopyOption DefaultImageCopyOption { get; set; }
+
+    public DefaultFilesCopyOption DefaultFilesCopyOption { get; set; }
+
     public bool ActionTop { get; set; } = true;
 
     public bool CacheImages { get; set; } = false;
