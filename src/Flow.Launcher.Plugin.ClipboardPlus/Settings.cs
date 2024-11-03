@@ -16,11 +16,11 @@ public class Settings : ISettings
 
     public ClickAction ClickAction { get; set; } = ClickAction.Copy;
 
-    public DefaultRichTextCopyOption DefaultRichTextCopyOption { get; set; }
+    public DefaultRichTextCopyOption DefaultRichTextCopyOption { get; set; } = DefaultRichTextCopyOption.Rtf;
 
-    public DefaultImageCopyOption DefaultImageCopyOption { get; set; }
+    public DefaultImageCopyOption DefaultImageCopyOption { get; set; } = DefaultImageCopyOption.Image;
 
-    public DefaultFilesCopyOption DefaultFilesCopyOption { get; set; }
+    public DefaultFilesCopyOption DefaultFilesCopyOption { get; set; } = DefaultFilesCopyOption.Files;
 
     public bool ActionTop { get; set; } = true;
 
