@@ -23,7 +23,7 @@ public class DatabaseHelper : IDisposable
 
     #region Context
 
-    private PluginInitContext? Context;
+    private readonly PluginInitContext? Context;
 
     #endregion
 

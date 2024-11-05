@@ -160,7 +160,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     /// <summary>
     /// Get the data as string.
     /// </summary>
-    /// <param name="encryptData">
+    /// <param name="needEncryptData">
     /// Whether to encrypt the data following the setting.
     /// </param>
     /// <returns>
@@ -169,7 +169,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     /// If data type is Files, return the data as string.
     /// Else return null.
     /// </returns>
-    public readonly string? DataToString(bool encryptData)
+    public readonly string? DataToString(bool needEncryptData)
     {
         var str = DataType switch
         {
@@ -179,7 +179,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             DataType.Files => (Data is string[] s ? string.Join('\n', s) : Data as string) ?? string.Empty,
             _ => null
         };
-        if (encryptData && (!string.IsNullOrEmpty(str)) && EncryptData)
+        if (needEncryptData && (!string.IsNullOrEmpty(str)) && EncryptData)
         {
             str = StringUtils.Encrypt(str, StringUtils.EncryptKey);
         }
