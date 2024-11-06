@@ -86,7 +86,7 @@ public class DatabaseHelperTest
     [Fact]
     public async Task TestCreateDatabase()
     {
-        var helper = new DatabaseHelper(
+        var helper = new SqliteDatabase(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
@@ -104,7 +104,7 @@ public class DatabaseHelperTest
     {
         // test text
         var exampleTextRecord = GetRandomClipboardData();
-        var helper = new DatabaseHelper(
+        var helper = new SqliteDatabase(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
@@ -133,7 +133,7 @@ public class DatabaseHelperTest
     [InlineData(2, "2023-05-28 11:35:00.1+08:00", 72)]
     public async Task TestDeleteRecordBefore(int type, string creatTime, int keepTime)
     {
-        var helper = new DatabaseHelper(
+        var helper = new SqliteDatabase(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
@@ -176,7 +176,7 @@ public class DatabaseHelperTest
     public async Task TestPinRecord()
     {
         var exampleTextRecord = GetRandomClipboardData();
-        var helper = new DatabaseHelper(
+        var helper = new SqliteDatabase(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
@@ -195,7 +195,7 @@ public class DatabaseHelperTest
     public async Task TestDeleteOneRecord()
     {
         var exampleTextRecord = GetRandomClipboardData();
-        var helper = new DatabaseHelper(
+        var helper = new SqliteDatabase(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
@@ -211,7 +211,7 @@ public class DatabaseHelperTest
     [Fact]
     public async Task TestDeleteInvalidRecord()
     {
-        var helper = new DatabaseHelper(
+        var helper = new SqliteDatabase(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
@@ -245,13 +245,13 @@ public class DatabaseHelperTest
             num++;
             _testOutputHelper.WriteLine($"{num}: {record}");
         }
-        Assert.Equal(validNum, c.Count);
+        Assert.Equal(validNum, c.Count());
     }
 
     [Fact]
     public async Task TestDeleteUnpinnedRecord()
     {
-        var helper = new DatabaseHelper(
+        var helper = new SqliteDatabase(
             "TestDb",
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
@@ -286,6 +286,6 @@ public class DatabaseHelperTest
             num++;
             _testOutputHelper.WriteLine($"{num}: {record}");
         }
-        Assert.Equal(pinnedNum, c.Count);
+        Assert.Equal(pinnedNum, c.Count());
     }
 }

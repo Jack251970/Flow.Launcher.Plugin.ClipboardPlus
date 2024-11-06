@@ -33,7 +33,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private Settings Settings = null!;
 
     // Database helper
-    private DatabaseHelper DatabaseHelper = null!;
+    private SqliteDatabase Database = null!;
 
     // Clipboard monitor instance
     // Warning: Do not init the instance in InitAsync function! This will cause issues.
@@ -300,8 +300,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
         // init database & records
         var fileExists = File.Exists(PathHelper.DatabasePath);
-        DatabaseHelper = new DatabaseHelper(PathHelper.DatabasePath, context: context);
-        await DatabaseHelper.InitializeDatabaseAsync();
+        Database = new SqliteDatabase(PathHelper.DatabasePath, context: context);
+        await Database.InitializeDatabaseAsync();
         if (fileExists)
         {
             await InitRecordsFromDatabaseAsync();
@@ -701,7 +701,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         // save to database if needed
         if (saved)
         {
-            await DatabaseHelper.AddOneRecordAsync(clipboardData);
+            await Database.AddOneRecordAsync(clipboardData);
         }
         Context.API.LogDebug(ClassName, "Added to database");
 
@@ -728,7 +728,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             foreach (var pair in Settings.KeepTimePairs)
             {
                 Context.API.LogInfo(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
-                await DatabaseHelper.DeleteRecordsByKeepTimeAsync(
+                await Database.DeleteRecordsByKeepTimeAsync(
                     (int)pair.Item1,
                     pair.Item2.ToKeepTime()
                 );
@@ -741,8 +741,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
 
         // restore records
-        var records = await DatabaseHelper.GetAllRecordsAsync();
-        if (records.Count > 0)
+        var records = await Database.GetAllRecordsAsync();
+        if (records.Any())
         {
             var records1 = records.Select(record => new ClipboardDataPair()
             {
@@ -750,7 +750,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, record))
             });
             RecordsList = new LinkedList<ClipboardDataPair>(records1);
-            CurrentScore = records.Max(r => r.InitScore);
+            CurrentScore = records1.Max(r => r.InitScore);
         }
         Context.API.LogWarn(ClassName, "Restored records successfully");
     }
@@ -775,7 +775,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             record.Dispose();
         }
         RecordsList.Clear();
-        await DatabaseHelper.DeleteAllRecordsAsync();
+        await Database.DeleteAllRecordsAsync();
         CurrentScore = 1;
         GarbageCollect();
         return number;
@@ -790,7 +790,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             record.Dispose();
             RecordsList.Remove(record);
         }
-        await DatabaseHelper.DeleteUnpinnedRecordsAsync();
+        await Database.DeleteUnpinnedRecordsAsync();
         if (RecordsList.Any())
         {
             CurrentScore = RecordsList.Max(r => r.ClipboardData.InitScore);
@@ -811,7 +811,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         {
             record.Dispose();
             RecordsList.Remove(record);
-            await DatabaseHelper.DeleteOneRecordAsync(record.ClipboardData);
+            await Database.DeleteOneRecordAsync(record.ClipboardData);
         }
         if (RecordsList.Any())
         {
@@ -914,7 +914,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             clipboardData.Saved = true;
             RecordsList.Remove(clipboardDataPair);
             RecordsList.AddLast(clipboardDataPair);
-            await DatabaseHelper.AddOneRecordAsync(clipboardData);
+            await Database.AddOneRecordAsync(clipboardData);
             if (requery)
             {
                 ReQuery();
@@ -1283,7 +1283,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         var clipboardData = clipboardDataPair.ClipboardData;
         clipboardDataPair.Dispose();
         RecordsList.Remove(clipboardDataPair);
-        await DatabaseHelper.DeleteOneRecordAsync(clipboardData);
+        await Database.DeleteOneRecordAsync(clipboardData);
         if (requery)
         {
             ReQuery();
@@ -1297,7 +1297,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         clipboardData.Pinned = !clipboardData.Pinned;
         RecordsList.Remove(clipboardDataPair);
         RecordsList.AddLast(clipboardDataPair);
-        await DatabaseHelper.PinOneRecordAsync(clipboardData);
+        await Database.PinOneRecordAsync(clipboardData);
         if (requery)
         {
             ReQuery();
@@ -1381,10 +1381,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         if (disposing)
         {
             Context.API.LogWarn(ClassName, $"Enter dispose");
-            if (DatabaseHelper != null)
+            if (Database != null)
             {
-                DatabaseHelper?.Dispose();
-                DatabaseHelper = null!;
+                Database?.Dispose();
+                Database = null!;
                 Context.API.LogDebug(ClassName, $"Disposed DatabaseHelper");
             }
             ClipboardMonitor.ClipboardChanged -= OnClipboardChange;
@@ -1410,12 +1410,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     private static void GarbageCollect()
     {
-        Task.Run(() =>
-        {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-        });
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
     }
 
     #endregion

@@ -28,12 +28,12 @@ public class Asset
 
     #region Convert Methods
 
-    public static Asset FromClipboardData(ClipboardData data)
+    public static Asset FromClipboardData(ClipboardData data, bool needEncryptData)
     {
         return new Asset
         {
-            DataB64 = data.DataToString(true)!,
-            UnicodeTextB64 = data.UnicodeTextToString(true)!,
+            DataB64 = data.DataToString(needEncryptData)!,
+            UnicodeTextB64 = data.UnicodeTextToString(needEncryptData)!,
             HashId = data.HashId,
         };
     }
