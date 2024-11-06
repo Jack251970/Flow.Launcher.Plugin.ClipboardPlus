@@ -750,7 +750,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, record))
             });
             RecordsList = new LinkedList<ClipboardDataPair>(records1);
-            CurrentScore = records1.Max(r => r.InitScore);
+            CurrentScore = records1.Max(r => r.ClipboardData.InitScore);
         }
         Context.API.LogWarn(ClassName, "Restored records successfully");
     }
