@@ -701,7 +701,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         // save to database if needed
         if (saved)
         {
-            await Database.AddOneRecordAsync(clipboardData);
+            await Database.AddOneRecordAsync(clipboardData, true);
         }
         Context.API.LogDebug(ClassName, "Added to database");
 
@@ -914,7 +914,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             clipboardData.Saved = true;
             RecordsList.Remove(clipboardDataPair);
             RecordsList.AddLast(clipboardDataPair);
-            await Database.AddOneRecordAsync(clipboardData);
+            await Database.AddOneRecordAsync(clipboardData, true);
             if (requery)
             {
                 ReQuery();

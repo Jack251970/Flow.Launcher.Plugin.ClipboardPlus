@@ -248,9 +248,9 @@ public class SqliteDatabase : IDisposable
     }
 
 #if DEBUG
-    public async Task AddOneRecordAsync(ClipboardData data, Action<string>? action = null)
+    public async Task AddOneRecordAsync(ClipboardData data, bool needEncryptData = true, Action<string>? action = null)
 #else
-    public async Task AddOneRecordAsync(ClipboardData data)
+    public async Task AddOneRecordAsync(ClipboardData data, bool needEncryptData = true)
 #endif
     {
         await HandleOpenCloseAsync(async () =>
@@ -261,9 +261,10 @@ public class SqliteDatabase : IDisposable
                 Asset.FromClipboardData(data, true)
             };
             await Connection.ExecuteAsync(SqlInsertAsset, assets);
+
             // insert record
             // note: you must insert record after data
-            var record = Record.FromClipboardData(data);
+            var record = Record.FromClipboardData(data, true);
 #if DEBUG
             if (record.DataType == (int)DataType.Files && record.EncryptData == true)
             {
@@ -273,6 +274,31 @@ public class SqliteDatabase : IDisposable
             await Connection.ExecuteAsync(SqlInsertRecord, record);
         });
     }
+
+    public async Task AddRecordsAsync(IEnumerable<ClipboardData> dataList, bool needEncryptData = true)
+    {
+        await HandleOpenCloseAsync(async () =>
+        {
+            var assets = new List<Asset>();
+            var records = new List<Record>();
+
+            foreach (var data in dataList)
+            {
+                // Create and add asset
+                assets.Add(Asset.FromClipboardData(data, needEncryptData));
+
+                // Create and add record
+                records.Add(Record.FromClipboardData(data, needEncryptData));
+            }
+
+            // insert assets in one go
+            await Connection.ExecuteAsync(SqlInsertAsset, assets);
+
+            // insert records in one go
+            await Connection.ExecuteAsync(SqlInsertRecord, records);
+        });
+    }
+
 
     public async Task DeleteOneRecordAsync(ClipboardData clipboardData)
     {

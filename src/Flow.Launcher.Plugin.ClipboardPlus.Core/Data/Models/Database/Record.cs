@@ -84,17 +84,20 @@ public class Record
     /// <param name="data">
     /// The clipboard data to convert.
     /// </param>
+    /// <param name="needEncryptData">
+    /// Whether to encrypt the data following the setting.
+    /// </param>
     /// <returns>
     /// The record converted from the clipboard data.
     /// </returns>
-    public static Record FromClipboardData(ClipboardData data)
+    public static Record FromClipboardData(ClipboardData data, bool needEncryptData)
     {
         var record = new Record
         {
             HashId = data.HashId,
             DataMd5B64 = data.DataMd5,
             DataType = (int)data.DataType,
-            EncryptData = data.EncryptData,
+            EncryptData = needEncryptData && data.EncryptData,
             SenderApp = data.SenderApp,
             InitScore = data.InitScore,
             CreateTime = data.CreateTime.ToString("O"),
