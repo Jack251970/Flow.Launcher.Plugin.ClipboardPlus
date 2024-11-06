@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Windows;
@@ -25,6 +26,8 @@ public partial class MainWindow : Window
     private readonly static string _imageSavePath = @"D:\clipboard.png";
 
     private readonly ClipboardMonitor ClipboardMonitor = new() { ObserveLastEntry = false };
+
+    private readonly List<ClipboardData> ClipboardDatas = new();
 
     private int _count = 0;
 
@@ -69,6 +72,7 @@ public partial class MainWindow : Window
         {
             data.UnicodeText = "DataType.Files";
         }
+        ClipboardDatas.Add(data);
         return data;
     }
 

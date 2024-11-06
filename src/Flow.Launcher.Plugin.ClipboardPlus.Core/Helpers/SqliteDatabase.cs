@@ -2,7 +2,7 @@ using Dapper;
 using Microsoft.Data.Sqlite;
 using System.Data;
 
-namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
+namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 
 public class SqliteDatabase : IDisposable
 {
@@ -275,31 +275,6 @@ public class SqliteDatabase : IDisposable
         });
     }
 
-    public async Task AddRecordsAsync(IEnumerable<ClipboardData> dataList, bool needEncryptData = true)
-    {
-        await HandleOpenCloseAsync(async () =>
-        {
-            var assets = new List<Asset>();
-            var records = new List<Record>();
-
-            foreach (var data in dataList)
-            {
-                // Create and add asset
-                assets.Add(Asset.FromClipboardData(data, needEncryptData));
-
-                // Create and add record
-                records.Add(Record.FromClipboardData(data, needEncryptData));
-            }
-
-            // insert assets in one go
-            await Connection.ExecuteAsync(SqlInsertAsset, assets);
-
-            // insert records in one go
-            await Connection.ExecuteAsync(SqlInsertRecord, records);
-        });
-    }
-
-
     public async Task DeleteOneRecordAsync(ClipboardData clipboardData)
     {
         await HandleOpenCloseAsync(async () =>
@@ -503,6 +478,7 @@ public class SqliteDatabase : IDisposable
     {
         if (disposing)
         {
+            Connection.Close();
             Connection.Dispose();
             Connection = null!;
             _disposed = true;

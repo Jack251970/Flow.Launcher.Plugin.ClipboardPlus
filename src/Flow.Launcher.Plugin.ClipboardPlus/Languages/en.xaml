@@ -101,6 +101,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_text">Keep text:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_images">Keep images:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_files">Keep files:</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_import_database">Import database</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_export_database">Export database</system:String>
 
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">Create time</system:String>

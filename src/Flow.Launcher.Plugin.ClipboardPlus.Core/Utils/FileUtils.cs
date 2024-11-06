@@ -87,4 +87,48 @@ public static class FileUtils
 
         return true;
     }
+
+    public static string GetSaveJsonFile()
+    {
+        var saveFileDialog = new SaveFileDialog
+        {
+            Filter = "Json files (*.json)|*.json|All files (*.*)|*.*",
+            DefaultExt = "db",
+            AddExtension = true
+        };
+
+        if (saveFileDialog.ShowDialog() != DialogResult.OK)
+        {
+            return string.Empty;
+        }
+
+        return saveFileDialog.FileName;
+    }
+
+    public static string GetOpenDatabaseFile()
+    {
+        var openFileDialog = new OpenFileDialog
+        {
+            Filter = "Json files (*.json)|*.json|All files (*.*)|*.*",
+        };
+
+        if (openFileDialog.ShowDialog() != DialogResult.OK)
+        {
+            return string.Empty;
+        }
+
+        return openFileDialog.FileName;
+    }
+
+    public static string GetSyncDatabaseFolder()
+    {
+        var folderBrowserDialog = new FolderBrowserDialog();
+
+        if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
+        {
+            return string.Empty;
+        }
+
+        return folderBrowserDialog.SelectedPath;
+    }
 }

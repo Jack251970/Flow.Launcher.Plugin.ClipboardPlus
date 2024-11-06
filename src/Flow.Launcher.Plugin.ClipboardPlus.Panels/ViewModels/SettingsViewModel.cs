@@ -76,6 +76,29 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
+    #region Import & Export Database
+
+    public ICommand ImportDatabaseCommand => new RelayCommand(ImportDatabase);
+
+    private void ImportDatabase(object? parameter)
+    {
+        var path = FileUtils.GetOpenDatabaseFile();
+        // TODO: Implement import database
+    }
+
+    public ICommand ExportDatabaseCommand => new RelayCommand(ExportDatabase);
+
+    private async void ExportDatabase(object? parameter)
+    {
+        var path = FileUtils.GetSaveJsonFile();
+        if (!string.IsNullOrEmpty(path))
+        {
+            await DatabaseHelper.ExportDatabase(ClipboardPlus.Database, path);
+        }
+    }
+
+    #endregion
+
     #endregion
 
     #region Dependency Properties

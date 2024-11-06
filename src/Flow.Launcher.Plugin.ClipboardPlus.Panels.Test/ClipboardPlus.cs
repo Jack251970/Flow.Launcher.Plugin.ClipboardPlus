@@ -1,11 +1,14 @@
 ﻿using System.Globalization;
 using System;
+using System.IO;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Test;
 
 internal class ClipboardPlus : IClipboardPlus
 {
     public PluginInitContext? Context => null;
+
+    public SqliteDatabase Database { get; } = new SqliteDatabase(Path.Combine(AppContext.BaseDirectory, "test.db"));
 
     public ISettings Settings { get; }
 

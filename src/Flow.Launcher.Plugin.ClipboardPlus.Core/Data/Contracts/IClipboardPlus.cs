@@ -6,6 +6,8 @@ public interface IClipboardPlus
 {
     public PluginInitContext? Context { get; }
 
+    public SqliteDatabase Database { get; }
+
     public ISettings Settings { get; }
 
     public ISettings LoadSettingJsonStorage();

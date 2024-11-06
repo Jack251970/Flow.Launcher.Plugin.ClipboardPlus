@@ -600,3 +600,35 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         return $"ClipboardData(Type: {DataType}, Text: {GetText(CultureInfo.CurrentCulture, null)}, Encrypt: {EncryptData}, CreateTime: {CreateTime})";
     }
 }
+
+public class JsonClipboardData
+{
+    public string HashId { get; set; } = string.Empty;
+    public string DataString { get; set; } = string.Empty;
+    public string DataMd5 { get; set; } = string.Empty;
+    public DataType DataType { get; set; }
+    public string SenderApp { get; set; } = string.Empty;
+    public int InitScore { get; set; }
+    public DateTime CreateTime { get; set; }
+    public string CachedImagePath { get; set; } = string.Empty;
+    public bool Pinned { get; set; }
+    public string UnicodeText { get; set; } = string.Empty;
+
+    public static JsonClipboardData FromClipboardData(ClipboardData data)
+    {
+        // json data shouldn't be encrypted for exporting
+        return new JsonClipboardData()
+        {
+            HashId = data.HashId,
+            DataString = data.DataToString(false)!,
+            DataMd5 = data.DataMd5,
+            DataType = data.DataType,
+            SenderApp = data.SenderApp,
+            InitScore = data.InitScore,
+            CreateTime = data.CreateTime,
+            CachedImagePath = data.CachedImagePath,
+            Pinned = data.Pinned,
+            UnicodeText = data.UnicodeTextToString(false)!
+        };
+    }
+}

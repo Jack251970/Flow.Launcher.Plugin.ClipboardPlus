@@ -103,7 +103,7 @@ public class Record
             CreateTime = data.CreateTime.ToString("O"),
             CachedImagePath = data.CachedImagePath,
             Pinned = data.Pinned,
-            UnicodeText = data.UnicodeText
+            UnicodeText = string.Empty  // just for getting the unicode text from the database
         };
         return record;
     }

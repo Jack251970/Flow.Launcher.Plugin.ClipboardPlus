@@ -1344,6 +1344,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     PluginInitContext? IClipboardPlus.Context => Context;
 
+    SqliteDatabase IClipboardPlus.Database => Database;
+
     ISettings IClipboardPlus.Settings => Settings;
 
     public ISettings LoadSettingJsonStorage()

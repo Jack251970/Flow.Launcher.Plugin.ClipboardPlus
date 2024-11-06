@@ -1,12 +1,15 @@
+using System.Text.Json;
+
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 
 public static class DatabaseHelper
 {
-    public static async Task ExportDatabase(SqliteDatabase database, string path)
+    public static async Task ExportDatabase(SqliteDatabase database, string jsonPath)
     {
         var records = await database.GetAllRecordsAsync();
-        var exportDatabase = new SqliteDatabase(path);
-        await exportDatabase.InitializeDatabaseAsync();
-        await exportDatabase.AddRecordsAsync(records, false);
+        var jsonRecords = records.Select(JsonClipboardData.FromClipboardData);
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        await using FileStream createStream = File.Create(jsonPath);
+        await JsonSerializer.SerializeAsync(createStream, jsonRecords, options);
     }
 }

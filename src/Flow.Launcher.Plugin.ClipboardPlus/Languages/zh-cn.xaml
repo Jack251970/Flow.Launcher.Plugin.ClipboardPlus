@@ -101,6 +101,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_text">保存文本：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_images">保存图片：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_files">保存文件：</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_import_database">导入数据库</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_export_database">导出数据库</system:String>
 
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">创建时间</system:String>
