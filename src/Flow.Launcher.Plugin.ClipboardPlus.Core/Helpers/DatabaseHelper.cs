@@ -4,16 +4,20 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 
 public static class DatabaseHelper
 {
-    public static async Task ExportDatabase(SqliteDatabase database, string jsonPath)
+    public static async Task ExportDatabase(IClipboardPlus clipboardPlus, string jsonPath)
     {
+        var database = clipboardPlus.Database;
         var records = await database.GetAllRecordsAsync();
         var jsonRecords = records.Select(JsonClipboardData.FromClipboardData);
         var options = new JsonSerializerOptions { WriteIndented = true };
         await using FileStream createStream = File.Create(jsonPath);
         await JsonSerializer.SerializeAsync(createStream, jsonRecords, options);
+        var context = clipboardPlus.Context;
+        context?.API.ShowMsg(context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+            context.GetTranslation("flowlauncher_plugin_clipboardplus_export_succeeded"));
     }
 
-    public static async Task ImportDatabase(SqliteDatabase database, string jsonPath)
+    public static async Task ImportDatabase(IClipboardPlus clipboardPlus, string jsonPath)
     {
         await using FileStream openStream = File.OpenRead(jsonPath);
         List<JsonClipboardData>? jsonRecords = null;
@@ -25,8 +29,10 @@ public static class DatabaseHelper
         {
             // ignored
         }
+        var context = clipboardPlus.Context;
         if (jsonRecords != null)
         {
+            var database = clipboardPlus.Database;
             var records = jsonRecords.Select(r => ClipboardData.FromJsonClipboardData(r, true));
             var databaseRecords = await database.GetAllRecordsAsync();
             if (!databaseRecords.Any())
@@ -37,6 +43,13 @@ public static class DatabaseHelper
             {
                 // TODO: Merge records
             }
+            context?.API.ShowMsg(context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                context.GetTranslation("flowlauncher_plugin_clipboardplus_import_succeeded"));
+        }
+        else
+        {
+            context?.API.ShowMsgError(context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                context.GetTranslation("flowlauncher_plugin_clipboardplus_import_failed"));
         }
     }
 }

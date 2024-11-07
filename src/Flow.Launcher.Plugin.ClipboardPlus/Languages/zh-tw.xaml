@@ -104,6 +104,10 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_import_records">導入記録</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_export_records">導出記録</system:String>
 
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_export_succeeded">導出成功！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_import_succeeded">導入成功！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_import_failed">導入失敗！</system:String>
+
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">剏建時間</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_source_application">源應用</system:String>

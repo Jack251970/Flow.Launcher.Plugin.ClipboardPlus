@@ -80,10 +80,10 @@ public class SettingsViewModel : BaseModel
 
     public ICommand ImportJsonRecordsCommand => new RelayCommand(ImportJsonRecords);
 
-    private void ImportJsonRecords(object? parameter)
+    private async void ImportJsonRecords(object? parameter)
     {
         var path = FileUtils.GetOpenJsonFile();
-        // TODO: Implement import database
+        await DatabaseHelper.ImportDatabase(ClipboardPlus, path);
     }
 
     public ICommand ExportJsonRecordsCommand => new RelayCommand(ExportJsonRecords);
@@ -93,7 +93,7 @@ public class SettingsViewModel : BaseModel
         var path = FileUtils.GetSaveJsonFile();
         if (!string.IsNullOrEmpty(path))
         {
-            await DatabaseHelper.ExportDatabase(ClipboardPlus.Database, path);
+            await DatabaseHelper.ExportDatabase(ClipboardPlus, path);
         }
     }
 

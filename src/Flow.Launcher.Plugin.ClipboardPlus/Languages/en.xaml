@@ -104,6 +104,10 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_import_records">Import records</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_export_records">Export records</system:String>
 
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_export_succeeded">Export succeeded!</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_import_succeeded">Import succeeded!</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_import_failed">Import failed!</system:String>
+
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">Create time</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_source_application">Source application</system:String>
