@@ -825,6 +825,67 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         return number;
     }
 
+    private async void SaveToDatabase(ClipboardDataPair clipboardDataPair, bool requery)
+    {
+        var clipboardData = clipboardDataPair.ClipboardData;
+        if (!clipboardData.Saved)
+        {
+            clipboardData.Saved = true;
+            RecordsList.Remove(clipboardDataPair);
+            RecordsList.AddLast(clipboardDataPair);
+            await Database.AddOneRecordAsync(clipboardData, true);
+            if (requery)
+            {
+                ReQuery();
+            }
+        }
+    }
+
+    private void RemoveFromList(ClipboardDataPair clipboardDataPair, bool requery)
+    {
+        clipboardDataPair.Dispose();
+        RecordsList.Remove(clipboardDataPair);
+        if (requery)
+        {
+            ReQuery();
+        }
+        GarbageCollect();
+    }
+
+    private async void RemoveFromListDatabase(ClipboardDataPair clipboardDataPair, bool requery)
+    {
+        var clipboardData = clipboardDataPair.ClipboardData;
+        clipboardDataPair.Dispose();
+        RecordsList.Remove(clipboardDataPair);
+        await Database.DeleteOneRecordAsync(clipboardData);
+        if (requery)
+        {
+            ReQuery();
+        }
+        GarbageCollect();
+    }
+
+    private async void PinOneRecord(ClipboardDataPair clipboardDataPair, bool requery)
+    {
+        var clipboardData = clipboardDataPair.ClipboardData;
+        clipboardDataPair.TogglePinned();
+        RecordsList.Remove(clipboardDataPair);
+        RecordsList.AddLast(clipboardDataPair);
+        await Database.PinOneRecordAsync(clipboardData);
+        if (requery)
+        {
+            ReQuery();
+        }
+    }
+
+    private async void ReQuery()
+    {
+        // TODO: Ask Flow-Launcher for a better way to exit the context menu.
+        new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
+        await Task.Delay(RetryInterval);
+        Context.API.ReQuery(false);
+    }
+
     #endregion
 
     #region Query Result
@@ -906,21 +967,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     #region Clipboard Actions
 
-    private async void SaveToDatabase(ClipboardDataPair clipboardDataPair, bool requery)
-    {
-        var clipboardData = clipboardDataPair.ClipboardData;
-        if (!clipboardData.Saved)
-        {
-            clipboardData.Saved = true;
-            RecordsList.Remove(clipboardDataPair);
-            RecordsList.AddLast(clipboardDataPair);
-            await Database.AddOneRecordAsync(clipboardData, true);
-            if (requery)
-            {
-                ReQuery();
-            }
-        }
-    }
+    #region Default Copy
 
     private void CopyToClipboard(ClipboardDataPair clipboardDataPair)
     {
@@ -928,6 +975,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         var dataType = clipboardData.DataType;
         switch (dataType)
         {
+            case DataType.UnicodeText:
+                CopyOriginallyToClipboard(clipboardDataPair);
+                break;
             case DataType.RichText:
                 switch (Settings.DefaultRichTextCopyOption)
                 {
@@ -999,6 +1049,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
     }
 
+    #endregion
+
+    #region Original Format
+
     private async void CopyOriginallyToClipboard(ClipboardDataPair clipboardDataPair)
     {
         var clipboardData = clipboardDataPair.ClipboardData;
@@ -1062,6 +1116,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
     }
 
+    #endregion
+
+    #region Plain Text Format
+
     private async void CopyAsPlainTextToClipboard(ClipboardDataPair clipboardDataPair)
     {
         var clipboardData = clipboardDataPair.ClipboardData;
@@ -1094,6 +1152,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
         }
     }
+
+    #endregion
+
+    #region Image File Format
 
     private async void CopyImageFileToClipboard(ClipboardDataPair clipboardDataPair)
     {
@@ -1143,6 +1205,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_image_data_invalid"));
         }
     }
+
+    #endregion
+
+    #region Files Sorted Format
 
     private async void CopyBySortingNameToClipboard(ClipboardDataPair clipboardDataPair, bool ascend)
     {
@@ -1201,6 +1267,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     [GeneratedRegex("\\d+")]
     private static partial Regex FilesComparisionRegex();
 
+    #endregion
+
+    #region Files Path Format
+
     private async void CopyFilePathToClipboard(ClipboardDataPair clipboardDataPair, string[] filePaths)
     {
         var clipboardData = clipboardDataPair.ClipboardData;
@@ -1227,6 +1297,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
         }
     }
+
+    #endregion
+
+    #region File Content Format
 
     private async void CopyFileContentToClipboard(ClipboardDataPair clipboardDataPair, string[] filePaths)
     {
@@ -1267,50 +1341,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
     }
 
-    private void RemoveFromList(ClipboardDataPair clipboardDataPair, bool requery)
-    {
-        clipboardDataPair.Dispose();
-        RecordsList.Remove(clipboardDataPair);
-        if (requery)
-        {
-            ReQuery();
-        }
-        GarbageCollect();
-    }
-
-    private async void RemoveFromListDatabase(ClipboardDataPair clipboardDataPair, bool requery)
-    {
-        var clipboardData = clipboardDataPair.ClipboardData;
-        clipboardDataPair.Dispose();
-        RecordsList.Remove(clipboardDataPair);
-        await Database.DeleteOneRecordAsync(clipboardData);
-        if (requery)
-        {
-            ReQuery();
-        }
-        GarbageCollect();
-    }
-
-    private async void PinOneRecord(ClipboardDataPair clipboardDataPair, bool requery)
-    {
-        var clipboardData = clipboardDataPair.ClipboardData;
-        clipboardDataPair.TogglePinned();
-        RecordsList.Remove(clipboardDataPair);
-        RecordsList.AddLast(clipboardDataPair);
-        await Database.PinOneRecordAsync(clipboardData);
-        if (requery)
-        {
-            ReQuery();
-        }
-    }
-
-    private async void ReQuery()
-    {
-        // TODO: Ask Flow-Launcher for a better way to exit the context menu.
-        new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
-        await Task.Delay(RetryInterval);
-        Context.API.ReQuery(false);
-    }
+    #endregion
 
     private static async Task<Exception?> FlushClipboard()
     {
