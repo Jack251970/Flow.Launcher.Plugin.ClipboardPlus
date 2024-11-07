@@ -8,6 +8,12 @@ public class ClipboardDataPair : IDisposable
 
     public required Lazy<UserControl> PreviewPanel { get; set; }
 
+    public void TogglePinned()
+    {
+        var originalData = ClipboardData;
+        ClipboardData = originalData.TogglePinnedClone();
+    }
+
     private bool _disposed;
 
     public void Dispose()

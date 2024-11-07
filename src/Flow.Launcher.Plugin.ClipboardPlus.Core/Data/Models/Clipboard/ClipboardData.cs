@@ -578,6 +578,21 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         };
     }
 
+    public readonly ClipboardData TogglePinnedClone()
+    {
+        return new ClipboardData(Data, DataType, EncryptData)
+        {
+            HashId = HashId,
+            SenderApp = SenderApp,
+            InitScore = InitScore,
+            CreateTime = CreateTime,
+            CachedImagePath = CachedImagePath,
+            Pinned = !Pinned,
+            Saved = Saved,
+            UnicodeText = UnicodeText
+        };
+    }
+
     #endregion
 
     #endregion

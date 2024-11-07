@@ -1294,7 +1294,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private async void PinOneRecord(ClipboardDataPair clipboardDataPair, bool requery)
     {
         var clipboardData = clipboardDataPair.ClipboardData;
-        clipboardData.Pinned = !clipboardData.Pinned;
+        clipboardDataPair.TogglePinned();
         RecordsList.Remove(clipboardDataPair);
         RecordsList.AddLast(clipboardDataPair);
         await Database.PinOneRecordAsync(clipboardData);
