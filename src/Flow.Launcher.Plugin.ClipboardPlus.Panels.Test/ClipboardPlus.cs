@@ -8,7 +8,7 @@ internal class ClipboardPlus : IClipboardPlus
 {
     public PluginInitContext? Context => null;
 
-    public SqliteDatabase Database { get; } = new SqliteDatabase(Path.Combine(AppContext.BaseDirectory, "test.db"));
+    public SqliteDatabase Database { get; } = new SqliteDatabase(Path.Combine(AppContext.BaseDirectory, "ClipboardPlus.db"));
 
     public ISettings Settings { get; }
 

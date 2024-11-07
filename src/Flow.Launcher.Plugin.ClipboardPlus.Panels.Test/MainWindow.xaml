@@ -18,6 +18,9 @@
             <TabItem x:Name="PreviewRichTextTabItem" Header="Preview Rich Text" />
             <TabItem x:Name="PreviewImageTabItem" Header="Preview Image" />
             <TabItem x:Name="PreviewFilesTabItem" Header="Preview Files" />
+            <TabItem Header="Database">
+                <TextBox x:Name="TextBoxDatabase" />
+            </TabItem>
             <TabItem Header="Clipboard Monitor">
                 <Grid HorizontalAlignment="Center">
                     <Grid.RowDefinitions>

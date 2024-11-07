@@ -29,6 +29,8 @@ public partial class MainWindow : Window
 
     private readonly List<ClipboardData> ClipboardDatas = new();
 
+    private List<ClipboardData> RecordList = null!;
+
     private int _count = 0;
 
     #endregion
@@ -39,6 +41,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         InitializeWindow();
+        InitializeDatabase();
         InitializeClipboardMonitor();
     }
 
@@ -80,7 +83,7 @@ public partial class MainWindow : Window
 
     #region Clipboard Monitor
 
-    private void OnClipboardChangeW(object? sender, ClipboardMonitorW.ClipboardChangedEventArgs e)
+    private async void OnClipboardChangeW(object? sender, ClipboardMonitorW.ClipboardChangedEventArgs e)
     {
         if (e.Content is null || e.DataType == DataType.Other)
         {
@@ -139,10 +142,14 @@ public partial class MainWindow : Window
             }
         });
 
+        RecordList.Add(clipboardData);
+
+        await ClipboardPlus.Database.AddOneRecordAsync(clipboardData, true);
+
         _count++;
     }
 
-    private void OnClipboardChange(object? sender, ClipboardMonitor.ClipboardChangedEventArgs e)
+    private async void OnClipboardChange(object? sender, ClipboardMonitor.ClipboardChangedEventArgs e)
     {
         if (e.Content is null || e.DataType == DataType.Other)
         {
@@ -192,6 +199,10 @@ public partial class MainWindow : Window
         {
             RichTextBox.SetRichText(ClipboardMonitor.ClipboardRtfText);
         }
+
+        RecordList.Add(clipboardData);
+
+        await ClipboardPlus.Database.AddOneRecordAsync(clipboardData, true);
 
         _count++;
     }
@@ -298,6 +309,18 @@ public partial class MainWindow : Window
 
         // Clipboard monitor
         TextBlock2.TextWrapping = TextWrapping.Wrap;
+    }
+
+    private async void InitializeDatabase()
+    {
+        await ClipboardPlus.Database.InitializeDatabaseAsync();
+        RecordList = await ClipboardPlus.Database.GetAllRecordsAsync();
+        var str = string.Empty;
+        foreach (var record in RecordList)
+        {
+            str += $"{record.CreateTime}\n\n";
+        }
+        TextBoxDatabase.Text = str;
     }
 
     private void InitializeClipboardMonitor()
