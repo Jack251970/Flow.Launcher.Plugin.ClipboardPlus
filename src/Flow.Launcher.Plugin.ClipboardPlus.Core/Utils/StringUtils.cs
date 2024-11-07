@@ -179,8 +179,13 @@ public static partial class StringUtils
 
     #region Encrypt & Decrypt
 
-    private static string encryptKey = null!;
+    private static string encryptKey = string.Empty;
     public static string EncryptKey => encryptKey;
+
+    private static string encryptKeyMd5 = string.Empty;
+    public static string EncryptKeyMd5 => encryptKeyMd5;
+
+    private static bool initialized = false;
 
     /// <summary>
     /// Initialize the AES key for encryption and decryption
@@ -190,7 +195,12 @@ public static partial class StringUtils
     /// </param>
     public static void InitEncryptKey(string key)
     {
-        encryptKey ??= key;
+        if (!initialized)
+        {
+            encryptKey = key;
+            encryptKeyMd5 = GetMd5(key);
+            initialized = true;
+        }
     }
 
     /// <summary>
