@@ -367,7 +367,8 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Command="{Binding ImportJsonRecordsCommand}"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_import_records}" />
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_import_records}"
+                IsEnabled="False" />
             <Button
                 Margin="5,0,0,0"
                 HorizontalAlignment="Left"

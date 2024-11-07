@@ -321,35 +321,6 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     /// </returns>
     public static ClipboardData FromRecord(Record record)
     {
-        static object? StringToData(string str, DataType type, bool encryptData)
-        {
-            if (!string.IsNullOrEmpty(str) && encryptData)
-            {
-                str = StringUtils.Decrypt(str, StringUtils.EncryptKey);
-            }
-            return type switch
-            {
-                DataType.UnicodeText => str,
-                DataType.RichText => str,
-                DataType.Image => str.ToBitmapImage(),
-                DataType.Files => str.Split('\n'),
-                _ => null
-            };
-        }
-
-        static string UnicodeTextToString(string str, bool encryptData)
-        {
-            if (string.IsNullOrEmpty(str))
-            {
-                return string.Empty;
-            }
-            if (encryptData)
-            {
-                str = StringUtils.Decrypt(str, StringUtils.EncryptKey);
-            }
-            return str;
-        }
-
         var data = record.DataMd5B64;
         var type = (DataType)record.DataType;
         var encrypt = record.EncryptData;
@@ -362,9 +333,73 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             CachedImagePath = record.CachedImagePath,
             Pinned = record.Pinned,
             Saved = true,
-            UnicodeText = UnicodeTextToString(record.UnicodeText, encrypt)
+            UnicodeText = StringToUnicodeText(record.UnicodeText, encrypt)
         };
     }
+
+    /// <summary>
+    /// Convert the json clipboard data to a clipboard data for selecting.
+    /// DataB64 is the base64 encoded data.
+    /// Json data isn't encrypted for importing.
+    /// </summary>
+    /// <param name="data">
+    /// The json clipboard data to convert.
+    /// </param>
+    /// <param name="saved">
+    /// Whether the data is saved to database.
+    /// </param>
+    /// <returns>
+    /// The clipboard data converted from the json clipboard data.
+    /// </returns>
+    public static ClipboardData FromJsonClipboardData(JsonClipboardData data, bool saved)
+    {
+        var type = data.DataType;
+        var encrypt = data.EncryptData;
+        return new ClipboardData(StringToData(data.DataB64, type, false), type, encrypt)
+        {
+            HashId = data.HashId,
+            SenderApp = data.SenderApp,
+            InitScore = data.InitScore,
+            CreateTime = data.CreateTime,
+            CachedImagePath = data.CachedImagePath,
+            Pinned = data.Pinned,
+            Saved = saved,
+            UnicodeText = StringToUnicodeText(data.UnicodeText, false)
+        };
+    }
+
+    #region Private
+
+    private static object? StringToData(string str, DataType type, bool encryptData)
+    {
+        if (!string.IsNullOrEmpty(str) && encryptData)
+        {
+            str = StringUtils.Decrypt(str, StringUtils.EncryptKey);
+        }
+        return type switch
+        {
+            DataType.UnicodeText => str,
+            DataType.RichText => str,
+            DataType.Image => str.ToBitmapImage(),
+            DataType.Files => str.Split('\n'),
+            _ => null
+        };
+    }
+
+    private static string StringToUnicodeText(string str, bool encryptData)
+    {
+        if (string.IsNullOrEmpty(str))
+        {
+            return string.Empty;
+        }
+        if (encryptData)
+        {
+            str = StringUtils.Decrypt(str, StringUtils.EncryptKey);
+        }
+        return str;
+    }
+
+    #endregion
 
     #endregion
 
@@ -604,9 +639,10 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
 public class JsonClipboardData
 {
     public string HashId { get; set; } = string.Empty;
-    public string DataString { get; set; } = string.Empty;
+    public string DataB64 { get; set; } = string.Empty;
     public string DataMd5 { get; set; } = string.Empty;
     public DataType DataType { get; set; }
+    public bool EncryptData { get; set; }
     public string SenderApp { get; set; } = string.Empty;
     public int InitScore { get; set; }
     public DateTime CreateTime { get; set; }
@@ -620,9 +656,10 @@ public class JsonClipboardData
         return new JsonClipboardData()
         {
             HashId = data.HashId,
-            DataString = data.DataToString(false)!,
+            DataB64 = data.DataToString(false)!,
             DataMd5 = data.DataMd5,
             DataType = data.DataType,
+            EncryptData = data.EncryptData,
             SenderApp = data.SenderApp,
             InitScore = data.InitScore,
             CreateTime = data.CreateTime,
