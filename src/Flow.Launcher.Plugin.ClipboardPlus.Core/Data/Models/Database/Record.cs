@@ -38,11 +38,6 @@ public class Record
     public string SenderApp { get; set; } = string.Empty;
 
     /// <summary>
-    /// Initial score of the record for pinning feature.
-    /// </summary>
-    public int InitScore { get; set; }
-
-    /// <summary>
     /// Create time of the record.
     /// </summary>
     public DateTime createTime;
@@ -53,6 +48,11 @@ public class Record
     }
 
     /// <summary>
+    /// Datetime score of the record for sorting.
+    /// </summary>
+    public int DatetimeScore { get; set; }
+
+    /// <summary>
     /// Path of the cached image for preview.
     /// </summary>
     public string CachedImagePath { get; set; } = string.Empty;
@@ -61,6 +61,11 @@ public class Record
     /// Text in unicode format.
     /// </summary>
     public string UnicodeText { get; set; } = string.Empty;
+
+    /// <summary>
+    /// MD5 hash of the encryption key for identifying the database.
+    /// </summary>
+    public string EncryptKeyMd5 { get; set; } = string.Empty;
 
     #endregion
 
@@ -99,13 +104,27 @@ public class Record
             DataType = (int)data.DataType,
             EncryptData = needEncryptData && data.EncryptData,
             SenderApp = data.SenderApp,
-            InitScore = data.InitScore,
             CreateTime = data.CreateTime.ToString("O"),
+            DatetimeScore = GetDateTimeScore(data.CreateTime),
             CachedImagePath = data.CachedImagePath,
             Pinned = data.Pinned,
-            UnicodeText = string.Empty  // just for getting the unicode text from the database
+            UnicodeText = string.Empty,  // just for getting the unicode text from the database
+            EncryptKeyMd5 = StringUtils.EncryptKeyMd5
         };
         return record;
+    }
+
+    // Note: Use the Flow.Launcher first version commit time as the base time for sorting.
+    private static readonly int BaseDateTimeScore = GetDateTimeScore(new DateTime(2020, 6, 28, 10, 24, 46, DateTimeKind.Utc));
+
+    public static int GetDateTimeScore(DateTime dateTime)
+    {
+        var ctime = new DateTimeOffset(dateTime);
+        var seconds = ctime.ToUnixTimeSeconds();
+        var str = seconds.ToString();
+        var s = str[^9..];
+        var score = Convert.ToInt32(s);
+        return score - BaseDateTimeScore;
     }
 
     #endregion

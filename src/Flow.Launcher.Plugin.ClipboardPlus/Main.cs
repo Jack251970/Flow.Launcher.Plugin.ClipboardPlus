@@ -41,7 +41,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     // Records list & Score
     private LinkedList<ClipboardDataPair> RecordsList = new();
-    private int CurrentScore = 0;
 
     // Score interval
     // Note: Get scores of the items further apart to make sure the ranking seqence of items is correct.
@@ -69,9 +68,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private const int ScoreInterval8 = 8 * ScoreInterval;
     private const int ScoreInterval9 = 9 * ScoreInterval;
 
-    private const int TopActionScore1 = ClipboardData.MaximumScore + 3 * ScoreInterval;
-    private const int TopActionScore2 = ClipboardData.MaximumScore + 2 * ScoreInterval;
-    private const int TopActionScore3 = ClipboardData.MaximumScore + 1 * ScoreInterval;
+    private const int TopActionScore1 = 2 * ClipboardData.MaximumScore + 3 * ScoreInterval;
+    private const int TopActionScore2 = 2 * ClipboardData.MaximumScore + 2 * ScoreInterval;
+    private const int TopActionScore3 = 2 * ClipboardData.MaximumScore + 1 * ScoreInterval;
 
     private const int BottomActionScore1 = 7500;
     private const int BottomActionScore2 = 5000;
@@ -300,7 +299,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
         // init database & records
         var fileExists = File.Exists(PathHelper.DatabasePath);
-        Database = new SqliteDatabase(PathHelper.DatabasePath, context: context);
+        Database = new SqliteDatabase(PathHelper.DatabasePath, scoreInterval: ScoreInterval, context: context);
         await Database.InitializeDatabaseAsync();
         if (fileExists)
         {
@@ -654,7 +653,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         {
             HashId = StringUtils.GetGuid(),
             SenderApp = e.SourceApplication.Name,
-            InitScore = CurrentScore + ScoreInterval,
+            InitScore = Database.CurrentScore,
             CreateTime = now,
             Pinned = false,
             Saved = saved
@@ -696,7 +695,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         Context.API.LogDebug(ClassName, "Added to list");
 
         // update score
-        CurrentScore += ScoreInterval;
+        Database.CurrentScore += ScoreInterval;
 
         // save to database if needed
         if (saved)
@@ -750,7 +749,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                 PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, record))
             });
             RecordsList = new LinkedList<ClipboardDataPair>(records1);
-            CurrentScore = records1.Max(r => r.ClipboardData.InitScore);
         }
         Context.API.LogWarn(ClassName, "Restored records successfully");
     }
@@ -776,7 +774,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
         RecordsList.Clear();
         await Database.DeleteAllRecordsAsync();
-        CurrentScore = 1;
+        Database.CurrentScore = 1;
         GarbageCollect();
         return number;
     }
@@ -793,11 +791,11 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         await Database.DeleteUnpinnedRecordsAsync();
         if (RecordsList.Any())
         {
-            CurrentScore = RecordsList.Max(r => r.ClipboardData.InitScore);
+            Database.CurrentScore = RecordsList.Max(r => r.ClipboardData.InitScore);
         }
         else
         {
-            CurrentScore = 1;
+            Database.CurrentScore = 1;
         }
         GarbageCollect();
         return number;
@@ -815,11 +813,11 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
         if (RecordsList.Any())
         {
-            CurrentScore = RecordsList.Max(r => r.ClipboardData.InitScore);
+            Database.CurrentScore = RecordsList.Max(r => r.ClipboardData.InitScore);
         }
         else
         {
-            CurrentScore = 1;
+            Database.CurrentScore = 1;
         }
         GarbageCollect();
         return number;
@@ -843,6 +841,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     private void RemoveFromList(ClipboardDataPair clipboardDataPair, bool requery)
     {
+        if (RecordsList.Last?.Value == clipboardDataPair)
+        {
+            Database.CurrentScore -= ScoreInterval;
+        }
         clipboardDataPair.Dispose();
         RecordsList.Remove(clipboardDataPair);
         if (requery)
@@ -854,6 +856,10 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     private async void RemoveFromListDatabase(ClipboardDataPair clipboardDataPair, bool requery)
     {
+        if (RecordsList.Last?.Value == clipboardDataPair)
+        {
+            Database.CurrentScore -= ScoreInterval;
+        }
         var clipboardData = clipboardDataPair.ClipboardData;
         clipboardDataPair.Dispose();
         RecordsList.Remove(clipboardDataPair);

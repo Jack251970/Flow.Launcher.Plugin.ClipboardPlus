@@ -319,7 +319,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     /// <returns>
     /// The clipboard data converted from the record.
     /// </returns>
-    public static ClipboardData FromRecord(Record record)
+    public static ClipboardData FromRecord(Record record, int initScore)
     {
         var data = record.DataMd5B64;
         var type = (DataType)record.DataType;
@@ -328,7 +328,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         {
             HashId = record.HashId,
             SenderApp = record.SenderApp,
-            InitScore = record.InitScore,
+            InitScore = initScore,
             CreateTime = record.createTime,
             CachedImagePath = record.CachedImagePath,
             Pinned = record.Pinned,

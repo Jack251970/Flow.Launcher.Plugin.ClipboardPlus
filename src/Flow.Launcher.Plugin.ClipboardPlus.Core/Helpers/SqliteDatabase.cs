@@ -10,7 +10,21 @@ public class SqliteDatabase : IDisposable
 
     #region Version
 
-    private readonly string DatabaseVersion = "1.0";
+    private const string DatabaseVersion = "1.1";
+
+    #region History
+
+    private const string DatabaseVersion10 = "1.0";
+
+    #endregion
+
+    #endregion
+
+    #region Score
+
+    public int CurrentScore = 1;
+
+    private readonly int ScoreInterval;
 
     #endregion
 
@@ -66,11 +80,12 @@ public class SqliteDatabase : IDisposable
             "sender_app"	        TEXT,
             "cached_image_path"     TEXT,
             "data_type"	            INTEGER,
-            "init_score"	        INTEGER,
             "create_time"	        TEXT,
+            "datetime_score"        INTEGER,
             "pinned"	            INTEGER,
             "encrypt_data"          INTEGER,
             "unicode_text"          TEXT,
+            "encrypt_key_md5"       TEXT,
             PRIMARY                 KEY("id" AUTOINCREMENT),
             FOREIGN                 KEY("hash_id") REFERENCES "asset"("hash_id") ON DELETE CASCADE
         );
@@ -84,12 +99,12 @@ public class SqliteDatabase : IDisposable
     private readonly string SqlInsertRecord =
         @"INSERT OR IGNORE INTO record(
             hash_id, data_md5_b64, sender_app, cached_image_path, 
-            data_type, init_score, create_time, pinned, encrypt_data,
-            unicode_text)
+            data_type, create_time, datetime_score, pinned, encrypt_data,
+            unicode_text, encrypt_key_md5)
         VALUES (
             @HashId, @DataMd5B64, @SenderApp, @CachedImagePath, 
-            @DataType, @InitScore, @CreateTime, @Pinned, @EncryptData,
-            '');";
+            @DataType, @CreateTime, @DatetimeScore, @Pinned, @EncryptData,
+            @UnicodeText, @EncryptKeyMd5);";
 
     private readonly string SqlSelectRecordCountByMd5 =
         "SELECT COUNT() FROM record WHERE hash_id=@HashId;";
@@ -108,11 +123,25 @@ public class SqliteDatabase : IDisposable
         """
         SELECT r.id as Id, a.data_b64 as DataMd5B64, r.sender_app as SenderApp, 
             r.cached_image_path as CachedImagePath, r.data_type as DataType, 
-            r.init_score as InitScore, r.encrypt_data as EncryptData,
-            r.create_time as CreateTime, r.pinned as Pinned, r.hash_id as HashId,
-            a.unicode_text_b64 as UnicodeText
+            r.encrypt_data as EncryptData, r.create_time as CreateTime, 
+            r.datetime_score as DatetimeScore, r.pinned as Pinned, 
+            r.hash_id as HashId, a.unicode_text_b64 as UnicodeText,
+            r.encrypt_key_md5 as EncryptKeyMd5
         FROM record r
         LEFT JOIN asset a ON r.hash_id=a.hash_id;
+        """;
+
+    private readonly string SqlSelectAllRecordOrederedByDateTimeScore =
+        """
+        SELECT r.id as Id, a.data_b64 as DataMd5B64, r.sender_app as SenderApp, 
+            r.cached_image_path as CachedImagePath, r.data_type as DataType, 
+            r.encrypt_data as EncryptData, r.create_time as CreateTime, 
+            r.datetime_score as DatetimeScore, r.pinned as Pinned, 
+            r.hash_id as HashId, a.unicode_text_b64 as UnicodeText,
+            r.encrypt_key_md5 as EncryptKeyMd5
+        FROM record r
+        LEFT JOIN asset a ON r.hash_id=a.hash_id
+        ORDER BY r.datetime_score ASC;
         """;
 
     private readonly string SqlDeleteRecordByKeepTime =
@@ -132,21 +161,27 @@ public class SqliteDatabase : IDisposable
     #region Constructors
 
     public SqliteDatabase(
-        SqliteConnection connection, 
+        SqliteConnection connection,
+        int scoreInterval,
+        bool keepConnection = true,
         PluginInitContext? context = null)
     {
         Connection = connection;
+        ScoreInterval = scoreInterval;
+        KeepConnection = keepConnection;
         Context = context;
     }
 
     public SqliteDatabase(
         string databasePath,
+        int scoreInterval,
         SqliteCacheMode cache = SqliteCacheMode.Default,
         SqliteOpenMode mode = SqliteOpenMode.ReadWriteCreate,
         bool keepConnection = true,
         PluginInitContext? context = null
     )
     {
+        ScoreInterval = scoreInterval;
         var connectionString = new SqliteConnectionStringBuilder()
         {
             DataSource = databasePath,
@@ -194,20 +229,81 @@ public class SqliteDatabase : IDisposable
         DROP TABLE IF EXISTS asset;
         """;
 
+    private readonly string SqlDeleteInitScoreAddDateTimeScoreEncryptKeyMd5Column =
+        """
+        ALTER TABLE record
+        DROP COLUMN init_score;
+        ALTER TABLE record
+        ADD COLUMN datetime_score INTEGER DEFAULT 0;
+        ALTER TABLE record
+        ADD COLUMN encrypt_key_md5 TEXT DEFAULT '';
+        """;
+
+    private readonly string SqlUpdateRecordDatetimeScoreEncryptKeyMd5 =
+        "UPDATE record SET datetime_score=@DatetimeScore, encrypt_key_md5=@EncryptKeyMd5 WHERE hash_id=@HashId;";
+
     #endregion
 
     private async Task UpdateDatabase(string currentVersion)
     {
         try
         {
-            switch (currentVersion)
+            if (currentVersion == DatabaseVersion)
             {
-                default:  // 0.0
-                          // Drop existing `record` and `asset` tables
-                    await Connection.ExecuteAsync(SqlDropTables);
-                    // Recreate the tables with the updated schema
-                    await Connection.ExecuteAsync(SqlCreateDatabase);
-                    break;
+                return;
+            }
+
+            if (currentVersion == DatabaseVersion10)
+            {
+                // 1.0
+                // Delete init_score column in `record` table
+                // Add datetime_score & encrypt_key_md5 columns in `record` table
+                await Connection.ExecuteAsync(SqlDeleteInitScoreAddDateTimeScoreEncryptKeyMd5Column);
+                /*await Connection.ExecuteAsync(
+                    """
+                    CREATE TABLE record_new (
+                        id	                    INTEGER NOT NULL UNIQUE,
+                        hash_id	                TEXT UNIQUE,
+                        data_md5_b64	        TEXT,
+                        sender_app	            TEXT,
+                        cached_image_path       TEXT,
+                        data_type	            INTEGER,
+                        create_time	            TEXT,
+                        datetime_score          INTEGER,
+                        pinned	                INTEGER,
+                        encrypt_data            INTEGER,
+                        unicode_text            TEXT,
+                        encrypt_key_md5         TEXT,
+                        PRIMARY                 KEY("id" AUTOINCREMENT),
+                        FOREIGN                 KEY("hash_id") REFERENCES "asset"("hash_id") ON DELETE CASCADE
+                    );
+                    INSERT INTO record_new (
+                        id, hash_id, data_md5_b64, sender_app, cached_image_path, 
+                        data_type, create_time, pinned, encrypt_data, unicode_text,
+                        datetime_score, encrypt_key_md5)
+                    SELECT id, hash_id, data_md5_b64, sender_app, cached_image_path, 
+                        data_type, create_time, pinned, encrypt_data, unicode_text,
+                        0, ''
+                    FROM record;
+                    DROP TABLE record;
+                    ALTER TABLE record_new RENAME TO record;
+                    """
+                );*/
+                var records = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
+                foreach (var record in records)
+                {
+                    record.DatetimeScore = Record.GetDateTimeScore(record.createTime);
+                    record.EncryptKeyMd5 = StringUtils.EncryptKeyMd5;
+                    await Connection.ExecuteAsync(SqlUpdateRecordDatetimeScoreEncryptKeyMd5, record);
+                }
+            }
+            else
+            {
+                // 0.0
+                // Drop existing `record` and `asset` tables
+                await Connection.ExecuteAsync(SqlDropTables);
+                // Recreate the tables with the updated schema
+                await Connection.ExecuteAsync(SqlCreateDatabase);
             }
             await SetDatabaseVersionAsync(DatabaseVersion);
         }
@@ -303,29 +399,32 @@ public class SqliteDatabase : IDisposable
     }
 
 #if DEBUG
-    public async Task<IEnumerable<ClipboardData>> GetAllRecordsAsync(Action<string>? action = null)
+    public async Task<List<ClipboardData>> GetAllRecordsAsync(Action<string>? action = null)
 #else
-    public async Task<IEnumerable<ClipboardData>> GetAllRecordsAsync()
+    public async Task<List<ClipboardData>> GetAllRecordsAsync()
 #endif
     {
         return await HandleOpenCloseAsync(async () =>
         {
             // query all records
-            var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
-#if DEBUG
+            var results = await Connection.QueryAsync<Record>(SqlSelectAllRecordOrederedByDateTimeScore);
+            var allRecord = new List<ClipboardData>();
             foreach (var record in results)
             {
                 try
                 {
-                    var _ = ClipboardData.FromRecord(record);
+                    var data = ClipboardData.FromRecord(record, CurrentScore);
+                    allRecord.Add(data);
+                    CurrentScore += ScoreInterval;
                 }
                 catch (Exception)
                 {
+#if DEBUG
                     action?.Invoke($"Exception: {record}");
+#endif
                 }
             }
-#endif
-            return results.Select(ClipboardData.FromRecord);
+            return allRecord;
         });
     }
 
@@ -346,7 +445,7 @@ public class SqliteDatabase : IDisposable
         {
             // query all records
             var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
-            LinkedList<ClipboardData> allRecord = new(results.Select(ClipboardData.FromRecord));
+            List<ClipboardData> allRecord = new(results.Select(ClipboardData.FromRecord));
             // delete invalid records
             var invalidRecords = allRecord.Where(x => !x.IsValid);
             foreach (var record in invalidRecords)

@@ -88,6 +88,7 @@ public class DatabaseHelperTest
     {
         var helper = new SqliteDatabase(
             "TestDb",
+            1,
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
         );
@@ -106,6 +107,7 @@ public class DatabaseHelperTest
         var exampleTextRecord = GetRandomClipboardData();
         var helper = new SqliteDatabase(
             "TestDb",
+            1,
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
         );
@@ -135,6 +137,7 @@ public class DatabaseHelperTest
     {
         var helper = new SqliteDatabase(
             "TestDb",
+            1,
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
         );
@@ -149,12 +152,12 @@ public class DatabaseHelperTest
         foreach (var s in spans)
         {
             var tmpRecord = GetRandomClipboardData(ctime + s);
-            await helper.AddOneRecordAsync(tmpRecord, (str) => _testOutputHelper.WriteLine($"{str}"));
+            await helper.AddOneRecordAsync(tmpRecord, true, (str) => _testOutputHelper.WriteLine($"{str}"));
             // test dulplicated data
             if (_random.NextDouble() > 0.99)
             {
                 var cloneRecord = tmpRecord.Clone();
-                await helper.AddOneRecordAsync(cloneRecord, (str) => _testOutputHelper.WriteLine($"{str}"));
+                await helper.AddOneRecordAsync(cloneRecord, true, (str) => _testOutputHelper.WriteLine($"{str}"));
             }
         }
         // helper.Connection.BackupDatabase(new SqliteConnection("Data Source=a.db"));
@@ -178,6 +181,7 @@ public class DatabaseHelperTest
         var exampleTextRecord = GetRandomClipboardData();
         var helper = new SqliteDatabase(
             "TestDb",
+            1,
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
         );
@@ -197,6 +201,7 @@ public class DatabaseHelperTest
         var exampleTextRecord = GetRandomClipboardData();
         var helper = new SqliteDatabase(
             "TestDb",
+            1,
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
         );
@@ -213,6 +218,7 @@ public class DatabaseHelperTest
     {
         var helper = new SqliteDatabase(
             "TestDb",
+            1,
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
         );
@@ -253,6 +259,7 @@ public class DatabaseHelperTest
     {
         var helper = new SqliteDatabase(
             "TestDb",
+            1,
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
         );
