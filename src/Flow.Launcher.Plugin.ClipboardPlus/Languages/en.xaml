@@ -84,7 +84,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_image_copy_option">Image default:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_files_copy_option">Files default:</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">Cache images</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">Cache clipboard images in folder</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_open_cache_folder">Open cache folder</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_cache_folder">Clean cache folder</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format">Format:</system:String>
@@ -101,8 +101,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_text">Keep text:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_images">Keep images:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_files">Keep files:</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_import_database">Import database</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_export_database">Export database</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_import_records">Import records</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_export_records">Export records</system:String>
 
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">Create time</system:String>

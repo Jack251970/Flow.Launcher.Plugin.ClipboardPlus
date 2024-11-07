@@ -36,7 +36,6 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -185,23 +184,19 @@
             BorderBrush="{DynamicResource Color03B}"
             BorderThickness="1" />
 
-        <!--  Cache Images  -->
-        <CheckBox
-            Grid.Row="10"
-            Grid.Column="0"
-            Margin="10,5,5,5"
-            VerticalAlignment="Center"
-            Content="{DynamicResource flowlauncher_plugin_clipboardplus_cache_images}"
-            IsChecked="{Binding CacheImages, Mode=TwoWay}" />
-
-        <!--  Cache Images Button  -->
+        <!--  Cache Images & Cache Images Button  -->
         <StackPanel
             Grid.Row="10"
-            Grid.Column="1"
+            Grid.Column="0"
             Grid.ColumnSpan="2"
-            Margin="10,5,0,5"
+            Margin="10,5,5,5"
             Orientation="Horizontal">
+            <CheckBox
+                VerticalAlignment="Center"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_cache_images}"
+                IsChecked="{Binding CacheImages, Mode=TwoWay}" />
             <Button
+                Margin="5,0,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Command="{Binding OpenCacheImageFolderCommand}"
@@ -355,14 +350,31 @@
             BorderBrush="{DynamicResource Color03B}"
             BorderThickness="1" />
 
-        <!--  Encrypt Data  -->
-        <CheckBox
+        <!--  Encrypt Data & Import & Export Records Button  -->
+
+        <StackPanel
             Grid.Row="15"
+            Grid.Column="0"
             Grid.ColumnSpan="2"
             Margin="10,5,5,5"
-            VerticalAlignment="Center"
-            Content="{DynamicResource flowlauncher_plugin_clipboardplus_encrypt_data}"
-            IsChecked="{Binding EncryptData, Mode=TwoWay}" />
+            Orientation="Horizontal">
+            <CheckBox
+                VerticalAlignment="Center"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_encrypt_data}"
+                IsChecked="{Binding EncryptData, Mode=TwoWay}" />
+            <Button
+                Margin="5,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Command="{Binding ImportJsonRecordsCommand}"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_import_records}" />
+            <Button
+                Margin="5,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Command="{Binding ExportJsonRecordsCommand}"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_export_records}" />
+        </StackPanel>
 
         <!--  Keep Text  -->
         <CheckBox
@@ -417,26 +429,6 @@
             IsEnabled="{Binding KeepFiles, Mode=OneWay}"
             ItemsSource="{Binding FilesKeepTimes, Mode=OneWay}"
             SelectedItem="{Binding SelectedFilesKeepTime, Mode=TwoWay}" />
-
-        <!--  Import & Export Database Button  -->
-        <StackPanel
-            Grid.Row="19"
-            Grid.Column="1"
-            Grid.ColumnSpan="2"
-            Margin="10,5,5,5"
-            Orientation="Horizontal">
-            <Button
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Command="{Binding ImportDatabaseCommand}"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_import_database}" />
-            <Button
-                Margin="5,0,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Command="{Binding ExportDatabaseCommand}"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_export_database}" />
-        </StackPanel>
 
     </Grid>
 </UserControl>

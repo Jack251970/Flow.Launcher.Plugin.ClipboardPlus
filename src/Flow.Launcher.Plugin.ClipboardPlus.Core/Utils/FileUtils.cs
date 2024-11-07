@@ -105,7 +105,7 @@ public static class FileUtils
         return saveFileDialog.FileName;
     }
 
-    public static string GetOpenDatabaseFile()
+    public static string GetOpenJsonFile()
     {
         var openFileDialog = new OpenFileDialog
         {

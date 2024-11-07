@@ -76,19 +76,19 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
-    #region Import & Export Database
+    #region Import & Export Records
 
-    public ICommand ImportDatabaseCommand => new RelayCommand(ImportDatabase);
+    public ICommand ImportJsonRecordsCommand => new RelayCommand(ImportJsonRecords);
 
-    private void ImportDatabase(object? parameter)
+    private void ImportJsonRecords(object? parameter)
     {
-        var path = FileUtils.GetOpenDatabaseFile();
+        var path = FileUtils.GetOpenJsonFile();
         // TODO: Implement import database
     }
 
-    public ICommand ExportDatabaseCommand => new RelayCommand(ExportDatabase);
+    public ICommand ExportJsonRecordsCommand => new RelayCommand(ExportJsonRecords);
 
-    private async void ExportDatabase(object? parameter)
+    private async void ExportJsonRecords(object? parameter)
     {
         var path = FileUtils.GetSaveJsonFile();
         if (!string.IsNullOrEmpty(path))

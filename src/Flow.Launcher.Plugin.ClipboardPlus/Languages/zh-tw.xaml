@@ -84,7 +84,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_image_copy_option">圖片默認：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_files_copy_option">文件默認：</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">緩存圖片</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">在文件夾中緩存剪貼闆圖片</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_open_cache_folder">打開緩存文件夾</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_cache_folder">清理緩存文件夾</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format">格式：</system:String>
@@ -101,8 +101,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_text">保存文本：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_images">保存圖片：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_files">保存文件：</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_import_database">導入數據庫</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_export_database">導出數據庫</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_import_records">導入記録</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_export_records">導出記録</system:String>
 
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">剏建時間</system:String>
