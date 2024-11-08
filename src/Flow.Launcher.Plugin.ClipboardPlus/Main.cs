@@ -109,8 +109,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                             if (number != 0)
                             {
                                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                    string.Format(
-                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle"), number));
+                                    string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle"), number));
                                 return true;
                             }
                             else
@@ -134,8 +133,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                             if (number != 0)
                             {
                                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                    string.Format(
-                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle"), number));
+                                    string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle"), number));
                                 return true;
                             }
                             else
@@ -159,8 +157,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                             if (number != 0)
                             {
                                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                    string.Format(
-                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_msg_subtitle"), number));
+                                    string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_msg_subtitle"), number));
                                 return true;
                             }
                             else
@@ -184,8 +181,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
                             if (number != 0)
                             {
                                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                    string.Format(
-                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle"), number));
+                                    string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle"), number));
                                 return true;
                             }
                             else
