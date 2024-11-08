@@ -259,36 +259,6 @@ public class SqliteDatabase : IDisposable
                 // Delete init_score column in `record` table
                 // Add datetime_score & encrypt_key_md5 columns in `record` table
                 await Connection.ExecuteAsync(SqlDeleteInitScoreAddDateTimeScoreEncryptKeyMd5Column);
-                /*await Connection.ExecuteAsync(
-                    """
-                    CREATE TABLE record_new (
-                        id	                    INTEGER NOT NULL UNIQUE,
-                        hash_id	                TEXT UNIQUE,
-                        data_md5_b64	        TEXT,
-                        sender_app	            TEXT,
-                        cached_image_path       TEXT,
-                        data_type	            INTEGER,
-                        create_time	            TEXT,
-                        datetime_score          INTEGER,
-                        pinned	                INTEGER,
-                        encrypt_data            INTEGER,
-                        unicode_text            TEXT,
-                        encrypt_key_md5         TEXT,
-                        PRIMARY                 KEY("id" AUTOINCREMENT),
-                        FOREIGN                 KEY("hash_id") REFERENCES "asset"("hash_id") ON DELETE CASCADE
-                    );
-                    INSERT INTO record_new (
-                        id, hash_id, data_md5_b64, sender_app, cached_image_path, 
-                        data_type, create_time, pinned, encrypt_data, unicode_text,
-                        datetime_score, encrypt_key_md5)
-                    SELECT id, hash_id, data_md5_b64, sender_app, cached_image_path, 
-                        data_type, create_time, pinned, encrypt_data, unicode_text,
-                        0, ''
-                    FROM record;
-                    DROP TABLE record;
-                    ALTER TABLE record_new RENAME TO record;
-                    """
-                );*/
                 var records = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
                 foreach (var record in records)
                 {
