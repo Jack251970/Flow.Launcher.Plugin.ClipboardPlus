@@ -102,6 +102,21 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
+    #region Oepn Sync Database Folder
+
+    public ICommand OpenSyncDatabaseFolderCommand => new RelayCommand(OpenSyncDatabaseFolder);
+
+    private void OpenSyncDatabaseFolder(object? parameter)
+    {
+        var path = FileUtils.GetSyncDatabaseFolder();
+        if (!string.IsNullOrEmpty(path))
+        {
+            SyncDatabasePath = path;
+        }
+    }
+
+    #endregion
+
     #endregion
 
     #region Dependency Properties
@@ -587,6 +602,30 @@ public class SettingsViewModel : BaseModel
         OnPropertyChanged(nameof(TextKeepTimes));
         OnPropertyChanged(nameof(ImagesKeepTimes));
         OnPropertyChanged(nameof(FilesKeepTimes));
+    }
+
+    #endregion
+
+    #region Sync Database
+
+    public bool SyncDatabase
+    {
+        get => Settings.SyncDatabase;
+        set
+        {
+            Settings.SyncDatabase = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string SyncDatabasePath
+    {
+        get => Settings.SyncDatabasePath;
+        set
+        {
+            Settings.SyncDatabasePath = value;
+            OnPropertyChanged();
+        }
     }
 
     #endregion

@@ -96,4 +96,14 @@ public interface ISettings
     /// List of data type and keep time pairs
     /// </summary>
     public List<Tuple<DataType, KeepTime>> KeepTimePairs { get; }
+
+    /// <summary>
+    /// Whether to sync database in multi-instance
+    /// </summary>
+    public bool SyncDatabase { get; set; }
+
+    /// <summary>
+    /// Path to sync database
+    /// </summary>
+    public string SyncDatabasePath { get; set; }
 }

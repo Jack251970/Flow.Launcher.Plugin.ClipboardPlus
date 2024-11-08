@@ -110,6 +110,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_import_succeeded">Import {0} records succeeded!</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_import_failed">Import failed!</system:String>
 
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_database">Sync database in multiple computers</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_database_path" xml:space="preserve">Public sync path: </system:String>
+
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">Create time</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_source_application">Source application</system:String>
