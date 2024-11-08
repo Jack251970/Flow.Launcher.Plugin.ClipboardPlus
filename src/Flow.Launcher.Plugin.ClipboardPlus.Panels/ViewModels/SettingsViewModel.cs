@@ -82,7 +82,7 @@ public class SettingsViewModel : BaseModel
 
     private async void ImportJsonRecords(object? parameter)
     {
-        var path = FileUtils.GetOpenJsonFile();
+        var path = FileUtils.GetOpenJsonFile(ClipboardPlus);
         if (!string.IsNullOrEmpty(path))
         {
             await DatabaseHelper.ImportDatabase(ClipboardPlus, path);
@@ -93,7 +93,7 @@ public class SettingsViewModel : BaseModel
 
     private async void ExportJsonRecords(object? parameter)
     {
-        var path = FileUtils.GetSaveJsonFile();
+        var path = FileUtils.GetSaveJsonFile(ClipboardPlus);
         if (!string.IsNullOrEmpty(path))
         {
             await DatabaseHelper.ExportDatabase(ClipboardPlus, path);

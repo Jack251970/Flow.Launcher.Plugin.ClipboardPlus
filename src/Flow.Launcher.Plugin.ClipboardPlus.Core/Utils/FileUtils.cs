@@ -88,12 +88,12 @@ public static class FileUtils
         return true;
     }
 
-    public static string GetSaveJsonFile()
+    public static string GetSaveJsonFile(IClipboardPlus clipboardPlus)
     {
         var saveFileDialog = new SaveFileDialog
         {
-            Filter = "Json files (*.json)|*.json|All files (*.*)|*.*",
-            DefaultExt = "db",
+            Filter = GetJsonFileFilter(clipboardPlus),
+            DefaultExt = "json",
             AddExtension = true
         };
 
@@ -105,11 +105,11 @@ public static class FileUtils
         return saveFileDialog.FileName;
     }
 
-    public static string GetOpenJsonFile()
+    public static string GetOpenJsonFile(IClipboardPlus clipboardPlus)
     {
         var openFileDialog = new OpenFileDialog
         {
-            Filter = "Json files (*.json)|*.json|All files (*.*)|*.*",
+            Filter = GetJsonFileFilter(clipboardPlus)
         };
 
         if (openFileDialog.ShowDialog() != DialogResult.OK)
@@ -130,5 +130,19 @@ public static class FileUtils
         }
 
         return folderBrowserDialog.SelectedPath;
+    }
+
+    private static string GetJsonFileFilter(IClipboardPlus clipboardPlus)
+    {
+        var context = clipboardPlus.Context;
+        if (context == null)
+        {
+            return "Json files (*.json)|*.json|All files (*.*)|*.*";
+        }
+        else
+        {
+            return $"{context.GetTranslation("flowlauncher_plugin_clipboardplus_json_files")} (*.json)|*.json|" +
+                $"{context.GetTranslation("flowlauncher_plugin_clipboardplus_json_files")} (*.*)|*.*";
+        }
     }
 }

@@ -9,6 +9,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">輕鬆管理你的剪切闆歴史並自定義複製規則，支持文字、圖像和文件</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_success">成功</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_fail">失敗</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_json_files">Json文件</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_all_files">所有文件</system:String>
 
     <!--  Main  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_disconnect_title">取消連接剪貼版</system:String>

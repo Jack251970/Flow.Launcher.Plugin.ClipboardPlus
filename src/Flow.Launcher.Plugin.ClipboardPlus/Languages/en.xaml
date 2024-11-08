@@ -9,6 +9,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">Easily manage your clipboard history and customizing copy rules with support for text, images, and files</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_success">Success</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_fail">Fail</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_json_files">Json files</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_all_files">All files</system:String>
 
     <!--  Main  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_disconnect_title">Disconnect from clipboard</system:String>
