@@ -314,9 +314,9 @@ public class SqliteDatabase : IDisposable
     }
 
 #if DEBUG
-    public async Task AddOneRecordAsync(ClipboardData data, bool needEncryptData = true, Action<string>? action = null)
+    public async Task AddOneRecordAsync(ClipboardData data, bool needEncryptData, Action<string>? action = null)
 #else
-    public async Task AddOneRecordAsync(ClipboardData data, bool needEncryptData = true)
+    public async Task AddOneRecordAsync(ClipboardData data, bool needEncryptData)
 #endif
     {
         await HandleOpenCloseAsync(async () =>
@@ -324,13 +324,13 @@ public class SqliteDatabase : IDisposable
             // insert asset
             var assets = new List<Asset>
             {
-                Asset.FromClipboardData(data, true)
+                Asset.FromClipboardData(data, needEncryptData)
             };
             await Connection.ExecuteAsync(SqlInsertAsset, assets);
 
             // insert record
             // note: you must insert record after data
-            var record = Record.FromClipboardData(data, true);
+            var record = Record.FromClipboardData(data, needEncryptData);
 #if DEBUG
             if (record.DataType == (int)DataType.Files && record.EncryptData == true)
             {
@@ -338,6 +338,31 @@ public class SqliteDatabase : IDisposable
             }
 #endif
             await Connection.ExecuteAsync(SqlInsertRecord, record);
+        });
+    }
+
+    public async Task AddRecordsAsync(IEnumerable<ClipboardData> datas, bool needEncryptData)
+    {
+        if (datas.Count() == 0)
+        {
+            return;
+        }
+        await HandleOpenCloseAsync(async () =>
+        {
+            foreach (var data in datas)
+            {
+                // insert asset
+                var assets = new List<Asset>
+                {
+                    Asset.FromClipboardData(data, needEncryptData)
+                };
+                await Connection.ExecuteAsync(SqlInsertAsset, assets);
+
+                // insert record
+                // note: you must insert record after data
+                var record = Record.FromClipboardData(data, needEncryptData);
+                await Connection.ExecuteAsync(SqlInsertRecord, record);
+            }
         });
     }
 
@@ -369,17 +394,24 @@ public class SqliteDatabase : IDisposable
     }
 
 #if DEBUG
-    public async Task<List<ClipboardData>> GetAllRecordsAsync(Action<string>? action = null)
+    public async Task<List<ClipboardData>> GetAllRecordsAsync(bool needSort, Action<string>? action = null)
 #else
-    public async Task<List<ClipboardData>> GetAllRecordsAsync()
+    public async Task<List<ClipboardData>> GetAllRecordsAsync(bool needSort)
 #endif
     {
         return await HandleOpenCloseAsync(async () =>
         {
-            // query all records
-            var results = await Connection.QueryAsync<Record>(SqlSelectAllRecordOrederedByDateTimeScore);
+            // query all records & return
+            if (!needSort)
+            {
+                var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
+                return results.Select(ClipboardData.FromRecord).ToList();
+            }
+
+            // query all records & build record list
+            var sortedResults = await Connection.QueryAsync<Record>(SqlSelectAllRecordOrederedByDateTimeScore);
             var allRecord = new List<ClipboardData>();
-            foreach (var record in results)
+            foreach (var record in sortedResults)
             {
                 try
                 {

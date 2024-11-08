@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Test;
 
@@ -9,6 +10,11 @@ internal class ClipboardPlus : IClipboardPlus
     public PluginInitContext? Context => null;
 
     public SqliteDatabase Database { get; } = new SqliteDatabase(Path.Combine(AppContext.BaseDirectory, "ClipboardPlus.db"), 1);
+
+    public async Task InitRecordsFromDatabaseAsync()
+    {
+        await Task.CompletedTask;
+    }
 
     public ISettings Settings { get; }
 

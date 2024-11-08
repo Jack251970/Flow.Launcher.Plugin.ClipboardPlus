@@ -83,7 +83,10 @@ public class SettingsViewModel : BaseModel
     private async void ImportJsonRecords(object? parameter)
     {
         var path = FileUtils.GetOpenJsonFile();
-        await DatabaseHelper.ImportDatabase(ClipboardPlus, path);
+        if (!string.IsNullOrEmpty(path))
+        {
+            await DatabaseHelper.ImportDatabase(ClipboardPlus, path);
+        }
     }
 
     public ICommand ExportJsonRecordsCommand => new RelayCommand(ExportJsonRecords);

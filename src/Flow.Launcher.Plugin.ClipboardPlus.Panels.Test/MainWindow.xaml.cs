@@ -323,7 +323,7 @@ public partial class MainWindow : Window
     private async void InitializeDatabase()
     {
         await ClipboardPlus.Database.InitializeDatabaseAsync();
-        RecordList = await ClipboardPlus.Database.GetAllRecordsAsync();
+        RecordList = await ClipboardPlus.Database.GetAllRecordsAsync(true);
         var str = string.Empty;
         foreach (var record in RecordList)
         {

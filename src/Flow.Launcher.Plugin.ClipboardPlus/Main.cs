@@ -722,7 +722,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     #region List & Database
 
-    private async Task InitRecordsFromDatabaseAsync()
+    public async Task InitRecordsFromDatabaseAsync()
     {
         // clear expired records
         try
@@ -743,7 +743,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         }
 
         // restore records
-        var records = await Database.GetAllRecordsAsync();
+        var records = await Database.GetAllRecordsAsync(true);
         if (records.Any())
         {
             var records1 = records.Select(record => new ClipboardDataPair()

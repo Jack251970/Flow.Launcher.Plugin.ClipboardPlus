@@ -8,6 +8,8 @@ public interface IClipboardPlus
 
     public SqliteDatabase Database { get; }
 
+    Task InitRecordsFromDatabaseAsync();
+
     public ISettings Settings { get; }
 
     public ISettings LoadSettingJsonStorage();

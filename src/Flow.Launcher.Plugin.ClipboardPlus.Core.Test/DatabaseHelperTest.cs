@@ -113,8 +113,8 @@ public class DatabaseHelperTest
             cache: SqliteCacheMode.Private
         );
         await helper.InitializeDatabaseAsync();
-        await helper.AddOneRecordAsync(exampleTextRecord);
-        var c = await helper.GetAllRecordsAsync();
+        await helper.AddOneRecordAsync(exampleTextRecord, true);
+        var c = await helper.GetAllRecordsAsync(true);
         var find = false;
         foreach (var record in c)
         {
@@ -163,7 +163,7 @@ public class DatabaseHelperTest
         }
         // helper.Connection.BackupDatabase(new SqliteConnection("Data Source=a.db"));
         await helper.DeleteRecordsByKeepTimeAsync(type, keepTime);
-        var recordsAfterDelete = await helper.GetAllRecordsAsync((str) => _testOutputHelper.WriteLine($"{str}"));
+        var recordsAfterDelete = await helper.GetAllRecordsAsync(true, (str) => _testOutputHelper.WriteLine($"{str}"));
         foreach (var record in recordsAfterDelete.Where(r => r.DataType == (DataType)type))
         {
             var expTime = record.CreateTime + TimeSpan.FromHours(keepTime);
@@ -187,11 +187,11 @@ public class DatabaseHelperTest
             cache: SqliteCacheMode.Private
         );
         await helper.InitializeDatabaseAsync();
-        await helper.AddOneRecordAsync(exampleTextRecord);
-        var c1 = (await helper.GetAllRecordsAsync()).First();
+        await helper.AddOneRecordAsync(exampleTextRecord, true);
+        var c1 = (await helper.GetAllRecordsAsync(true)).First();
         exampleTextRecord.Pinned = !exampleTextRecord.Pinned;
         await helper.PinOneRecordAsync(exampleTextRecord);
-        var c2 = (await helper.GetAllRecordsAsync()).First();
+        var c2 = (await helper.GetAllRecordsAsync(true)).First();
         Assert.Equal(c1.Pinned, !c2.Pinned);
         await helper.CloseAsync();
     }
@@ -207,9 +207,9 @@ public class DatabaseHelperTest
             cache: SqliteCacheMode.Private
         );
         await helper.InitializeDatabaseAsync();
-        await helper.AddOneRecordAsync(exampleTextRecord);
+        await helper.AddOneRecordAsync(exampleTextRecord, true);
         await helper.DeleteOneRecordAsync(exampleTextRecord);
-        var c = await helper.GetAllRecordsAsync();
+        var c = await helper.GetAllRecordsAsync(true);
         Assert.Empty(c);
         await helper.CloseAsync();
     }
@@ -231,7 +231,7 @@ public class DatabaseHelperTest
         {
             var valid = _random.NextDouble() > 0.5;
             var exampleTextRecord = GetRandomClipboardData(valid);
-            await helper.AddOneRecordAsync(exampleTextRecord);
+            await helper.AddOneRecordAsync(exampleTextRecord, true);
             if (valid)
             {
                 validNum++;
@@ -244,7 +244,7 @@ public class DatabaseHelperTest
             }
         }
         await helper.DeleteInvalidRecordsAsync();
-        var c = await helper.GetAllRecordsAsync();
+        var c = await helper.GetAllRecordsAsync(true);
         _testOutputHelper.WriteLine("After Delete Invalid Data");
         var num = 0;
         foreach (var record in c)
@@ -273,7 +273,7 @@ public class DatabaseHelperTest
             var pinned = _random.NextDouble() > 0.5;
             var exampleTextRecord = GetRandomClipboardData();
             exampleTextRecord.Pinned = pinned;
-            await helper.AddOneRecordAsync(exampleTextRecord);
+            await helper.AddOneRecordAsync(exampleTextRecord, true);
             if (pinned)
             {
                 pinnedNum++;
@@ -286,7 +286,7 @@ public class DatabaseHelperTest
             }
         }
         await helper.DeleteUnpinnedRecordsAsync();
-        var c = await helper.GetAllRecordsAsync();
+        var c = await helper.GetAllRecordsAsync(true);
         _testOutputHelper.WriteLine("After Delete Unpinned Data");
         var num = 0;
         foreach (var record in c)
