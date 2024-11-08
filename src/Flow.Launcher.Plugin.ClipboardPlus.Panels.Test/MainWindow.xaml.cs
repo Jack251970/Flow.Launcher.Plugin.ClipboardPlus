@@ -68,8 +68,11 @@ public partial class MainWindow : Window
             SenderApp = "Flow.Launcher.exe",
             InitScore = 1,
             CreateTime = DateTime.Now,
+            CachedImagePath = string.Empty,
             Pinned = pinned,
-            Saved = false
+            Saved = false,
+            UnicodeText = string.Empty,
+            EncryptKeyMd5 = StringUtils.EncryptKeyMd5
         };
         if (type == DataType.RichText)
         {
@@ -98,8 +101,11 @@ public partial class MainWindow : Window
             SenderApp = e.SourceApplication.Name,
             InitScore = 1,
             CreateTime = now,
+            CachedImagePath = string.Empty,
             Pinned = false,
-            Saved = false
+            Saved = false,
+            UnicodeText = string.Empty,
+            EncryptKeyMd5 = StringUtils.EncryptKeyMd5
         };
         if (e.DataType == DataType.RichText)
         {
@@ -164,8 +170,11 @@ public partial class MainWindow : Window
             SenderApp = e.SourceApplication.Name,
             InitScore = 1,
             CreateTime = now,
+            CachedImagePath = string.Empty,
             Pinned = false,
-            Saved = false
+            Saved = false,
+            UnicodeText = string.Empty,
+            EncryptKeyMd5 = StringUtils.EncryptKeyMd5
         };
         if (e.DataType == DataType.RichText)
         {

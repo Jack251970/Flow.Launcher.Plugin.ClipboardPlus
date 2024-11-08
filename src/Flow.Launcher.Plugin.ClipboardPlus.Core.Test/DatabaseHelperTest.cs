@@ -19,14 +19,12 @@ public class DatabaseHelperTest
 
     private readonly BitmapImage _defaultImage = new(new Uri(_defaultImagePath, UriKind.Absolute));
 
-    private readonly static string _encryptKey = StringUtils.GenerateEncryptKey();
-
     private readonly ITestOutputHelper _testOutputHelper;
 
     public DatabaseHelperTest(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
-        StringUtils.InitEncryptKey(_encryptKey);
+        StringUtils.InitEncryptKey(StringUtils.GenerateEncryptKey());
     }
 
     #region GetRandomClipboardData
@@ -71,8 +69,11 @@ public class DatabaseHelperTest
             SenderApp = StringUtils.RandomString(5) + ".exe",
             InitScore = _random.Next(1000),
             CreateTime = createTime,
+            CachedImagePath = string.Empty,
             Pinned = false,
-            Saved = true
+            Saved = true,
+            UnicodeText = string.Empty,
+            EncryptKeyMd5 = StringUtils.EncryptKeyMd5
         };
         if (type == DataType.RichText)
         {

@@ -109,7 +109,7 @@ public class Record
             CachedImagePath = data.CachedImagePath,
             Pinned = data.Pinned,
             UnicodeText = string.Empty,  // just for getting the unicode text from the database
-            EncryptKeyMd5 = StringUtils.EncryptKeyMd5
+            EncryptKeyMd5 = data.EncryptKeyMd5
         };
         return record;
     }

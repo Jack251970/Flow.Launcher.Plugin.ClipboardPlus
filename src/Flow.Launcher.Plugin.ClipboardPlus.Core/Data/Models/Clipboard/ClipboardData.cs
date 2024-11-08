@@ -91,6 +91,11 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     /// </summary>
     public string UnicodeText { get; set; } = string.Empty;
 
+    /// <summary>
+    /// MD5 hash of the encryption key for identifying the database.
+    /// </summary>
+    public string EncryptKeyMd5 { get; set; } = string.Empty;
+
     #endregion
 
     #region Icon & Glyph
@@ -333,7 +338,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             CachedImagePath = record.CachedImagePath,
             Pinned = record.Pinned,
             Saved = true,
-            UnicodeText = StringToUnicodeText(record.UnicodeText, encrypt)
+            UnicodeText = StringToUnicodeText(record.UnicodeText, encrypt),
+            EncryptKeyMd5 = record.EncryptKeyMd5
         };
     }
 
@@ -359,12 +365,13 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         {
             HashId = data.HashId,
             SenderApp = data.SenderApp,
-            InitScore = data.InitScore,
+            InitScore = 0,
             CreateTime = data.CreateTime,
             CachedImagePath = data.CachedImagePath,
             Pinned = data.Pinned,
             Saved = saved,
-            UnicodeText = StringToUnicodeText(data.UnicodeText, false)
+            UnicodeText = StringToUnicodeText(data.UnicodeText, false),
+            EncryptKeyMd5 = data.EncryptKeyMd5
         };
     }
 
@@ -574,7 +581,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             CachedImagePath = CachedImagePath,
             Pinned = Pinned,
             Saved = Saved,
-            UnicodeText = UnicodeText
+            UnicodeText = UnicodeText,
+            EncryptKeyMd5 = EncryptKeyMd5
         };
     }
 
@@ -589,7 +597,8 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             CachedImagePath = CachedImagePath,
             Pinned = !Pinned,
             Saved = Saved,
-            UnicodeText = UnicodeText
+            UnicodeText = UnicodeText,
+            EncryptKeyMd5 = EncryptKeyMd5
         };
     }
 
@@ -659,11 +668,11 @@ public class JsonClipboardData
     public DataType DataType { get; set; }
     public bool EncryptData { get; set; }
     public string SenderApp { get; set; } = string.Empty;
-    public int InitScore { get; set; }
     public DateTime CreateTime { get; set; }
     public string CachedImagePath { get; set; } = string.Empty;
     public bool Pinned { get; set; }
     public string UnicodeText { get; set; } = string.Empty;
+    public string EncryptKeyMd5 { get; set; } = string.Empty;
 
     public static JsonClipboardData FromClipboardData(ClipboardData data)
     {
@@ -676,11 +685,11 @@ public class JsonClipboardData
             DataType = data.DataType,
             EncryptData = data.EncryptData,
             SenderApp = data.SenderApp,
-            InitScore = data.InitScore,
             CreateTime = data.CreateTime,
             CachedImagePath = data.CachedImagePath,
             Pinned = data.Pinned,
-            UnicodeText = data.UnicodeTextToString(false)!
+            UnicodeText = data.UnicodeTextToString(false)!,
+            EncryptKeyMd5 = data.EncryptKeyMd5
         };
     }
 }

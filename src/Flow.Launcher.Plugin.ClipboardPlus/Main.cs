@@ -654,9 +654,12 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             HashId = StringUtils.GetGuid(),
             SenderApp = e.SourceApplication.Name,
             InitScore = Database.CurrentScore,
+            CachedImagePath = string.Empty,
             CreateTime = now,
             Pinned = false,
-            Saved = saved
+            Saved = saved,
+            UnicodeText = string.Empty,
+            EncryptKeyMd5 = StringUtils.EncryptKeyMd5
         };
 
         // filter duplicate data
