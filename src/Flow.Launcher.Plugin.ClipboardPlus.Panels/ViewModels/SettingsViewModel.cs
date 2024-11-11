@@ -615,6 +615,7 @@ public class SettingsViewModel : BaseModel
         {
             Settings.SyncDatabase = value;
             OnPropertyChanged();
+            SyncDatabaseChanged(value);
         }
     }
 
@@ -623,8 +624,10 @@ public class SettingsViewModel : BaseModel
         get => Settings.SyncDatabasePath;
         set
         {
+            var oldValue = Settings.SyncDatabasePath;
             Settings.SyncDatabasePath = value;
             OnPropertyChanged();
+            SyncDatabasePathChanged(oldValue, value);
         }
     }
 
@@ -638,6 +641,36 @@ public class SettingsViewModel : BaseModel
     {
         base.OnPropertyChanged(propertyName);
         ClipboardPlus.SaveSettingJsonStorage();
+    }
+
+    private async void SyncDatabaseChanged(bool newValue)
+    {
+        if (newValue)
+        {
+            await SyncHelper.InitializeAsync(ClipboardPlus);
+        }
+    }
+
+    private async void SyncDatabasePathChanged(string oldValue, string newValue)
+    {
+        if (SyncDatabase)
+        {
+            if (string.IsNullOrEmpty(oldValue))
+            {
+                if (!string.IsNullOrEmpty(newValue))
+                {
+                    await SyncHelper.InitializeAsync(ClipboardPlus);
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(newValue))
+                {
+                    // TODO
+                    //await SyncHelper.ReinitializeAsync(ClipboardPlus);
+                }
+            }
+        }
     }
 
     #endregion

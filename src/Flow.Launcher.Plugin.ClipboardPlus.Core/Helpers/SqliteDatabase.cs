@@ -144,6 +144,19 @@ public class SqliteDatabase : IDisposable
         ORDER BY r.datetime_score ASC;
         """;
 
+    private readonly string SqlSelectLocalRecord =
+        $"""
+        SELECT r.id as Id, a.data_b64 as DataMd5B64, r.sender_app as SenderApp, 
+            r.cached_image_path as CachedImagePath, r.data_type as DataType, 
+            r.encrypt_data as EncryptData, r.create_time as CreateTime, 
+            r.datetime_score as DatetimeScore, r.pinned as Pinned, 
+            r.hash_id as HashId, a.unicode_text_b64 as UnicodeText,
+            r.encrypt_key_md5 as EncryptKeyMd5
+        FROM record r
+        LEFT JOIN asset a ON r.hash_id=a.hash_id
+        WHERE r.encrypt_key_md5='{StringUtils.EncryptKeyMd5}';
+        """;
+
     private readonly string SqlDeleteRecordByKeepTime =
         """
         DELETE FROM record
@@ -427,6 +440,15 @@ public class SqliteDatabase : IDisposable
                 }
             }
             return allRecord;
+        });
+    }
+
+    public async Task<List<ClipboardData>> GetLocalRecordsAsync()
+    {
+        return await HandleOpenCloseAsync(async () =>
+        {
+            var results = await Connection.QueryAsync<Record>(SqlSelectLocalRecord);
+            return results.Select(ClipboardData.FromRecord).ToList();
         });
     }
 

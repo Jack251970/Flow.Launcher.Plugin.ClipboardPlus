@@ -282,7 +282,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     {
         Context = context;
 
-        // init path helpers
+        // init path helper
         PathHelper.Init(context);
 
         // init settings
@@ -302,6 +302,9 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             await InitRecordsFromDatabaseAsync();
         }
         Context.API.LogDebug(ClassName, "Init database successfully");
+
+        // init sync helper
+        await SyncHelper.InitializeAsync(this);
 
         // init clipboard monitor
         ClipboardMonitor.ClipboardChanged += OnClipboardChange;

@@ -115,7 +115,8 @@ public class Record
     }
 
     // Note: Use the Flow.Launcher first version commit time as the base time for sorting.
-    private static readonly int BaseDateTimeScore = GetDateTimeScore(new DateTime(2020, 6, 28, 10, 24, 46, DateTimeKind.Utc));
+    public static DateTime BaseDateTime = new(2020, 6, 28, 10, 24, 46, DateTimeKind.Utc);
+    private static readonly int BaseDateTimeScore = GetDateTimeScore(BaseDateTime);
 
     public static int GetDateTimeScore(DateTime dateTime)
     {

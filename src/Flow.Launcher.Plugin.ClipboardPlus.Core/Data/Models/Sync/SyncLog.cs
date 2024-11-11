@@ -1,0 +1,51 @@
+﻿namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
+
+public class SyncLog : JsonStorage<List<SyncLogItem>>
+{
+    public SyncLog(string path) : base(path)
+    {
+
+    }
+
+    public async Task<bool> ReadFileAsync()
+    {
+        if (File.Exists(_path))
+        {
+            return await ReadAsync();
+        }
+
+        return false;
+    }
+
+    public async Task InitializeAsync()
+    {
+        // write default sync log
+        _jsonData = new()
+        {
+            new SyncLogItem()
+            {
+                JsonFileVersion = 0,
+                LogEventType = EventType.None,
+                LogClipboardDatas = new()
+            }
+        };
+        await WriteAsync();
+    }
+}
+
+public class SyncLogItem
+{
+    public int JsonFileVersion { get; set; } = -1;
+
+    public EventType LogEventType { get; set; } = EventType.None;
+
+    public List<JsonClipboardData> LogClipboardDatas = new();
+}
+
+public enum EventType
+{
+    None,
+    Add,
+    Change,
+    Delete
+}
