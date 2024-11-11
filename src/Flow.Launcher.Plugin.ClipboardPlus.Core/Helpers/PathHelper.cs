@@ -6,11 +6,12 @@ public static class PathHelper
 
     public const string TempCacheImageName = "temp";
 
+    public const string SyncDataFile = "SyncData.json";
+    public const string SyncLogFile = "SyncLog.json";
+
     private const string SettingsFile = "settings.json";
     private const string DatabaseFile = "ClipboardPlus.db";
     private const string SyncStatusFile = "SyncStatus.json";
-    private const string SyncDataFile = "SyncData.json";
-    private const string SyncLogFile = "SyncLog.json";
 
     #endregion
 
@@ -36,7 +37,6 @@ public static class PathHelper
             SettingsPath = Path.Combine(PluginPath, SettingsFile);
             DatabasePath = Path.Combine(PluginPath, DatabaseFile);
             SyncStatusPath = Path.Combine(PluginPath, SyncStatusFile);
-            SyncDataPath = Path.Combine(PluginPath, SyncDataFile);
             SyncLogPath = Path.Combine(PluginPath, SyncLogFile);
 
             // icons paths
@@ -73,7 +73,6 @@ public static class PathHelper
     public static string SettingsPath { get; private set; } = string.Empty;
     public static string DatabasePath { get; private set; } = string.Empty;
     public static string SyncStatusPath { get; private set; } = string.Empty;
-    public static string SyncDataPath { get; private set; } = string.Empty;
     public static string SyncLogPath { get; private set; } = string.Empty;
 
     // icons paths
