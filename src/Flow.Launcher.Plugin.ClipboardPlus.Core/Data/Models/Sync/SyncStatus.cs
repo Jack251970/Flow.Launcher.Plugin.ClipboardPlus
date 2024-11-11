@@ -27,51 +27,82 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 JsonFileVersion = 0
             }
         };
-        await WriteAsync();
 
-        // write sync log
-        await LocalSyncLog.InitializeAsync();
-
-        // export database
-        await DatabaseHelper.ExportLocalDatabase(ClipboardPlus, hashId, 0);
+        // write into files
+        await InitializeStatusLogJsonFile(hashId, 0);
     }
 
     public async Task<bool> ReadFileAsync()
     {
         if (File.Exists(_path) && File.Exists(_localSyncLogPath))
         {
-            return await ReadAsync();
+            return await ReadAsync() && await LocalSyncLog.ReadFileAsync();
         }
 
         return false;
     }
 
-    public int GetLocalJsonFileVersion()
+    public async Task UpdateFileAsync(EventType eventType, List<JsonClipboardData> datas)
     {
-        foreach (var item in _jsonData)
+        if (eventType == EventType.None)
         {
-            if (item.EncryptKeyMd5 == StringUtils.EncryptKeyMd5)
-            {
-                return item.JsonFileVersion;
-            }
+            return;
         }
 
-        return -1;
+        var index = _jsonData.FindIndex(x => x.EncryptKeyMd5 == StringUtils.EncryptKeyMd5);
+        if (index != -1)
+        {
+            switch (eventType)
+            {
+                case EventType.DeleteAll:
+                    // generate a new hash id
+                    var hashId = StringUtils.GetGuid();
+                    _jsonData[index].HashId = hashId;
+                    _jsonData[index].JsonFileVersion = 0;
+
+                    // write into files
+                    await InitializeStatusLogJsonFile(hashId, 0);
+                    break;
+                default:
+                    // if no data, return
+                    if (datas.Count == 0)
+                    {
+                        return;
+                    }
+
+                    // generate next version
+                    var nextVersion = _jsonData[index].JsonFileVersion + 1;
+                    _jsonData[index].JsonFileVersion = nextVersion;
+
+                    // write sync log file
+                    await WriteStatusLogJsonFile(_jsonData[index].HashId, nextVersion, eventType, datas);
+                    break;
+            }
+        }
     }
 
-    public async Task<int> UpdateLocalJsonFileVersion()
+    private async Task InitializeStatusLogJsonFile(string hashId, int version)
     {
-        foreach (var item in _jsonData)
-        {
-            if (item.EncryptKeyMd5 == StringUtils.EncryptKeyMd5)
-            {
-                item.JsonFileVersion++;
-                await WriteAsync();
-                return item.JsonFileVersion;
-            }
-        }
+        // write sync status file
+        await WriteAsync();
 
-        return -1;
+        // write sync log
+        await LocalSyncLog.InitializeAsync();
+
+        // export database
+        await DatabaseHelper.ExportLocalDatabase(ClipboardPlus, hashId, version);
+    }
+
+    private async Task WriteStatusLogJsonFile(string hashId, int version, EventType eventType, List<JsonClipboardData> datas)
+    {
+        // write sync status file
+        await WriteAsync();
+
+        // write sync log
+        await LocalSyncLog.UpdateFileAsync(version, eventType, datas);
+
+        // export database
+        await DatabaseHelper.ExportLocalDatabase(ClipboardPlus, hashId, version);
     }
 }
 

@@ -157,12 +157,18 @@ public class SqliteDatabase : IDisposable
         WHERE r.encrypt_key_md5='{StringUtils.EncryptKeyMd5}';
         """;
 
+    private readonly string SqlSelectRecordByKeepTime =
+        "SELECT * FROM record WHERE strftime('%s', 'now') - strftime('%s', create_time) > @KeepTime*3600;";
+
     private readonly string SqlDeleteRecordByKeepTime =
         """
         DELETE FROM record
         WHERE strftime('%s', 'now') - strftime('%s', create_time) > @KeepTime*3600
         AND data_type=@DataType;
         """;
+
+    private readonly string SqlSelectUnpinnedRecord =
+        "SELECT * FROM record WHERE pinned=0;";
 
     private readonly string SqlDeleteUnpinnedRecords =
         "DELETE FROM record WHERE pinned=0;";
@@ -351,15 +357,19 @@ public class SqliteDatabase : IDisposable
             }
 #endif
             await Connection.ExecuteAsync(SqlInsertRecord, record);
+
+            // update sync status
+            await UpdateSyncStatusAsync(EventType.Add, data);
         });
     }
 
     public async Task AddRecordsAsync(IEnumerable<ClipboardData> datas, bool needEncryptData)
     {
-        if (datas.Count() == 0)
+        if (!datas.Any())
         {
             return;
         }
+
         await HandleOpenCloseAsync(async () =>
         {
             foreach (var data in datas)
@@ -376,14 +386,21 @@ public class SqliteDatabase : IDisposable
                 var record = Record.FromClipboardData(data, needEncryptData);
                 await Connection.ExecuteAsync(SqlInsertRecord, record);
             }
+
+            // update sync status
+            await UpdateSyncStatusAsync(EventType.Add, datas);
         });
     }
 
-    public async Task DeleteOneRecordAsync(ClipboardData clipboardData)
+    public async Task DeleteOneRecordAsync(ClipboardData data)
     {
         await HandleOpenCloseAsync(async () =>
         {
-            await DeleteOneRecordByClipboardData(clipboardData);
+            // delete one record
+            await DeleteOneRecordByClipboardData(data);
+
+            // update sync status
+            await UpdateDeleteEventSyncStatusAsync(data);
         });
     }
 
@@ -391,8 +408,12 @@ public class SqliteDatabase : IDisposable
     {
         await HandleOpenCloseAsync(async () =>
         {
+            // delete tables and recreate
             await Connection.ExecuteAsync(SqlDeleteAllRecords);
             await Connection.ExecuteAsync(SqlCreateDatabase);
+
+            // update sync status
+            await UpdateSyncStatusAsync(EventType.DeleteAll, new List<ClipboardData>());
         });
     }
 
@@ -403,6 +424,9 @@ public class SqliteDatabase : IDisposable
             var record = new { Pin = data.Pinned, data.HashId };
             await Connection.ExecuteAsync(SqlUpdateRecordPinned, record);
             await CloseIfNotKeepAsync();
+
+            // update sync status
+            await UpdateSyncStatusAsync(EventType.Change, data);
         });
     }
 
@@ -456,10 +480,17 @@ public class SqliteDatabase : IDisposable
     {
         await HandleOpenCloseAsync(async () =>
         {
+            // query all records
+            var results = await Connection.QueryAsync<Record>(SqlSelectRecordByKeepTime, new { KeepTime = keepTime });
+
+            // delete records by keep time
             await Connection.ExecuteAsync(
                 SqlDeleteRecordByKeepTime,
                 new { KeepTime = keepTime, DataType = dataType }
             );
+
+            // update sync status
+            await UpdateDeleteEventSyncStatusAsync(results);
         });
     }
 
@@ -469,13 +500,17 @@ public class SqliteDatabase : IDisposable
         {
             // query all records
             var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
-            List<ClipboardData> allRecord = new(results.Select(ClipboardData.FromRecord));
+            List<ClipboardData> allRecords = new(results.Select(ClipboardData.FromRecord));
+
             // delete invalid records
-            var invalidRecords = allRecord.Where(x => !x.IsValid);
+            var invalidRecords = allRecords.Where(x => !x.IsValid);
             foreach (var record in invalidRecords)
             {
                 await DeleteOneRecordByClipboardData(record);
             }
+
+            // update sync status
+            await UpdateDeleteEventSyncStatusAsync(invalidRecords);
         });
     }
 
@@ -483,13 +518,20 @@ public class SqliteDatabase : IDisposable
     {
         await HandleOpenCloseAsync(async () =>
         {
+            // get upinned records
+            var results = await Connection.QueryAsync<Record>(SqlSelectUnpinnedRecord);
+
+            // delete unpinned records
             await Connection.ExecuteAsync(SqlDeleteUnpinnedRecords);
+
+            // update sync status
+            await UpdateDeleteEventSyncStatusAsync(results);
         });
     }
 
-    private async Task DeleteOneRecordByClipboardData(ClipboardData clipboardData)
+    private async Task DeleteOneRecordByClipboardData(ClipboardData data)
     {
-        var hashId = clipboardData.HashId;
+        var hashId = data.HashId;
         var count = await Connection.QueryFirstAsync<int>(
             SqlSelectRecordCountByMd5,
             new { HashId = hashId }
@@ -501,7 +543,7 @@ public class SqliteDatabase : IDisposable
         {
             await Connection.ExecuteAsync(
                 SqlDeleteRecordAsset1,
-                new { clipboardData.HashId }
+                new { data.HashId }
             );
         }
         // otherwise, no record depends on `asset`, directly delete records
@@ -515,6 +557,74 @@ public class SqliteDatabase : IDisposable
             );
         }
     }
+
+    #region Sync Status
+
+    private static async Task UpdateSyncStatusAsync(EventType eventType, ClipboardData data)
+    {
+        if (data.EncryptKeyMd5 == StringUtils.EncryptKeyMd5)
+        {
+            await SyncHelper.UpdateSyncStatusAsync(eventType, JsonClipboardData.FromClipboardData(data));
+        }
+    }
+
+    private static async Task UpdateSyncStatusAsync(EventType eventType, IEnumerable<ClipboardData> datas)
+    {
+        var jsonDatas = new List<JsonClipboardData>();
+        foreach (var data in datas)
+        {
+            if (data.EncryptKeyMd5 == StringUtils.EncryptKeyMd5)
+            {
+                jsonDatas.Add(JsonClipboardData.FromClipboardData(data));
+            }
+        }
+        await SyncHelper.UpdateSyncStatusAsync(eventType, jsonDatas);
+    }
+
+    private static async Task UpdateDeleteEventSyncStatusAsync(ClipboardData data)
+    {
+        if (data.EncryptKeyMd5 == StringUtils.EncryptKeyMd5)
+        {
+            await SyncHelper.UpdateSyncStatusAsync(EventType.Delete, new JsonClipboardData()
+            {
+                HashId = data.HashId
+            });
+        }
+    }
+
+    private static async Task UpdateDeleteEventSyncStatusAsync(IEnumerable<ClipboardData> datas)
+    {
+        var jsonDatas = new List<JsonClipboardData>();
+        foreach (var data in datas)
+        {
+            if (data.EncryptKeyMd5 == StringUtils.EncryptKeyMd5)
+            {
+                jsonDatas.Add(new JsonClipboardData()
+                {
+                    HashId = data.HashId
+                });
+            }
+        }
+        await SyncHelper.UpdateSyncStatusAsync(EventType.Delete, jsonDatas);
+    }
+
+    private static async Task UpdateDeleteEventSyncStatusAsync(IEnumerable<Record> datas)
+    {
+        var jsonDatas = new List<JsonClipboardData>();
+        foreach (var data in datas)
+        {
+            if (data.EncryptKeyMd5 == StringUtils.EncryptKeyMd5)
+            {
+                jsonDatas.Add(new JsonClipboardData()
+                {
+                    HashId = data.HashId
+                });
+            }
+        }
+        await SyncHelper.UpdateSyncStatusAsync(EventType.Delete, jsonDatas);
+    }
+
+    #endregion
 
     #endregion
 

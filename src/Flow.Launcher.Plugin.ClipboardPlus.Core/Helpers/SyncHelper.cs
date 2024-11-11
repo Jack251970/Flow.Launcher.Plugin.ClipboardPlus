@@ -2,11 +2,11 @@
 
 public static class SyncHelper
 {
+    private static string ClassName => typeof(SyncHelper).Name;
+
     private static bool syncInitialized = false;
-    public static bool SyncInitialized => syncInitialized;
 
     private static SyncStatus? syncStatus;
-    public static SyncStatus? SyncStatus => syncStatus;
 
     public static async Task InitializeAsync(IClipboardPlus clipboardPlus)
     {
@@ -16,6 +16,7 @@ public static class SyncHelper
             return;
         }
 
+        // begin reinitialization
         await ReinitializeAsync(clipboardPlus);
     }
 
@@ -34,6 +35,7 @@ public static class SyncHelper
 
             // set sync initialized
             syncInitialized = true;
+            clipboardPlus.Context?.API.LogInfo(ClassName, "Sync status initialized");
             return;
         }
 
@@ -56,7 +58,24 @@ public static class SyncHelper
 
                 // set sync initialized
                 syncInitialized = true;
+                clipboardPlus.Context?.API.LogInfo(ClassName, "Sync status initialized");
             }
+        }
+    }
+
+    public static async Task UpdateSyncStatusAsync(EventType eventType, List<JsonClipboardData> datas)
+    {
+        if (syncInitialized)
+        {
+            await syncStatus!.UpdateFileAsync(eventType, datas);
+        }
+    }
+
+    public static async Task UpdateSyncStatusAsync(EventType eventType, JsonClipboardData data)
+    {
+        if (syncInitialized)
+        {
+            await syncStatus!.UpdateFileAsync(eventType, new List<JsonClipboardData>() { data });
         }
     }
 }

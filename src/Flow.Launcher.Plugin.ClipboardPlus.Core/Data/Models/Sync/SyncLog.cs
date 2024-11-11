@@ -7,16 +7,6 @@ public class SyncLog : JsonStorage<List<SyncLogItem>>
 
     }
 
-    public async Task<bool> ReadFileAsync()
-    {
-        if (File.Exists(_path))
-        {
-            return await ReadAsync();
-        }
-
-        return false;
-    }
-
     public async Task InitializeAsync()
     {
         // write default sync log
@@ -29,6 +19,27 @@ public class SyncLog : JsonStorage<List<SyncLogItem>>
                 LogClipboardDatas = new()
             }
         };
+        await WriteAsync();
+    }
+
+    public async Task<bool> ReadFileAsync()
+    {
+        if (File.Exists(_path))
+        {
+            return await ReadAsync();
+        }
+
+        return false;
+    }
+
+    public async Task UpdateFileAsync(int version, EventType eventType, List<JsonClipboardData> datas)
+    {
+        _jsonData.Add(new SyncLogItem()
+        {
+            JsonFileVersion = version,
+            LogEventType = eventType,
+            LogClipboardDatas = datas
+        });
         await WriteAsync();
     }
 }
@@ -47,5 +58,6 @@ public enum EventType
     None,
     Add,
     Change,
-    Delete
+    Delete,
+    DeleteAll
 }
