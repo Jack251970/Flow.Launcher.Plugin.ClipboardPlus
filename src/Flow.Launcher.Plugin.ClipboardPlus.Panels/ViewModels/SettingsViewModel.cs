@@ -666,6 +666,7 @@ public class SettingsViewModel : BaseModel
             {
                 if (!string.IsNullOrEmpty(newValue))
                 {
+                    await SyncHelper.InitializeAsync(ClipboardPlus);
                     FileUtils.CopyFilesFromOneFolderToAnother(oldValue, newValue);
                     SyncHelper.ChangeSyncDatabasePath(newValue);
                 }
