@@ -90,9 +90,12 @@ public class SyncWatcher : IDisposable
     {
         if (disposing)
         {
+            _directoryWatcher.Changed -= DirectoryWatcher_OnCreated;
+            _directoryWatcher.Deleted -= DirectoryWatcher_OnDeleted;
             _directoryWatcher.Dispose();
             foreach (var watcher in _filesWatchers)
             {
+                watcher.Value.Changed -= FileWatcher_OnChanged;
                 watcher.Value.Dispose();
             }
             _disposed = true;
