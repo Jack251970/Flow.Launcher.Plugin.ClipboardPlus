@@ -175,6 +175,15 @@ public static partial class StringUtils
         return string.Join(string.Empty, hex);
     }
 
+    public static bool IsMd5(string s)
+    {
+        var md5Regex = Md5Regex();
+        return md5Regex.IsMatch(s);
+    }
+
+    [GeneratedRegex("^[a-fA-F0-9]{32}$")]
+    internal static partial Regex Md5Regex();
+
     #endregion
 
     #region Encrypt & Decrypt
