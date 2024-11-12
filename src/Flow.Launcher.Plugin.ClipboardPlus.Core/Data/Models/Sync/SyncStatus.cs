@@ -45,7 +45,44 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
     {
         if (File.Exists(_path) && File.Exists(_localSyncLogPath))
         {
-            return await ReadAsync() && await LocalSyncLog.ReadFileAsync();
+            // read sync status & local sync log files
+            var success = await ReadAsync() && await LocalSyncLog.ReadFileAsync();
+
+            // if not success, return
+            if (!success)
+            {
+                return false;
+            }
+
+            // if no local sync log data, return
+            var index = _jsonData.FindIndex(x => x.EncryptKeyMd5 == StringUtils.EncryptKeyMd5);
+            if (index != -1)
+            {
+                return false;
+            }
+
+            if (CloudSyncEnabled)
+            {
+                // create sync database directory
+                if (!Directory.Exists(_cloudSyncDiretory))
+                {
+                    Directory.CreateDirectory(_cloudSyncDiretory);
+                }
+
+                // check if cloud files are exist
+                if (!File.Exists(_cloudSyncLogPath))
+                {
+                    // write sync log
+                    await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
+
+                    // export database
+                    var hashId = _jsonData[index].HashId;
+                    var version = _jsonData[index].JsonFileVersion;
+                    await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
+                }
+            }
+
+            return success;
         }
 
         return false;
