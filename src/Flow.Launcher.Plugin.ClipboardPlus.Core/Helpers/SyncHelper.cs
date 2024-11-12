@@ -8,6 +8,8 @@ public static class SyncHelper
 
     private static SyncStatus? syncStatus;
 
+    private static SyncWatcher? syncWatcher;
+
     public static async Task InitializeAsync(IClipboardPlus clipboardPlus)
     {
         // if already initialized
@@ -81,11 +83,19 @@ public static class SyncHelper
         }
     }
 
+    public static void ChangeSyncEnabled(bool enabled)
+    {
+        if (syncInitialized && syncWatcher != null)
+        {
+            syncWatcher.Enabled = enabled;
+        }
+    }
+
     public static void Dispose()
     {
         if (syncInitialized)
         {
-            syncStatus!.Dispose();
+            syncWatcher?.Dispose();
         }
     }
 }

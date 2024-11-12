@@ -649,6 +649,7 @@ public class SettingsViewModel : BaseModel
         {
             await SyncHelper.InitializeAsync(ClipboardPlus);
         }
+        SyncHelper.ChangeSyncEnabled(Settings.SyncEnabled);
     }
 
     private async void SyncDatabasePathChanged(string oldValue, string newValue)
@@ -657,14 +658,14 @@ public class SettingsViewModel : BaseModel
         {
             if (string.IsNullOrEmpty(oldValue))
             {
-                if (!string.IsNullOrEmpty(newValue))
+                if (!string.IsNullOrEmpty(newValue))  // empty to non-empty
                 {
                     await SyncHelper.InitializeAsync(ClipboardPlus);
                 }
             }
             else
             {
-                if (!string.IsNullOrEmpty(newValue))
+                if (!string.IsNullOrEmpty(newValue))  // non-empty to non-empty
                 {
                     await SyncHelper.InitializeAsync(ClipboardPlus);
                     FileUtils.CopyFilesFromOneFolderToAnother(oldValue, newValue);
@@ -672,6 +673,7 @@ public class SettingsViewModel : BaseModel
                 }
             }
         }
+        SyncHelper.ChangeSyncEnabled(Settings.SyncEnabled);
     }
 
     #endregion
