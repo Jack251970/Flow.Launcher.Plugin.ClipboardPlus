@@ -2,7 +2,7 @@
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
-public class SyncStatus : JsonStorage<List<SyncStatusItem>>
+public class SyncStatus : JsonStorage<List<SyncStatusItem>>, IDisposable
 {
     private readonly IClipboardPlus ClipboardPlus;
 
@@ -11,6 +11,8 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
     private readonly string _localSyncLogPath = PathHelper.SyncLogPath;
 
     private bool CloudSyncEnabled => ClipboardPlus.Settings.SyncEnabled;
+
+    private readonly SyncWatcher? CloudSyncWatcher;
 
     private string _cloudSyncDiretory;
     private string _cloudSyncLogPath;
@@ -188,6 +190,38 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
             await LocalSyncLog.UpdateFileAsync(version, eventType, datas);
         }
     }
+
+    #region IDisposable Interface
+
+    private bool _disposed;
+
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            CloudSyncWatcher?.Dispose();
+            _disposed = true;
+        }
+    }
+
+    private static void GarbageCollect()
+    {
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+    }
+
+    #endregion
 }
 
 public class SyncStatusItem

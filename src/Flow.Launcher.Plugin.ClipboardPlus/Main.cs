@@ -1432,6 +1432,8 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             ClipboardMonitor.Dispose();
             ClipboardMonitor = null!;
             Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
+            SyncHelper.Dispose();
+            Context.API.LogDebug(ClassName, $"Disposed SyncHelper");
             CultureInfoChanged = null;
             Settings = null!;
             RecordsList = null!;

@@ -80,4 +80,12 @@ public static class SyncHelper
             syncStatus!.ChangeSyncDatabasePath(path);
         }
     }
+
+    public static void Dispose()
+    {
+        if (syncInitialized)
+        {
+            syncStatus!.Dispose();
+        }
+    }
 }
