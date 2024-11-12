@@ -2,6 +2,29 @@
 
 public class SyncWatcher : IDisposable
 {
+    public EventHandler<SyncDataEventArgs>? SyncDataChanged;
+
+    private bool _enabled = true;
+    public bool Enabled
+    {
+        get => _enabled;
+        set
+        {
+            if (_enabled != value)
+            {
+                if (value)
+                {
+                    StartWatchers();
+                }
+                else
+                {
+                    StopWatchers();
+                }
+                _enabled = value;
+            }
+        }
+    }
+
     private FileSystemWatcher _directoryWatcher = null!;
 
     private readonly Dictionary<string, FileSystemWatcher> _filesWatchers = new();
@@ -16,13 +39,36 @@ public class SyncWatcher : IDisposable
         };
         _directoryWatcher.Created += DirectoryWatcher_OnCreated;
         _directoryWatcher.Deleted += DirectoryWatcher_OnDeleted;
-        _directoryWatcher.EnableRaisingEvents = true;
+        _directoryWatcher.EnableRaisingEvents = false;
 
         var folders = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
         foreach (var folder in folders)
         {
             var folderName = Path.GetFileName(folder);
             AddFileWatcher(folderName, folder);
+        }
+
+        if (_enabled)
+        {
+            StartWatchers();
+        }
+    }
+
+    private void StartWatchers()
+    {
+        _directoryWatcher.EnableRaisingEvents = true;
+        foreach (var watcher in _filesWatchers)
+        {
+            watcher.Value.EnableRaisingEvents = true;
+        }
+    }
+
+    private void StopWatchers()
+    {
+        _directoryWatcher.EnableRaisingEvents = false;
+        foreach (var watcher in _filesWatchers)
+        {
+            watcher.Value.EnableRaisingEvents = false;
         }
     }
 
@@ -33,7 +79,11 @@ public class SyncWatcher : IDisposable
             return;
         }
 
-        Console.WriteLine($"File watcher added: {folder} {path}");
+        if (folder == StringUtils.EncryptKeyMd5)
+        {
+            return;
+        }
+
         var fileWatcher = new FileSystemWatcher
         {
             Path = path,
@@ -41,14 +91,13 @@ public class SyncWatcher : IDisposable
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName
         };
         fileWatcher.Changed += FileWatcher_OnChanged;
-        fileWatcher.EnableRaisingEvents = true;
+        fileWatcher.EnableRaisingEvents = false;
 
         _filesWatchers.Add(folder, fileWatcher);
     }
 
     private void DirectoryWatcher_OnCreated(object sender, FileSystemEventArgs e)
     {
-        Console.WriteLine($"Folder created: {e.Name} {e.FullPath}");
         var fileName = e.Name;
         var filePath = e.FullPath;
         if (!string.IsNullOrEmpty(fileName))
@@ -59,7 +108,6 @@ public class SyncWatcher : IDisposable
 
     private void DirectoryWatcher_OnDeleted(object sender, FileSystemEventArgs e)
     {
-        Console.WriteLine($"Folder deleted: {e.FullPath}");
         var fileName = e.Name;
         if (!string.IsNullOrEmpty(fileName))
         {
@@ -69,7 +117,7 @@ public class SyncWatcher : IDisposable
 
     private void FileWatcher_OnChanged(object sender, FileSystemEventArgs e)
     {
-        Console.WriteLine($"File changed: {e.FullPath}");
+        
     }
 
     #region IDisposable Interface
@@ -104,4 +152,9 @@ public class SyncWatcher : IDisposable
     }
 
     #endregion
+}
+
+public class SyncDataEventArgs
+{
+
 }
