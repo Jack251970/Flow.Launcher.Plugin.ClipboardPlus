@@ -145,4 +145,12 @@ public static class FileUtils
                 $"{context.GetTranslation("flowlauncher_plugin_clipboardplus_json_files")} (*.*)|*.*";
         }
     }
+
+    public static void CopyFilesFromOneFolderToAnother(string oldFolder, string newFolder)
+    {
+        if (!File.Exists(newFolder))
+        {
+            File.Create(newFolder);
+        }
+    }
 }

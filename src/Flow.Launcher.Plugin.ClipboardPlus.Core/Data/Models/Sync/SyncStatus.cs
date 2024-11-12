@@ -8,10 +8,19 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
 
     private readonly string _localSyncLogPath = PathHelper.SyncLogPath;
 
+    private bool CloudSyncEnabled => ClipboardPlus.Settings.SyncEnabled;
+
+    private readonly string _cloudSyncDiretory;
+    private readonly string _cloudSyncLogPath;
+    private readonly string _cloudDataPath;
+
     public SyncStatus(IClipboardPlus clipboardPlus, string path) : base(path)
     {
         ClipboardPlus = clipboardPlus;
         LocalSyncLog = new SyncLog(_localSyncLogPath);
+        _cloudSyncDiretory = Path.Combine(clipboardPlus.Settings.SyncDatabasePath, StringUtils.EncryptKeyMd5);
+        _cloudSyncLogPath = Path.Combine(_cloudSyncDiretory, PathHelper.SyncLogFile);
+        _cloudDataPath = Path.Combine(_cloudSyncDiretory, PathHelper.SyncDataFile);
     }
 
     public async Task InitializeAsync()
@@ -86,11 +95,26 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
         // write sync status file
         await WriteAsync();
 
-        // write sync log
-        await LocalSyncLog.InitializeAsync();
+        if (CloudSyncEnabled)
+        {
+            // create sync database directory
+            if (!Directory.Exists(_cloudSyncDiretory))
+            {
+                Directory.CreateDirectory(_cloudSyncDiretory);
+            }
 
-        // export database
-        await DatabaseHelper.ExportLocalDatabase(ClipboardPlus, hashId, version);
+            // write sync log
+            await LocalSyncLog.InitializeAsync();
+            await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
+
+            // export database
+            await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
+        }
+        else
+        {
+            // write sync log
+            await LocalSyncLog.InitializeAsync();
+        }
     }
 
     private async Task WriteStatusLogJsonFile(string hashId, int version, EventType eventType, List<JsonClipboardData> datas)
@@ -98,11 +122,26 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
         // write sync status file
         await WriteAsync();
 
-        // write sync log
-        await LocalSyncLog.UpdateFileAsync(version, eventType, datas);
+        if (CloudSyncEnabled)
+        {
+            // create sync database directory
+            if (!Directory.Exists(_cloudSyncDiretory))
+            {
+                Directory.CreateDirectory(_cloudSyncDiretory);
+            }
 
-        // export database
-        await DatabaseHelper.ExportLocalDatabase(ClipboardPlus, hashId, version);
+            // write sync log
+            await LocalSyncLog.UpdateFileAsync(version, eventType, datas);
+            await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
+
+            // export database
+            await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
+        }
+        else
+        {
+            // write sync log
+            await LocalSyncLog.UpdateFileAsync(version, eventType, datas);
+        }
     }
 }
 

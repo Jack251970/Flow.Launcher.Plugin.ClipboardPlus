@@ -38,8 +38,13 @@ public class JsonStorage<T> where T : new()
 
     protected async Task WriteAsync()
     {
+        await WriteAsync(_path);
+    }
+
+    protected async Task WriteAsync(string path)
+    {
         var options = new JsonSerializerOptions { WriteIndented = true };
-        await using FileStream openStream = File.Create(_path);
+        await using FileStream openStream = File.Create(path);
         await JsonSerializer.SerializeAsync(openStream, _jsonData, options);
     }
 }

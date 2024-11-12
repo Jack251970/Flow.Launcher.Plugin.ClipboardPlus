@@ -42,6 +42,11 @@ public class SyncLog : JsonStorage<List<SyncLogItem>>
         });
         await WriteAsync();
     }
+
+    public async Task WriteCloudFileAsync(string cloudFilePath)
+    {
+        await WriteAsync(cloudFilePath);
+    }
 }
 
 public class SyncLogItem

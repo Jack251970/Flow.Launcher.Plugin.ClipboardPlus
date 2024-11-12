@@ -77,7 +77,7 @@ public static class DatabaseHelper
 
     #region Sync
 
-    public static async Task ExportLocalDatabase(IClipboardPlus clipboardPlus, string hashId, int databaseVersion)
+    public static async Task ExportDatabase(IClipboardPlus clipboardPlus, string jsonPath, string hashId, int databaseVersion)
     {
         var database = clipboardPlus.Database;
         var records = await database.GetLocalRecordsAsync();
@@ -96,14 +96,14 @@ public static class DatabaseHelper
         records.Insert(0, infoData);
         var jsonRecords = records.Select(JsonClipboardData.FromClipboardData);
         var options = new JsonSerializerOptions { WriteIndented = true };
-        await using FileStream createStream = File.Create(PathHelper.SyncDataPath);
+        await using FileStream createStream = File.Create(jsonPath);
         await JsonSerializer.SerializeAsync(createStream, jsonRecords, options);
         var context = clipboardPlus.Context;
     }
 
-    public static async Task<(string, int, IEnumerable<JsonClipboardData>)?> ImportLocalDatabase()
+    public static async Task<(string, int, IEnumerable<JsonClipboardData>)?> ImportLocalDatabase(string jsonPath)
     {
-        await using FileStream openStream = File.OpenRead(PathHelper.SyncDataPath);
+        await using FileStream openStream = File.OpenRead(jsonPath);
         List<JsonClipboardData>? jsonRecords = null;
         try
         {
