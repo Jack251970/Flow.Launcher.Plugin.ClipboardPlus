@@ -30,7 +30,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
     private CultureInfo CultureInfo = null!;
 
     // Settings
-    private Settings Settings = null!;
+    private ISettings Settings = null!;
 
     // Database helper
     private SqliteDatabase Database = null!;

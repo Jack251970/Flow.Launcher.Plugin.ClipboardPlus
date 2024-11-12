@@ -106,4 +106,9 @@ public interface ISettings
     /// Path to sync database
     /// </summary>
     public string SyncDatabasePath { get; set; }
+
+    /// <summary>
+    /// Whether to sync database is enabled and path is valid
+    /// </summary>
+    public bool SyncEnabled { get; }
 }

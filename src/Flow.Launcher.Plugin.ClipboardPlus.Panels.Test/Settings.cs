@@ -49,6 +49,9 @@ public class Settings : ISettings
     public string SyncDatabasePath { get; set; } = string.Empty;
 
     [JsonIgnore]
+    public bool SyncEnabled => SyncDatabase && (!string.IsNullOrEmpty(SyncDatabasePath));
+
+    [JsonIgnore]
     public List<Tuple<DataType, KeepTime>> KeepTimePairs => 
         new ()
         {

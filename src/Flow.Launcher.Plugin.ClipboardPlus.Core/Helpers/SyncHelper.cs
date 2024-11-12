@@ -44,7 +44,7 @@ public static class SyncHelper
         {
             // if need to sync database and sync database path is valid
             var settings = clipboardPlus.Settings;
-            if (settings.SyncDatabase && (!string.IsNullOrEmpty(settings.SyncDatabasePath)))
+            if (settings.SyncEnabled)
             {
                 // create sync database directory
                 if (!Directory.Exists(settings.SyncDatabasePath))
