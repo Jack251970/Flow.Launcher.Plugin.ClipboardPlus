@@ -148,11 +148,13 @@ public static class FileUtils
 
     public static void CopyFilesFromOneFolderToAnother(string oldFolder, string newFolder)
     {
+        // create new folder if it doesn't exist
         if (!Directory.Exists(newFolder))
         {
             Directory.CreateDirectory(newFolder);
         }
 
+        // copy files from old folder to new folder
         var oldFolderLength = oldFolder.Length;
         var files = Directory.GetFiles(oldFolder, "*.*", SearchOption.AllDirectories);
         foreach (var file in files)
@@ -166,6 +168,16 @@ public static class FileUtils
             File.Copy(file, destFile, true);
         }
 
-        Directory.Delete(oldFolder, true);
+        // delete all folders and files under older folder and keep old folder
+        var directories = Directory.GetDirectories(oldFolder, "*", SearchOption.AllDirectories);
+        foreach (var directory in directories)
+        {
+            Directory.Delete(directory, true);
+        }
+        var oldFiles = Directory.GetFiles(oldFolder, "*.*", SearchOption.AllDirectories);
+        foreach (var file in oldFiles)
+        {
+            File.Delete(file);
+        }
     }
 }
