@@ -98,15 +98,9 @@ public class SyncWatcher : IDisposable
                 watcher.Value.Changed -= FileWatcher_OnChanged;
                 watcher.Value.Dispose();
             }
+            _filesWatchers.Clear();
             _disposed = true;
         }
-    }
-
-    private static void GarbageCollect()
-    {
-        GC.Collect();
-        GC.WaitForPendingFinalizers();
-        GC.Collect();
     }
 
     #endregion

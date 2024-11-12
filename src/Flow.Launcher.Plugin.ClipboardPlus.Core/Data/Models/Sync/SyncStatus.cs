@@ -214,13 +214,6 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>, IDisposable
         }
     }
 
-    private static void GarbageCollect()
-    {
-        GC.Collect();
-        GC.WaitForPendingFinalizers();
-        GC.Collect();
-    }
-
     #endregion
 }
 
