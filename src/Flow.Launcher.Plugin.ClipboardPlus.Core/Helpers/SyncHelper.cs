@@ -16,12 +16,6 @@ public static class SyncHelper
             return;
         }
 
-        // begin reinitialization
-        await ReinitializeAsync(clipboardPlus);
-    }
-
-    public static async Task ReinitializeAsync(IClipboardPlus clipboardPlus)
-    {
         // if sync status file exists
         if (File.Exists(PathHelper.SyncStatusPath))
         {
@@ -76,6 +70,14 @@ public static class SyncHelper
         if (syncInitialized)
         {
             await syncStatus!.UpdateFileAsync(eventType, new List<JsonClipboardData>() { data });
+        }
+    }
+
+    public static void ChangeSyncDatabasePath(string path)
+    {
+        if (syncInitialized)
+        {
+            syncStatus!.ChangeSyncDatabasePath(path);
         }
     }
 }

@@ -666,8 +666,8 @@ public class SettingsViewModel : BaseModel
             {
                 if (!string.IsNullOrEmpty(newValue))
                 {
-                    // TODO
-                    //await SyncHelper.ReinitializeAsync(ClipboardPlus);
+                    FileUtils.CopyFilesFromOneFolderToAnother(oldValue, newValue);
+                    SyncHelper.ChangeSyncDatabasePath(newValue);
                 }
             }
         }

@@ -148,9 +148,24 @@ public static class FileUtils
 
     public static void CopyFilesFromOneFolderToAnother(string oldFolder, string newFolder)
     {
-        if (!File.Exists(newFolder))
+        if (!Directory.Exists(newFolder))
         {
-            File.Create(newFolder);
+            Directory.CreateDirectory(newFolder);
         }
+
+        var oldFolderLength = oldFolder.Length;
+        var files = Directory.GetFiles(oldFolder, "*.*", SearchOption.AllDirectories);
+        foreach (var file in files)
+        {
+            var destFile = Path.Combine(newFolder, file[(oldFolderLength + 1)..]);
+            var directory = Path.GetDirectoryName(destFile);
+            if ((!string.IsNullOrEmpty(directory)) && (!Directory.Exists(directory)))
+            {
+                Directory.CreateDirectory(directory);
+            }
+            File.Copy(file, destFile, true);
+        }
+
+        Directory.Delete(oldFolder, true);
     }
 }

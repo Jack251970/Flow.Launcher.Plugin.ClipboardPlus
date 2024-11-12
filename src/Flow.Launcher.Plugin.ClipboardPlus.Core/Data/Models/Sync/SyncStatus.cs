@@ -1,4 +1,6 @@
-﻿namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
 public class SyncStatus : JsonStorage<List<SyncStatusItem>>
 {
@@ -10,17 +12,15 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
 
     private bool CloudSyncEnabled => ClipboardPlus.Settings.SyncEnabled;
 
-    private readonly string _cloudSyncDiretory;
-    private readonly string _cloudSyncLogPath;
-    private readonly string _cloudDataPath;
+    private string _cloudSyncDiretory;
+    private string _cloudSyncLogPath;
+    private string _cloudDataPath;
 
     public SyncStatus(IClipboardPlus clipboardPlus, string path) : base(path)
     {
         ClipboardPlus = clipboardPlus;
         LocalSyncLog = new SyncLog(_localSyncLogPath);
-        _cloudSyncDiretory = Path.Combine(clipboardPlus.Settings.SyncDatabasePath, StringUtils.EncryptKeyMd5);
-        _cloudSyncLogPath = Path.Combine(_cloudSyncDiretory, PathHelper.SyncLogFile);
-        _cloudDataPath = Path.Combine(_cloudSyncDiretory, PathHelper.SyncDataFile);
+        ChangeSyncDatabasePath(clipboardPlus.Settings.SyncDatabasePath);
     }
 
     public async Task InitializeAsync()
@@ -88,6 +88,14 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                     break;
             }
         }
+    }
+
+    [MemberNotNull(nameof(_cloudSyncDiretory), nameof(_cloudSyncLogPath), nameof(_cloudDataPath))]
+    public void ChangeSyncDatabasePath(string syncDatabasePath)
+    {
+        _cloudSyncDiretory = Path.Combine(syncDatabasePath, StringUtils.EncryptKeyMd5);
+        _cloudSyncLogPath = Path.Combine(_cloudSyncDiretory, PathHelper.SyncLogFile);
+        _cloudDataPath = Path.Combine(_cloudSyncDiretory, PathHelper.SyncDataFile);
     }
 
     private async Task InitializeStatusLogJsonFile(string hashId, int version)
