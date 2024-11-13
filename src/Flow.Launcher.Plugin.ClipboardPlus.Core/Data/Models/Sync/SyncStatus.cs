@@ -135,8 +135,63 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
         _cloudDataPath = Path.Combine(_cloudSyncDiretory, PathHelper.SyncDataFile);
     }
 
+    public async Task InitializeSyncData(string encryptKeyMd5, string folderPath)
+    {
+        // read sync data file
+        var dataFile = Path.Combine(folderPath, PathHelper.SyncDataFile);
+        var results = await DatabaseHelper.ImportDatabase(dataFile);
+        if (results == null)
+        {
+            return;
+        }
+
+        var hashId = results.Value.Item1;
+        var version = results.Value.Item2;
+        var data = results.Value.Item3;
+
+        // if not found encrypt key md5 in sync status
+        var index = _jsonData.FindIndex(x => x.EncryptKeyMd5 == encryptKeyMd5);
+        if (index == -1)
+        {
+            // import database
+            var records = data.Select(item => ClipboardData.FromJsonClipboardData(item, true));
+            await ClipboardPlus.Database.AddRecordsAsync(records, true, false);
+
+            // write sync status file
+            _jsonData.Add(new SyncStatusItem()
+            {
+                HashId = hashId,
+                EncryptKeyMd5 = encryptKeyMd5,
+                JsonFileVersion = version
+            });
+            await WriteAsync();
+        }
+
+        // read sync log file
+        var logFile = Path.Combine(folderPath, PathHelper.SyncLogFile);
+        var syncLog = new SyncLog(logFile);
+        if (!await syncLog.ReadFileAsync())
+        {
+            return;
+        }
+
+        // update database
+        var curVersion = index == -1 ? version : _jsonData[index].JsonFileVersion;
+        var logDatas = syncLog.GetUpdateLogDatas(curVersion);
+        // TODO
+        /*var records = logDatas.Select(item => ClipboardData.FromJsonClipboardData(item, true));
+        await ClipboardPlus.Database.AddRecordsAsync(records, true, false);
+        // update sync status file
+        if (index != -1)
+        {
+            _jsonData[index].JsonFileVersion = logVersion;
+            await WriteAsync();
+        }*/
+    }
+
     public async void SyncWatcher_OnSyncDataChanged(object? _, SyncDataEventArgs e)
     {
+        // read sync data file & sync log file
         var dataFile = Path.Combine(e.FolderPath, PathHelper.SyncDataFile);
         var results = await DatabaseHelper.ImportDatabase(dataFile);
         if (results == null)
@@ -154,6 +209,8 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
         var hashId = results.Value.Item1;
         var version = results.Value.Item2;
         var data = results.Value.Item3;
+
+        // handle event type
         switch (e.EventType)
         {
             case SyncEventType.Add:
@@ -164,8 +221,9 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 break;
         }
         
-        // TODO:
-        ClipboardPlus.Context?.API.LogInfo("SyncStatus", $"Sync data changed: {hashId} - {version} - {e.EventType} - {e.EncryptKeyMd5} - {e.FolderPath}");
+        // TODO: Remove test codes
+        using var writer = new StreamWriter("D:\\log.txt", true);
+        writer.WriteLine($"{DateTime.Now}: {e.EventType} Md5: {e.EncryptKeyMd5} Hash: {hashId} Ver: {version}");
     }
 
     private async Task InitializeStatusLogJsonFile(string hashId, int version)

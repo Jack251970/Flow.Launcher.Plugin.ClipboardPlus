@@ -363,7 +363,7 @@ public class SqliteDatabase : IDisposable
         });
     }
 
-    public async Task AddRecordsAsync(IEnumerable<ClipboardData> datas, bool needEncryptData)
+    public async Task AddRecordsAsync(IEnumerable<ClipboardData> datas, bool needEncryptData, bool updateSync = true)
     {
         if (!datas.Any())
         {
@@ -388,7 +388,10 @@ public class SqliteDatabase : IDisposable
             }
 
             // update sync status
-            await UpdateSyncStatusAsync(EventType.Add, datas);
+            if (updateSync)
+            {
+                await UpdateSyncStatusAsync(EventType.Add, datas);
+            }
         });
     }
 

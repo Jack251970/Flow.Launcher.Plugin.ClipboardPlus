@@ -47,6 +47,24 @@ public class SyncLog : JsonStorage<List<SyncLogItem>>
     {
         await WriteAsync(cloudFilePath);
     }
+
+    public List<SyncLogItem> GetUpdateLogDatas(int curVersion)
+    {
+        var latestVersion = GetLatestVersion();
+        if (latestVersion < curVersion)
+        {
+            return new();
+        }
+
+        var startIndex = _jsonData.FindIndex(x => x.JsonFileVersion == curVersion);
+        var endIndex = _jsonData.Capacity - 1;
+        return _jsonData.GetRange(startIndex + 1, endIndex - startIndex);
+    }
+
+    private int GetLatestVersion()
+    {
+        return _jsonData.Last().JsonFileVersion;
+    }
 }
 
 public class SyncLogItem
