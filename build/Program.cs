@@ -15,7 +15,6 @@ using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 using Newtonsoft.Json;
-using static NuGet.Packaging.PackagingConstants;
 
 namespace Build;
 

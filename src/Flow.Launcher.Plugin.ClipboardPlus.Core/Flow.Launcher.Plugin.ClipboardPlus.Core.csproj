@@ -21,7 +21,7 @@
     <ItemGroup>
       <PackageReference Include="Dapper" Version="2.1.35" />
       <PackageReference Include="Flow.Launcher.Plugin" Version="4.4.0" />
-      <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.8" />
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0" />
     </ItemGroup>
 
     <ItemGroup>
