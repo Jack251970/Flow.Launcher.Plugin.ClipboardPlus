@@ -4,7 +4,7 @@ public class SyncWatcher : IDisposable
 {
     public EventHandler<SyncDataEventArgs>? SyncDataChanged;
 
-    private bool _enabled = true;
+    private bool _enabled = false;
     public bool Enabled
     {
         get => _enabled;
@@ -46,12 +46,34 @@ public class SyncWatcher : IDisposable
         {
             var folderName = Path.GetFileName(folder);
             AddFileWatcher(folderName, folder);
+
+            // TODO: Change to async
+            if (folderName != StringUtils.EncryptKeyMd5)
+            {
+                SyncDataChanged?.Invoke(this, new SyncDataEventArgs
+                {
+                    EventType = SyncEventType.Add,
+                    EncryptKeyMd5 = folderName,
+                    FolderPath = folder
+                });
+            }
         }
 
         if (_enabled)
         {
             StartWatchers();
         }
+    }
+
+    public void ChangeSyncDatabasePath(string path)
+    {
+        if (path == _directoryWatcher.Path)
+        {
+            return;
+        }
+
+        RemoveWatchers();
+        InitializeWatchers(path);
     }
 
     private void StartWatchers()
@@ -87,7 +109,7 @@ public class SyncWatcher : IDisposable
         var fileWatcher = new FileSystemWatcher
         {
             Path = path,
-            Filter = "SyncLog.json",
+            Filter = PathHelper.SyncLogFile,
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName
         };
         fileWatcher.Changed += FileWatcher_OnChanged;
@@ -98,26 +120,50 @@ public class SyncWatcher : IDisposable
 
     private void DirectoryWatcher_OnCreated(object sender, FileSystemEventArgs e)
     {
-        var fileName = e.Name;
-        var filePath = e.FullPath;
-        if (!string.IsNullOrEmpty(fileName))
+        var folderName = e.Name;
+        var folder = e.FullPath;
+        if (!string.IsNullOrEmpty(folderName))
         {
-            AddFileWatcher(fileName, filePath);
+            AddFileWatcher(folderName, folder);
+            SyncDataChanged?.Invoke(this, new SyncDataEventArgs
+            {
+                EventType = SyncEventType.Add,
+                EncryptKeyMd5 = folderName,
+                FolderPath = folder
+            });
         }
     }
 
     private void DirectoryWatcher_OnDeleted(object sender, FileSystemEventArgs e)
     {
-        var fileName = e.Name;
-        if (!string.IsNullOrEmpty(fileName))
+        var folderName = e.Name;
+        var folder = e.FullPath;
+        if (!string.IsNullOrEmpty(folderName))
         {
-            _filesWatchers.Remove(fileName);
+            _filesWatchers.Remove(folderName);
+            SyncDataChanged?.Invoke(this, new SyncDataEventArgs
+            {
+                EventType = SyncEventType.Delete,
+                EncryptKeyMd5 = folderName,
+                FolderPath = folder
+            });
         }
     }
 
     private void FileWatcher_OnChanged(object sender, FileSystemEventArgs e)
     {
-        
+        var file = e.FullPath;
+        var folder = Path.GetDirectoryName(file);
+        var folderName = Path.GetFileName(folder);
+        if ((!string.IsNullOrEmpty(folder)) && (!string.IsNullOrEmpty(folderName)))
+        {
+            SyncDataChanged?.Invoke(this, new SyncDataEventArgs
+            {
+                EventType = SyncEventType.Change,
+                EncryptKeyMd5 = folderName,
+                FolderPath = folder
+            });
+        }
     }
 
     #region IDisposable Interface
@@ -138,17 +184,23 @@ public class SyncWatcher : IDisposable
     {
         if (disposing)
         {
-            _directoryWatcher.Changed -= DirectoryWatcher_OnCreated;
-            _directoryWatcher.Deleted -= DirectoryWatcher_OnDeleted;
-            _directoryWatcher.Dispose();
-            foreach (var watcher in _filesWatchers)
-            {
-                watcher.Value.Changed -= FileWatcher_OnChanged;
-                watcher.Value.Dispose();
-            }
-            _filesWatchers.Clear();
+            RemoveWatchers();
             _disposed = true;
         }
+    }
+
+    private void RemoveWatchers()
+    {
+        _directoryWatcher.Changed -= DirectoryWatcher_OnCreated;
+        _directoryWatcher.Deleted -= DirectoryWatcher_OnDeleted;
+        _directoryWatcher.Dispose();
+        _directoryWatcher = null!;
+        foreach (var watcher in _filesWatchers)
+        {
+            watcher.Value.Changed -= FileWatcher_OnChanged;
+            watcher.Value.Dispose();
+        }
+        _filesWatchers.Clear();
     }
 
     #endregion
@@ -156,5 +208,14 @@ public class SyncWatcher : IDisposable
 
 public class SyncDataEventArgs
 {
+    public required SyncEventType EventType { get; set; }
+    public required string EncryptKeyMd5 { get; set; }
+    public required string FolderPath { get; set; }
+}
 
+public enum SyncEventType
+{
+    Add,
+    Delete,
+    Change
 }

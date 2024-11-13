@@ -22,6 +22,10 @@ public static class DatabaseHelper
 
     public static async Task ImportDatabase(IClipboardPlus clipboardPlus, string jsonPath)
     {
+        if (!File.Exists(jsonPath))
+        {
+            return;
+        }
         await using FileStream openStream = File.OpenRead(jsonPath);
         List<JsonClipboardData>? jsonRecords = null;
         try
@@ -101,8 +105,12 @@ public static class DatabaseHelper
         var context = clipboardPlus.Context;
     }
 
-    public static async Task<(string, int, IEnumerable<JsonClipboardData>)?> ImportLocalDatabase(string jsonPath)
+    public static async Task<(string, int, IEnumerable<JsonClipboardData>)?> ImportDatabase(string jsonPath)
     {
+        if (!File.Exists(jsonPath))
+        {
+            return null;
+        }
         await using FileStream openStream = File.OpenRead(jsonPath);
         List<JsonClipboardData>? jsonRecords = null;
         try

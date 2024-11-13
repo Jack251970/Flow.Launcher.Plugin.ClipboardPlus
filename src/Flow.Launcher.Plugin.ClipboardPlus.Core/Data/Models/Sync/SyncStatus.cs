@@ -135,6 +135,39 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
         _cloudDataPath = Path.Combine(_cloudSyncDiretory, PathHelper.SyncDataFile);
     }
 
+    public async void SyncWatcher_OnSyncDataChanged(object? _, SyncDataEventArgs e)
+    {
+        var dataFile = Path.Combine(e.FolderPath, PathHelper.SyncDataFile);
+        var results = await DatabaseHelper.ImportDatabase(dataFile);
+        if (results == null)
+        {
+            return;
+        }
+
+        var logFile = Path.Combine(e.FolderPath, PathHelper.SyncLogFile);
+        var syncLog = new SyncLog(logFile);
+        if (!await syncLog.ReadFileAsync())
+        {
+            return;
+        }
+
+        var hashId = results.Value.Item1;
+        var version = results.Value.Item2;
+        var data = results.Value.Item3;
+        switch (e.EventType)
+        {
+            case SyncEventType.Add:
+                break;
+            case SyncEventType.Delete:
+                break;
+            case SyncEventType.Change:
+                break;
+        }
+        
+        // TODO:
+        ClipboardPlus.Context?.API.LogInfo("SyncStatus", $"Sync data changed: {hashId} - {version} - {e.EventType} - {e.EncryptKeyMd5} - {e.FolderPath}");
+    }
+
     private async Task InitializeStatusLogJsonFile(string hashId, int version)
     {
         // write sync status file

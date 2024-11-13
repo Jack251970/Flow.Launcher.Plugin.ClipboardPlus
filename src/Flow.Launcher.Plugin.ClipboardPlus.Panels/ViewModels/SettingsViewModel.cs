@@ -102,7 +102,7 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
-    #region Oepn Sync Database Folder
+    #region Open Sync Database Folder
 
     public ICommand OpenSyncDatabaseFolderCommand => new RelayCommand(OpenSyncDatabaseFolder);
 
@@ -643,37 +643,55 @@ public class SettingsViewModel : BaseModel
         ClipboardPlus.SaveSettingJsonStorage();
     }
 
-    private async void SyncDatabaseChanged(bool newValue)
+    private async void SyncDatabaseChanged(bool value)
     {
-        if (newValue)
+        // if enable sync database, need to initialize sync helper
+        if (value)
         {
             await SyncHelper.InitializeAsync(ClipboardPlus);
         }
-        SyncHelper.ChangeSyncEnabled(Settings.SyncEnabled);
+
+        // invoke sync enabled changed event
+        SyncHelper.ChangeSyncEnabled(ClipboardPlus);
     }
 
     private async void SyncDatabasePathChanged(string oldValue, string newValue)
     {
-        if (SyncDatabase)
+        // if sync database is disabled, return
+        if (!SyncDatabase)
         {
-            if (string.IsNullOrEmpty(oldValue))
+            return;
+        }
+
+        // if old value is empty, need to initialize sync helper
+        if (string.IsNullOrEmpty(oldValue))
+        {
+            if (!string.IsNullOrEmpty(newValue))  // empty to non-empty
             {
-                if (!string.IsNullOrEmpty(newValue))  // empty to non-empty
-                {
-                    await SyncHelper.InitializeAsync(ClipboardPlus);
-                }
+                await SyncHelper.InitializeAsync(ClipboardPlus);
             }
-            else
+            else  // empty to empty
             {
-                if (!string.IsNullOrEmpty(newValue))  // non-empty to non-empty
-                {
-                    await SyncHelper.InitializeAsync(ClipboardPlus);
-                    FileUtils.CopyFilesFromOneFolderToAnother(oldValue, newValue);
-                    SyncHelper.ChangeSyncDatabasePath(newValue);
-                }
+                // ignore
             }
         }
-        SyncHelper.ChangeSyncEnabled(Settings.SyncEnabled);
+        // if old value is non-empty, need to change sync database path or disable sync helper
+        else
+        {
+            if (!string.IsNullOrEmpty(newValue))  // non-empty to non-empty
+            {
+                await SyncHelper.InitializeAsync(ClipboardPlus);
+                FileUtils.CopyFilesFromOneFolderToAnother(oldValue, newValue);
+                SyncHelper.ChangeSyncDatabasePath(ClipboardPlus);
+            }
+            else  // non-empty to empty
+            {
+                SyncHelper.Disable();
+            }
+        }
+
+        // invoke sync enabled changed event
+        SyncHelper.ChangeSyncEnabled(ClipboardPlus);
     }
 
     #endregion
