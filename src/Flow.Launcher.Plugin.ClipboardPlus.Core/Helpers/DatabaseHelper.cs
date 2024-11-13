@@ -1,4 +1,4 @@
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 
@@ -12,9 +12,9 @@ public static class DatabaseHelper
         var records = await database.GetAllRecordsAsync(false);
         var jsonRecords = records.Select(JsonClipboardData.FromClipboardData);
         var addedCount = jsonRecords.Count();
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        await using FileStream createStream = File.Create(jsonPath);
-        await JsonSerializer.SerializeAsync(createStream, jsonRecords, options);
+        var formatting = Formatting.Indented;
+        string json = JsonConvert.SerializeObject(jsonRecords, formatting);
+        await File.WriteAllTextAsync(jsonPath, json);
         var context = clipboardPlus.Context;
         context?.API.ShowMsg(context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
             string.Format(context.GetTranslation("flowlauncher_plugin_clipboardplus_export_succeeded"), addedCount));
@@ -26,11 +26,11 @@ public static class DatabaseHelper
         {
             return;
         }
-        await using FileStream openStream = File.OpenRead(jsonPath);
         List<JsonClipboardData>? jsonRecords = null;
         try
         {
-            jsonRecords = await JsonSerializer.DeserializeAsync<List<JsonClipboardData>>(openStream);
+            string json = await File.ReadAllTextAsync(jsonPath);
+            jsonRecords = JsonConvert.DeserializeObject<List<JsonClipboardData>>(json);
         }
         catch (Exception)
         {
@@ -99,9 +99,9 @@ public static class DatabaseHelper
         };
         records.Insert(0, infoData);
         var jsonRecords = records.Select(JsonClipboardData.FromClipboardData);
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        await using FileStream createStream = File.Create(jsonPath);
-        await JsonSerializer.SerializeAsync(createStream, jsonRecords, options);
+        var formatting = Formatting.Indented;
+        string json = JsonConvert.SerializeObject(jsonRecords, formatting);
+        await File.WriteAllTextAsync(jsonPath, json);
         var context = clipboardPlus.Context;
     }
 
@@ -111,26 +111,25 @@ public static class DatabaseHelper
         {
             return null;
         }
-        await using FileStream openStream = File.OpenRead(jsonPath);
         List<JsonClipboardData>? jsonRecords = null;
         try
         {
-            jsonRecords = await JsonSerializer.DeserializeAsync<List<JsonClipboardData>>(openStream);
-            if (jsonRecords != null)
-            {
-                var infoData = jsonRecords.FirstOrDefault();
-                if (infoData != null && infoData.CreateTime == Record.BaseDateTime && infoData.DataType == DataType.Other)
-                {
-                    var hashId = infoData.HashId;
-                    var databaseVersion = int.Parse(infoData.SenderApp);
-                    var data = jsonRecords.Skip(1);
-                    return (infoData.HashId, databaseVersion, data);
-                }
-            }
+            string json = await File.ReadAllTextAsync(jsonPath);
+            jsonRecords = JsonConvert.DeserializeObject<List<JsonClipboardData>>(json);
         }
         catch (Exception)
         {
             // ignored
+        }
+        if (jsonRecords != null)
+        {
+            var infoData = jsonRecords.FirstOrDefault();
+            if (infoData != null && infoData.CreateTime == Record.BaseDateTime && infoData.DataType == DataType.Other)
+            {
+                var databaseVersion = int.Parse(infoData.SenderApp);
+                var data = jsonRecords.Skip(1);
+                return (infoData.HashId, databaseVersion, data);
+            }
         }
         return null;
     }

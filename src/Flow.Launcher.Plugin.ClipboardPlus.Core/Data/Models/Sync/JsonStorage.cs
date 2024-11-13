@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+﻿using Newtonsoft.Json;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
@@ -19,10 +19,10 @@ public class JsonStorage<T> where T : new()
         {
             return false;
         }
-        await using FileStream openStream = File.OpenRead(_path);
         try
         {
-            var items = await JsonSerializer.DeserializeAsync<T>(openStream);
+            string json = await File.ReadAllTextAsync(_path);
+            var items = JsonConvert.DeserializeObject<T>(json);
             if (items != null)
             {
                 _jsonData = items;
@@ -43,8 +43,8 @@ public class JsonStorage<T> where T : new()
 
     protected async Task WriteAsync(string path)
     {
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        await using FileStream openStream = File.Create(path);
-        await JsonSerializer.SerializeAsync(openStream, _jsonData, options);
+        var formatting = Formatting.Indented;
+        string json = JsonConvert.SerializeObject(_jsonData, formatting);
+        await File.WriteAllTextAsync(path, json);
     }
 }
