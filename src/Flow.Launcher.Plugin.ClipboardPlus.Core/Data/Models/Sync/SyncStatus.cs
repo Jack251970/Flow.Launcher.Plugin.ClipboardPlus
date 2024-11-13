@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Security.Policy;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
@@ -135,8 +137,27 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
         _cloudDataPath = Path.Combine(_cloudSyncDiretory, PathHelper.SyncDataFile);
     }
 
-    public async Task InitializeSyncData(string encryptKeyMd5, string folderPath)
+    public async Task InitializeSyncData(List<SyncDataEventArgs> args)
     {
+        // TODO: Handle Delete & InitializeSyncData
+        // TODO: Remove test codes
+        using var writer = new StreamWriter("D:\\log.txt", true);
+        foreach (var e in args)
+        {
+            writer.WriteLine($"{DateTime.Now}: {e.EventType} Md5: {e.EncryptKeyMd5}");
+        }
+    }
+
+    private async Task InitializeSyncData(SyncDataEventArgs e)
+    {
+        // handle event args
+        if (e.EventType != SyncEventType.Init)
+        {
+            return;
+        }
+        var encryptKeyMd5 = e.EncryptKeyMd5;
+        var folderPath = e.FolderPath;
+
         // read sync data file
         var dataFile = Path.Combine(folderPath, PathHelper.SyncDataFile);
         var results = await DatabaseHelper.ImportDatabase(dataFile);

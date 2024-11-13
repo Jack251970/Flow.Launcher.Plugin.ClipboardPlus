@@ -43,7 +43,7 @@ public static class SyncHelper
                 }
 
                 // initialize sync watcher
-                InitializeSyncWatcher(clipboardPlus);
+                await InitializeSyncWatcher(clipboardPlus);
             }
 
             // set sync initialized
@@ -69,7 +69,7 @@ public static class SyncHelper
                 await syncStatus!.InitializeAsync();
 
                 // initialize sync watcher
-                InitializeSyncWatcher(clipboardPlus);
+                await InitializeSyncWatcher(clipboardPlus);
 
                 // set sync initialized
                 syncStatusInitialized = true;
@@ -82,17 +82,19 @@ public static class SyncHelper
     {
         if (syncStatusInitialized)
         {
-            // disable sync status
-            syncStatus = null;
-            syncStatusInitialized = false;
-
             // disable sync watcher
             if (syncWatcherInitialized)
             {
-                syncWatcher!.Dispose();
+                syncWatcher!.SyncDataInitialized -= syncStatus!.InitializeSyncData;
+                syncWatcher!.SyncDataChanged -= syncStatus!.SyncWatcher_OnSyncDataChanged;
+                syncWatcher.Dispose();
                 syncWatcher = null;
                 syncWatcherInitialized = false;
             }
+
+            // disable sync status
+            syncStatus = null;
+            syncStatusInitialized = false;
         }
     }
 
@@ -112,7 +114,7 @@ public static class SyncHelper
         }
     }
 
-    public static void ChangeSyncDatabasePath(IClipboardPlus clipboardPlus)
+    public static async void ChangeSyncDatabasePath(IClipboardPlus clipboardPlus)
     {
         if (syncStatusInitialized)
         {
@@ -123,12 +125,12 @@ public static class SyncHelper
             // change sync watcher database path
             if (syncWatcherInitialized)
             {
-                syncWatcher!.ChangeSyncDatabasePath(syncDatabasePath);
+                await syncWatcher!.ChangeSyncDatabasePath(syncDatabasePath);
             }
         }
     }
 
-    public static void ChangeSyncEnabled(IClipboardPlus clipboardPlus)
+    public static async void ChangeSyncEnabled(IClipboardPlus clipboardPlus)
     {
         if (syncStatusInitialized)
         {
@@ -136,7 +138,7 @@ public static class SyncHelper
             var syncEnabled = clipboardPlus.Settings.SyncEnabled;
             if (syncEnabled)
             {
-                InitializeSyncWatcher(clipboardPlus);
+                await InitializeSyncWatcher(clipboardPlus);
             }
 
             // change sync enabled
@@ -147,19 +149,18 @@ public static class SyncHelper
         }
     }
 
-    private static void InitializeSyncWatcher(IClipboardPlus clipboardPlus)
+    private static async Task InitializeSyncWatcher(IClipboardPlus clipboardPlus)
     {
-        if (syncWatcherInitialized)
+        if (!syncWatcherInitialized)
         {
-            return;
+            syncWatcher = new SyncWatcher();
+            syncWatcher.SyncDataInitialized += syncStatus!.InitializeSyncData;
+            syncWatcher.SyncDataChanged += syncStatus!.SyncWatcher_OnSyncDataChanged;
+            await syncWatcher.InitializeWatchers(clipboardPlus.Settings.SyncDatabasePath);
+            syncWatcher.Enabled = true;
+            syncWatcherInitialized = true;
+            clipboardPlus.Context?.API.LogInfo(ClassName, "Start sync watcher");
         }
-
-        syncWatcher = new SyncWatcher();
-        syncWatcher.SyncDataChanged += syncStatus!.SyncWatcher_OnSyncDataChanged;
-        syncWatcher.InitializeWatchers(clipboardPlus.Settings.SyncDatabasePath);
-        syncWatcher.Enabled = true;
-        syncWatcherInitialized = true;
-        clipboardPlus.Context?.API.LogInfo(ClassName, "Start sync watcher");
     }
 
     public static void Dispose()

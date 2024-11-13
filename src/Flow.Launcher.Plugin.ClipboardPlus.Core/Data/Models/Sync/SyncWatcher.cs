@@ -2,6 +2,8 @@
 
 public class SyncWatcher : IDisposable
 {
+    public Func<List<SyncDataEventArgs>, Task>? SyncDataInitialized;
+
     public EventHandler<SyncDataEventArgs>? SyncDataChanged;
 
     private bool _enabled = false;
@@ -29,7 +31,7 @@ public class SyncWatcher : IDisposable
 
     private readonly Dictionary<string, FileSystemWatcher> _filesWatchers = new();
 
-    public void InitializeWatchers(string path)
+    public async Task InitializeWatchers(string path)
     {
         _directoryWatcher = new FileSystemWatcher
         {
@@ -42,21 +44,26 @@ public class SyncWatcher : IDisposable
         _directoryWatcher.EnableRaisingEvents = false;
 
         var folders = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
+        var args = new List<SyncDataEventArgs>();
         foreach (var folder in folders)
         {
             var folderName = Path.GetFileName(folder);
-            AddFileWatcher(folderName, folder);
-
-            // TODO: Change to async
             if (folderName != StringUtils.EncryptKeyMd5)
             {
-                SyncDataChanged?.Invoke(this, new SyncDataEventArgs
+                AddFileWatcher(folderName, folder, false);
+
+                args.Add(new SyncDataEventArgs
                 {
-                    EventType = SyncEventType.Add,
+                    EventType = SyncEventType.Init,
                     EncryptKeyMd5 = folderName,
                     FolderPath = folder
                 });
             }
+        }
+
+        if (SyncDataInitialized != null)
+        {
+            await SyncDataInitialized.Invoke(args);
         }
 
         if (_enabled)
@@ -65,7 +72,7 @@ public class SyncWatcher : IDisposable
         }
     }
 
-    public void ChangeSyncDatabasePath(string path)
+    public async Task ChangeSyncDatabasePath(string path)
     {
         if (path == _directoryWatcher.Path)
         {
@@ -73,7 +80,7 @@ public class SyncWatcher : IDisposable
         }
 
         RemoveWatchers();
-        InitializeWatchers(path);
+        await InitializeWatchers(path);
     }
 
     private void StartWatchers()
@@ -94,28 +101,38 @@ public class SyncWatcher : IDisposable
         }
     }
 
-    private void AddFileWatcher(string folder, string path)
+    private void AddFileWatcher(string folderName, string folder, bool invoke)
     {
-        if (!StringUtils.IsMd5(folder))
+        if (!StringUtils.IsMd5(folderName))
         {
             return;
         }
 
-        if (folder == StringUtils.EncryptKeyMd5)
+        if (folderName == StringUtils.EncryptKeyMd5)
         {
             return;
         }
 
         var fileWatcher = new FileSystemWatcher
         {
-            Path = path,
+            Path = folder,
             Filter = PathHelper.SyncLogFile,
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName
         };
         fileWatcher.Changed += FileWatcher_OnChanged;
         fileWatcher.EnableRaisingEvents = false;
 
-        _filesWatchers.Add(folder, fileWatcher);
+        _filesWatchers.Add(folderName, fileWatcher);
+
+        if (invoke)
+        {
+            SyncDataChanged?.Invoke(this, new SyncDataEventArgs
+            {
+                EventType = SyncEventType.Add,
+                EncryptKeyMd5 = folderName,
+                FolderPath = folder
+            });
+        }
     }
 
     private void DirectoryWatcher_OnCreated(object sender, FileSystemEventArgs e)
@@ -124,13 +141,7 @@ public class SyncWatcher : IDisposable
         var folder = e.FullPath;
         if (!string.IsNullOrEmpty(folderName))
         {
-            AddFileWatcher(folderName, folder);
-            SyncDataChanged?.Invoke(this, new SyncDataEventArgs
-            {
-                EventType = SyncEventType.Add,
-                EncryptKeyMd5 = folderName,
-                FolderPath = folder
-            });
+            AddFileWatcher(folderName, folder, true);
         }
     }
 
@@ -215,6 +226,7 @@ public class SyncDataEventArgs
 
 public enum SyncEventType
 {
+    Init,
     Add,
     Delete,
     Change
