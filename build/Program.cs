@@ -114,12 +114,12 @@ public class PublishTask : FrostingTask<BuildContext>
         // context.CopyDirectory(srcDir, midDir);
 
         var ptn =
-            // Core
+            // Plugin
             @"Flow.Launcher.Plugin.ClipboardPlus\.dll|Flow.Launcher.Plugin.ClipboardPlus.+\.dll|"
-            // Nuget
-            + @"Dapper\.dll|"
-            + @"H\.InputSimulator\.dll|"
-            + @"FluentIcons\.Common\.dll|FluentIcons\.WPF\.dll|"
+            // Nuget Packages
+            + @"Dapper.dll|"
+            + @"H.InputSimulator.dll|"
+            //+ @"Newtonsoft.Json.dll|"  // No need to add it because it's already in Flow.Launcher
             + @"SQLitePCLRaw.+\.dll|Microsoft.+(S|s)qlite\.dll";
         var files = context.GetFiles($"{srcDir}/**/*");
         FilePath? versionFile = null;
