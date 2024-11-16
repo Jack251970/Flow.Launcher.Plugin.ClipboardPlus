@@ -586,7 +586,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         };
     }
 
-    public readonly ClipboardData TogglePinnedClone()
+    public readonly ClipboardData Clone(bool pinned)
     {
         return new ClipboardData(Data, DataType, EncryptData)
         {
@@ -595,7 +595,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             InitScore = InitScore,
             CreateTime = CreateTime,
             CachedImagePath = CachedImagePath,
-            Pinned = !Pinned,
+            Pinned = pinned,
             Saved = Saved,
             UnicodeText = UnicodeText,
             EncryptKeyMd5 = EncryptKeyMd5

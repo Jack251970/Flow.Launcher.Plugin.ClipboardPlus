@@ -10,8 +10,9 @@ public class ClipboardDataPair : IDisposable
 
     public void TogglePinned()
     {
-        var originalData = ClipboardData;
-        ClipboardData = originalData.TogglePinnedClone();
+        var originalPinned = ClipboardData.Pinned;
+        var newClipboardData = ClipboardData.Clone(!originalPinned);
+        ClipboardData = newClipboardData;
     }
 
     private bool _disposed;
