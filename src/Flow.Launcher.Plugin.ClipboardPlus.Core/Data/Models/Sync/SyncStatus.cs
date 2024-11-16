@@ -4,6 +4,8 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
 public class SyncStatus : JsonStorage<List<SyncStatusItem>>
 {
+    private const int SyncLogExportDelay = 300;
+
     private readonly IClipboardPlus ClipboardPlus;
 
     private readonly SyncLog LocalSyncLog;
@@ -72,13 +74,17 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 // check if cloud files are exist
                 if (!File.Exists(_cloudSyncLogPath))
                 {
-                    // write sync log
-                    await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
+                    await Task.Run(async () =>
+                    {
+                        // write sync log
+                        await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
+                        await Task.Delay(SyncLogExportDelay);  // wait for cloud drive to sync
 
-                    // export database
-                    var hashId = _jsonData[index].HashId;
-                    var version = _jsonData[index].JsonFileVersion;
-                    await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
+                        // export database
+                        var hashId = _jsonData[index].HashId;
+                        var version = _jsonData[index].JsonFileVersion;
+                        await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
+                    });
                 }
             }
 
@@ -262,12 +268,16 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 Directory.CreateDirectory(_cloudSyncDiretory);
             }
 
-            // write sync log
-            await LocalSyncLog.InitializeAsync();
-            await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
+            await Task.Run(async () =>
+            {
+                // write sync log
+                await LocalSyncLog.InitializeAsync();
+                await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
+                await Task.Delay(SyncLogExportDelay);
 
-            // export database
-            await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
+                // export database
+                await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
+            });
         }
         else
         {
@@ -289,12 +299,16 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 Directory.CreateDirectory(_cloudSyncDiretory);
             }
 
-            // write sync log
-            await LocalSyncLog.UpdateFileAsync(version, eventType, datas);
-            await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
+            await Task.Run(async () =>
+            {
+                // write sync log
+                await LocalSyncLog.UpdateFileAsync(version, eventType, datas);
+                await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
+                await Task.Delay(SyncLogExportDelay);
 
-            // export database
-            await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
+                // export database
+                await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
+            });
         }
         else
         {

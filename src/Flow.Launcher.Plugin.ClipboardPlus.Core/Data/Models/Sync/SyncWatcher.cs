@@ -116,7 +116,7 @@ public class SyncWatcher : IDisposable
         var fileWatcher = new FileSystemWatcher
         {
             Path = folder,
-            Filter = PathHelper.SyncLogFile,
+            Filter = PathHelper.SyncDataFile,
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName
         };
         fileWatcher.Changed += FileWatcher_OnChanged;
