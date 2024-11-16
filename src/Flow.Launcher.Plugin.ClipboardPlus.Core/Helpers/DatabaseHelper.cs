@@ -105,7 +105,7 @@ public static class DatabaseHelper
         var context = clipboardPlus.Context;
     }
 
-    public static async Task<(string, int, IEnumerable<JsonClipboardData>)?> ImportDatabase(string jsonPath)
+    public static async Task<(string HashId, int Version, IEnumerable<JsonClipboardData> Data)?> ImportDatabase(string jsonPath)
     {
         if (!File.Exists(jsonPath))
         {

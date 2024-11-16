@@ -449,6 +449,7 @@ public class SqliteDatabase : IDisposable
     {
         await HandleOpenCloseAsync(async () =>
         {
+            // update record pinned status
             var record = new { Pin = data.Pinned, data.HashId };
             await Connection.ExecuteAsync(SqlUpdateRecordPinned, record);
             await CloseIfNotKeepAsync();
@@ -457,6 +458,29 @@ public class SqliteDatabase : IDisposable
             if (updateSync)
             {
                 await UpdateSyncStatusAsync(EventType.Change, data);
+            }
+        });
+    }
+
+    public async Task PinRecordsAsync(IEnumerable<ClipboardData> datas, bool updateSync = true)
+    {
+        if (!datas.Any())
+        {
+            return;
+        }
+        await HandleOpenCloseAsync(async () =>
+        {
+            // update record pinned status
+            foreach (var data in datas)
+            {
+                var record = new { Pin = data.Pinned, data.HashId };
+                await Connection.ExecuteAsync(SqlUpdateRecordPinned, record);
+            }
+
+            // update sync status
+            if (updateSync)
+            {
+                await UpdateSyncStatusAsync(EventType.Change, datas);
             }
         });
     }
