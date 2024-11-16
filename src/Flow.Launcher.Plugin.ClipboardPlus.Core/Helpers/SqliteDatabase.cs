@@ -402,23 +402,23 @@ public class SqliteDatabase : IDisposable
         await HandleOpenCloseAsync(async () =>
         {
             // delete one record
-            await DeleteOneRecordByClipboardData(data);
+            await DeleteOneRecordByClipboardData(data.HashId);
 
             // update sync status
             await UpdateDeleteEventSyncStatusAsync(data);
         });
     }
 
-    public async Task DeleteRecordsAsync(IEnumerable<ClipboardData> datas, bool updateSync = true)
+    public async Task DeleteRecordsAsync(IEnumerable<string> hashIds, bool updateSync = true)
     {
-        if (!datas.Any())
+        if (!hashIds.Any())
         {
             return;
         }
 
         await HandleOpenCloseAsync(async () =>
         {
-            foreach (var data in datas)
+            foreach (var data in hashIds)
             {
                 // delete one record
                 await DeleteOneRecordByClipboardData(data);
@@ -427,7 +427,7 @@ public class SqliteDatabase : IDisposable
             // update sync status
             if (updateSync)
             {
-                await UpdateDeleteEventSyncStatusAsync(datas);
+                await UpdateDeleteEventSyncStatusAsync(hashIds);
             }
         });
     }
@@ -540,7 +540,7 @@ public class SqliteDatabase : IDisposable
             var invalidRecords = allRecords.Where(x => !x.IsValid);
             foreach (var record in invalidRecords)
             {
-                await DeleteOneRecordByClipboardData(record);
+                await DeleteOneRecordByClipboardData(record.HashId);
             }
 
             // update sync status
@@ -587,9 +587,8 @@ public class SqliteDatabase : IDisposable
         });
     }
 
-    private async Task DeleteOneRecordByClipboardData(ClipboardData data)
+    private async Task DeleteOneRecordByClipboardData(string hashId)
     {
-        var hashId = data.HashId;
         var count = await Connection.QueryFirstAsync<int>(
             SqlSelectRecordCountByMd5,
             new { HashId = hashId }
@@ -601,7 +600,7 @@ public class SqliteDatabase : IDisposable
         {
             await Connection.ExecuteAsync(
                 SqlDeleteRecordAsset1,
-                new { data.HashId }
+                new { HashId = hashId }
             );
         }
         // otherwise, no record depends on `asset`, directly delete records
@@ -678,6 +677,19 @@ public class SqliteDatabase : IDisposable
                     HashId = data.HashId
                 });
             }
+        }
+        await SyncHelper.UpdateSyncStatusAsync(EventType.Delete, jsonDatas);
+    }
+
+    private static async Task UpdateDeleteEventSyncStatusAsync(IEnumerable<string> hashIds)
+    {
+        var jsonDatas = new List<JsonClipboardData>();
+        foreach (var hashId in hashIds)
+        {
+            jsonDatas.Add(new JsonClipboardData()
+            {
+                HashId = hashId
+            });
         }
         await SyncHelper.UpdateSyncStatusAsync(EventType.Delete, jsonDatas);
     }
