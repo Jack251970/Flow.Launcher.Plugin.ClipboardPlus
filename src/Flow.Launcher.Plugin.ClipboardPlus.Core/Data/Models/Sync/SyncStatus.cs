@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Policy;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
@@ -58,7 +56,7 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
 
             // if no local sync log data, return
             var index = _jsonData.FindIndex(x => x.EncryptKeyMd5 == StringUtils.EncryptKeyMd5);
-            if (index != -1)
+            if (index == -1)
             {
                 return false;
             }
@@ -98,34 +96,36 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
         }
 
         var index = _jsonData.FindIndex(x => x.EncryptKeyMd5 == StringUtils.EncryptKeyMd5);
-        if (index != -1)
+        if (index == -1)
         {
-            switch (eventType)
-            {
-                case EventType.DeleteAll:
-                    // generate a new hash id
-                    var hashId = StringUtils.GetGuid();
-                    _jsonData[index].HashId = hashId;
-                    _jsonData[index].JsonFileVersion = 0;
+            return;
+        }
 
-                    // write into files
-                    await InitializeStatusLogJsonFile(hashId, 0);
-                    break;
-                default:
-                    // if no data, return
-                    if (datas.Count == 0)
-                    {
-                        return;
-                    }
+        switch (eventType)
+        {
+            case EventType.DeleteAll:
+                // generate a new hash id
+                var hashId = StringUtils.GetGuid();
+                _jsonData[index].HashId = hashId;
+                _jsonData[index].JsonFileVersion = 0;
 
-                    // generate next version
-                    var nextVersion = _jsonData[index].JsonFileVersion + 1;
-                    _jsonData[index].JsonFileVersion = nextVersion;
+                // write into files
+                await InitializeStatusLogJsonFile(hashId, 0);
+                break;
+            default:
+                // if no data, return
+                if (datas.Count == 0)
+                {
+                    return;
+                }
 
-                    // write sync log file
-                    await WriteStatusLogJsonFile(_jsonData[index].HashId, nextVersion, eventType, datas);
-                    break;
-            }
+                // generate next version
+                var nextVersion = _jsonData[index].JsonFileVersion + 1;
+                _jsonData[index].JsonFileVersion = nextVersion;
+
+                // write sync log file
+                await WriteStatusLogJsonFile(_jsonData[index].HashId, nextVersion, eventType, datas);
+                break;
         }
     }
 
@@ -174,19 +174,21 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
         var index = _jsonData.FindIndex(x => x.EncryptKeyMd5 == encryptKeyMd5);
         if (index == -1)
         {
-            // import database
-            var records = data.Select(item => ClipboardData.FromJsonClipboardData(item, true));
-            await ClipboardPlus.Database.AddRecordsAsync(records, true, false);
-
-            // write sync status file
-            _jsonData.Add(new SyncStatusItem()
-            {
-                HashId = hashId,
-                EncryptKeyMd5 = encryptKeyMd5,
-                JsonFileVersion = version
-            });
-            await WriteAsync();
+            return;
         }
+
+        // import database
+        var records = data.Select(item => ClipboardData.FromJsonClipboardData(item, true));
+        await ClipboardPlus.Database.AddRecordsAsync(records, true, false);
+
+        // write sync status file
+        _jsonData.Add(new SyncStatusItem()
+        {
+            HashId = hashId,
+            EncryptKeyMd5 = encryptKeyMd5,
+            JsonFileVersion = version
+        });
+        await WriteAsync();
 
         // read sync log file
         var logFile = Path.Combine(folderPath, PathHelper.SyncLogFile);

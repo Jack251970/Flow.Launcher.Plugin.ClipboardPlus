@@ -31,6 +31,7 @@ public static class SyncHelper
             {
                 // reinitialize files
                 await syncStatus!.InitializeAsync();
+                clipboardPlus.Context?.API.LogWarn(ClassName, "Sync status reinitialized");
             }
 
             // if sync database enabled and sync database path is valid
@@ -48,7 +49,7 @@ public static class SyncHelper
 
             // set sync initialized
             syncStatusInitialized = true;
-            clipboardPlus.Context?.API.LogInfo(ClassName, "Sync status initialized");
+            clipboardPlus.Context?.API.LogInfo(ClassName, "Sync helper initialized");
             return;
         }
 
@@ -73,7 +74,7 @@ public static class SyncHelper
 
                 // set sync initialized
                 syncStatusInitialized = true;
-                clipboardPlus.Context?.API.LogInfo(ClassName, "Sync status initialized");
+                clipboardPlus.Context?.API.LogInfo(ClassName, "Sync helper initialized");
             }
         }
     }
