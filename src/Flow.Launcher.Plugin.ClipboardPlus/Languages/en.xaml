@@ -110,7 +110,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_import_succeeded">Import {0} records succeeded!</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_import_failed">Import failed!</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_database">Sync database in multiple computers</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_enable_sync">Enable sync</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_disable_sync_temporarily">Disable sync temporarily</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_disable_sync_permanently">Disable sync permanently</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_database_path" xml:space="preserve">Public sync path: </system:String>
 
     <!--  Enum  -->

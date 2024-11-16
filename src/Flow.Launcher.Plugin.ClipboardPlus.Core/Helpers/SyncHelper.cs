@@ -79,7 +79,7 @@ public static class SyncHelper
         }
     }
 
-    public static void Disable()
+    public static void Disable(bool deleteLocalFiles = false)
     {
         if (syncStatusInitialized)
         {
@@ -94,6 +94,10 @@ public static class SyncHelper
             }
 
             // disable sync status
+            if (deleteLocalFiles)
+            {
+                syncStatus!.DeleteLocalFiles();
+            }
             syncStatus = null;
             syncStatusInitialized = false;
         }

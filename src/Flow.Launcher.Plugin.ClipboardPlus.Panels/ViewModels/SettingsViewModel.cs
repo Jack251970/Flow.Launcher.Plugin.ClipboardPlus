@@ -102,6 +102,33 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
+    #region Enable & Disable Sync Database
+
+    public ICommand EnableSyncDatabaseCommand => new RelayCommand(EnableSyncDatabase);
+
+    private void EnableSyncDatabase(object? parameter)
+    {
+        SyncDatabase = true;
+    }
+
+    public ICommand DisableSyncDatabaseTemporarilyCommand => new RelayCommand(DisableSyncDatabaseTemporarily);
+
+    private void DisableSyncDatabaseTemporarily(object? parameter)
+    {
+        SyncDatabase = false;
+    }
+
+    public ICommand DisableSyncDatabasePermanentlyCommand => new RelayCommand(DisableSyncDatabasePermanently);
+
+    private void DisableSyncDatabasePermanently(object? parameter)
+    {
+        SyncHelper.Disable(true);
+        FileUtils.DeleteAllUnderFolder(SyncDatabasePath);
+        SyncDatabase = false;
+    }
+
+    #endregion
+
     #region Open Sync Database Folder
 
     public ICommand OpenSyncDatabaseFolderCommand => new RelayCommand(OpenSyncDatabaseFolder);

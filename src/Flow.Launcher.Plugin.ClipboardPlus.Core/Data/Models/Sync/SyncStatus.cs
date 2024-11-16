@@ -94,6 +94,12 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
         return false;
     }
 
+    public void DeleteLocalFiles()
+    {
+        File.Delete(_localSyncLogPath);
+        File.Delete(_path);
+    }
+
     public async Task UpdateFileAsync(EventType eventType, List<JsonClipboardData> datas)
     {
         if (eventType == EventType.None)

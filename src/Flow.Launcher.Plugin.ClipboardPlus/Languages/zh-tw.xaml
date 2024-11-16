@@ -110,7 +110,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_import_succeeded">導入{0}條記録成功！</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_import_failed">導入失敗！</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_database">多臺電腦同步數據庫</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_enable_sync">啟用同步</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_disable_sync_temporarily">臨時禁用同步</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_disable_sync_permanently">永久禁用同步</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_database_path" xml:space="preserve">公共同步路徑：</system:String>
 
     <!--  Enum  -->
