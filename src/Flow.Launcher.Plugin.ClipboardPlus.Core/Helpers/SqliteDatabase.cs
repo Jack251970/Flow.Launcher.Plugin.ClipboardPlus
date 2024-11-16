@@ -157,21 +157,23 @@ public class SqliteDatabase : IDisposable
         WHERE r.encrypt_key_md5='{StringUtils.EncryptKeyMd5}';
         """;
 
-    private readonly string SqlSelectRecordByKeepTime =
-        "SELECT * FROM record WHERE strftime('%s', 'now') - strftime('%s', create_time) > @KeepTime*3600;";
+    private readonly string SqlSelectRecordByKeepTimeDataType =
+        "SELECT * FROM record WHERE strftime('%s', 'now') - strftime('%s', create_time) > @KeepTime*3600 AND data_type=@DataType;";
 
-    private readonly string SqlDeleteRecordByKeepTime =
-        """
-        DELETE FROM record
-        WHERE strftime('%s', 'now') - strftime('%s', create_time) > @KeepTime*3600
-        AND data_type=@DataType;
-        """;
+    private readonly string SqlDeleteRecordByKeepTimeDataType =
+        "DELETE FROM record WHERE strftime('%s', 'now') - strftime('%s', create_time) > @KeepTime*3600 AND data_type=@DataType;";
 
     private readonly string SqlSelectUnpinnedRecord =
         "SELECT * FROM record WHERE pinned=0;";
 
     private readonly string SqlDeleteUnpinnedRecords =
         "DELETE FROM record WHERE pinned=0;";
+
+    private readonly string SqlSelectRecordsByEncryptKeyMd5 =
+        "SELECT * FROM record WHERE encrypt_key_md5=@EncryptKeyMd5;";
+
+    private readonly string SqlDeleteRecordsByEncryptKeyMd5 =
+        "DELETE FROM record WHERE encrypt_key_md5=@EncryptKeyMd5;";
 
     #endregion
 
@@ -407,6 +409,29 @@ public class SqliteDatabase : IDisposable
         });
     }
 
+    public async Task DeleteRecordsAsync(IEnumerable<ClipboardData> datas, bool updateSync = true)
+    {
+        if (!datas.Any())
+        {
+            return;
+        }
+
+        await HandleOpenCloseAsync(async () =>
+        {
+            foreach (var data in datas)
+            {
+                // delete one record
+                await DeleteOneRecordByClipboardData(data);
+            }
+
+            // update sync status
+            if (updateSync)
+            {
+                await UpdateDeleteEventSyncStatusAsync(datas);
+            }
+        });
+    }
+
     public async Task DeleteAllRecordsAsync()
     {
         await HandleOpenCloseAsync(async () =>
@@ -420,7 +445,7 @@ public class SqliteDatabase : IDisposable
         });
     }
 
-    public async Task PinOneRecordAsync(ClipboardData data)
+    public async Task PinOneRecordAsync(ClipboardData data, bool updateSync = true)
     {
         await HandleOpenCloseAsync(async () =>
         {
@@ -429,7 +454,10 @@ public class SqliteDatabase : IDisposable
             await CloseIfNotKeepAsync();
 
             // update sync status
-            await UpdateSyncStatusAsync(EventType.Change, data);
+            if (updateSync)
+            {
+                await UpdateSyncStatusAsync(EventType.Change, data);
+            }
         });
     }
 
@@ -483,12 +511,15 @@ public class SqliteDatabase : IDisposable
     {
         await HandleOpenCloseAsync(async () =>
         {
-            // query all records
-            var results = await Connection.QueryAsync<Record>(SqlSelectRecordByKeepTime, new { KeepTime = keepTime });
+            // query all records by keep time and data type
+            var results = await Connection.QueryAsync<Record>(
+                SqlSelectRecordByKeepTimeDataType,
+                new { KeepTime = keepTime, DataType = dataType }
+            );
 
-            // delete records by keep time
+            // delete records by keep time and data type
             await Connection.ExecuteAsync(
-                SqlDeleteRecordByKeepTime,
+                SqlDeleteRecordByKeepTimeDataType,
                 new { KeepTime = keepTime, DataType = dataType }
             );
 
@@ -529,6 +560,30 @@ public class SqliteDatabase : IDisposable
 
             // update sync status
             await UpdateDeleteEventSyncStatusAsync(results);
+        });
+    }
+
+    public async Task DeleteRecordsByEncryptKeyMd5(string encryptKeyMd5, bool updateSync = true)
+    {
+        await HandleOpenCloseAsync(async () =>
+        {
+            // query records by encrypt key md5
+           var results = await Connection.QueryAsync<Record>(
+               SqlSelectRecordsByEncryptKeyMd5, 
+               new { EncryptKeyMd5 = encryptKeyMd5 }
+            );
+
+            // delete records by encrypt key md5
+            await Connection.ExecuteAsync(
+                SqlDeleteRecordsByEncryptKeyMd5,
+                new { EncryptKeyMd5 = encryptKeyMd5 }
+            );
+
+            // update sync status
+            if (updateSync)
+            {
+                await UpdateDeleteEventSyncStatusAsync(results);
+            }
         });
     }
 
