@@ -146,7 +146,7 @@ public static class FileUtils
         }
     }
 
-    public static void CopyFilesFromOneFolderToAnother(string oldFolder, string newFolder)
+    public static void MoveSyncFiles(string oldFolder, string newFolder)
     {
         // create new folder if it doesn't exist
         if (!Directory.Exists(newFolder))
@@ -159,22 +159,40 @@ public static class FileUtils
         var files = Directory.GetFiles(oldFolder, "*.*", SearchOption.AllDirectories);
         foreach (var file in files)
         {
-            var destFile = Path.Combine(newFolder, file[(oldFolderLength + 1)..]);
-            var directory = Path.GetDirectoryName(destFile);
-            if ((!string.IsNullOrEmpty(directory)) && (!Directory.Exists(directory)))
+            // check if file is a sync data file or sync log file that need to moves
+            var fileName = Path.GetFileName(file);
+            var fileDirectory = Path.GetDirectoryName(file);
+            var folderName = Path.GetFileName(Path.GetDirectoryName(file));
+            if (folderName == null || (!StringUtils.IsMd5(folderName)) ||
+                fileDirectory == null ||
+                (!(fileName == PathHelper.SyncDataFile || fileName == PathHelper.SyncLogFile)))
             {
-                Directory.CreateDirectory(directory);
+                continue;
+            }
+            var destFile = Path.Combine(newFolder, file[(oldFolderLength + 1)..]);
+            var destDirectory = Path.GetDirectoryName(destFile);
+            if ((!string.IsNullOrEmpty(destDirectory)) && (!Directory.Exists(destDirectory)))
+            {
+                Directory.CreateDirectory(destDirectory);
             }
             File.Copy(file, destFile, true);
+            File.Delete(file);
+            if (Directory.GetFiles(fileDirectory).Length == 0)
+            {
+                Directory.Delete(fileDirectory);
+            }
         }
+    }
 
+    public static void DeleteAllUnderFolder(string folder)
+    {
         // delete all folders and files under older folder and keep old folder
-        var directories = Directory.GetDirectories(oldFolder, "*", SearchOption.AllDirectories);
+        var directories = Directory.GetDirectories(folder, "*", SearchOption.AllDirectories);
         foreach (var directory in directories)
         {
             Directory.Delete(directory, true);
         }
-        var oldFiles = Directory.GetFiles(oldFolder, "*.*", SearchOption.AllDirectories);
+        var oldFiles = Directory.GetFiles(folder, "*.*", SearchOption.AllDirectories);
         foreach (var file in oldFiles)
         {
             File.Delete(file);
