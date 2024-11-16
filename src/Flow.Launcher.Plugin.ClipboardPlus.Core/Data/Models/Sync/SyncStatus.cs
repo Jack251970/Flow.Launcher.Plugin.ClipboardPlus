@@ -152,12 +152,6 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
     public async Task InitializeSyncData(List<SyncDataEventArgs> args)
     {
         // TODO: Handle Delete & InitializeSyncData
-        // TODO: Remove test codes
-        using var writer = new StreamWriter("D:\\log.txt", true);
-        foreach (var e in args)
-        {
-            writer.WriteLine($"{DateTime.Now}: {e.EventType} Md5: {e.EncryptKeyMd5}");
-        }
     }
 
     private async Task InitializeSyncData(SyncDataEventArgs e)
@@ -255,10 +249,6 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
             case SyncEventType.Change:
                 break;
         }
-        
-        // TODO: Remove test codes
-        using var writer = new StreamWriter("D:\\log.txt", true);
-        writer.WriteLine($"{DateTime.Now}: {e.EventType} Md5: {e.EncryptKeyMd5} Hash: {hashId} Ver: {version}");
     }
 
     private async Task InitializeStatusLogJsonFile(string hashId, int version)
