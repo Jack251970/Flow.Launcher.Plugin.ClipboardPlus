@@ -57,7 +57,12 @@ public class SyncLog : JsonStorage<List<SyncLogItem>>
         }
 
         var startIndex = _jsonData.FindIndex(x => x.JsonFileVersion == curVersion);
-        var endIndex = _jsonData.Capacity - 1;
+        if (startIndex == -1 || startIndex == _jsonData.Count - 1)
+        {
+            return new();
+        }
+
+        var endIndex = _jsonData.Count - 1;
         return _jsonData.GetRange(startIndex + 1, endIndex - startIndex);
     }
 
