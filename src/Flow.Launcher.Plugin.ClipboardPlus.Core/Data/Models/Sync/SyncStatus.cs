@@ -409,11 +409,21 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
 
     private async Task DeleteDatabase(string encryptKeyMd5)
     {
+        if (encryptKeyMd5 == StringUtils.EncryptKeyMd5)
+        {
+            return;
+        }
+
         await ClipboardPlus.Database.DeleteRecordsByEncryptKeyMd5(encryptKeyMd5);
     }
 
     private async Task DeleteJsonData(string encryptKeyMd5)
     {
+        if (encryptKeyMd5 == StringUtils.EncryptKeyMd5)
+        {
+            return;
+        }
+
         var index = _jsonData.FindIndex(x => x.EncryptKeyMd5 == encryptKeyMd5);
         if (index != -1)
         {
