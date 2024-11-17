@@ -16,7 +16,7 @@ using Clipboard = System.Windows.Clipboard;
 namespace Flow.Launcher.Plugin.ClipboardPlus;
 
 public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPluginI18n,
-    IResultUpdated, ISavable, ISettingProvider, IClipboardPlus, IDisposable
+    IResultUpdated, ISavable, ISettingProvider, IClipboardPlus, IAsyncDisposable
 {
     #region Properties
 
@@ -1400,40 +1400,44 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     #endregion
 
-    #region IDisposable Interface
+    #region IAsyncDisposable Interface
 
     private bool _disposed;
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         if (_disposed)
         {
             return;
         }
-        Dispose(true);
+
+        await DisposeAsync(true);
         GC.SuppressFinalize(this);
     }
 
-    protected async void Dispose(bool disposing)
+    protected virtual async ValueTask DisposeAsync(bool disposing)
     {
         if (disposing)
         {
             Context.API.LogWarn(ClassName, $"Enter dispose");
+
             if (Database != null)
             {
-                Database?.Dispose();
+                Database.Dispose();
                 Database = null!;
                 Context.API.LogDebug(ClassName, $"Disposed DatabaseHelper");
             }
+
+            Context.API.LogInfo(ClassName, $"Disposed DatabaseHelper");
+
             ClipboardMonitor.ClipboardChanged -= OnClipboardChange;
             ClipboardMonitor.Dispose();
             ClipboardMonitor = null!;
             Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
+
             SyncHelper.Dispose();
             Context.API.LogDebug(ClassName, $"Disposed SyncHelper");
-            CultureInfoChanged = null;
-            Settings = null!;
-            RecordsList = null!;
+
             var exception = await FlushClipboard();
             if (exception == null)
             {
@@ -1443,6 +1447,11 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             {
                 Context.API.LogException(ClassName, $"Flushed Clipboard failed", exception);
             }
+
+            CultureInfoChanged = null;
+            Settings = null!;
+            RecordsList = null!;
+
             Context.API.LogWarn(ClassName, $"Finish dispose");
             _disposed = true;
         }
