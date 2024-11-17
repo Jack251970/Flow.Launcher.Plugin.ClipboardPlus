@@ -87,7 +87,7 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 // check if cloud files are exist
                 if (!File.Exists(_cloudSyncLogPath))
                 {
-                    await ProcessTaskQueueAsync(async () =>
+                    _ = ProcessTaskQueueAsync(async () =>
                     {
                         // write sync log
                         await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
@@ -424,7 +424,7 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 Directory.CreateDirectory(_cloudSyncDiretory);
             }
 
-            await ProcessTaskQueueAsync(async () =>
+            _ = ProcessTaskQueueAsync(async () =>
             {
                 // write sync log
                 await LocalSyncLog.InitializeAsync();
@@ -459,7 +459,7 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 Directory.CreateDirectory(_cloudSyncDiretory);
             }
 
-            await ProcessTaskQueueAsync(async () =>
+            _ = ProcessTaskQueueAsync(async () =>
             {
                 // write sync log
                 await LocalSyncLog.UpdateFileAsync(version, eventType, datas);
