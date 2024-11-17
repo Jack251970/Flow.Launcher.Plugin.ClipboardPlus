@@ -302,8 +302,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
         Context.API.LogDebug(ClassName, "Init database successfully");
 
-        // init sync helper
-        await SyncHelper.InitializeAsync(this);
+        // TODO: init sync helper
+        //await SyncHelper.InitializeAsync(this);
 
         // init clipboard monitor
         ClipboardMonitor.ClipboardChanged += OnClipboardChange;
@@ -1485,8 +1485,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             ClipboardMonitor = null!;
             Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
 
-            SyncHelper.Dispose();
-            Context.API.LogDebug(ClassName, $"Disposed SyncHelper");
+            // TODO: dispose sync helper
+            //SyncHelper.Dispose();
+            //Context.API.LogDebug(ClassName, $"Disposed SyncHelper");
 
             var exception = await FlushClipboard();
             if (exception == null)

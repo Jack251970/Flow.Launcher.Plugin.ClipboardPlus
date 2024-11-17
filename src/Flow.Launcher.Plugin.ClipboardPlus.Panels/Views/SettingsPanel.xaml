@@ -37,9 +37,9 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <!-- <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />-->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -434,16 +434,16 @@
             SelectedItem="{Binding SelectedFilesKeepTime, Mode=TwoWay}" />
 
         <!--  Seperator  -->
-        <Separator
+        <!--  <Separator
             Grid.Row="19"
             Grid.ColumnSpan="2"
             Height="1"
             Margin="-60,10,0,10"
             BorderBrush="{DynamicResource Color03B}"
-            BorderThickness="1" />
+            BorderThickness="1" />-->
 
         <!--  Sync Database  -->
-        <Grid
+        <!--  <Grid
             Grid.Row="20"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -477,10 +477,10 @@
                 Command="{Binding DisableSyncDatabasePermanentlyCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_disable_sync_permanently}"
                 IsEnabled="{Binding SyncDatabase, Mode=OneWay}" />
-        </Grid>
+        </Grid>-->
 
         <!--  Sync Database Path  -->
-        <Grid
+        <!--  <Grid
             Grid.Row="21"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -511,7 +511,7 @@
                 Command="{Binding OpenSyncDatabaseFolderCommand}"
                 Content="..."
                 IsEnabled="{Binding SyncDatabase, Mode=OneWay}" />
-        </Grid>
+        </Grid>-->
 
     </Grid>
 </UserControl>
