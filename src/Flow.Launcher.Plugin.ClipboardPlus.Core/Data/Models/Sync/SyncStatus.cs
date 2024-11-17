@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
@@ -6,7 +7,9 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
 {
     private static string ClassName => typeof(SyncStatus).Name;
 
-    private const int SyncLogExportDelay = 300;
+    private const int DatabaseExportDelay = 300;
+
+    private const int SyncDelay = 3000;
 
     private readonly IClipboardPlus ClipboardPlus;
 
@@ -19,6 +22,14 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
     private string _cloudSyncDiretory;
     private string _cloudSyncLogPath;
     private string _cloudDataPath;
+
+    #region Queued Tasks
+
+    private readonly ConcurrentQueue<Func<Task>> _taskQueue = new();
+    private readonly SemaphoreSlim _queueSemaphore = new(1, 1);  // Semaphore to synchronize task queue processing
+    private bool _isProcessingQueue;
+
+    #endregion
 
     public SyncStatus(IClipboardPlus clipboardPlus, string path) : base(path)
     {
@@ -76,11 +87,11 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 // check if cloud files are exist
                 if (!File.Exists(_cloudSyncLogPath))
                 {
-                    await Task.Run(async () =>
+                    await ProcessTaskQueueAsync(async () =>
                     {
                         // write sync log
                         await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
-                        await Task.Delay(SyncLogExportDelay);  // wait for cloud drive to sync
+                        await Task.Delay(DatabaseExportDelay);  // wait for cloud drive to sync
 
                         // export database
                         var hashId = _jsonData[index].HashId;
@@ -88,6 +99,8 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                         await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
 
                         ClipboardPlus.Context?.API.LogInfo(ClassName, "Sync log & data saved");
+
+                        await Task.Delay(SyncDelay);  // wait for cloud drive to sync
                     });
                 }
             }
@@ -411,17 +424,19 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 Directory.CreateDirectory(_cloudSyncDiretory);
             }
 
-            await Task.Run(async () =>
+            await ProcessTaskQueueAsync(async () =>
             {
                 // write sync log
                 await LocalSyncLog.InitializeAsync();
                 await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
-                await Task.Delay(SyncLogExportDelay);
+                await Task.Delay(DatabaseExportDelay);
 
                 // export database
                 await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
 
                 ClipboardPlus.Context?.API.LogInfo(ClassName, "Sync log & data saved");
+
+                await Task.Delay(SyncDelay);  // wait for cloud drive to sync
             });
         }
         else
@@ -444,17 +459,19 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 Directory.CreateDirectory(_cloudSyncDiretory);
             }
 
-            await Task.Run(async () => 
+            await ProcessTaskQueueAsync(async () =>
             {
                 // write sync log
                 await LocalSyncLog.UpdateFileAsync(version, eventType, datas);
                 await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
-                await Task.Delay(SyncLogExportDelay);
+                await Task.Delay(DatabaseExportDelay);
 
                 // export database
                 await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
 
                 ClipboardPlus.Context?.API.LogInfo(ClassName, "Sync log & data saved");
+
+                await Task.Delay(SyncDelay);  // wait for cloud drive to sync
             });
         }
         else
@@ -576,6 +593,36 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 _jsonData[index].JsonFileVersion = version.Value;
             }
             await WriteAsync();
+        }
+    }
+
+    #endregion
+
+    #region Extension functions
+
+    private async Task ProcessTaskQueueAsync(Func<Task> func)
+    {
+        _taskQueue.Enqueue(func);
+
+        if (_isProcessingQueue)
+        {
+            return;
+        }
+
+        _isProcessingQueue = true;
+        await _queueSemaphore.WaitAsync(); // Ensure only one task queue process at a time
+
+        try
+        {
+            while (_taskQueue.TryDequeue(out var f))
+            {
+                await f();
+            }
+        }
+        finally
+        {
+            _isProcessingQueue = false;
+            _queueSemaphore.Release();
         }
     }
 
