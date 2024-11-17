@@ -527,7 +527,6 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         var saved = clipboardData.Saved;
         if (!clipboardData.Saved)
         {
-            Context.API.LogInfo(ClassName, $"Clipboard data: {clipboardData}, Saved: {clipboardData.Saved}");
             results.Add(new Result
             {
                 Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_save_title"),
