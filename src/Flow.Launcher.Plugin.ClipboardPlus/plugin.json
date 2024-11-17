@@ -4,7 +4,7 @@
   "Name": "Clipboard+",
   "Description": "Easily manage your clipboard history and customizing copy rules with support for text, images, and files",
   "Author": "Jack251970",
-  "Version": "1.1.7",
+  "Version": "1.1.8",
   "Language": "csharp",
   "Website": "https://github.com/Jack251970/Flow.Launcher.Plugin.ClipboardPlus",
   "IcoPath": "Images/clipboard.png",
