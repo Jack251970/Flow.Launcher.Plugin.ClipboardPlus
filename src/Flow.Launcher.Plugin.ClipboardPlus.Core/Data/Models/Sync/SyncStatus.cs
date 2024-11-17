@@ -153,8 +153,12 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
         _cloudDataPath = Path.Combine(_cloudSyncDiretory, PathHelper.SyncDataFile);
     }
 
+    #region Sync Watcher
+
     public async Task InitializeSyncData(List<SyncDataEventArgs> args)
     {
+        var needReindex = false;
+
         // check all databases in the sync status file but not in the event args
         var deletedEncryptKeyMd5s = new List<string>();
         foreach (var status in _jsonData)
@@ -174,6 +178,16 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 deletedEncryptKeyMd5s.Add(encryptKeyMd5);
             }
         }
+        foreach (var encryptKeyMd5 in deletedEncryptKeyMd5s)
+        {
+            // delete database
+            await DeleteDatabase(encryptKeyMd5);
+
+            // delete from sync status file
+            await DeleteJsonData(encryptKeyMd5);
+        }
+        needReindex = deletedEncryptKeyMd5s.Count > 0;
+        deletedEncryptKeyMd5s.Clear();
 
         // check all databases in the event args
         foreach (var arg in args)
@@ -207,6 +221,8 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 // add into sync status file
                 await AddJsonData(hashId, encryptKeyMd5, version);
 
+                needReindex = true;
+
                 continue;
             }
 
@@ -223,6 +239,8 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
 
                 // change sync status file
                 await ChangeJsonData(encryptKeyMd5, hashId, null);
+
+                needReindex = true;
 
                 continue;
             }
@@ -244,20 +262,20 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
 
             // update database
             var logDatas = syncLog.GetUpdateLogDatas(statusVersion);
-            await UpdateDatabase(logDatas);
+            var changed = await UpdateDatabase(logDatas, !needReindex);
+            if (!changed)
+            {
+                needReindex = true;
+            }
 
             // change sync status file
             await ChangeJsonData(encryptKeyMd5, null, version);
         }
 
-        // remove encrypt key md5s
-        foreach (var encryptKeyMd5 in deletedEncryptKeyMd5s)
+        // reindex records in the list
+        if (needReindex)
         {
-            // delete database
-            await DeleteDatabase(encryptKeyMd5);
-
-            // delete from sync status file
-            await DeleteJsonData(encryptKeyMd5);
+            await ClipboardPlus.InitRecordsFromDatabaseAsync();
         }
 
         ClipboardPlus.Context?.API.LogInfo(ClassName, "Sync data initialized");
@@ -280,6 +298,9 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
 
             // delete from sync status file
             await DeleteJsonData(encryptKeyMd5);
+
+            // reindex records in the list
+            await ClipboardPlus.InitRecordsFromDatabaseAsync();
 
             return;
         }
@@ -307,6 +328,9 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
 
                 // add into sync status file
                 await AddJsonData(hashId, encryptKeyMd5, version);
+
+                // reindex records in the list
+                await ClipboardPlus.InitRecordsFromDatabaseAsync();
             }
 
             return;
@@ -325,6 +349,9 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
 
             // change sync status file
             await ChangeJsonData(encryptKeyMd5, hashId, null);
+
+            // reindex records in the list
+            await ClipboardPlus.InitRecordsFromDatabaseAsync();
 
             return;
         }
@@ -345,14 +372,27 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
         }
 
         // update database
+        var needReindex = false;
         var logDatas = syncLog.GetUpdateLogDatas(statusVersion);
-        await UpdateDatabase(logDatas);
+        var changed = await UpdateDatabase(logDatas, true);
+        if (!changed)
+        {
+            needReindex = true;
+        }
 
         // change sync status file
         await ChangeJsonData(encryptKeyMd5, null, version);
 
+        // reindex records in the list
+        if (needReindex)
+        {
+            await ClipboardPlus.InitRecordsFromDatabaseAsync();
+        }
+
         ClipboardPlus.Context?.API.LogInfo(ClassName, "Sync data changed");
     }
+
+    #endregion
 
     #region Private
 
@@ -470,7 +510,7 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
         await WriteAsync();
     }
 
-    private async Task UpdateDatabase(List<SyncLogItem> logItems)
+    private async Task<bool> UpdateDatabase(List<SyncLogItem> logItems, bool changeList)
     {
         var addedClipboardData = new List<ClipboardData>();
         var deletedHashIds = new List<string>();
@@ -516,9 +556,10 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                     break;
             }
         }
-        await ClipboardPlus.Database.AddRecordsAsync(addedClipboardData, true, false);
         await ClipboardPlus.Database.DeleteRecordsAsync(deletedHashIds);
+        await ClipboardPlus.Database.AddRecordsAsync(addedClipboardData, true, false);
         await ClipboardPlus.Database.PinRecordsAsync(changedClipboardData);
+        return false;
     }
 
     private async Task ChangeJsonData(string encryptKeyMd5, string? hashId = null, int? version = null)
