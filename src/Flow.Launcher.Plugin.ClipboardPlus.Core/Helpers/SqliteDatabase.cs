@@ -179,7 +179,7 @@ public class SqliteDatabase : IDisposable
 
     #region Queued Tasks
 
-    private readonly ConcurrentQueue<Func<Task>> _funcQueue = new();
+    private readonly ConcurrentQueue<Func<Task>> _taskQueue = new();
     private readonly SemaphoreSlim _queueSemaphore = new(1, 1);  // Semaphore to synchronize task queue processing
     private bool _isProcessingQueue;
 
@@ -742,7 +742,7 @@ public class SqliteDatabase : IDisposable
 
     private async Task ProcessTaskQueueAsync(Func<Task> func)
     {
-        _funcQueue.Enqueue(func);
+        _taskQueue.Enqueue(func);
 
         if (_isProcessingQueue)
         {
@@ -754,7 +754,7 @@ public class SqliteDatabase : IDisposable
 
         try
         {
-            while (_funcQueue.TryDequeue(out var f))
+            while (_taskQueue.TryDequeue(out var f))
             {
                 await f();
             }
