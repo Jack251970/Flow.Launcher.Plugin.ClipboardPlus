@@ -181,7 +181,7 @@ public static partial class StringUtils
         return md5Regex.IsMatch(s);
     }
 
-    [GeneratedRegex("^[a-fA-F0-9]{32}$")]
+    [GeneratedRegex("^[a-fA-F0-9]+$")]
     internal static partial Regex Md5Regex();
 
     #endregion
