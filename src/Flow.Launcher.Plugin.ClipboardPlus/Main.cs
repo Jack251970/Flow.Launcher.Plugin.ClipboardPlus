@@ -726,7 +726,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             foreach (var pair in Settings.KeepTimePairs)
             {
-                Context.API.LogInfo(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
+                Context.API.LogDebug(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
                 await Database.DeleteRecordsByKeepTimeAsync(
                     (int)pair.Item1,
                     pair.Item2.ToKeepTime()
@@ -1478,7 +1478,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 Context.API.LogDebug(ClassName, $"Disposed DatabaseHelper");
             }
 
-            Context.API.LogInfo(ClassName, $"Disposed DatabaseHelper");
+            Context.API.LogDebug(ClassName, $"Disposed DatabaseHelper");
 
             ClipboardMonitor.ClipboardChanged -= OnClipboardChange;
             ClipboardMonitor.Dispose();
