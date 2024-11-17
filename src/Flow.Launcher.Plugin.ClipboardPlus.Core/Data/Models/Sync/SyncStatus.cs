@@ -74,17 +74,14 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 // check if cloud files are exist
                 if (!File.Exists(_cloudSyncLogPath))
                 {
-                    await Task.Run(async () =>
-                    {
-                        // write sync log
-                        await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
-                        await Task.Delay(SyncLogExportDelay);  // wait for cloud drive to sync
+                    // write sync log
+                    await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
+                    await Task.Delay(SyncLogExportDelay);  // wait for cloud drive to sync
 
-                        // export database
-                        var hashId = _jsonData[index].HashId;
-                        var version = _jsonData[index].JsonFileVersion;
-                        await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
-                    });
+                    // export database
+                    var hashId = _jsonData[index].HashId;
+                    var version = _jsonData[index].JsonFileVersion;
+                    await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
                 }
             }
 
@@ -151,50 +148,177 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
 
     public async Task InitializeSyncData(List<SyncDataEventArgs> args)
     {
-        // TODO: Handle Delete & InitializeSyncData
+        // check all databases in the sync status file but not in the event args
+        var deletedEncryptKeyMd5s = new List<string>();
+        foreach (var status in _jsonData)
+        {
+            var encryptKeyMd5 = status.EncryptKeyMd5;
+            var index = args.FindIndex(x => x.EncryptKeyMd5 == encryptKeyMd5);
+            if (index == -1)
+            {
+                // need to do operation later for unchanging _jsonData
+                deletedEncryptKeyMd5s.Add(encryptKeyMd5);
+            }
+        }
+
+        // check all databases in the event args
+        foreach (var arg in args)
+        {
+            // check event args
+            if (arg.EventType != SyncEventType.Init)
+            {
+                continue;
+            }
+
+            // read sync data file & parse results
+            var folderPath = arg.FolderPath;
+            var dataFile = Path.Combine(folderPath, PathHelper.SyncDataFile);
+            var results = await DatabaseHelper.ImportDatabase(dataFile);
+            if (results == null)
+            {
+                continue;
+            }
+            var hashId = results.Value.HashId;
+            var version = results.Value.Version;
+            var data = results.Value.Data;
+
+            // check all databases in the event args but not in sync status file
+            var encryptKeyMd5 = arg.EncryptKeyMd5;
+            var index = _jsonData.FindIndex(x => x.EncryptKeyMd5 == encryptKeyMd5);
+            if (index == -1)
+            {
+                // add database
+                await AddDatabase(data);
+
+                // add into sync status file
+                await AddJsonData(hashId, encryptKeyMd5, version);
+
+                continue;
+            }
+
+            // check hashId to decide if need to delete records and add database
+            var status = _jsonData[index];
+            var statusHashId = status.HashId;
+            if (hashId != statusHashId)
+            {
+                // delete database
+                await DeleteDatabase(encryptKeyMd5);
+
+                // add database
+                await AddDatabase(data);
+
+                // change sync status file
+                await ChangeJsonData(encryptKeyMd5, hashId, null);
+
+                continue;
+            }
+
+            // check version to decide if need to update records
+            var statusVersion = status.JsonFileVersion;
+            if (statusVersion >= version)
+            {
+                return;
+            }
+
+            // read sync log file
+            var logFile = Path.Combine(folderPath, PathHelper.SyncLogFile);
+            var syncLog = new SyncLog(logFile);
+            if (!await syncLog.ReadFileAsync())
+            {
+                return;
+            }
+
+            // update database
+            var logDatas = syncLog.GetUpdateLogDatas(statusVersion);
+            await UpdateDatabase(logDatas);
+
+            // change sync status file
+            await ChangeJsonData(encryptKeyMd5, null, version);
+        }
+
+        // remove encrypt key md5s
+        foreach (var encryptKeyMd5 in deletedEncryptKeyMd5s)
+        {
+            // delete database
+            await DeleteDatabase(encryptKeyMd5);
+
+            // delete from sync status file
+            await DeleteJsonData(encryptKeyMd5);
+        }
     }
 
-    private async Task InitializeSyncData(SyncDataEventArgs e)
+    public async void SyncWatcher_OnSyncDataChanged(object? _, SyncDataEventArgs arg)
     {
-        // handle event args
-        if (e.EventType != SyncEventType.Init)
+        // check event args
+        if (arg.EventType == SyncEventType.Init)
         {
             return;
         }
-        var encryptKeyMd5 = e.EncryptKeyMd5;
-        var folderPath = e.FolderPath;
 
-        // read sync data file
+        // if event type is delete, delete database & sync status file
+        var encryptKeyMd5 = arg.EncryptKeyMd5;
+        if (arg.EventType == SyncEventType.Delete)
+        {
+            // delete database
+            await DeleteDatabase(encryptKeyMd5);
+
+            // delete from sync status file
+            await DeleteJsonData(encryptKeyMd5);
+
+            return;
+        }
+
+        // read sync data file & parse results
+        var folderPath = arg.FolderPath;
         var dataFile = Path.Combine(folderPath, PathHelper.SyncDataFile);
         var results = await DatabaseHelper.ImportDatabase(dataFile);
         if (results == null)
         {
             return;
         }
+        var hashId = results.Value.HashId;
+        var version = results.Value.Version;
+        var data = results.Value.Data;
 
-        var hashId = results.Value.Item1;
-        var version = results.Value.Item2;
-        var data = results.Value.Item3;
-
-        // if not found encrypt key md5 in sync status
+        // if event type is add, add database & sync status file
         var index = _jsonData.FindIndex(x => x.EncryptKeyMd5 == encryptKeyMd5);
-        if (index == -1)
+        if (arg.EventType == SyncEventType.Add)
         {
+            if (index == -1)
+            {
+                // add database
+                await AddDatabase(data);
+
+                // add into sync status file
+                await AddJsonData(hashId, encryptKeyMd5, version);
+            }
+
             return;
         }
 
-        // import database
-        var records = data.Select(item => ClipboardData.FromJsonClipboardData(item, true));
-        await ClipboardPlus.Database.AddRecordsAsync(records, true, false);
-
-        // write sync status file
-        _jsonData.Add(new SyncStatusItem()
+        // check hashId to decide if need to delete records and add database
+        var status = _jsonData[index];
+        var statusHashId = status.HashId;
+        if (hashId != statusHashId)
         {
-            HashId = hashId,
-            EncryptKeyMd5 = encryptKeyMd5,
-            JsonFileVersion = version
-        });
-        await WriteAsync();
+            // delete database
+            await DeleteDatabase(encryptKeyMd5);
+
+            // add database
+            await AddDatabase(data);
+
+            // change sync status file
+            await ChangeJsonData(encryptKeyMd5, hashId, null);
+
+            return;
+        }
+
+        // check version to decide if need to update records
+        var statusVersion = status.JsonFileVersion;
+        if (statusVersion >= version)
+        {
+            return;
+        }
 
         // read sync log file
         var logFile = Path.Combine(folderPath, PathHelper.SyncLogFile);
@@ -205,51 +329,16 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
         }
 
         // update database
-        var curVersion = index == -1 ? version : _jsonData[index].JsonFileVersion;
-        var logDatas = syncLog.GetUpdateLogDatas(curVersion);
-        // TODO
-        /*var records = logDatas.Select(item => ClipboardData.FromJsonClipboardData(item, true));
-        await ClipboardPlus.Database.AddRecordsAsync(records, true, false);
-        // update sync status file
-        if (index != -1)
-        {
-            _jsonData[index].JsonFileVersion = logVersion;
-            await WriteAsync();
-        }*/
+        var logDatas = syncLog.GetUpdateLogDatas(statusVersion);
+        await UpdateDatabase(logDatas);
+
+        // change sync status file
+        await ChangeJsonData(encryptKeyMd5, null, version);
     }
 
-    public async void SyncWatcher_OnSyncDataChanged(object? _, SyncDataEventArgs e)
-    {
-        // read sync data file & sync log file
-        var dataFile = Path.Combine(e.FolderPath, PathHelper.SyncDataFile);
-        var results = await DatabaseHelper.ImportDatabase(dataFile);
-        if (results == null)
-        {
-            return;
-        }
+    #region Private
 
-        var logFile = Path.Combine(e.FolderPath, PathHelper.SyncLogFile);
-        var syncLog = new SyncLog(logFile);
-        if (!await syncLog.ReadFileAsync())
-        {
-            return;
-        }
-
-        var hashId = results.Value.Item1;
-        var version = results.Value.Item2;
-        var data = results.Value.Item3;
-
-        // handle event type
-        switch (e.EventType)
-        {
-            case SyncEventType.Add:
-                break;
-            case SyncEventType.Delete:
-                break;
-            case SyncEventType.Change:
-                break;
-        }
-    }
+    #region Handle Files
 
     private async Task InitializeStatusLogJsonFile(string hashId, int version)
     {
@@ -264,16 +353,13 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 Directory.CreateDirectory(_cloudSyncDiretory);
             }
 
-            await Task.Run(async () =>
-            {
-                // write sync log
-                await LocalSyncLog.InitializeAsync();
-                await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
-                await Task.Delay(SyncLogExportDelay);
+            // write sync log
+            await LocalSyncLog.InitializeAsync();
+            await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
+            await Task.Delay(SyncLogExportDelay);
 
-                // export database
-                await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
-            });
+            // export database
+            await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
         }
         else
         {
@@ -295,16 +381,13 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
                 Directory.CreateDirectory(_cloudSyncDiretory);
             }
 
-            await Task.Run(async () =>
-            {
-                // write sync log
-                await LocalSyncLog.UpdateFileAsync(version, eventType, datas);
-                await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
-                await Task.Delay(SyncLogExportDelay);
+            // write sync log
+            await LocalSyncLog.UpdateFileAsync(version, eventType, datas);
+            await LocalSyncLog.WriteCloudFileAsync(_cloudSyncLogPath);
+            await Task.Delay(SyncLogExportDelay);
 
-                // export database
-                await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
-            });
+            // export database
+            await DatabaseHelper.ExportDatabase(ClipboardPlus, _cloudDataPath, hashId, version);
         }
         else
         {
@@ -312,6 +395,114 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
             await LocalSyncLog.UpdateFileAsync(version, eventType, datas);
         }
     }
+
+    #endregion
+
+    #region Database & Json Data
+
+    private async Task DeleteDatabase(string encryptKeyMd5)
+    {
+        await ClipboardPlus.Database.DeleteRecordsByEncryptKeyMd5(encryptKeyMd5);
+    }
+
+    private async Task DeleteJsonData(string encryptKeyMd5)
+    {
+        var index = _jsonData.FindIndex(x => x.EncryptKeyMd5 == encryptKeyMd5);
+        if (index != -1)
+        {
+            _jsonData.RemoveAt(index);
+            await WriteAsync();
+        }
+    }
+
+    private async Task AddDatabase(IEnumerable<JsonClipboardData> data)
+    {
+        var records = data.Select(item => ClipboardData.FromJsonClipboardData(item, true));
+        await ClipboardPlus.Database.AddRecordsAsync(records, true, false);
+    }
+
+    private async Task AddJsonData(string hashId, string encryptKeyMd5, int version)
+    {
+        _jsonData.Add(new SyncStatusItem()
+        {
+            HashId = hashId,
+            EncryptKeyMd5 = encryptKeyMd5,
+            JsonFileVersion = version
+        });
+        await WriteAsync();
+    }
+
+    private async Task UpdateDatabase(List<SyncLogItem> logItems)
+    {
+        var addedClipboardData = new List<ClipboardData>();
+        var deletedHashIds = new List<string>();
+        var changedClipboardData = new List<ClipboardData>();
+        for (var i = 0; i < logItems.Count; i++)  // in chronological order
+        {
+            var logItem = logItems[i];
+            var eventType = logItem.LogEventType;
+            var datas = logItem.LogClipboardDatas;
+            switch (eventType)
+            {
+                case EventType.Add:
+                    // add all records
+                    addedClipboardData.AddRange(datas.Select(item => ClipboardData.FromJsonClipboardData(item, true)));
+                    break;
+                case EventType.Delete:
+                    // find if the record is already in the added list
+                    foreach (var data in datas)
+                    {
+                        var addedIndex = addedClipboardData.FindIndex(x => x.HashId == data.HashId);
+                        if (addedIndex != -1)  // if the record is already in the added list, delete it
+                        {
+                            addedClipboardData.RemoveAt(addedIndex);
+                            continue;
+                        }
+                        // else, add it to the deleted list
+                        deletedHashIds.Add(data.HashId);
+                    }
+
+                    break;
+                case EventType.Change:
+                    foreach (var data in datas)
+                    {
+                        var addedIndex = addedClipboardData.FindIndex(x => x.HashId == data.HashId);
+                        if (addedIndex != -1)  // if the record is already in the added list, change it
+                        {
+                            addedClipboardData[addedIndex] = ClipboardData.FromJsonClipboardData(data, true);
+                            continue;
+                        }
+                        // else, add it to the changed list
+                        changedClipboardData.Add(ClipboardData.FromJsonClipboardData(data, true));
+                    }
+                    break;
+            }
+        }
+        await ClipboardPlus.Database.AddRecordsAsync(addedClipboardData, true, false);
+        await ClipboardPlus.Database.DeleteRecordsAsync(deletedHashIds);
+        await ClipboardPlus.Database.PinRecordsAsync(changedClipboardData);
+    }
+
+    private async Task ChangeJsonData(string encryptKeyMd5, string? hashId = null, int? version = null)
+    {
+        var index = _jsonData.FindIndex(x => x.EncryptKeyMd5 == encryptKeyMd5);
+        if (index != -1)
+        {
+            if (hashId != null)
+            {
+                _jsonData[index].HashId = hashId;
+            }
+            if (version != null)
+            {
+                _jsonData[index].JsonFileVersion = version.Value;
+            }
+            await WriteAsync();
+        }
+    }
+
+    #endregion
+
+    #endregion
 }
 
 public class SyncStatusItem
