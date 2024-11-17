@@ -1423,7 +1423,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
             if (Database != null)
             {
-                Database.Dispose();
+                await Database.DisposeAsync();
                 Database = null!;
                 Context.API.LogDebug(ClassName, $"Disposed DatabaseHelper");
             }

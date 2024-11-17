@@ -5,7 +5,7 @@ using System.Data;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 
-public class SqliteDatabase : IDisposable
+public class SqliteDatabase : IAsyncDisposable
 {
     #region Properties
 
@@ -740,6 +740,18 @@ public class SqliteDatabase : IDisposable
 
     #region Extension functions
 
+    private async Task WaitTaskQueueAsync()
+    {
+        if (!_isProcessingQueue)
+        {
+            return;
+        }
+
+        // wait for the current task queue to finish
+        await _queueSemaphore.WaitAsync();
+        _queueSemaphore.Release();
+    }
+
     private async Task ProcessTaskQueueAsync(Func<Task> func)
     {
         _taskQueue.Enqueue(func);
@@ -754,9 +766,9 @@ public class SqliteDatabase : IDisposable
 
         try
         {
-            while (_taskQueue.TryDequeue(out var f))
+            while (_taskQueue.TryDequeue(out var task))
             {
-                await f();
+                await task();
             }
         }
         finally
@@ -774,22 +786,24 @@ public class SqliteDatabase : IDisposable
 
     private bool _disposed;
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         if (_disposed)
         {
             return;
         }
-        Dispose(true);
+
+        await DisposeAsync(true);
         GC.SuppressFinalize(this);
     }
 
-    protected virtual void Dispose(bool disposing)
+    protected virtual async ValueTask DisposeAsync(bool disposing)
     {
         if (disposing)
         {
-            Connection.Close();
-            Connection.Dispose();
+            await WaitTaskQueueAsync();
+            await Connection.CloseAsync();
+            await Connection.DisposeAsync();
             Connection = null!;
             _disposed = true;
         }
