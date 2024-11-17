@@ -152,7 +152,14 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
         var deletedEncryptKeyMd5s = new List<string>();
         foreach (var status in _jsonData)
         {
+            // skip the local sync log
             var encryptKeyMd5 = status.EncryptKeyMd5;
+            if (encryptKeyMd5 == StringUtils.EncryptKeyMd5)
+            {
+                continue;
+            }
+
+            // find the database in the sync status file but not in the event args
             var index = args.FindIndex(x => x.EncryptKeyMd5 == encryptKeyMd5);
             if (index == -1)
             {
@@ -182,7 +189,7 @@ public class SyncStatus : JsonStorage<List<SyncStatusItem>>
             var version = results.Value.Version;
             var data = results.Value.Data;
 
-            // check all databases in the event args but not in sync status file
+            // find the database in the event args but not in sync status file
             var encryptKeyMd5 = arg.EncryptKeyMd5;
             var index = _jsonData.FindIndex(x => x.EncryptKeyMd5 == encryptKeyMd5);
             if (index == -1)
