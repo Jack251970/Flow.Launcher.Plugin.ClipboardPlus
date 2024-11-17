@@ -902,9 +902,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
         var clipboardData = clipboardDataPair.ClipboardData;
         if (clipboardData.Pinned)
         {
-            Context.API.LogInfo(ClassName, $"Pinned record: {clipboardData}");
             var score = clipboardData.GetScore(Settings.RecordOrder);
-            Context.API.LogInfo(ClassName, $"Pinned record score: {score}");
         }
         return new Result
         {
