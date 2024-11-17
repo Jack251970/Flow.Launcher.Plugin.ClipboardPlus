@@ -114,7 +114,7 @@ public class SqliteDatabase : IDisposable
         "PRAGMA foreign_keys = ON; DELETE FROM asset WHERE hash_id=@HashId;";
 
     private readonly string SqlDeleteAllRecords =
-        "DROP TABLE IF EXISTS record; DROP TABLE IF EXISTS asset; VACUUM;";
+        "DELETE FROM record; DELETE FROM asset;";
 
     private readonly string SqlUpdateRecordPinned =
         "UPDATE record SET pinned=@Pin WHERE hash_id=@HashId;";
@@ -440,9 +440,8 @@ public class SqliteDatabase : IDisposable
     {
         await ProcessTaskQueueAsync(async () =>
         {
-            // delete tables and recreate
+            // delete all records
             await Connection.ExecuteAsync(SqlDeleteAllRecords);
-            await Connection.ExecuteAsync(SqlCreateDatabase);
 
             // update sync status
             await UpdateSyncStatusAsync(EventType.DeleteAll, new List<ClipboardData>());
