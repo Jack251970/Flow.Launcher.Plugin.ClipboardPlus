@@ -123,7 +123,8 @@ public class SettingsViewModel : BaseModel
     private void DisableSyncDatabasePermanently(object? parameter)
     {
         SyncHelper.Disable(true);
-        FileUtils.DeleteAllUnderFolder(SyncDatabasePath);
+        var syncPath = Path.Combine(SyncDatabasePath, StringUtils.EncryptKeyMd5);
+        FileUtils.DeleteAllItselfUnderFolder(syncPath);
         SyncDatabase = false;
     }
 
