@@ -1,5 +1,6 @@
 using Dapper;
 using Microsoft.Data.Sqlite;
+using System.Collections.Concurrent;
 using System.Data;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
@@ -31,7 +32,6 @@ public class SqliteDatabase : IDisposable
     #region Connection
 
     public SqliteConnection Connection;
-    public bool KeepConnection;
 
     #endregion
 
@@ -177,6 +177,15 @@ public class SqliteDatabase : IDisposable
 
     #endregion
 
+    #region Queued Tasks
+
+    private readonly ConcurrentQueue<Func<Task>> _funcQueue = new();
+    private readonly SemaphoreSlim _queueSemaphore = new(1, 1);  // Semaphore to synchronize task queue processing
+    private readonly SemaphoreSlim _dbSemaphore = new(1, 1); // Semaphore to synchronize database access
+    private bool _isProcessingQueue;
+
+    #endregion
+
     #endregion
 
     #region Constructors
@@ -184,12 +193,10 @@ public class SqliteDatabase : IDisposable
     public SqliteDatabase(
         SqliteConnection connection,
         int scoreInterval,
-        bool keepConnection = true,
         PluginInitContext? context = null)
     {
         Connection = connection;
         ScoreInterval = scoreInterval;
-        KeepConnection = keepConnection;
         Context = context;
     }
 
@@ -198,7 +205,6 @@ public class SqliteDatabase : IDisposable
         int scoreInterval,
         SqliteCacheMode cache = SqliteCacheMode.Default,
         SqliteOpenMode mode = SqliteOpenMode.ReadWriteCreate,
-        bool keepConnection = true,
         PluginInitContext? context = null
     )
     {
@@ -211,7 +217,6 @@ public class SqliteDatabase : IDisposable
             Cache = cache,
         }.ToString();
         Connection = new SqliteConnection(connectionString);
-        KeepConnection = keepConnection;
         Context = context;
     }
 
@@ -308,30 +313,29 @@ public class SqliteDatabase : IDisposable
 
     public async Task InitializeDatabaseAsync()
     {
-        await HandleOpenCloseAsync(async () =>
+        await OpenAsync();
+
+        // check if `meta` exists
+        var name = Connection.QueryFirstOrDefault<string>(SqlSelectMetaTable);
+        if (name != "meta")
         {
-            // check if `meta` exists
-            var name = Connection.QueryFirstOrDefault<string>(SqlSelectMetaTable);
-            if (name != "meta")
-            {
-                // if not exists, create `meta` table
-                await Connection.ExecuteAsync(SqlCreateMeta);
-                await SetDatabaseVersionAsync("0.0");
-            }
-            // check if `record` exists
-            name = Connection.QueryFirstOrDefault<string>(SqlSelectRecordTable);
-            if (name != "record")
-            {
-                // if not exists, create `record` and `asset` table
-                await Connection.ExecuteAsync(SqlCreateDatabase);
-            }
-            // update version
-            var currentVersion = GetDatabaseVersionAsync();
-            if (currentVersion != DatabaseVersion)
-            {
-                await UpdateDatabase(currentVersion);
-            }
-        });
+            // if not exists, create `meta` table
+            await Connection.ExecuteAsync(SqlCreateMeta);
+            await SetDatabaseVersionAsync("0.0");
+        }
+        // check if `record` exists
+        name = Connection.QueryFirstOrDefault<string>(SqlSelectRecordTable);
+        if (name != "record")
+        {
+            // if not exists, create `record` and `asset` table
+            await Connection.ExecuteAsync(SqlCreateDatabase);
+        }
+        // update version
+        var currentVersion = GetDatabaseVersionAsync();
+        if (currentVersion != DatabaseVersion)
+        {
+            await UpdateDatabase(currentVersion);
+        }
     }
 
 #if DEBUG
@@ -340,7 +344,7 @@ public class SqliteDatabase : IDisposable
     public async Task AddOneRecordAsync(ClipboardData data, bool needEncryptData)
 #endif
     {
-        await HandleOpenCloseAsync(async () =>
+        await ProcessTaskQueueAsync(async () =>
         {
             // insert asset
             var assets = new List<Asset>
@@ -372,7 +376,7 @@ public class SqliteDatabase : IDisposable
             return;
         }
 
-        await HandleOpenCloseAsync(async () =>
+        await ProcessTaskQueueAsync(async () =>
         {
             foreach (var data in datas)
             {
@@ -399,7 +403,7 @@ public class SqliteDatabase : IDisposable
 
     public async Task DeleteOneRecordAsync(ClipboardData data)
     {
-        await HandleOpenCloseAsync(async () =>
+        await ProcessTaskQueueAsync(async () =>
         {
             // delete one record
             await DeleteOneRecordByClipboardData(data.HashId);
@@ -416,7 +420,7 @@ public class SqliteDatabase : IDisposable
             return;
         }
 
-        await HandleOpenCloseAsync(async () =>
+        await ProcessTaskQueueAsync(async () =>
         {
             foreach (var data in hashIds)
             {
@@ -434,7 +438,7 @@ public class SqliteDatabase : IDisposable
 
     public async Task DeleteAllRecordsAsync()
     {
-        await HandleOpenCloseAsync(async () =>
+        await ProcessTaskQueueAsync(async () =>
         {
             // delete tables and recreate
             await Connection.ExecuteAsync(SqlDeleteAllRecords);
@@ -447,12 +451,11 @@ public class SqliteDatabase : IDisposable
 
     public async Task PinOneRecordAsync(ClipboardData data, bool updateSync = true)
     {
-        await HandleOpenCloseAsync(async () =>
+        await ProcessTaskQueueAsync(async () =>
         {
             // update record pinned status
             var record = new { Pin = data.Pinned, data.HashId };
             await Connection.ExecuteAsync(SqlUpdateRecordPinned, record);
-            await CloseIfNotKeepAsync();
 
             // update sync status
             if (updateSync)
@@ -468,7 +471,8 @@ public class SqliteDatabase : IDisposable
         {
             return;
         }
-        await HandleOpenCloseAsync(async () =>
+
+        await ProcessTaskQueueAsync(async () =>
         {
             // update record pinned status
             foreach (var data in datas)
@@ -491,7 +495,7 @@ public class SqliteDatabase : IDisposable
     public async Task<List<ClipboardData>> GetAllRecordsAsync(bool needSort)
 #endif
     {
-        return await HandleOpenCloseAsync(async () =>
+        return await ProcessDbAccessAsync(async () =>
         {
             // query all records & return
             if (!needSort)
@@ -524,7 +528,7 @@ public class SqliteDatabase : IDisposable
 
     public async Task<List<ClipboardData>> GetLocalRecordsAsync()
     {
-        return await HandleOpenCloseAsync(async () =>
+        return await ProcessDbAccessAsync(async () =>
         {
             var results = await Connection.QueryAsync<Record>(SqlSelectLocalRecord);
             return results.Select(ClipboardData.FromRecord).ToList();
@@ -533,7 +537,7 @@ public class SqliteDatabase : IDisposable
 
     public async Task DeleteRecordsByKeepTimeAsync(int dataType, int keepTime)
     {
-        await HandleOpenCloseAsync(async () =>
+        await ProcessTaskQueueAsync(async () =>
         {
             // query all records by keep time and data type
             var results = await Connection.QueryAsync<Record>(
@@ -554,7 +558,7 @@ public class SqliteDatabase : IDisposable
 
     public async Task DeleteInvalidRecordsAsync()
     {
-        await HandleOpenCloseAsync(async () =>
+        await ProcessTaskQueueAsync(async () =>
         {
             // query all records
             var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
@@ -574,7 +578,7 @@ public class SqliteDatabase : IDisposable
 
     public async Task DeleteUnpinnedRecordsAsync()
     {
-        await HandleOpenCloseAsync(async () =>
+        await ProcessTaskQueueAsync(async () =>
         {
             // get upinned records
             var results = await Connection.QueryAsync<Record>(SqlSelectUnpinnedRecord);
@@ -589,7 +593,7 @@ public class SqliteDatabase : IDisposable
 
     public async Task DeleteRecordsByEncryptKeyMd5(string encryptKeyMd5, bool updateSync = true)
     {
-        await HandleOpenCloseAsync(async () =>
+        await ProcessTaskQueueAsync(async () =>
         {
             // query records by encrypt key md5
            var results = await Connection.QueryAsync<Record>(
@@ -732,33 +736,9 @@ public class SqliteDatabase : IDisposable
         }
     }
 
-    public void Open()
-    {
-        if (Connection.State == ConnectionState.Closed)
-        {
-            Connection.Open();
-        }
-    }
-
     public async Task CloseAsync()
     {
         if (Connection.State == ConnectionState.Open)
-        {
-            await Connection.CloseAsync();
-        }
-    }
-
-    public void Close()
-    {
-        if (Connection.State == ConnectionState.Open)
-        {
-            Connection.Close();
-        }
-    }
-
-    private async Task CloseIfNotKeepAsync()
-    {
-        if (!KeepConnection)
         {
             await Connection.CloseAsync();
         }
@@ -768,19 +748,52 @@ public class SqliteDatabase : IDisposable
 
     #region Extension functions
 
-    private async Task<T> HandleOpenCloseAsync<T>(Func<Task<T>> func)
+    private async Task<T> ProcessDbAccessAsync<T>(Func<Task<T>> func)
     {
-        await OpenAsync();
-        var result = await func();
-        await CloseIfNotKeepAsync();
-        return result;
+        await _dbSemaphore.WaitAsync(); // Wait until the semaphore is free
+
+        try
+        {
+            return await func();
+        }
+        finally
+        {
+            _dbSemaphore.Release(); // Release the semaphore
+        }
     }
 
-    private async Task HandleOpenCloseAsync(Func<Task> func)
+    private async Task ProcessTaskQueueAsync(Func<Task> func)
     {
-        await OpenAsync();
-        await func();
-        await CloseIfNotKeepAsync();
+        _funcQueue.Enqueue(func);
+
+        if (_isProcessingQueue)
+        {
+            return;
+        }
+
+        _isProcessingQueue = true;
+        await _queueSemaphore.WaitAsync(); // Ensure only one task queue process at a time
+
+        try
+        {
+            while (_funcQueue.TryDequeue(out var f))
+            {
+                await _dbSemaphore.WaitAsync(); // Acquire the semaphore for database access
+                try
+                {
+                    await f();
+                }
+                finally
+                {
+                    _dbSemaphore.Release(); // Release the semaphore
+                }
+            }
+        }
+        finally
+        {
+            _isProcessingQueue = false;
+            _queueSemaphore.Release();
+        }
     }
 
     #endregion
