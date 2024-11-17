@@ -1350,7 +1350,24 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     private static async Task<Exception?> FlushClipboard()
     {
-        return await RetryAction(Clipboard.Flush);
+        return await RetryAction(() =>
+        {
+            if (Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
+            {
+                var thread = new Thread(() =>
+                {
+                    Clipboard.Flush();
+                });
+
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+                thread.Join();
+            }
+            else
+            {
+                Clipboard.Flush();
+            }
+        });
     }
 
     private static async Task<Exception?> RetryAction(Action action)
@@ -1441,7 +1458,7 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
             var exception = await FlushClipboard();
             if (exception == null)
             {
-                Context.API.LogDebug(ClassName, $"Flushed Clipboard");
+                Context.API.LogDebug(ClassName, $"Flushed Clipboard succeeded");
             }
             else
             {
