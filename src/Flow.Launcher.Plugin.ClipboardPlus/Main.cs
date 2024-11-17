@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,7 +14,7 @@ using Clipboard = System.Windows.Clipboard;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus;
 
-public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPluginI18n,
+public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPluginI18n,
     IResultUpdated, ISavable, ISettingProvider, IClipboardPlus, IAsyncDisposable
 {
     #region Properties
@@ -1252,24 +1251,59 @@ public partial class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMen
 
     private static string[] SortAscending(string[] strings)
     {
-        return strings.OrderBy(path =>
-        {
-            var match = FilesComparisionRegex().Match(path);
-            return match.Success ? int.Parse(match.Value) : 0;
-        }).ToArray();
+        return strings.OrderBy(path => path, new NaturalStringComparer()).ToArray();
     }
 
     private static string[] SortDescending(string[] strings)
     {
-        return strings.OrderByDescending(path =>
-        {
-            var match = FilesComparisionRegex().Match(path);
-            return match.Success ? int.Parse(match.Value) : 0;
-        }).ToArray();
+        return strings.OrderByDescending(path => path, new NaturalStringComparer()).ToArray();
     }
 
-    [GeneratedRegex("\\d+")]
-    private static partial Regex FilesComparisionRegex();
+    public class NaturalStringComparer : IComparer<string>
+    {
+        public int Compare(string? x, string? y)
+        {
+            // If both strings are null, they are considered equal
+            if (x == null && y == null) return 0;
+
+            // If one string is null and the other is not, the null string is considered less
+            if (x == null) return -1;
+            if (y == null) return 1;
+
+            // Compare strings by processing numeric segments as numbers
+            int i = 0, j = 0;
+            while (i < x.Length && j < y.Length)
+            {
+                // Skip leading non-numeric characters
+                if (!char.IsDigit(x[i]) && !char.IsDigit(y[j]))
+                {
+                    if (x[i] != y[j]) return x[i] - y[j];
+                    i++;
+                    j++;
+                    continue;
+                }
+
+                // Extract numeric segments
+                var numX = ExtractNumber(x, ref i);
+                var numY = ExtractNumber(y, ref j);
+
+                // Compare numeric segments
+                int result = numX.CompareTo(numY);
+                if (result != 0) return result;
+            }
+
+            // Compare remaining non-numeric characters if one string is shorter
+            return x.Length - y.Length;
+        }
+
+        private static int ExtractNumber(string s, ref int index)
+        {
+            int start = index;
+            while (index < s.Length && char.IsDigit(s[index])) index++;
+            if (start == index) return 0; // No number found, return 0
+            return int.Parse(s[start..index]); // Extract and return the number
+        }
+    }
 
     #endregion
 
