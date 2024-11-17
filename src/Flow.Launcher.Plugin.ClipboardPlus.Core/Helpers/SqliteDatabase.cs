@@ -181,7 +181,6 @@ public class SqliteDatabase : IDisposable
 
     private readonly ConcurrentQueue<Func<Task>> _funcQueue = new();
     private readonly SemaphoreSlim _queueSemaphore = new(1, 1);  // Semaphore to synchronize task queue processing
-    private readonly SemaphoreSlim _dbSemaphore = new(1, 1); // Semaphore to synchronize database access
     private bool _isProcessingQueue;
 
     #endregion
@@ -494,44 +493,38 @@ public class SqliteDatabase : IDisposable
     public async Task<List<ClipboardData>> GetAllRecordsAsync(bool needSort)
 #endif
     {
-        return await ProcessDbAccessAsync(async () =>
+        // query all records & return
+        if (!needSort)
         {
-            // query all records & return
-            if (!needSort)
-            {
-                var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
-                return results.Select(ClipboardData.FromRecord).ToList();
-            }
+            var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
+            return results.Select(ClipboardData.FromRecord).ToList();
+        }
 
-            // query all records & build record list
-            var sortedResults = await Connection.QueryAsync<Record>(SqlSelectAllRecordOrederedByDateTimeScore);
-            var allRecord = new List<ClipboardData>();
-            foreach (var record in sortedResults)
+        // query all records & build record list
+        var sortedResults = await Connection.QueryAsync<Record>(SqlSelectAllRecordOrederedByDateTimeScore);
+        var allRecord = new List<ClipboardData>();
+        foreach (var record in sortedResults)
+        {
+            try
             {
-                try
-                {
-                    var data = ClipboardData.FromRecord(record, CurrentScore);
-                    allRecord.Add(data);
-                    CurrentScore += ScoreInterval;
-                }
-                catch (Exception)
-                {
-#if DEBUG
-                    action?.Invoke($"Exception: {record}");
-#endif
-                }
+                var data = ClipboardData.FromRecord(record, CurrentScore);
+                allRecord.Add(data);
+                CurrentScore += ScoreInterval;
             }
-            return allRecord;
-        });
+            catch (Exception)
+            {
+#if DEBUG
+                action?.Invoke($"Exception: {record}");
+#endif
+            }
+        }
+        return allRecord;
     }
 
     public async Task<List<ClipboardData>> GetLocalRecordsAsync()
     {
-        return await ProcessDbAccessAsync(async () =>
-        {
-            var results = await Connection.QueryAsync<Record>(SqlSelectLocalRecord);
-            return results.Select(ClipboardData.FromRecord).ToList();
-        });
+        var results = await Connection.QueryAsync<Record>(SqlSelectLocalRecord);
+        return results.Select(ClipboardData.FromRecord).ToList();
     }
 
     public async Task DeleteRecordsByKeepTimeAsync(int dataType, int keepTime)
@@ -747,20 +740,6 @@ public class SqliteDatabase : IDisposable
 
     #region Extension functions
 
-    private async Task<T> ProcessDbAccessAsync<T>(Func<Task<T>> func)
-    {
-        await _dbSemaphore.WaitAsync(); // Wait until the semaphore is free
-
-        try
-        {
-            return await func();
-        }
-        finally
-        {
-            _dbSemaphore.Release(); // Release the semaphore
-        }
-    }
-
     private async Task ProcessTaskQueueAsync(Func<Task> func)
     {
         _funcQueue.Enqueue(func);
@@ -777,15 +756,7 @@ public class SqliteDatabase : IDisposable
         {
             while (_funcQueue.TryDequeue(out var f))
             {
-                await _dbSemaphore.WaitAsync(); // Acquire the semaphore for database access
-                try
-                {
-                    await f();
-                }
-                finally
-                {
-                    _dbSemaphore.Release(); // Release the semaphore
-                }
+                await f();
             }
         }
         finally
