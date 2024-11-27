@@ -36,7 +36,17 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     // Clipboard monitor instance
     // Warning: Do not init the instance in InitAsync function! This will cause issues.
-    private ClipboardMonitorW ClipboardMonitor = new() { ObserveLastEntry = false };
+    private ClipboardMonitorW ClipboardMonitor = new()
+    { 
+        ObserveLastEntry = false, 
+        ObservableFormats = new()
+        {
+            Images = true,
+            Texts = true,
+            Files = true,
+            Others = false
+        }
+    };
 
     // Records list & Score
     private LinkedList<ClipboardDataPair> RecordsList = new();
