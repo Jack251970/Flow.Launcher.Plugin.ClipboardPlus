@@ -67,7 +67,8 @@ internal class ClipboardHandleW : IDisposable
     /// </summary>
     public void StartMonitoring()
     {
-        CreateHiddenWindow();
+        // Make sure on the application dispatcher.
+        System.Windows.Application.Current.Dispatcher.InvokeAsync(CreateHiddenWindow);
     }
 
     /// <summary>
@@ -77,7 +78,7 @@ internal class ClipboardHandleW : IDisposable
     {
         if (_hwndSource is not null)
         {
-            await RetryAction(RemoveClipboardFormatListener);
+            await RetryActionAsync(RemoveClipboardFormatListener);
             _hwndSource.Dispose();
         }
     }
@@ -102,7 +103,7 @@ internal class ClipboardHandleW : IDisposable
         _hwndSource = new HwndSource(parameters);
         _hwndSource.AddHook(WndProc);
 
-        await RetryAction(AddClipboardFormatListener);
+        await RetryActionAsync(AddClipboardFormatListener);
         Ready = true;
     }
 
@@ -173,7 +174,7 @@ internal class ClipboardHandleW : IDisposable
                 // Determines whether a file/files have been cut/copied.
                 if (ClipboardMonitorInstance.ObservableFormats.Images && IsDataImage(dataObj))
                 {
-                    // Handle the image on the application dispatcher for UI actions.
+                    // Make sure on the application dispatcher.
                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
                     {
                         if (dataObj.GetData(DataFormats.Bitmap) is BitmapSource capturedImage)
@@ -423,7 +424,7 @@ internal class ClipboardHandleW : IDisposable
         return _executablePath;
     }
 
-    private static async Task RetryAction(Func<bool> action, int retryInterval = 100, int maxAttemptCount = 3)
+    private static async Task RetryActionAsync(Func<bool> action, int retryInterval = 100, int maxAttemptCount = 3)
     {
         for (int i = 0; i < maxAttemptCount; i++)
         {
