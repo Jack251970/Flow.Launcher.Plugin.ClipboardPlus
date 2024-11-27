@@ -204,9 +204,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 IcoPath = PathHelper.CleanIconPath,
                 Glyph = ResourceHelper.CleanGlyph,
                 Score = Settings.ActionTop ? TopActionScore1 : BottomActionScore1,
-                Action = _ =>
+                AsyncAction = async _ =>
                 {
-                    Clipboard.Clear();
+                    await Win32Helper.StartSTATask(Clipboard.Clear);
                     return true;
                 },
             });
@@ -1063,20 +1063,24 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         var dataType = clipboardData.DataType;
         if (validObject is not null)
         {
-            var exception = await RetryAction(() =>
+            var exception = await RetryActionOnSTAThread(() =>
             {
                 switch (dataType)
                 {
                     case DataType.UnicodeText:
+                        Clipboard.Clear();
                         Clipboard.SetText((string)validObject);
                         break;
                     case DataType.RichText:
+                        Clipboard.Clear();
                         Clipboard.SetText((string)validObject, TextDataFormat.Rtf);
                         break;
                     case DataType.Image:
+                        Clipboard.Clear();
                         Clipboard.SetImage((BitmapSource)validObject);
                         break;
                     case DataType.Files:
+                        Clipboard.Clear();
                         var paths = new StringCollection();
                         paths.AddRange((string[])validObject);
                         Clipboard.SetFileDropList(paths);
@@ -1135,7 +1139,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         var validObject = clipboardData.UnicodeTextToValid();
         if (validObject is not null)
         {
-            var exception = await RetryAction(() => Clipboard.SetText(validObject));
+            var exception = await RetryActionOnSTAThread(() =>
+            {
+                Clipboard.Clear();
+                Clipboard.SetText(validObject);
+            });
             if (exception == null)
             {
                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
@@ -1181,13 +1189,10 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
         if (!string.IsNullOrEmpty(cachePath))
         {
-            var exception = await RetryAction(() =>
+            var exception = await RetryActionOnSTAThread(() =>
             {
-                var paths = new StringCollection
-                {
-                    cachePath
-                };
-                Clipboard.SetFileDropList(paths);
+                Clipboard.Clear();
+                Clipboard.SetFileDropList(new StringCollection { cachePath });
             });
             if (exception == null)
             {
@@ -1228,7 +1233,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             var filePaths = ascend ? SortAscending((string[])validObject) : SortDescending((string[])validObject);
             var paths = new StringCollection();
             paths.AddRange(filePaths);
-            var exception = await RetryAction(() => Clipboard.SetFileDropList(paths));
+            var exception = await RetryActionOnSTAThread(() => 
+            {
+                Clipboard.Clear();
+                Clipboard.SetFileDropList(paths);
+            });
             if (exception == null)
             {
                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
@@ -1315,7 +1324,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         var filePath = filePaths.FirstOrDefault();
         if (File.Exists(filePath))
         {
-            var exception = await RetryAction(() => Clipboard.SetText(filePath));
+            var exception = await RetryActionOnSTAThread(() =>
+            {
+                Clipboard.Clear();
+                Clipboard.SetText(filePath);
+            });
             if (exception == null)
             {
                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
@@ -1346,15 +1359,17 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         var filePath = filePaths.FirstOrDefault();
         if (File.Exists(filePath))
         {
-            var exception = await RetryAction(() =>
+            var exception = await RetryActionOnSTAThread(() =>
             {
                 if (FileUtils.IsImageFile(filePath))
                 {
+                    Clipboard.Clear();
                     var image = filePath.ToImage();
                     Clipboard.SetImage(image);
                 }
                 else
                 {
+                    Clipboard.Clear();
                     var text = File.ReadAllText(filePath);
                     Clipboard.SetText(text);
                 }
@@ -1383,16 +1398,17 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private static async Task<Exception?> FlushClipboard()
     {
-        return await RetryAction(() => { Win32Helper.StartSTATask(Clipboard.Flush);});
+        return await RetryActionOnSTAThread(Clipboard.Flush);
     }
 
-    private static async Task<Exception?> RetryAction(Action action)
+    private static async Task<Exception?> RetryActionOnSTAThread(Action action)
     {
+        
         for (int i = 0; i < ClipboardRetryTimes; i++)
         {
             try
             {
-                action();
+                await Win32Helper.StartSTATask(action);
                 break;
             }
             catch (Exception e)
