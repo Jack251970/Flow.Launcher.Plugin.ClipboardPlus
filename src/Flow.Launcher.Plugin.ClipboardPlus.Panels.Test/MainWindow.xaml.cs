@@ -25,7 +25,7 @@ public partial class MainWindow : Window
 
     private readonly static string _imageSavePath = @"D:\clipboard.png";
 
-    private readonly ClipboardMonitor ClipboardMonitor = new() { ObserveLastEntry = false };
+    private readonly ClipboardMonitorW ClipboardMonitor = new() { ObserveLastEntry = false };
 
     private readonly List<ClipboardData> ClipboardDatas = new();
 
@@ -334,13 +334,13 @@ public partial class MainWindow : Window
 
     private void InitializeClipboardMonitor()
     {
-        ClipboardMonitor.ClipboardChanged += OnClipboardChange;
+        ClipboardMonitor.ClipboardChanged += OnClipboardChangeW;
         ClipboardMonitor.StartMonitoring();
     }
 
     private void Window_Closed(object sender, EventArgs e)
     {
-        ClipboardMonitor.ClipboardChanged -= OnClipboardChange;
+        ClipboardMonitor.ClipboardChanged -= OnClipboardChangeW;
         ClipboardMonitor.Dispose();
     }
 
@@ -358,7 +358,7 @@ public partial class MainWindow : Window
 
     private void Button_Click3(object sender, RoutedEventArgs e)
     {
-        ClipboardMonitor.ClipboardChanged += OnClipboardChange;
+        ClipboardMonitor.ClipboardChanged += OnClipboardChangeW;
         ClipboardMonitor.StartMonitoring();
         TextBlock1.Text = "";
         TextBlock2.Text = "";
@@ -389,7 +389,7 @@ public partial class MainWindow : Window
 
     private void Button_Click6(object sender, RoutedEventArgs e)
     {
-        ClipboardMonitor.ClipboardChanged -= OnClipboardChange;
+        ClipboardMonitor.ClipboardChanged -= OnClipboardChangeW;
         ClipboardMonitor.Dispose();
         TextBlock1.Text = "";
         TextBlock2.Text = "";

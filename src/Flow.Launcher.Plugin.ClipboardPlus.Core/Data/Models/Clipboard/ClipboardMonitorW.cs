@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2024 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
-using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
@@ -86,17 +85,6 @@ public class ClipboardMonitorW : IDisposable
     #region Public
 
     /// <summary>
-    /// Gets the current foreground window's handle.
-    /// </summary>
-    /// <returns>
-    /// Handle to the currently active window.
-    /// </returns>
-    public IntPtr ForegroundWindowHandle()
-    {
-        return GetForegroundWindow();
-    }
-
-    /// <summary>
     /// Starts the clipboard-monitoring process and
     /// initializes the system clipboard-access handle.
     /// </summary>
@@ -153,17 +141,10 @@ public class ClipboardMonitorW : IDisposable
         ObserveLastEntry = true;
     }
 
-    internal void Invoke(object? content, DataType type, SourceApplication source)
+    internal void Invoke(object? content, DataType type, SourceApplicationW source)
     {
         ClipboardChanged?.Invoke(this, new ClipboardChangedEventArgs(content, type, source));
     }
-
-    #region Win32 Interop
-
-    [DllImport("user32.dll")]
-    private static extern int GetForegroundWindow();
-
-    #endregion
 
     #endregion
 
@@ -195,14 +176,13 @@ public class ClipboardMonitorW : IDisposable
         public ClipboardChangedEventArgs(
             object? content,
             DataType dataType,
-            SourceApplication source
+            SourceApplicationW source
         )
         {
             Content = content;
             DataType = dataType;
 
-            SourceApplication = new SourceApplication(
-                source.Id,
+            SourceApplication = new SourceApplicationW(
                 source.Handle,
                 source.Name,
                 source.Title,
@@ -226,7 +206,7 @@ public class ClipboardMonitorW : IDisposable
         /// Gets the application from where the
         /// clipboard's content were copied.
         /// </summary>
-        public SourceApplication SourceApplication { get; }
+        public SourceApplicationW SourceApplication { get; }
 
         #endregion
     }

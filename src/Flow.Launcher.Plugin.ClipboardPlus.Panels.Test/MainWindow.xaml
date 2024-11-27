@@ -73,7 +73,6 @@
                         Grid.Row="6"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
-
                 </Grid>
             </TabItem>
         </TabControl>

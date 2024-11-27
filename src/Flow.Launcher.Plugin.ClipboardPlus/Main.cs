@@ -36,7 +36,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     // Clipboard monitor instance
     // Warning: Do not init the instance in InitAsync function! This will cause issues.
-    private ClipboardMonitor ClipboardMonitor = new() { ObserveLastEntry = false };
+    private ClipboardMonitorW ClipboardMonitor = new() { ObserveLastEntry = false };
 
     // Records list & Score
     private LinkedList<ClipboardDataPair> RecordsList = new();
@@ -307,6 +307,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
         // init clipboard monitor
         ClipboardMonitor.ClipboardChanged += OnClipboardChange;
+        ClipboardMonitor.StartMonitoring();  // just call it for ClipboardMonitorW
         Context.API.LogDebug(ClassName, "Init clipboard monitor successfully");
     }
 
@@ -631,7 +632,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region Clipboard Monitor
 
-    private void OnClipboardChange(object? sender, ClipboardMonitor.ClipboardChangedEventArgs e)
+    private void OnClipboardChange(object? sender, ClipboardMonitorW.ClipboardChangedEventArgs e)
     {
         Context.API.LogDebug(ClassName, "Clipboard changed");
         if (e.Content is null || e.DataType == DataType.Other)

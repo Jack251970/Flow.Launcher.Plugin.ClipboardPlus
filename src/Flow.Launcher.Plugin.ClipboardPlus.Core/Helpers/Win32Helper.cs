@@ -40,4 +40,102 @@ public class Win32Helper
 
         return taskCompletionSource.Task;
     }
+
+    public static Task StartSTATask(Func<Task> func)
+    {
+        var taskCompletionSource = new TaskCompletionSource();
+        Thread thread = new(async () =>
+        {
+            PInvoke.OleInitialize();
+
+            try
+            {
+                await func();
+                taskCompletionSource.SetResult();
+            }
+            catch (Exception)
+            {
+                taskCompletionSource.SetResult();
+            }
+            finally
+            {
+                PInvoke.OleUninitialize();
+            }
+        })
+
+        {
+            IsBackground = true,
+            Priority = ThreadPriority.Normal
+        };
+
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+
+        return taskCompletionSource.Task;
+    }
+
+    public static Task<T?> StartSTATask<T>(Func<T> func)
+    {
+        var taskCompletionSource = new TaskCompletionSource<T?>();
+
+        Thread thread = new(() =>
+        {
+            PInvoke.OleInitialize();
+
+            try
+            {
+                taskCompletionSource.SetResult(func());
+            }
+            catch (Exception)
+            {
+                taskCompletionSource.SetResult(default);
+            }
+            finally
+            {
+                PInvoke.OleUninitialize();
+            }
+        })
+
+        {
+            IsBackground = true,
+            Priority = ThreadPriority.Normal
+        };
+
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+
+        return taskCompletionSource.Task;
+    }
+
+    public static Task<T?> StartSTATask<T>(Func<Task<T>> func)
+    {
+        var taskCompletionSource = new TaskCompletionSource<T?>();
+
+        Thread thread = new(async () =>
+        {
+            PInvoke.OleInitialize();
+            try
+            {
+                taskCompletionSource.SetResult(await func());
+            }
+            catch (Exception)
+            {
+                taskCompletionSource.SetResult(default);
+            }
+            finally
+            {
+                PInvoke.OleUninitialize();
+            }
+        })
+
+        {
+            IsBackground = true,
+            Priority = ThreadPriority.Normal
+        };
+
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+
+        return taskCompletionSource.Task;
+    }
 }
