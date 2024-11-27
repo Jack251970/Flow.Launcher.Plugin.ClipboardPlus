@@ -1403,7 +1403,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private static async Task<Exception?> RetryActionOnSTAThread(Action action)
     {
-        
         for (int i = 0; i < ClipboardRetryTimes; i++)
         {
             try
