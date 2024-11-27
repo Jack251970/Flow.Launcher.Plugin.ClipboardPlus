@@ -1383,24 +1383,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private static async Task<Exception?> FlushClipboard()
     {
-        return await RetryAction(() =>
-        {
-            if (Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
-            {
-                var thread = new Thread(() =>
-                {
-                    Clipboard.Flush();
-                });
-
-                thread.SetApartmentState(ApartmentState.STA);
-                thread.Start();
-                thread.Join();
-            }
-            else
-            {
-                Clipboard.Flush();
-            }
-        });
+        return await RetryAction(() => { Win32Helper.StartSTATask(Clipboard.Flush);});
     }
 
     private static async Task<Exception?> RetryAction(Action action)
