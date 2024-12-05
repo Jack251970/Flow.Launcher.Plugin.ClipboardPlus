@@ -283,7 +283,14 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             var records = query.Search.Trim().Length == 0
                 ? RecordsList.ToArray()
                 : RecordsList.Where(i => !string.IsNullOrEmpty(i.ClipboardData.GetText(CultureInfo)) && i.ClipboardData.GetText(CultureInfo).ToLower().Contains(query.Search.Trim().ToLower())).ToArray();
-            results.AddRange(records.Select(GetResultFromClipboardData));
+            foreach (var record in records)
+            {
+                var result = GetResultFromClipboardData(record);
+                if (result != null)
+                {
+                    results.Add(result);
+                }
+            }
             Context.API.LogDebug(ClassName, "Added records successfully");
         }
         return results;
@@ -908,63 +915,67 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region Query Result
 
-    private Result GetResultFromClipboardData(ClipboardDataPair clipboardDataPair)
+    private Result? GetResultFromClipboardData(ClipboardDataPair clipboardDataPair)
     {
-        var clipboardData = clipboardDataPair.ClipboardData;
-        if (clipboardData.Pinned)
+        try
         {
-            var score = clipboardData.GetScore(Settings.RecordOrder);
-        }
-        return new Result
-        {
-            Title = clipboardData.GetTitle(CultureInfo),
-            SubTitle = clipboardData.GetSubtitle(CultureInfo),
-            SubTitleToolTip = clipboardData.GetSubtitle(CultureInfo),
-            Icon = () => clipboardData.Icon,
-            Glyph = clipboardData.Glyph,
-            CopyText = clipboardData.GetText(CultureInfo),
-            Score = clipboardData.GetScore(Settings.RecordOrder),
-            TitleToolTip = clipboardData.GetText(CultureInfo),
-            ContextData = clipboardDataPair,
-            PreviewPanel = clipboardDataPair.PreviewPanel,
-            AsyncAction = async _ =>
+            var clipboardData = clipboardDataPair.ClipboardData;
+            return new Result
             {
-                switch (Settings.ClickAction)
+                Title = clipboardData.GetTitle(CultureInfo),
+                SubTitle = clipboardData.GetSubtitle(CultureInfo),
+                SubTitleToolTip = clipboardData.GetSubtitle(CultureInfo),
+                Icon = () => clipboardData.Icon,
+                Glyph = clipboardData.Glyph,
+                CopyText = clipboardData.GetText(CultureInfo),
+                Score = clipboardData.GetScore(Settings.RecordOrder),
+                TitleToolTip = clipboardData.GetText(CultureInfo),
+                ContextData = clipboardDataPair,
+                PreviewPanel = clipboardDataPair.PreviewPanel,
+                AsyncAction = async _ =>
                 {
-                    case ClickAction.Copy:
-                        CopyToClipboard(clipboardDataPair);
-                        break;
-                    case ClickAction.CopyPaste:
-                        Context.API.HideMainWindow();
-                        CopyToClipboard(clipboardDataPair);
-                        await WaitWindowHideAndSimulatePaste();
-                        break;
-                    case ClickAction.CopyDeleteList:
-                        CopyToClipboard(clipboardDataPair);
-                        RemoveFromList(clipboardDataPair, false);
-                        break;
-                    case ClickAction.CopyDeleteListDatabase:
-                        CopyToClipboard(clipboardDataPair);
-                        RemoveFromListDatabase(clipboardDataPair, false);
-                        break;
-                    case ClickAction.CopyPasteDeleteList:
-                        Context.API.HideMainWindow();
-                        CopyToClipboard(clipboardDataPair);
-                        RemoveFromList(clipboardDataPair, false);
-                        await WaitWindowHideAndSimulatePaste();
-                        break;
-                    case ClickAction.CopyPasteDeleteListDatabase:
-                        Context.API.HideMainWindow();
-                        CopyToClipboard(clipboardDataPair);
-                        RemoveFromListDatabase(clipboardDataPair, false);
-                        await WaitWindowHideAndSimulatePaste();
-                        break;
-                    default:
-                        break;
-                }
-                return true;
-            },
-        };
+                    switch (Settings.ClickAction)
+                    {
+                        case ClickAction.Copy:
+                            CopyToClipboard(clipboardDataPair);
+                            break;
+                        case ClickAction.CopyPaste:
+                            Context.API.HideMainWindow();
+                            CopyToClipboard(clipboardDataPair);
+                            await WaitWindowHideAndSimulatePaste();
+                            break;
+                        case ClickAction.CopyDeleteList:
+                            CopyToClipboard(clipboardDataPair);
+                            RemoveFromList(clipboardDataPair, false);
+                            break;
+                        case ClickAction.CopyDeleteListDatabase:
+                            CopyToClipboard(clipboardDataPair);
+                            RemoveFromListDatabase(clipboardDataPair, false);
+                            break;
+                        case ClickAction.CopyPasteDeleteList:
+                            Context.API.HideMainWindow();
+                            CopyToClipboard(clipboardDataPair);
+                            RemoveFromList(clipboardDataPair, false);
+                            await WaitWindowHideAndSimulatePaste();
+                            break;
+                        case ClickAction.CopyPasteDeleteListDatabase:
+                            Context.API.HideMainWindow();
+                            CopyToClipboard(clipboardDataPair);
+                            RemoveFromListDatabase(clipboardDataPair, false);
+                            await WaitWindowHideAndSimulatePaste();
+                            break;
+                        default:
+                            break;
+                    }
+                    return true;
+                },
+            };
+        }
+        catch (Exception e)
+        {
+            Context.API.LogException(ClassName, "Get result from clipboard data failed", e);
+            return null;
+        }
     }
 
     private async Task WaitWindowHideAndSimulatePaste()
