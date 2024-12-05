@@ -17,8 +17,6 @@ internal class ClipboardHandleW : IDisposable
 {
     #region Fields
 
-    private const int WM_CLIPBOARDUPDATE = 0x031D;
-
     private HwndSource _hwndSource = null!;
 
     private bool _ready;
@@ -140,7 +138,7 @@ internal class ClipboardHandleW : IDisposable
     /// <returns></returns>
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-        if (msg == WM_CLIPBOARDUPDATE)
+        if (msg == PInvoke.WM_CLIPBOARDUPDATE)
         {
             OnClipboardChanged();
         }

@@ -5,3 +5,4 @@ RemoveClipboardFormatListener
 GetForegroundWindow
 GetWindowThreadProcessId
 GetWindowText
+WM_CLIPBOARDUPDATE
