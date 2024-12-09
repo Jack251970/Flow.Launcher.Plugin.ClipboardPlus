@@ -98,7 +98,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     public List<Result> Query(Query query)
     {
-        var actionResult = new List<Result>();
         var results = new List<Result>();
         if (query.FirstSearch == Settings.ClearKeyword)
         {
@@ -208,7 +207,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         else
         {
             // clean action
-            actionResult.Add(new Result
+            results.Add(new Result
             {
                 Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clean_title"),
                 SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clean_subtitle"),
@@ -225,7 +224,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             // connect & disconnect action
             if (ClipboardMonitor.MonitorClipboard)
             {
-                actionResult.Add(new Result
+                results.Add(new Result
                 {
                     Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_disconnect_title"),
                     SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_disconnect_subtitle"),
@@ -241,7 +240,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             }
             else
             {
-                actionResult.Add(new Result
+                results.Add(new Result
                 {
                     Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_connect_title"),
                     SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_connect_subtitle"),
@@ -257,7 +256,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             }
 
             // clear action
-            actionResult.Add(new Result
+            results.Add(new Result
             {
                 Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_title"),
                 SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_subtitle"),
@@ -274,12 +273,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             // update results
             ResultsUpdated?.Invoke(this, new ResultUpdatedEventArgs
             {
-                Results = actionResult,
+                Results = results,
                 Query = query
             });
 
             // records results
-            results.AddRange(actionResult);
             var records = query.Search.Trim().Length == 0
                 ? RecordsList.ToArray()
                 : RecordsList.Where(i => !string.IsNullOrEmpty(i.ClipboardData.GetText(CultureInfo)) && i.ClipboardData.GetText(CultureInfo).ToLower().Contains(query.Search.Trim().ToLower())).ToArray();
