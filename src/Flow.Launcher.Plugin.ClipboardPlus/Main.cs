@@ -216,7 +216,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 Score = Settings.ActionTop ? TopActionScore1 : BottomActionScore1,
                 AsyncAction = async _ =>
                 {
-                    await Win32Helper.StartSTATask(Clipboard.Clear);
+                    await Win32Helper.StartSTATaskAsync(Clipboard.Clear);
                     return true;
                 },
             });
@@ -1430,7 +1430,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             try
             {
-                await Win32Helper.StartSTATask(action);
+                await Win32Helper.StartSTATaskAsync(action);
                 break;
             }
             catch (Exception e)

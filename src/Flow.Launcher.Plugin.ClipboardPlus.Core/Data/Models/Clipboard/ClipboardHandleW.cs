@@ -187,7 +187,7 @@ internal class ClipboardHandleW : IDisposable
             }
 
             // Handle clipboard action in sta thread
-            await Win32Helper.StartSTATask(() =>
+            await Win32Helper.StartSTATaskAsync(() =>
             {
                 // If the clipboard is empty, return.
                 var dataObj = Clipboard.GetDataObject();

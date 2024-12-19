@@ -8,7 +8,7 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 /// </summary>
 public class Win32Helper
 {
-    public static Task StartSTATask(Action action)
+    public static Task StartSTATaskAsync(Action action)
     {
         var taskCompletionSource = new TaskCompletionSource();
         Thread thread = new(() =>
@@ -29,7 +29,6 @@ public class Win32Helper
                 PInvoke.OleUninitialize();
             }
         })
-
         {
             IsBackground = true,
             Priority = ThreadPriority.Normal
@@ -41,7 +40,7 @@ public class Win32Helper
         return taskCompletionSource.Task;
     }
 
-    public static Task StartSTATask(Func<Task> func)
+    public static Task StartSTATaskAsync(Func<Task> func)
     {
         var taskCompletionSource = new TaskCompletionSource();
         Thread thread = new(async () =>
@@ -62,7 +61,6 @@ public class Win32Helper
                 PInvoke.OleUninitialize();
             }
         })
-
         {
             IsBackground = true,
             Priority = ThreadPriority.Normal
@@ -74,7 +72,7 @@ public class Win32Helper
         return taskCompletionSource.Task;
     }
 
-    public static Task<T?> StartSTATask<T>(Func<T> func)
+    public static Task<T?> StartSTATaskAsync<T>(Func<T> func)
     {
         var taskCompletionSource = new TaskCompletionSource<T?>();
 
@@ -95,7 +93,6 @@ public class Win32Helper
                 PInvoke.OleUninitialize();
             }
         })
-
         {
             IsBackground = true,
             Priority = ThreadPriority.Normal
@@ -107,7 +104,7 @@ public class Win32Helper
         return taskCompletionSource.Task;
     }
 
-    public static Task<T?> StartSTATask<T>(Func<Task<T>> func)
+    public static Task<T?> StartSTATaskAsync<T>(Func<Task<T>> func)
     {
         var taskCompletionSource = new TaskCompletionSource<T?>();
 
@@ -127,7 +124,6 @@ public class Win32Helper
                 PInvoke.OleUninitialize();
             }
         })
-
         {
             IsBackground = true,
             Priority = ThreadPriority.Normal
