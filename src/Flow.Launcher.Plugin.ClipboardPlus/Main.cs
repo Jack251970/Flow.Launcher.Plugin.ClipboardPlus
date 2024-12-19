@@ -37,8 +37,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     // Clipboard monitor instance
     // Warning: Do not init the instance in InitAsync function! This will cause issues.
     private ClipboardMonitorW ClipboardMonitor = new()
-    { 
-        ObserveLastEntry = false, 
+    {
+        ObserveLastEntry = false,
         ObservableFormats = new()
         {
             Images = true,
@@ -297,6 +297,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     public async Task InitAsync(PluginInitContext context)
     {
         Context = context;
+        ClipboardMonitor.SetContext(context);
 
         // init path helper
         PathHelper.Init(context);

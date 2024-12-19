@@ -7,6 +7,9 @@ using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Windows.Win32;
+using Windows.Win32.Foundation;
+using System.Windows;
+using Application = System.Windows.Application;
 using Clipboard = System.Windows.Clipboard;
 using DataFormats = System.Windows.DataFormats;
 using IDataObject = System.Windows.IDataObject;
@@ -17,7 +20,11 @@ internal class ClipboardHandleW : IDisposable
 {
     #region Fields
 
-    private HwndSource _hwndSource = null!;
+    private static string ClassName => typeof(ClipboardHandleW).Name;
+
+    private PluginInitContext? _context;
+
+    private HWND _handle = HWND.Null;
 
     private bool _ready;
 
@@ -54,6 +61,20 @@ internal class ClipboardHandleW : IDisposable
 
     #endregion
 
+    #region Constructor
+
+    public ClipboardHandleW()
+    {
+
+    }
+
+    public void SetContext(PluginInitContext context)
+    {
+        _context = context;
+    }
+
+    #endregion
+
     #region Methods
 
     #region Clipboard Management
@@ -65,8 +86,30 @@ internal class ClipboardHandleW : IDisposable
     /// </summary>
     public void StartMonitoring()
     {
-        // Make sure on the application dispatcher.
-        System.Windows.Application.Current.Dispatcher.InvokeAsync(CreateHiddenWindow);
+        if (Application.Current.MainWindow.IsLoaded)
+        {
+            MainWindow_Loaded(null, new RoutedEventArgs());
+        }
+        else
+        {
+            Application.Current.MainWindow.Loaded += MainWindow_Loaded;
+        }
+    }
+
+    private async void MainWindow_Loaded(object? sender, RoutedEventArgs e)
+    {
+        // Get the handle of the main window.
+        var handle = new WindowInteropHelper(Application.Current.MainWindow).Handle;
+        _handle = new(handle);
+
+        // Add the hook to the window.
+        var win = HwndSource.FromHwnd(handle);
+        win.AddHook(WndProc);
+
+        // Add clipboard format listener
+        await RetryActionAsync(AddClipboardFormatListener);
+
+        Ready = true;
     }
 
     /// <summary>
@@ -74,35 +117,7 @@ internal class ClipboardHandleW : IDisposable
     /// </summary>
     public async void StopMonitoring()
     {
-        if (_hwndSource is not null)
-        {
-            await RetryActionAsync(RemoveClipboardFormatListener);
-            _hwndSource.Dispose();
-        }
-    }
-
-    /// <summary>
-    /// Creates a hidden window to monitor the system clipboard.
-    /// </summary>
-    private async void CreateHiddenWindow()
-    {
-        var parameters = new HwndSourceParameters(GetType().Name)
-        {
-            Width = 1,
-            Height = 1,
-            PositionX = -10000,
-            PositionY = -10000,
-            WindowStyle = unchecked((int)(0x80000000 | 0x10000000)), // WS_POPUP | WS_VISIBLE
-            ExtendedWindowStyle = 0x00000080, // WS_EX_TOOLWINDOW
-            ParentWindow = IntPtr.Zero,
-            UsesPerPixelOpacity = false
-        };
-
-        _hwndSource = new HwndSource(parameters);
-        _hwndSource.AddHook(WndProc);
-
-        await RetryActionAsync(AddClipboardFormatListener);
-        Ready = true;
+        await RetryActionAsync(RemoveClipboardFormatListener);
     }
 
     /// <summary>
@@ -113,7 +128,13 @@ internal class ClipboardHandleW : IDisposable
     /// </returns>
     private bool AddClipboardFormatListener()
     {
-        return PInvoke.AddClipboardFormatListener(new(_hwndSource.Handle));
+        if (_handle != HWND.Null)
+        {
+            var result = PInvoke.AddClipboardFormatListener(_handle);
+            _context?.API.LogDebug(ClassName, "Clipboard format listener added.");
+            return result;
+        }
+        return false;
     }
 
     /// <summary>
@@ -124,7 +145,13 @@ internal class ClipboardHandleW : IDisposable
     /// </returns>
     private bool RemoveClipboardFormatListener()
     {
-        return PInvoke.RemoveClipboardFormatListener(new(_hwndSource.Handle));
+        if (_handle != HWND.Null)
+        {
+            var result = PInvoke.RemoveClipboardFormatListener(_handle);
+            _context?.API.LogDebug(ClassName, "Clipboard format listener removed.");
+            return result;
+        }
+        return true;
     }
 
     /// <summary>
@@ -173,7 +200,7 @@ internal class ClipboardHandleW : IDisposable
                 if (ClipboardMonitorInstance.ObservableFormats.Images && IsDataImage(dataObj))
                 {
                     // Make sure on the application dispatcher.
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
                         if (dataObj.GetData(DataFormats.Bitmap) is BitmapSource capturedImage)
                         {

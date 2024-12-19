@@ -2,6 +2,8 @@
 // Licensed under the Apache License. See the LICENSE.
 
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using Application = System.Windows.Application;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
@@ -12,6 +14,11 @@ public class ClipboardMonitorW : IDisposable
 {
     #region Fields
 
+    private static string ClassName => typeof(ClipboardMonitorW).Name;
+
+    private PluginInitContext? _context;
+
+    private DispatcherTimer _timer = new();
     private ClipboardHandleW _clipboardHandle = new();
     private ObservableDataFormats _observableFormats = new();
 
@@ -63,7 +70,20 @@ public class ClipboardMonitorW : IDisposable
 
     public ClipboardMonitorW()
     {
+        _timer = new DispatcherTimer
+        {
+            Interval = new TimeSpan(0, 0, 0, 0, 1000),
+            IsEnabled = false
+        };
+        _timer.Tick += Timer_Tick;
+
         SetDefaults();
+    }
+
+    public void SetContext(PluginInitContext context)
+    {
+        _context = context;
+        _clipboardHandle.SetContext(context);
     }
 
     #endregion
@@ -80,8 +100,8 @@ public class ClipboardMonitorW : IDisposable
     {
         if (!_startMonitoring)
         {
-            _clipboardHandle.StartMonitoring();
-            _startMonitoring = true;
+            _timer.Start();
+            _timer.IsEnabled = true;
         }
     }
 
@@ -90,7 +110,11 @@ public class ClipboardMonitorW : IDisposable
     /// </summary>
     public void PauseMonitoring()
     {
-        MonitorClipboard = false;
+        if (MonitorClipboard)
+        {
+            MonitorClipboard = false;
+            _context?.API.LogDebug(ClassName, "Clipboard monitoring paused.");
+        }
     }
 
     /// <summary>
@@ -98,7 +122,11 @@ public class ClipboardMonitorW : IDisposable
     /// </summary>
     public void ResumeMonitoring()
     {
-        MonitorClipboard = true;
+        if (!MonitorClipboard)
+        {
+            MonitorClipboard = true;
+            _context?.API.LogDebug(ClassName, "Clipboard monitoring resumed.");
+        }
     }
 
     /// <summary>
@@ -111,6 +139,7 @@ public class ClipboardMonitorW : IDisposable
         {
             _clipboardHandle.StopMonitoring();
             _startMonitoring = false;
+            _context?.API.LogDebug(ClassName, "Clipboard monitoring stopped.");
         }
     }
 
@@ -197,6 +226,33 @@ public class ClipboardMonitorW : IDisposable
 
     #endregion
 
+    #region Private
+
+    private void Timer_Tick(object? sender, EventArgs e)
+    {
+        // Wait until the dispatcher is ready & main window is initialized
+        if (Application.Current.Dispatcher == null)
+        {
+            return;
+        }
+        else if (Application.Current.MainWindow == null)
+        {
+            return;
+        }
+
+        // Stop the timer & start monitoring
+        _timer.Stop();
+        _timer.IsEnabled = false;
+        if (!_startMonitoring)
+        {
+            _clipboardHandle.StartMonitoring();
+            _startMonitoring = true;
+            _context?.API.LogDebug(ClassName, "Clipboard monitoring started.");
+        }
+    }
+
+    #endregion
+
     #endregion
 
     #region IDisposable
@@ -224,6 +280,8 @@ public class ClipboardMonitorW : IDisposable
         if (disposing)
         {
             _clipboardHandle.Dispose();
+            _timer.Stop();
+            _timer = null!;
             _clipboardHandle = null!;
             _observableFormats = null!;
             ClipboardFiles = null!;
