@@ -28,31 +28,19 @@ public class ClipboardMonitorW : IDisposable
     public bool MonitorClipboard
     {
         get => _monitorClipboard;
-        set
-        {
-            _monitorClipboard = value;
-            MonitorClipboardChanged?.Invoke(this, EventArgs.Empty);
-        }
+        set => _monitorClipboard = value;
     }
 
     public bool ObserveLastEntry
     {
         get => _observeLastEntry;
-        set
-        {
-            _observeLastEntry = value;
-            ObserveLastEntryChanged?.Invoke(this, EventArgs.Empty);
-        }
+        set => _observeLastEntry = value;
     }
 
     public ObservableDataFormats ObservableFormats
     {
         get => _observableFormats;
-        set
-        {
-            _observableFormats = value;
-            ObservableFormatsChanged?.Invoke(this, EventArgs.Empty);
-        }
+        set => _observableFormats = value;
     }
 
     #endregion
@@ -157,12 +145,6 @@ public class ClipboardMonitorW : IDisposable
     #region Event Handlers
 
     public event EventHandler<ClipboardChangedEventArgs>? ClipboardChanged = null;
-
-    public event EventHandler<EventArgs>? MonitorClipboardChanged = null;
-
-    public event EventHandler<EventArgs>? ObservableFormatsChanged = null;
-
-    public event EventHandler<EventArgs>? ObserveLastEntryChanged = null;
 
     #endregion
 

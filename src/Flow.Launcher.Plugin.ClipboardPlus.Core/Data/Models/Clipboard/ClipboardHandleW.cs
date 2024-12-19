@@ -188,10 +188,10 @@ internal class ClipboardHandleW : IDisposable
                                     capturedImage,
                                     DataType.Image,
                                     new SourceApplicationW(
-                                        GetApplicationHandle(),
-                                        GetApplicationName(),
-                                        GetActiveWindowTitle(),
-                                        GetApplicationPath()
+                                        _executableHandle,
+                                        _executableName,
+                                        _executableTitle,
+                                        _executablePath
                                     )
                                 );
                             }
@@ -230,10 +230,10 @@ internal class ClipboardHandleW : IDisposable
                                 capturedText,
                                 DataType.UnicodeText,
                                 new SourceApplicationW(
-                                    GetApplicationHandle(),
-                                    GetApplicationName(),
-                                    GetActiveWindowTitle(),
-                                    GetApplicationPath()
+                                    _executableHandle,
+                                    _executableName,
+                                    _executableTitle,
+                                    _executablePath
                                 )
                             );
                         }
@@ -246,10 +246,10 @@ internal class ClipboardHandleW : IDisposable
                                 capturedRtfData,
                                 DataType.RichText,
                                 new SourceApplicationW(
-                                    GetApplicationHandle(),
-                                    GetApplicationName(),
-                                    GetActiveWindowTitle(),
-                                    GetApplicationPath()
+                                    _executableHandle,
+                                    _executableName,
+                                    _executableTitle,
+                                    _executablePath
                                 )
                             );
                         }
@@ -274,10 +274,10 @@ internal class ClipboardHandleW : IDisposable
                                 dataObj,
                                 DataType.Other,
                                 new SourceApplicationW(
-                                    GetApplicationHandle(),
-                                    GetApplicationName(),
-                                    GetActiveWindowTitle(),
-                                    GetApplicationPath()
+                                    _executableHandle,
+                                    _executableName,
+                                    _executableTitle,
+                                    _executablePath
                                 )
                             );
                         }
@@ -295,10 +295,10 @@ internal class ClipboardHandleW : IDisposable
                                 capturedFiles,
                                 DataType.Files,
                                 new SourceApplicationW(
-                                    GetApplicationHandle(),
-                                    GetApplicationName(),
-                                    GetActiveWindowTitle(),
-                                    GetApplicationPath()
+                                    _executableHandle,
+                                    _executableName,
+                                    _executableTitle,
+                                    _executablePath
                                 )
                             );
                         }
@@ -313,10 +313,10 @@ internal class ClipboardHandleW : IDisposable
                             dataObj,
                             DataType.Other,
                             new SourceApplicationW(
-                                GetApplicationHandle(),
-                                GetApplicationName(),
-                                GetActiveWindowTitle(),
-                                GetApplicationPath()
+                                _executableHandle,
+                                _executableName,
+                                _executableTitle,
+                                _executablePath
                             )
                         );
                     }
@@ -400,26 +400,6 @@ internal class ClipboardHandleW : IDisposable
             // ignored
             return true;
         }
-    }
-
-    private IntPtr GetApplicationHandle()
-    {
-        return _executableHandle;
-    }
-
-    private string GetApplicationName()
-    {
-        return _executableName;
-    }
-
-    private string GetActiveWindowTitle()
-    {
-        return _executableTitle;
-    }
-
-    private string GetApplicationPath()
-    {
-        return _executablePath;
     }
 
     private static async Task RetryActionAsync(Func<bool> action, int retryInterval = 100, int maxAttemptCount = 3)
