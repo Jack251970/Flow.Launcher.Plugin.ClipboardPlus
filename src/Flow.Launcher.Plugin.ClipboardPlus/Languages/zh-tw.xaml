@@ -18,7 +18,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_connect_title">連接剪貼板</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_connect_subtitle">連接到剪貼板以開始監視剪貼板數據</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">清理剪切板</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">清理剪切板數據</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">清理當前剪切板數據</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">清除記録</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">從列錶和數據庫清除記録</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_title">清除列錶</system:String>
