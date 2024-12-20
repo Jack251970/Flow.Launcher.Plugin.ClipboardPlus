@@ -653,7 +653,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private void OnClipboardChange(object? sender, ClipboardMonitorW.ClipboardChangedEventArgs e)
     {
         Context.API.LogDebug(ClassName, "Clipboard changed");
-        if (e.Content is null || e.DataType == DataType.Other)
+        if (e.Content is null || e.DataType == DataType.Other || sender is not ClipboardMonitorW clipboardMonitor)
         {
             return;
         }
@@ -695,13 +695,13 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         if (dataType == DataType.RichText)
         {
             // due to some bugs, we need to convert rtf to plain text
-            if (string.IsNullOrEmpty(ClipboardMonitor.ClipboardText))
+            if (string.IsNullOrEmpty(clipboardMonitor.ClipboardText))
             {
-                clipboardData.UnicodeText = StringUtils.ConvertRtfToPlainText(ClipboardMonitor.ClipboardRtfText);
+                clipboardData.UnicodeText = StringUtils.ConvertRtfToPlainText(clipboardMonitor.ClipboardRtfText);
             }
             else
             {
-                clipboardData.UnicodeText = ClipboardMonitor.ClipboardText;
+                clipboardData.UnicodeText = clipboardMonitor.ClipboardText;
             }
         }
 

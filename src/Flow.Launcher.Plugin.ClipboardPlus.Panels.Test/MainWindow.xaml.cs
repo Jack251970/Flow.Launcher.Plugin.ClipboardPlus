@@ -88,7 +88,7 @@ public partial class MainWindow : Window
 
     private async void OnClipboardChangeW(object? sender, ClipboardMonitorW.ClipboardChangedEventArgs e)
     {
-        if (e.Content is null || e.DataType == DataType.Other)
+        if (e.Content is null || e.DataType == DataType.Other || sender is not ClipboardMonitorW clipboardMonitor)
         {
             return;
         }
@@ -109,7 +109,7 @@ public partial class MainWindow : Window
         };
         if (e.DataType == DataType.RichText)
         {
-            clipboardData.UnicodeText = ClipboardMonitor.ClipboardText;
+            clipboardData.UnicodeText = clipboardMonitor.ClipboardText;
         }
 
         Dispatcher.Invoke(() =>
@@ -132,19 +132,19 @@ public partial class MainWindow : Window
                 $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
                 $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
 
-            TextBox.Text = ClipboardMonitor.ClipboardText;
-            if (string.IsNullOrEmpty(ClipboardMonitor.ClipboardRtfText))
+            TextBox.Text = clipboardMonitor.ClipboardText;
+            if (string.IsNullOrEmpty(clipboardMonitor.ClipboardRtfText))
             {
-                RichTextBox.SetUnicodeText(ClipboardMonitor.ClipboardText);
+                RichTextBox.SetUnicodeText(clipboardMonitor.ClipboardText);
             }
             else
             {
-                RichTextBox.SetRichText(ClipboardMonitor.ClipboardRtfText);
+                RichTextBox.SetRichText(clipboardMonitor.ClipboardRtfText);
             }
 
             if (e.DataType is DataType.Image)
             {
-                Image.Source = ClipboardMonitor.ClipboardImage ?? _defaultImage;
+                Image.Source = clipboardMonitor.ClipboardImage ?? _defaultImage;
             }
         });
 
