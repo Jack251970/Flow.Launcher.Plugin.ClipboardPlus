@@ -102,49 +102,6 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
-    #region Enable & Disable Sync Database
-
-    public ICommand EnableSyncDatabaseCommand => new RelayCommand(EnableSyncDatabase);
-
-    private void EnableSyncDatabase(object? parameter)
-    {
-        SyncDatabase = true;
-    }
-
-    public ICommand DisableSyncDatabaseTemporarilyCommand => new RelayCommand(DisableSyncDatabaseTemporarily);
-
-    private void DisableSyncDatabaseTemporarily(object? parameter)
-    {
-        SyncDatabase = false;
-    }
-
-    public ICommand DisableSyncDatabasePermanentlyCommand => new RelayCommand(DisableSyncDatabasePermanently);
-
-    private void DisableSyncDatabasePermanently(object? parameter)
-    {
-        SyncHelper.Disable(true);
-        var syncPath = Path.Combine(SyncDatabasePath, StringUtils.EncryptKeyMd5);
-        FileUtils.DeleteAllItselfUnderFolder(syncPath);
-        SyncDatabase = false;
-    }
-
-    #endregion
-
-    #region Open Sync Database Folder
-
-    public ICommand OpenSyncDatabaseFolderCommand => new RelayCommand(OpenSyncDatabaseFolder);
-
-    private void OpenSyncDatabaseFolder(object? parameter)
-    {
-        var path = FileUtils.GetSyncDatabaseFolder();
-        if (!string.IsNullOrEmpty(path))
-        {
-            SyncDatabasePath = path;
-        }
-    }
-
-    #endregion
-
     #endregion
 
     #region Dependency Properties
@@ -635,33 +592,6 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
-    #region Sync Database
-
-    public bool SyncDatabase
-    {
-        get => Settings.SyncDatabase;
-        set
-        {
-            Settings.SyncDatabase = value;
-            OnPropertyChanged();
-            SyncDatabaseChanged(value);
-        }
-    }
-
-    public string SyncDatabasePath
-    {
-        get => Settings.SyncDatabasePath;
-        set
-        {
-            var oldValue = Settings.SyncDatabasePath;
-            Settings.SyncDatabasePath = value;
-            OnPropertyChanged();
-            SyncDatabasePathChanged(oldValue, value);
-        }
-    }
-
-    #endregion
-
     #endregion
 
     #region OnPropertyChanged
@@ -670,57 +600,6 @@ public class SettingsViewModel : BaseModel
     {
         base.OnPropertyChanged(propertyName);
         ClipboardPlus.SaveSettingJsonStorage();
-    }
-
-    private async void SyncDatabaseChanged(bool value)
-    {
-        // if enable sync database, need to initialize sync helper
-        if (value)
-        {
-            await SyncHelper.InitializeAsync(ClipboardPlus);
-        }
-
-        // invoke sync enabled changed event
-        SyncHelper.ChangeSyncEnabled(ClipboardPlus);
-    }
-
-    private async void SyncDatabasePathChanged(string oldValue, string newValue)
-    {
-        // if sync database is disabled, return
-        if (!SyncDatabase)
-        {
-            return;
-        }
-
-        // if old value is empty, need to initialize sync helper
-        if (string.IsNullOrEmpty(oldValue))
-        {
-            if (!string.IsNullOrEmpty(newValue))  // empty to non-empty
-            {
-                await SyncHelper.InitializeAsync(ClipboardPlus);
-            }
-            else  // empty to empty
-            {
-                // ignore
-            }
-        }
-        // if old value is non-empty, need to change sync database path or disable sync helper
-        else
-        {
-            if (!string.IsNullOrEmpty(newValue))  // non-empty to non-empty
-            {
-                await SyncHelper.InitializeAsync(ClipboardPlus);
-                FileUtils.MoveSyncFiles(oldValue, newValue);
-                SyncHelper.ChangeSyncDatabasePath(ClipboardPlus);
-            }
-            else  // non-empty to empty
-            {
-                SyncHelper.Disable();
-            }
-        }
-
-        // invoke sync enabled changed event
-        SyncHelper.ChangeSyncEnabled(ClipboardPlus);
     }
 
     #endregion

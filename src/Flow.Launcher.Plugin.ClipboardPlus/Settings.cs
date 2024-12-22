@@ -44,13 +44,6 @@ public class Settings : ISettings
 
     public KeepTime FilesKeepTime { get; set; } = 0;
 
-    public bool SyncDatabase { get; set; } = false;
-
-    public string SyncDatabasePath { get; set; } = string.Empty;
-
-    [JsonIgnore]
-    public bool SyncEnabled => SyncDatabase && (!string.IsNullOrEmpty(SyncDatabasePath));
-
     [JsonIgnore]
     public List<Tuple<DataType, KeepTime>> KeepTimePairs => 
         new ()

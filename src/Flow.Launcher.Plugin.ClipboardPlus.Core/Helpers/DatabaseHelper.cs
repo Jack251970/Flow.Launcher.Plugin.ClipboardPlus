@@ -4,8 +4,6 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 
 public static class DatabaseHelper
 {
-    #region Import & Export
-
     public static async Task ExportDatabase(IClipboardPlus clipboardPlus, string jsonPath)
     {
         var database = clipboardPlus.Database;
@@ -76,63 +74,4 @@ public static class DatabaseHelper
                 context.GetTranslation("flowlauncher_plugin_clipboardplus_import_failed"));
         }
     }
-
-    #endregion
-
-    #region Sync
-
-    public static async Task ExportDatabase(IClipboardPlus clipboardPlus, string jsonPath, string hashId, int databaseVersion)
-    {
-        var database = clipboardPlus.Database;
-        var records = await database.GetLocalRecordsAsync();
-        var infoData = new ClipboardData()
-        {
-            HashId = hashId,
-            SenderApp = databaseVersion.ToString(),
-            InitScore = 0,
-            CachedImagePath = string.Empty,
-            CreateTime = Record.BaseDateTime,
-            Pinned = false,
-            Saved = false,
-            UnicodeText = string.Empty,
-            EncryptKeyMd5 = string.Empty
-        };
-        records.Insert(0, infoData);
-        var jsonRecords = records.Select(JsonClipboardData.FromClipboardData);
-        var formatting = Formatting.Indented;
-        string json = JsonConvert.SerializeObject(jsonRecords, formatting);
-        await File.WriteAllTextAsync(jsonPath, json);
-        var context = clipboardPlus.Context;
-    }
-
-    public static async Task<(string HashId, int Version, IEnumerable<JsonClipboardData> Data)?> ImportDatabase(string jsonPath)
-    {
-        if (!File.Exists(jsonPath))
-        {
-            return null;
-        }
-        List<JsonClipboardData>? jsonRecords = null;
-        try
-        {
-            string json = await File.ReadAllTextAsync(jsonPath);
-            jsonRecords = JsonConvert.DeserializeObject<List<JsonClipboardData>>(json);
-        }
-        catch (Exception)
-        {
-            // ignored
-        }
-        if (jsonRecords != null)
-        {
-            var infoData = jsonRecords.FirstOrDefault();
-            if (infoData != null && infoData.CreateTime == Record.BaseDateTime && infoData.DataType == DataType.Other)
-            {
-                var databaseVersion = int.Parse(infoData.SenderApp);
-                var data = jsonRecords.Skip(1);
-                return (infoData.HashId, databaseVersion, data);
-            }
-        }
-        return null;
-    }
-
-    #endregion
 }

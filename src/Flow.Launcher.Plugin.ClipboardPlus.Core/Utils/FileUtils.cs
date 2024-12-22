@@ -120,18 +120,6 @@ public static class FileUtils
         return openFileDialog.FileName;
     }
 
-    public static string GetSyncDatabaseFolder()
-    {
-        var folderBrowserDialog = new FolderBrowserDialog();
-
-        if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
-        {
-            return string.Empty;
-        }
-
-        return folderBrowserDialog.SelectedPath;
-    }
-
     private static string GetJsonFileFilter(IClipboardPlus clipboardPlus)
     {
         var context = clipboardPlus.Context;
@@ -143,66 +131,6 @@ public static class FileUtils
         {
             return $"{context.GetTranslation("flowlauncher_plugin_clipboardplus_json_files")} (*.json)|*.json|" +
                 $"{context.GetTranslation("flowlauncher_plugin_clipboardplus_json_files")} (*.*)|*.*";
-        }
-    }
-
-    public static void MoveSyncFiles(string oldFolder, string newFolder)
-    {
-        // create new folder if it doesn't exist
-        if (!Directory.Exists(newFolder))
-        {
-            Directory.CreateDirectory(newFolder);
-        }
-
-        // copy files from old folder to new folder
-        var oldFolderLength = oldFolder.Length;
-        var files = Directory.GetFiles(oldFolder, "*.*", SearchOption.AllDirectories);
-        foreach (var file in files)
-        {
-            // check if file is a sync data file or sync log file that need to moves
-            var fileName = Path.GetFileName(file);
-            var fileDirectory = Path.GetDirectoryName(file);
-            var folderName = Path.GetFileName(Path.GetDirectoryName(file));
-            if (folderName == null || (!StringUtils.IsMd5(folderName)) ||
-                fileDirectory == null ||
-                (!(fileName == PathHelper.SyncDataFile || fileName == PathHelper.SyncLogFile)))
-            {
-                continue;
-            }
-            var destFile = Path.Combine(newFolder, file[(oldFolderLength + 1)..]);
-            var destDirectory = Path.GetDirectoryName(destFile);
-            if ((!string.IsNullOrEmpty(destDirectory)) && (!Directory.Exists(destDirectory)))
-            {
-                Directory.CreateDirectory(destDirectory);
-            }
-            File.Copy(file, destFile, true);
-            File.Delete(file);
-            if (Directory.GetFiles(fileDirectory).Length == 0)
-            {
-                Directory.Delete(fileDirectory);
-            }
-        }
-    }
-
-    public static void DeleteAllItselfUnderFolder(string rootFolder)
-    {
-        if (Directory.Exists(rootFolder))
-        {
-            Directory.Delete(rootFolder, true);
-        }
-    }
-
-    public static void DeleteAllUnderFolder(string rootFolder)
-    {
-        var directories = Directory.GetDirectories(rootFolder, "*", SearchOption.AllDirectories);
-        foreach (var directory in directories)
-        {
-            Directory.Delete(directory, true);
-        }
-        var oldFiles = Directory.GetFiles(rootFolder, "*.*", SearchOption.AllDirectories);
-        foreach (var file in oldFiles)
-        {
-            File.Delete(file);
         }
     }
 }
