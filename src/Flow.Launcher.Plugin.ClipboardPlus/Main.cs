@@ -849,7 +849,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             clipboardData.Saved = true;
             RecordsList.Remove(clipboardDataPair);
-            RecordsList.AddLast(clipboardDataPair);
+            RecordsList.AddFirst(clipboardDataPair);
             if (requery)
             {
                 ReQuery();
@@ -860,7 +860,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private void RemoveFromList(ClipboardDataPair clipboardDataPair, bool requery)
     {
-        if (RecordsList.Last?.Value == clipboardDataPair)
+        if (RecordsList.First?.Value == clipboardDataPair)
         {
             Database.CurrentScore -= ScoreInterval;
         }
@@ -875,7 +875,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private void RemoveFromListDatabase(ClipboardDataPair clipboardDataPair, bool requery)
     {
-        if (RecordsList.Last?.Value == clipboardDataPair)
+        if (RecordsList.First?.Value == clipboardDataPair)
         {
             Database.CurrentScore -= ScoreInterval;
         }
@@ -894,7 +894,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     {
         clipboardDataPair.TogglePinned();
         RecordsList.Remove(clipboardDataPair);
-        RecordsList.AddLast(clipboardDataPair);
+        RecordsList.AddFirst(clipboardDataPair);
         if (requery)
         {
             ReQuery();
