@@ -904,7 +904,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private async void ReQuery()
     {
-        // TODO: Ask Flow-Launcher for a better way to exit the context menu.
+        // TODO: Improve refresh way here in future version of FL.
         new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
         await Task.Delay(RetryInterval);
         Context.API.ReQuery(false);

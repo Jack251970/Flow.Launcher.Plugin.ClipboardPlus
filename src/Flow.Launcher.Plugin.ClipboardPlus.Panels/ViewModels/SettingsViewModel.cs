@@ -156,6 +156,7 @@ public class SettingsViewModel : BaseModel
         get => Settings.ClearKeyword;
         set
         {
+            // TODO: Warning user not to use string.Empty here in future version of FL.
             Settings.ClearKeyword = value;
             OnPropertyChanged();
         }
