@@ -20,7 +20,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">Clean clipboard</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">Clean current clipboard data</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">Clear records</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">Clear records in both list and database</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">Open menu to clear records in list and database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_title">Clear in list</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_subtitle">Clear all records in list</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle">Clear {0} records in list!</system:String>
@@ -77,11 +77,11 @@
 
     <!--  Settings  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword">Clear keyword:</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_max_records">Max records:</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">Order by:</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_max_records">List max records:</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">Order records by:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">Set the action options (e.g., Clean clipboard) as topmost / bottommost in the query</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">Click action:</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">Record click action:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_rich_text_copy_option">Rich text default:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_image_copy_option">Image default:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_files_copy_option">Files default:</system:String>
@@ -89,7 +89,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">Cache clipboard images in folder</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_open_cache_folder">Open cache folder</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_cache_folder">Clean cache folder</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format">Format:</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format">Image format:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_format_year">Year</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_format_month">Month</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_format_day">Day</system:String>
