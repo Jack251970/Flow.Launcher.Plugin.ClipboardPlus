@@ -31,7 +31,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_subtitle">Clear unpinned records in both list and database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_msg_subtitle">Clear {0} unpinned records in both list and database!</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_title">Clear invalid records</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_subtitle">Clear invalid records in both list and database</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_subtitle">Clear empty text, unexisting files and empty records in both list and database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle">Clear {0} invalid records in both list and database!</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle">There are no records that can be cleared!</system:String>
 

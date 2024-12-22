@@ -31,7 +31,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_subtitle">從列錶和數據庫清除所有未固定記録</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_msg_subtitle">從列錶和數據庫清除瞭{0}條未固定記録！</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_title">清除無傚記録</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_subtitle">從列錶和數據庫清除所有無傚記録</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_subtitle">從列錶和數據庫清除空文字，不存在的文件與空記錄</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle">從列錶和數據庫清除瞭{0}條無傚記録！</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle">沒有可清除的記録！</system:String>
 
