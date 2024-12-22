@@ -155,67 +155,6 @@ public partial class MainWindow : Window
         _count++;
     }
 
-    private async void OnClipboardChange(object? sender, ClipboardMonitor.ClipboardChangedEventArgs e)
-    {
-        if (e.Content is null || e.DataType == DataType.Other)
-        {
-            return;
-        }
-
-        // init clipboard data
-        var now = DateTime.Now;
-        var clipboardData = new ClipboardData(e.Content, e.DataType, true)
-        {
-            HashId = StringUtils.GetGuid(),
-            SenderApp = e.SourceApplication.Name,
-            InitScore = 1,
-            CreateTime = now,
-            CachedImagePath = string.Empty,
-            Pinned = false,
-            Saved = false,
-            UnicodeText = string.Empty,
-            EncryptKeyMd5 = StringUtils.EncryptKeyMd5
-        };
-        if (e.DataType == DataType.RichText)
-        {
-            clipboardData.UnicodeText = ClipboardMonitor.ClipboardText;
-        }
-
-        TextBlock1.Text = $"Count: {_count}\n" +
-            $"ClipboardChangedEventArgs\n" +
-            $"DataType: {e.DataType}\n" +
-            $"SourceApplication: {e.SourceApplication.Name}\n" +
-            $"Content: {e.Content}";
-        TextBlock2.Text = $"ClipboardMonitor\n" +
-            $"ClipboardText: {ClipboardMonitor.ClipboardText}\n" +
-            $"ClipboardRtfText: {ClipboardMonitor.ClipboardRtfText}\n" +
-            $"ClipboardFiles: {ClipboardMonitor.ClipboardFiles}\n" +
-            $"ClipboardImage: {ClipboardMonitor.ClipboardImage}";
-        TextBlock3.Text = $"ClipboardData\n" +
-            $"DataMd5: {clipboardData.DataMd5}\n" +
-            $"DataToString: {clipboardData.DataToString(false)}\n" +
-            $"DataToString(Encrypted): {clipboardData.DataToString(true)}\n" +
-            $"Title: {clipboardData.GetTitle(CultureInfo.CurrentCulture)}\n" +
-            $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
-            $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
-
-        TextBox.Text = ClipboardMonitor.ClipboardText;
-        if (string.IsNullOrEmpty(ClipboardMonitor.ClipboardRtfText))
-        {
-            RichTextBox.SetUnicodeText(ClipboardMonitor.ClipboardText);
-        }
-        else
-        {
-            RichTextBox.SetRichText(ClipboardMonitor.ClipboardRtfText);
-        }
-
-        RecordList.Add(clipboardData);
-
-        await ClipboardPlus.Database.AddOneRecordAsync(clipboardData, true);
-
-        _count++;
-    }
-
     #endregion
 
     #region Events

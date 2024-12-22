@@ -29,16 +29,4 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Update="Data\Models\Clipboard\ClipboardHandle.cs">
-        <SubType>Form</SubType>
-      </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
-      <EmbeddedResource Update="Data\Models\Clipboard\ClipboardHandle.resx">
-        <SubType>Designer</SubType>
-      </EmbeddedResource>
-    </ItemGroup>
-
 </Project>
