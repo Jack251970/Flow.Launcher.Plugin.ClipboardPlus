@@ -96,6 +96,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         return Task.Run(() => Query(query));
     }
 
+    // TODO: Remove selected count from score.
     public List<Result> Query(Query query)
     {
         var results = new List<Result>();
@@ -341,6 +342,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region IContextMenu Interface
 
+    // TODO: Remove selected count from score.
     public List<Result> LoadContextMenus(Result result)
     {
         var results = new List<Result>();
@@ -912,6 +914,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region Query Result
 
+    // TODO: Remove selected count from score.
     private Result? GetResultFromClipboardData(ClipboardDataPair clipboardDataPair)
     {
         try
