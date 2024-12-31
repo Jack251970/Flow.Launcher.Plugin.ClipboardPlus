@@ -82,22 +82,30 @@ public class SettingsViewModel : BaseModel
 
     private async void ImportJsonRecords(object? parameter)
     {
+        ImportEnabled = false;
+
         var path = FileUtils.GetOpenJsonFile(ClipboardPlus);
         if (!string.IsNullOrEmpty(path))
         {
             await DatabaseHelper.ImportDatabase(ClipboardPlus, path);
         }
+
+        ImportEnabled = true;
     }
 
     public ICommand ExportJsonRecordsCommand => new RelayCommand(ExportJsonRecords);
 
     private async void ExportJsonRecords(object? parameter)
     {
+        ExportEnabled = false;
+
         var path = FileUtils.GetSaveJsonFile(ClipboardPlus);
         if (!string.IsNullOrEmpty(path))
         {
             await DatabaseHelper.ExportDatabase(ClipboardPlus, path);
         }
+
+        ExportEnabled = true;
     }
 
     #endregion
@@ -427,6 +435,32 @@ public class SettingsViewModel : BaseModel
     public void InitializeCacheFormatPreview()
     {
         _cacheFormatPreview = StringUtils.FormatImageName(Settings.CacheFormat, DateTime.Now);
+    }
+
+    #endregion
+
+    #region Import & Export Records
+
+    private bool _importEnabled = true;
+    public bool ImportEnabled
+    {
+        get => _importEnabled;
+        set
+        {
+            _importEnabled = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private bool _exportEnabled = true;
+    public bool ExportEnabled
+    {
+        get => _exportEnabled;
+        set
+        {
+            _exportEnabled = value;
+            OnPropertyChanged();
+        }
     }
 
     #endregion
