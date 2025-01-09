@@ -1,12 +1,14 @@
-# Flow Launcher ClipboardPlus Plugin
+<p align="center">
+  <img src="./src/Flow.Launcher.Plugin.ClipboardPlus/Images/clipboard.png" width="90">
+</p>
 
-## About
+<h1>
+	Flow Launcher ClipboardPlus Plugin
+</h1>
 
-This plugin is a clipboard manager for [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher).
+**This plugin is a clipboard manager for [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher). It can help you manage your clipboard history and customizing copy rules with support for text, images, and files.**
 
-It can help you manage your clipboard history and customizing copy rules with support for text, images, and files.
-
-## Features
+## ⭐ Features
 
 - Copy & delete & pin record
 - Cache images to folder
@@ -18,7 +20,7 @@ It can help you manage your clipboard history and customizing copy rules with su
 - Clean clipboard
 - Copy files by sorting names
 
-## Screenshots
+## 🖼️ Screenshots
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./images/screenshot1_dark.png">
@@ -46,26 +48,26 @@ It can help you manage your clipboard history and customizing copy rules with su
   <img alt="Screenshot 5" src="./images/screenshot5_light.png">
 </picture>
 
-## Installation
+## 🚀 Installation
 
-### Manually Build
+* Plugin Store (Recommended)
 
-1. Clone the repository
-2. Run `build.ps1` or `build.sh` to publish the plugin in `.dist` folder
-3. Unzip the release zip file
-4. Place the released contents in your `%appdata%/FlowLauncher/Plugins` folder and **restart** Flow Launcher
+  1. Search `Clipboard+` in Flow Launcher Plugin Store and install
 
-### Manually Release
+* Manually Release
 
-1. Downlaod zip file from [Release](https://github.com/Jack251970/Flow.Launcher.Plugin.ClipboardPlus/releases)
-2. Unzip the release zip file
-3. Place the released contents in your `%appdata%/FlowLauncher/Plugins` folder and **restart** Flow Launcher
+  1. Downlaod zip file from [Release](https://github.com/Jack251970/Flow.Launcher.Plugin.ClipboardPlus/releases)
+  2. Unzip the release zip file
+  3. Place the released contents in your `%appdata%/FlowLauncher/Plugins` folder and **restart** Flow Launcher
 
-### Plugin Store
+* Manually Build
 
-1. Search `Clipboard+` in Flow Launcher Plugin Store and install
+  1. Clone the repository
+  2. Run `build.ps1` or `build.sh` to publish the plugin in `.dist` folder
+  3. Unzip the release zip file
+  4. Place the released contents in your `%appdata%/FlowLauncher/Plugins` folder and **restart** Flow Launcher
 
-## Usage
+## 🪧 Tips
 
 The default action keyword is `cbp`, you can change it in the FlowLauncher.
 
@@ -82,12 +84,12 @@ This will save the data to the database, and you won't lose them when you exit t
 > Note: It is recommended to cache images using `CacheImages` option, 
 saving large images via `KeepImage` to database may block query for a little while.
 
-## Reference
+## 📚 Reference
 
 - [ICONS](https://icons8.com/icons)
 - [ClipboardR](https://github.com/rainyl/Flow.Launcher.Plugin.ClipboardR)
 - [SharpClipboard](https://github.com/Willy-Kimura/SharpClipboard)
 
-## License
+## 📄 License
 
 [Apache License V2.0](LICENSE)
