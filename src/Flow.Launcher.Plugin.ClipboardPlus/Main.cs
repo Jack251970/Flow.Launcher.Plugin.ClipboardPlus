@@ -899,7 +899,14 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             ReQuery();
         }
-        _ = Database.PinOneRecordAsync(clipboardDataPair.ClipboardData);
+        if (!clipboardDataPair.ClipboardData.Saved)
+        {
+            _ = Database.AddOneRecordAsync(clipboardDataPair.ClipboardData, true);
+        }
+        else
+        {
+            _ = Database.PinOneRecordAsync(clipboardDataPair.ClipboardData);
+        }
     }
 
     private async void ReQuery()
