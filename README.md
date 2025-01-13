@@ -2,9 +2,7 @@
   <img src="./src/Flow.Launcher.Plugin.ClipboardPlus/Images/clipboard.png" width="90">
 </p>
 
-<h1>
-	Flow Launcher ClipboardPlus Plugin
-</h1>
+# Flow Launcher ClipboardPlus Plugin
 
 **This plugin is a clipboard manager for [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher). It can help you manage your clipboard history and customizing copy rules with support for text, images, and files.**
 
