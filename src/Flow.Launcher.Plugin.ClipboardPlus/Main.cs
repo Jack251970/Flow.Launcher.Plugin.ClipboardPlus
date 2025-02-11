@@ -96,7 +96,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         return Task.Run(() => Query(query));
     }
 
-    // TODO: Remove selected count from score.
+    // TODO: Remove selected count from Record class.
+    // TODO: Add AutoCompleteText & Others properties in Record class.
     public List<Result> Query(Query query)
     {
         var results = new List<Result>();
