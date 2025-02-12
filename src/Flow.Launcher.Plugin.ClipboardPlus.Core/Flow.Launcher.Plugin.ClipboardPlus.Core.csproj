@@ -18,6 +18,59 @@
       <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
 
+    <!-- CsWinRT related properties for projections generation -->
+    <PropertyGroup>
+      <CsWinRTEmbedded>true</CsWinRTEmbedded>
+      <CsWinRTWindowsMetadata>10.0.19041.0</CsWinRTWindowsMetadata>
+      <CsWinRTIncludes>
+        Windows.ApplicationModel.DataTransfer;
+        Windows.ApplicationModel.DataTransfer.ShareTargetInfo;
+        Windows.ApplicationModel.AddResourcePackageOptions;
+        Windows.ApplicationModel.AppDisplayInfo;
+        Windows.ApplicationModel.AppInstallerInfo;
+        Windows.ApplicationModel.Core.AppDisplayInfo;
+        Windows.ApplicationModel.Core.AppListEntry;
+        Windows.ApplicationModel.Core.IAppListEntry;
+        Windows.ApplicationModel.IAppDisplayInfo;
+        Windows.ApplicationModel.IAppInstallerInfo;
+        Windows.ApplicationModel.IPackage;
+        Windows.ApplicationModel.IPackageCatalog;
+        Windows.ApplicationModel.Package;
+        Windows.Data.Text.TextSegment;
+        Windows.Devices.Geolocation;
+        Windows.Foundation;
+        Windows.Globalization.DayOfWeek;
+        Windows.Management.Deployment;
+        Windows.Security.EnterpriseData.ProtectionPolicyEvaluationResult;
+        Windows.Storage;
+        Windows.System.IUser;
+        Windows.System.ProcessorArchitecture;
+        Windows.System.User;
+        Windows.UI;
+      </CsWinRTIncludes>
+      <CsWinRTExcludes>
+        Windows.Foundation.Diagnostics;
+        Windows.Foundation.PropertyType;
+        Windows.Storage.BulkAccess;
+        Windows.ApplicationModel.DataTransfer.DragDrop;
+        Windows.ApplicationModel.DataTransfer.ShareTarget;
+        Windows.UI.ApplicationSettings;
+        Windows.UI.Composition;
+        Windows.UI.Core;
+        Windows.UI.Input.Core;
+        Windows.UI.Notifications;
+        Windows.UI.Shell;
+        Windows.UI.StartScreen;
+        Windows.UI.Text.Core;
+        Windows.UI.ViewManagement;
+        Windows.UI.WebUI;
+        Windows.UI.WindowManagement;
+        Windows.UI.Input;
+        Windows.UI.Xaml;
+        Windows.UI.Xaml.Input;
+      </CsWinRTExcludes>
+    </PropertyGroup>
+
     <ItemGroup>
       <PackageReference Include="Dapper" Version="2.1.35" />
       <PackageReference Include="Flow.Launcher.Plugin" Version="4.4.0" />
@@ -26,6 +79,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
