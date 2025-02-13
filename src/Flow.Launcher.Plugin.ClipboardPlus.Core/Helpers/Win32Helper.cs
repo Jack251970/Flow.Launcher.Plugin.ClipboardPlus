@@ -1,4 +1,5 @@
-﻿using Windows.Win32;
+﻿using System.Runtime.Versioning;
+using Windows.Win32;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 
@@ -8,6 +9,7 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 /// </summary>
 public class Win32Helper
 {
+    [SupportedOSPlatform("windows5.0")]
     public static Task StartSTATaskAsync(Action action)
     {
         var taskCompletionSource = new TaskCompletionSource();
@@ -40,6 +42,7 @@ public class Win32Helper
         return taskCompletionSource.Task;
     }
 
+    [SupportedOSPlatform("windows5.0")]
     public static Task StartSTATaskAsync(Func<Task> func)
     {
         var taskCompletionSource = new TaskCompletionSource();
@@ -72,6 +75,7 @@ public class Win32Helper
         return taskCompletionSource.Task;
     }
 
+    [SupportedOSPlatform("windows5.0")]
     public static Task<T?> StartSTATaskAsync<T>(Func<T> func)
     {
         var taskCompletionSource = new TaskCompletionSource<T?>();
@@ -104,6 +108,7 @@ public class Win32Helper
         return taskCompletionSource.Task;
     }
 
+    [SupportedOSPlatform("windows5.0")]
     public static Task<T?> StartSTATaskAsync<T>(Func<Task<T>> func)
     {
         var taskCompletionSource = new TaskCompletionSource<T?>();

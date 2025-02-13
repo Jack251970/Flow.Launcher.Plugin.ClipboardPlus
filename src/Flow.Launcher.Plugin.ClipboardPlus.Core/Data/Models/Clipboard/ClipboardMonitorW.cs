@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2024 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
+using System.Runtime.Versioning;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Application = System.Windows.Application;
@@ -10,6 +11,7 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 /// <summary>
 /// ClipboardMonitorW is a class that monitors the clipboard
 /// </summary>
+[SupportedOSPlatform("windows6.0.6000")]
 public class ClipboardMonitorW : IDisposable
 {
     #region Fields

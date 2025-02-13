@@ -13,9 +13,11 @@ using Application = System.Windows.Application;
 using Clipboard = System.Windows.Clipboard;
 using DataFormats = System.Windows.DataFormats;
 using IDataObject = System.Windows.IDataObject;
+using System.Runtime.Versioning;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
+[SupportedOSPlatform("windows6.0.6000")]
 internal class ClipboardHandleW : IDisposable
 {
     #region Fields
