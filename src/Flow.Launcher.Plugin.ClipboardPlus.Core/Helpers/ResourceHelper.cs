@@ -41,6 +41,7 @@ public static class ResourceHelper
     public static GlyphInfo ConnectGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE703");
     public static GlyphInfo DisconnectGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE703");
     public static GlyphInfo CleanGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE894");
+    public static GlyphInfo ClearHistoryGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uF0E3");
     public static GlyphInfo ClearGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uE894");
     public static GlyphInfo ListGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uEA37");
     public static GlyphInfo DatabaseGlyph => new(FontFamily: "/Resources/#Segoe Fluent Icons", Glyph: "\uEE94");

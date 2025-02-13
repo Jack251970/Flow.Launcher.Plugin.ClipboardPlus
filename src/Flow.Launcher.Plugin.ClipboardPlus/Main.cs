@@ -77,13 +77,15 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private const int ScoreInterval8 = 8 * ScoreInterval;
     private const int ScoreInterval9 = 9 * ScoreInterval;
 
-    private const int TopActionScore1 = 2 * ClipboardData.MaximumScore + 3 * ScoreInterval;
-    private const int TopActionScore2 = 2 * ClipboardData.MaximumScore + 2 * ScoreInterval;
-    private const int TopActionScore3 = 2 * ClipboardData.MaximumScore + 1 * ScoreInterval;
+    private const int TopActionScore1 = 2 * ClipboardData.MaximumScore + 4 * ScoreInterval;
+    private const int TopActionScore2 = 2 * ClipboardData.MaximumScore + 3 * ScoreInterval;
+    private const int TopActionScore3 = 2 * ClipboardData.MaximumScore + 2 * ScoreInterval;
+    private const int TopActionScore4 = 2 * ClipboardData.MaximumScore + 1 * ScoreInterval;
 
-    private const int BottomActionScore1 = 7500;
-    private const int BottomActionScore2 = 5000;
-    private const int BottomActionScore3 = 2500;
+    private const int BottomActionScore1 = 8000;
+    private const int BottomActionScore2 = 6000;
+    private const int BottomActionScore3 = 4000;
+    private const int BottomActionScore4 = 2000;
 
     #endregion
 
@@ -223,6 +225,24 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 },
             });
 
+            // clean history action
+            if (WindowsClipboardHelper.IsHistoryEnabled())
+            {
+                results.Add(new Result
+                {
+                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_history_title"),
+                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_history_subtitle"),
+                    IcoPath = PathHelper.AppIconPath,
+                    Glyph = ResourceHelper.ClearHistoryGlyph,
+                    Score = Settings.ActionTop ? TopActionScore2 : BottomActionScore2,
+                    AsyncAction = async _ =>
+                    {
+                        await Win32Helper.StartSTATaskAsync(WindowsClipboardHelper.ClearHistory);
+                        return true;
+                    },
+                });
+            }
+
             // connect & disconnect action
             if (ClipboardMonitor.MonitorClipboard)
             {
@@ -232,7 +252,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_disconnect_subtitle"),
                     IcoPath = PathHelper.DisconnectIconPath,
                     Glyph = ResourceHelper.DisconnectGlyph,
-                    Score = Settings.ActionTop ? TopActionScore2 : BottomActionScore2,
+                    Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
                     Action = _ =>
                     {
                         ClipboardMonitor.PauseMonitoring();
@@ -248,7 +268,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_connect_subtitle"),
                     IcoPath = PathHelper.ConnectIconPath,
                     Glyph = ResourceHelper.ConnectGlyph,
-                    Score = Settings.ActionTop ? TopActionScore2 : BottomActionScore2,
+                    Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
                     Action = _ =>
                     {
                         ClipboardMonitor.ResumeMonitoring();
@@ -265,7 +285,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_subtitle"),
                 IcoPath = PathHelper.ClearIconPath,
                 Glyph = ResourceHelper.ClearGlyph,
-                Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
+                Score = Settings.ActionTop ? TopActionScore4 : BottomActionScore4,
                 Action = _ =>
                 {
                     Context.API.ChangeQuery($"{query.ActionKeyword}{Plugin.Query.TermSeparator}{Settings.ClearKeyword} ", true);

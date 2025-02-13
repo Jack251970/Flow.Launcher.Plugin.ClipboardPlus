@@ -19,6 +19,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_connect_subtitle">Connect to clipboard to start monitoring clipboard data</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">Clean clipboard</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">Clean current clipboard data</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_history_title">Clear system clipboard history</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_history_subtitle">Clear all records in system clipboard history</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">Clear records</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">Open menu to clear records in list and database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_title">Clear in list</system:String>
