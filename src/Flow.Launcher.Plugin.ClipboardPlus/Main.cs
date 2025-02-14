@@ -105,7 +105,42 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         var results = new List<Result>();
         if (query.FirstSearch == Settings.ClearKeyword)
         {
-            // clear actions results
+            // clean windows clipboard history actions
+            if (WindowsClipboardHelper.IsHistoryEnabled())
+            {
+                results.AddRange(
+                    new[]
+                    {
+                        new Result
+                        {
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_windows_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_windows_subtitle"),
+                            IcoPath = PathHelper.AppIconPath,
+                            Glyph = ResourceHelper.ClearHistoryGlyph,
+                            Score = ScoreInterval6,
+                            AsyncAction = async _ =>
+                            {
+                                await Win32Helper.StartSTATaskAsync(WindowsClipboardHelper.ClearAllRecordsAsync);
+                                return true;
+                            }
+                        },
+                        new Result
+                        {
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_windows_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_windows_subtitle"),
+                            IcoPath = PathHelper.AppIconPath,
+                            Glyph = ResourceHelper.ClearHistoryGlyph,
+                            Score = ScoreInterval5,
+                            AsyncAction = async _ =>
+                            {
+                                await Win32Helper.StartSTATaskAsync(WindowsClipboardHelper.ClearUnpinnnedRecords);
+                                return true;
+                            },
+                        }
+                    });
+            }
+
+            // clear list and database actions
             results.AddRange(
                 new[]
                 {
@@ -224,24 +259,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     return true;
                 },
             });
-
-            // clean history action
-            if (WindowsClipboardHelper.IsHistoryEnabled())
-            {
-                results.Add(new Result
-                {
-                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_history_title"),
-                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_history_subtitle"),
-                    IcoPath = PathHelper.AppIconPath,
-                    Glyph = ResourceHelper.ClearHistoryGlyph,
-                    Score = Settings.ActionTop ? TopActionScore2 : BottomActionScore2,
-                    AsyncAction = async _ =>
-                    {
-                        await Win32Helper.StartSTATaskAsync(WindowsClipboardHelper.ClearUnpinnnedRecords);
-                        return true;
-                    },
-                });
-            }
 
             // connect & disconnect action
             if (ClipboardMonitor.MonitorClipboard)
