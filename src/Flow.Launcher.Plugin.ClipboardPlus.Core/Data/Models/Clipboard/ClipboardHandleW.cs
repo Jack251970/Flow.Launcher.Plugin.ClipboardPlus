@@ -11,7 +11,6 @@ using System.Windows.Media.Imaging;
 using Windows.Win32;
 using Windows.Win32.Foundation;
 using Application = System.Windows.Application;
-using Clipboard = System.Windows.Clipboard;
 using DataFormats = System.Windows.DataFormats;
 using IDataObject = System.Windows.IDataObject;
 
@@ -192,7 +191,7 @@ internal class ClipboardHandleW : IDisposable
             await Win32Helper.StartSTATaskAsync(() =>
             {
                 // If the clipboard is empty, return.
-                var dataObj = Clipboard.GetDataObject();
+                var dataObj = System.Windows.Clipboard.GetDataObject();
                 if (dataObj is null)
                 {
                     return;
