@@ -113,8 +113,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     {
                         new Result
                         {
-                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_windows_title"),
-                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_windows_subtitle"),
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_system_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_system_subtitle"),
                             IcoPath = PathHelper.AppIconPath,
                             Glyph = ResourceHelper.ClearHistoryGlyph,
                             Score = ScoreInterval6,
@@ -126,8 +126,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         },
                         new Result
                         {
-                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_windows_title"),
-                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_windows_subtitle"),
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_system_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_system_subtitle"),
                             IcoPath = PathHelper.AppIconPath,
                             Glyph = ResourceHelper.ClearHistoryGlyph,
                             Score = ScoreInterval5,
