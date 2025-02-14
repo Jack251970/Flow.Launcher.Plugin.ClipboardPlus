@@ -16,6 +16,9 @@ using IDataObject = System.Windows.IDataObject;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
+/// <summary>
+/// ClipboardHandleW is a class that handles the clipboard
+/// </summary>
 [SupportedOSPlatform("windows6.0.6000")]
 internal class ClipboardHandleW : IDisposable
 {
@@ -227,31 +230,15 @@ internal class ClipboardHandleW : IDisposable
                     });
                 }
                 // Determines whether unicode text or rich text has been cut/copied.
-                else if (ClipboardMonitorInstance.ObservableFormats.Texts && IsDataText(dataObj))
+                else if (ClipboardMonitorInstance.ObservableFormats.Texts)
                 {
-                    var capturedText = dataObj.GetData(DataFormats.UnicodeText) as string;
-                    var capturedRtfData = dataObj.GetData(DataFormats.Rtf);
+                    if (IsDataAnsiText(dataObj))
+                    {
+                        var capturedText = dataObj.GetData(DataFormats.Text) as string;
+                        ClipboardMonitorInstance.ClipboardText = capturedText ?? string.Empty;
 
-                    var unicodeText = false;
-                    if (capturedRtfData is string capturedRtfText)
-                    {
-                        ClipboardMonitorInstance.ClipboardRtfText = capturedRtfText;
-                    }
-                    else if (capturedRtfData is MemoryStream capturedRtfStream)
-                    {
-                        using var reader = new StreamReader(capturedRtfStream);
-                        capturedRtfText = reader.ReadToEnd();
-                        ClipboardMonitorInstance.ClipboardRtfText = capturedRtfText;
-                    }
-                    else
-                    {
                         ClipboardMonitorInstance.ClipboardRtfText = string.Empty;
-                        unicodeText = true;
-                    }
-                    ClipboardMonitorInstance.ClipboardText = capturedText ?? string.Empty;
 
-                    if (unicodeText)
-                    {
                         if (GetApplicationInfo())
                         {
                             ClipboardMonitorInstance.Invoke(
@@ -266,8 +253,48 @@ internal class ClipboardHandleW : IDisposable
                             );
                         }
                     }
-                    else
+                    else if (IsDataUnicodeText(dataObj))
                     {
+                        var capturedText = dataObj.GetData(DataFormats.UnicodeText) as string;
+                        ClipboardMonitorInstance.ClipboardText = capturedText ?? string.Empty;
+
+                        ClipboardMonitorInstance.ClipboardRtfText = string.Empty;
+
+                        if (GetApplicationInfo())
+                        {
+                            ClipboardMonitorInstance.Invoke(
+                                capturedText,
+                                DataType.UnicodeText,
+                                new SourceApplicationW(
+                                    _executableHandle,
+                                    _executableName,
+                                    _executableTitle,
+                                    _executablePath
+                                )
+                            );
+                        }
+                    }
+                    else if (IsDataRtf(dataObj))
+                    {
+                        var capturedText = dataObj.GetData(DataFormats.Text) as string ?? dataObj.GetData(DataFormats.UnicodeText) as string;
+                        ClipboardMonitorInstance.ClipboardText = capturedText ?? string.Empty;
+
+                        var capturedRtfData = dataObj.GetData(DataFormats.Rtf);
+                        if (capturedRtfData is string capturedRtfText)
+                        {
+                            ClipboardMonitorInstance.ClipboardRtfText = capturedRtfText;
+                        }
+                        else if (capturedRtfData is MemoryStream capturedRtfStream)
+                        {
+                            using var reader = new StreamReader(capturedRtfStream);
+                            capturedRtfText = reader.ReadToEnd();
+                            ClipboardMonitorInstance.ClipboardRtfText = capturedRtfText;
+                        }
+                        else
+                        {
+                            ClipboardMonitorInstance.ClipboardRtfText = string.Empty;
+                        }
+
                         if (GetApplicationInfo())
                         {
                             ClipboardMonitorInstance.Invoke(
@@ -371,11 +398,19 @@ internal class ClipboardHandleW : IDisposable
         return dataObj.GetDataPresent(DataFormats.Bitmap);
     }
 
-    private static bool IsDataText(IDataObject dataObj)
+    private static bool IsDataAnsiText(IDataObject dataObj)
     {
-        return dataObj.GetDataPresent(DataFormats.Text) ||
-            dataObj.GetDataPresent(DataFormats.UnicodeText) ||
-            dataObj.GetDataPresent(DataFormats.Rtf);
+        return dataObj.GetDataPresent(DataFormats.Text);
+    }
+
+    private static bool IsDataUnicodeText(IDataObject dataObj)
+    {
+        return dataObj.GetDataPresent(DataFormats.UnicodeText);
+    }
+
+    private static bool IsDataRtf(IDataObject dataObj)
+    {
+        return dataObj.GetDataPresent(DataFormats.Rtf);
     }
 
     private static bool IsDataFiles(IDataObject dataObj)
