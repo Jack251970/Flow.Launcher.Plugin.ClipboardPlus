@@ -4,16 +4,16 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
+using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Windows.Win32;
 using Windows.Win32.Foundation;
-using System.Windows;
 using Application = System.Windows.Application;
 using Clipboard = System.Windows.Clipboard;
 using DataFormats = System.Windows.DataFormats;
 using IDataObject = System.Windows.IDataObject;
-using System.Runtime.Versioning;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
