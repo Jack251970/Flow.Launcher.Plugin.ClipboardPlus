@@ -1,4 +1,7 @@
-﻿using Windows.ApplicationModel.DataTransfer;
+﻿// Copyright (c) 2024 Jack251970
+// Licensed under the Apache License. See the LICENSE.
+
+using Windows.ApplicationModel.DataTransfer;
 using Clipboard = Windows.ApplicationModel.DataTransfer.Clipboard;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
