@@ -26,11 +26,30 @@ public class WindowsClipboardHelper
         return false;
     }
 
-    public static bool ClearHistory()
+    public static bool ClearUnpinnnedRecords()
     {
         if (IsClipboardHistorySupported())
         {
             return Clipboard.ClearHistory();
+        }
+
+        return false;
+    }
+
+    public static async Task<bool> ClearAllRecordsAsync()
+    {
+        if (IsClipboardHistorySupported())
+        {
+            var historyItems = await Clipboard.GetHistoryItemsAsync();
+            if (historyItems.Status == ClipboardHistoryItemsResultStatus.Success)
+            {
+                Clipboard.ClearHistory();
+                foreach (var item in historyItems.Items)
+                {
+                    Clipboard.DeleteItemFromHistory(item);
+                }
+                return true;
+            }
         }
 
         return false;
@@ -45,7 +64,6 @@ public class WindowsClipboardHelper
             var historyItems = await Clipboard.GetHistoryItemsAsync();
             if (historyItems.Status == ClipboardHistoryItemsResultStatus.Success)
             {
-                // TODO
                 /*foreach (var item in historyItems.Items)
                 {
                     clipboardDataItems.Add(new ClipboardData(item.Content, dataType, settings.EncryptData)

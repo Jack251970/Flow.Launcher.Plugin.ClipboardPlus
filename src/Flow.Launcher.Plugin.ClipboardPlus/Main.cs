@@ -237,7 +237,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     Score = Settings.ActionTop ? TopActionScore2 : BottomActionScore2,
                     AsyncAction = async _ =>
                     {
-                        await Win32Helper.StartSTATaskAsync(WindowsClipboardHelper.ClearHistory);
+                        await Win32Helper.StartSTATaskAsync(WindowsClipboardHelper.ClearUnpinnnedRecords);
                         return true;
                     },
                 });
