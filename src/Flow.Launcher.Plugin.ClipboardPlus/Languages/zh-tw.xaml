@@ -20,7 +20,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">清理剪切板</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">清理當前剪切板數據</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_history_title">清除系統剪切板歷史</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_history_subtitle">從系統剪切板歷史清除所有記錄</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_history_subtitle">從系統剪切板歷史清除未固定記錄</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">清除記録</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">打開菜單以從列錶和數據庫清除記録</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_title">清除列錶</system:String>
