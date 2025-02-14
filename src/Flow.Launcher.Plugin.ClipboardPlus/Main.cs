@@ -360,9 +360,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
         Context.API.LogDebug(ClassName, "Init database successfully");
 
-        // init clipboard monitor
+        // init & start clipboard monitor
         ClipboardMonitor.ClipboardChanged += OnClipboardChange;
-        ClipboardMonitor.StartMonitoring();  // just call it for ClipboardMonitorW
+        ClipboardMonitor.StartMonitoring();
         Context.API.LogDebug(ClassName, "Init clipboard monitor successfully");
     }
 
