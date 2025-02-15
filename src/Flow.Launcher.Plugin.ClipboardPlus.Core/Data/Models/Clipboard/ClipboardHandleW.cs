@@ -83,8 +83,6 @@ internal class ClipboardHandleW : IDisposable
 
     #region Clipboard Management
 
-    #region Clipboard Monitor
-
     /// <summary>
     /// Starts monitoring the system clipboard.
     /// </summary>
@@ -262,9 +260,10 @@ internal class ClipboardHandleW : IDisposable
                     }
                     ClipboardMonitorInstance.ClipboardRtfText = richText;
 
+                    var isPlainText = richText == string.Empty;
                     ClipboardMonitorInstance.Invoke(
-                        plainText,
-                        richText != string.Empty ? DataType.RichText : DataType.PlainText,
+                        isPlainText ? plainText : richText,
+                        isPlainText ? DataType.PlainText : DataType.RichText,
                         new SourceApplication(
                             _executableHandle,
                             _executableName,
@@ -384,9 +383,6 @@ internal class ClipboardHandleW : IDisposable
     {
         return dataObj.GetDataPresent(DataFormats.FileDrop);
     }
-
-
-    #endregion
 
     #endregion
 
