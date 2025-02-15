@@ -3,7 +3,6 @@
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
-// TODO: Change Handler to uint type
 public class SourceApplication
 {
     #region Properties
