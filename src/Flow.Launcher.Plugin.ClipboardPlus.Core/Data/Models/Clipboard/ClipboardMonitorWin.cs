@@ -148,6 +148,8 @@ public class ClipboardMonitorWin : IDisposable
 
         MonitorClipboard = true;
         ObserveLastEntry = true;
+
+        StartMonitoring();
     }
 
     internal void Invoke(object? content, DataType type, SourceApplication source)
