@@ -633,11 +633,27 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
 
     #region IDisposable
 
-    public readonly void Dispose()
+    private bool _disposed;
+
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    private void Dispose(bool disposing)
+    {
+        if (disposing)
     {
         if (Data is IDisposable disposable)
         {
             disposable.Dispose();
+        }
+            _disposed = true;
         }
     }
 

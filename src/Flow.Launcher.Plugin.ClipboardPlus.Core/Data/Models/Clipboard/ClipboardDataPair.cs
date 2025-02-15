@@ -15,6 +15,8 @@ public class ClipboardDataPair : IDisposable
         ClipboardData = newClipboardData;
     }
 
+    #region IDisposable
+
     private bool _disposed;
 
     public void Dispose()
@@ -43,4 +45,6 @@ public class ClipboardDataPair : IDisposable
             _disposed = true;
         }
     }
+
+    #endregion
 }
