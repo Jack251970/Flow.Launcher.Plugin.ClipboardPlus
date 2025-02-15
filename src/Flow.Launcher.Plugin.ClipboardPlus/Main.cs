@@ -118,9 +118,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.AppIconPath,
                             Glyph = ResourceHelper.ClearHistoryGlyph,
                             Score = ScoreInterval6,
-                            AsyncAction = async _ =>
+                            Action = _ =>
                             {
-                                await Win32Helper.StartSTATaskAsync(WindowsClipboardHelper.ClearAllRecordsAsync);
+                                Win32Helper.StartSTATask(async () => await WindowsClipboardHelper.ClearAllRecordsAsync());
                                 return true;
                             }
                         },
@@ -131,9 +131,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.AppIconPath,
                             Glyph = ResourceHelper.ClearHistoryGlyph,
                             Score = ScoreInterval5,
-                            AsyncAction = async _ =>
+                            Action = _ =>
                             {
-                                await Win32Helper.StartSTATaskAsync(WindowsClipboardHelper.ClearUnpinnnedRecords);
+                                Win32Helper.StartSTATask(() => WindowsClipboardHelper.ClearUnpinnnedRecords());
                                 return true;
                             },
                         }
@@ -253,9 +253,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 IcoPath = PathHelper.CleanIconPath,
                 Glyph = ResourceHelper.CleanGlyph,
                 Score = Settings.ActionTop ? TopActionScore1 : BottomActionScore1,
-                AsyncAction = async _ =>
+                Action = _ =>
                 {
-                    await Win32Helper.StartSTATaskAsync(Clipboard.Clear);
+                    Win32Helper.StartSTATask(Clipboard.Clear);
                     return true;
                 },
             });
