@@ -15,25 +15,29 @@ public static class PathHelper
 
     private static bool IsInitialized = false;
 
-    public static void Init(PluginInitContext context)
+    public static void Init(PluginInitContext context, string assemblyName)
     {
         if (!IsInitialized)
         {
             // plugin paths
             PluginPath = context.CurrentPluginMetadata.PluginDirectory;
-            ImageCachePath = Path.Combine(PluginPath, "CachedImages");
+            PluginSettingsPath = GetDataDirectory(assemblyName);
+            var originalImageCachePath = Path.Combine(PluginPath, "CachedImages");
+            ImageCachePath = Path.Combine(PluginSettingsPath, "CachedImages");
+            FileUtils.MoveDirectory(originalImageCachePath, ImageCachePath);
             if (!Directory.Exists(ImageCachePath))
             {
                 Directory.CreateDirectory(ImageCachePath);
             }
             FileUtils.ClearImageCache(ImageCachePath, TempCacheImageName);
-            IconPath = Path.Combine(PluginPath, "Images");
 
             // data paths
-            SettingsPath = Path.Combine(PluginPath, SettingsFile);
-            DatabasePath = Path.Combine(PluginPath, DatabaseFile);
+            var originalDatabasePath = Path.Combine(PluginPath, DatabaseFile);
+            DatabasePath = Path.Combine(PluginSettingsPath, DatabaseFile);
+            FileUtils.MoveFile(originalDatabasePath, DatabasePath);
 
             // icons paths
+            IconPath = Path.Combine(PluginPath, "Images");
             AppIconPath = Path.Combine(IconPath, "clipboard.png");
             ConnectIconPath = Path.Combine(IconPath, "connect.png");
             DisconnectIconPath = Path.Combine(IconPath, "disconnect.png");
@@ -60,6 +64,7 @@ public static class PathHelper
 
     // plugin paths
     public static string PluginPath { get; private set; } = string.Empty;
+    public static string PluginSettingsPath { get; private set; } = string.Empty;
     public static string ImageCachePath { get; private set; } = string.Empty;
     public static string IconPath { get; private set; } = string.Empty;
 
@@ -92,6 +97,51 @@ public static class PathHelper
     public static string GetPinIconPath(bool pinned)
     {
         return pinned ? UnpinIconPath : PinIconPath;
+    }
+
+    // TODO: PR to Flow.Launcher to add this property to PluginMetaData
+    private static string GetDataDirectory(string assemblyName)
+    {
+        string flowDir = string.Empty;
+
+        try
+        {
+            // reflection to get DataLocation.DataDirectory
+            var assembly = AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(a => a.GetName().Name == "Flow.Launcher.Infrastructure");
+
+            if (assembly != null)
+            {
+                var dataLocationType = assembly.GetType("Flow.Launcher.Infrastructure.UserSettings.DataLocation");
+
+                if (dataLocationType != null)
+                {
+                    var method = dataLocationType.GetMethod("DataDirectory");
+                    if (method != null)
+                    {
+                        var dataDir = method.Invoke(null, null) as string;
+                        if (!string.IsNullOrEmpty(dataDir))
+                        {
+                            flowDir = dataDir;
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception _)
+        {
+            // ignored
+        }
+
+        if (string.IsNullOrEmpty(flowDir))
+        {
+            // default: C:\Users\<username>\AppData\Roaming\FlowLauncher
+            flowDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "FlowLauncher");
+        }
+
+        //  <flowDir>\Settings\Plugins\<pluginName>
+        return Path.Combine(flowDir, "Settings", "Plugins", assemblyName);
     }
 
     #endregion

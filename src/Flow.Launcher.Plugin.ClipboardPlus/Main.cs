@@ -124,7 +124,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         return Task.Run(() => Query(query));
     }
 
-    // TODO: Remove selected count from Record class.
+    // TODO: Remove selected count from score.
     // TODO: Add AutoCompleteText & Others properties in Record class.
     public List<Result> Query(Query query)
     {
@@ -367,7 +367,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         ClipboardMonitor.SetContext(context);
 
         // init path helper
-        PathHelper.Init(context);
+        PathHelper.Init(context, GetType().Assembly.GetName().Name ?? "Flow.Launcher.Plugin.ClipboardPlus");
 
         // init settings
         Settings = context.API.LoadSettingJsonStorage<Settings>();

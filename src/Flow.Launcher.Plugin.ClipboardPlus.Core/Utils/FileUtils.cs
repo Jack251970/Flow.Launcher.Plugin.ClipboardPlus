@@ -133,4 +133,43 @@ public static class FileUtils
                 $"{context.GetTranslation("flowlauncher_plugin_clipboardplus_json_files")} (*.*)|*.*";
         }
     }
+
+    public static bool MoveFile(string sourcePath, string destinationPath)
+    {
+        if (!File.Exists(sourcePath))
+        {
+            return false;
+        }
+
+        if (File.Exists(destinationPath))
+        {
+            File.Delete(sourcePath);
+            return false;
+        }
+
+        var destinationDirectory = Path.GetDirectoryName(destinationPath);
+        if (!Directory.Exists(destinationDirectory) && (!string.IsNullOrEmpty(destinationDirectory)))
+        {
+            Directory.CreateDirectory(destinationDirectory);
+        }
+        File.Move(sourcePath, destinationPath);
+        return true;
+    }
+
+    public static bool MoveDirectory(string sourcePath, string destinationPath)
+    {
+        if (!Directory.Exists(sourcePath))
+        {
+            return false;
+        }
+
+        if (Directory.Exists(destinationPath))
+        {
+            Directory.Delete(sourcePath, true);
+            return false;
+        }
+
+        Directory.Move(sourcePath, destinationPath);
+        return true;
+    }
 }
