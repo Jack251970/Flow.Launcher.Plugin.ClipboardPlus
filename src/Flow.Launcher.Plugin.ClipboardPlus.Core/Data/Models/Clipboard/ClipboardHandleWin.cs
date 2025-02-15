@@ -120,31 +120,10 @@ internal class ClipboardHandleWin : IDisposable
             if (ClipboardMonitorInstance.ObservableFormats.Images && IsDataImage(dataObj))
             {
                 // Make sure on the application dispatcher.
-                System.Windows.Application.Current.Dispatcher.Invoke((Delegate)(async () =>
+                _ = System.Windows.Application.Current.Dispatcher.Invoke(async () =>
                 {
-                    if (await dataObj.GetBitmapAsync() is RandomAccessStreamReference imageReceived)
+                    if (await GetImageContentAsync(dataObj) is BitmapImage capturedImage)
                     {
-                        // Open the stream reference
-                        using var imageStream = await imageReceived.OpenReadAsync();
-
-                        // Convert to .NET stream and copy to MemoryStream
-                        using var netStream = imageStream.AsStreamForRead();
-                        using var memoryStream = new MemoryStream();
-                        await netStream.CopyToAsync(memoryStream);
-                        memoryStream.Position = 0; // Reset position for reading
-
-                        // Create and configure BitmapImage
-                        var capturedImage = new BitmapImage();
-                        capturedImage.BeginInit();
-                        capturedImage.CacheOption = BitmapCacheOption.OnLoad; // Critical for immediate load
-                        capturedImage.StreamSource = memoryStream;
-                        capturedImage.EndInit();
-
-                        // Enable cross-thread access
-                        if (capturedImage.CanFreeze)
-                        {
-                            capturedImage.Freeze();
-                        }
                         ClipboardMonitorInstance.ClipboardImage = capturedImage;
 
                         if (GetApplicationInfo())
@@ -161,29 +140,18 @@ internal class ClipboardHandleWin : IDisposable
                             );
                         }
                     }
-                }));
+                });
             }
             // Determines whether plain text or rich text has been cut/copied.
             else if (ClipboardMonitorInstance.ObservableFormats.Texts && IsDataText(dataObj))
             {
-                var plainText = string.Empty;
-                if (IsDataPlainText(dataObj))
-                {
-                    plainText = await dataObj.GetTextAsync() ?? string.Empty;
-                }
+                var (plainText, richText, dataType) = await GetTextContentAsync(dataObj);
                 ClipboardMonitorInstance.ClipboardText = plainText;
-
-                var richText = string.Empty;
-                if (IsDataRichText(dataObj))
-                {
-                    richText = await dataObj.GetRtfAsync() ?? string.Empty;
-                }
                 ClipboardMonitorInstance.ClipboardRtfText = richText;
 
-                var isPlainText = richText == string.Empty;
                 ClipboardMonitorInstance.Invoke(
-                    isPlainText ? plainText : richText,
-                    isPlainText ? DataType.PlainText : DataType.RichText,
+                    dataType == DataType.PlainText ? plainText : richText,
+                    dataType,
                     new SourceApplication(
                         _executableHandle,
                         _executableName,
@@ -195,17 +163,22 @@ internal class ClipboardHandleWin : IDisposable
             // Determines whether a file has been cut/copied.
             else if (ClipboardMonitorInstance.ObservableFormats.Files && IsDataFiles(dataObj))
             {
-                // Edited from: FilesystemHelper.cs in https://github.com/files-community/Files
-                if (await dataObj.GetStorageItemsAsync() is not IReadOnlyList<IStorageItem> source)
+                // If the 'capturedFiles' string array persists as null, then this means
+                // that the copied content is of a complex object type since the file-drop
+                // format is able to capture more-than-just-file content in the clipboard.
+                // Therefore assign the content its rightful type.
+                if (await GetFilesContentAsync(dataObj) is string[] capturedFiles)
                 {
-                    ClipboardMonitorInstance.ClipboardObject = dataObj;
-                    ClipboardMonitorInstance.ClipboardText = await dataObj.GetTextAsync() ?? string.Empty;
+                    // Clear all existing files before update.
+                    ClipboardMonitorInstance.ClipboardFiles.Clear();
+                    ClipboardMonitorInstance.ClipboardFiles.AddRange(capturedFiles);
+                    ClipboardMonitorInstance.ClipboardFile = capturedFiles[0];
 
                     if (GetApplicationInfo())
                     {
                         ClipboardMonitorInstance.Invoke(
-                            dataObj,
-                            DataType.Other,
+                            capturedFiles,
+                            DataType.Files,
                             new SourceApplication(
                                 _executableHandle,
                                 _executableName,
@@ -217,35 +190,14 @@ internal class ClipboardHandleWin : IDisposable
                 }
                 else
                 {
-                    // Clear all existing files before update.
-                    var itemsList = new List<string>();
-                    foreach (var item in source)
-                    {
-                        try
-                        {
-                            itemsList.Add(item.Path);
-                        }
-                        catch (Exception ex) when ((uint)ex.HResult == 0x80040064 || (uint)ex.HResult == 0x8004006A)
-                        {
-                            // Not support for files from remote desktop
-                        }
-                        catch (Exception ex)
-                        {
-                            _context?.API.LogException(ClassName, ex.Message, ex);
-                        }
-                    }
-                    var capturedFiles = itemsList.ToArray();
-
-                    // Clear all existing files before update.
-                    ClipboardMonitorInstance.ClipboardFiles.Clear();
-                    ClipboardMonitorInstance.ClipboardFiles.AddRange(capturedFiles);
-                    ClipboardMonitorInstance.ClipboardFile = capturedFiles[0];
+                    ClipboardMonitorInstance.ClipboardObject = dataObj;
+                    ClipboardMonitorInstance.ClipboardText = await dataObj.GetTextAsync() ?? string.Empty;
 
                     if (GetApplicationInfo())
                     {
                         ClipboardMonitorInstance.Invoke(
-                            capturedFiles,
-                            DataType.Files,
+                            dataObj,
+                            DataType.Other,
                             new SourceApplication(
                                 _executableHandle,
                                 _executableName,
@@ -289,12 +241,14 @@ internal class ClipboardHandleWin : IDisposable
         }
     }
 
-    private static bool IsDataImage(DataPackageView dataObj)
+    #region Helper Methods
+
+    public static bool IsDataImage(DataPackageView dataObj)
     {
         return dataObj.Contains(StandardDataFormats.Bitmap);
     }
 
-    private static bool IsDataText(DataPackageView dataObj)
+    public static bool IsDataText(DataPackageView dataObj)
     {
         return IsDataPlainText(dataObj) || IsDataRichText(dataObj);
     }
@@ -309,10 +263,89 @@ internal class ClipboardHandleWin : IDisposable
         return dataObj.Contains(StandardDataFormats.Rtf);
     }
 
-    private static bool IsDataFiles(DataPackageView dataObj)
+    public static bool IsDataFiles(DataPackageView dataObj)
     {
         return dataObj.Contains(StandardDataFormats.StorageItems);
     }
+
+    public static async Task<BitmapImage?> GetImageContentAsync(DataPackageView dataObj)
+    {
+        if (await dataObj.GetBitmapAsync() is RandomAccessStreamReference imageReceived)
+        {
+            // Open the stream reference
+            using var imageStream = await imageReceived.OpenReadAsync();
+
+            // Convert to .NET stream and copy to MemoryStream
+            using var netStream = imageStream.AsStreamForRead();
+            using var memoryStream = new MemoryStream();
+            await netStream.CopyToAsync(memoryStream);
+            memoryStream.Position = 0; // Reset position for reading
+
+            // Create and configure BitmapImage
+            var capturedImage = new BitmapImage();
+            capturedImage.BeginInit();
+            capturedImage.CacheOption = BitmapCacheOption.OnLoad; // Critical for immediate load
+            capturedImage.StreamSource = memoryStream;
+            capturedImage.EndInit();
+
+            // Enable cross-thread access
+            if (capturedImage.CanFreeze)
+            {
+                capturedImage.Freeze();
+            }
+
+            return capturedImage;
+        }
+
+        return null;
+    }
+
+    public static async Task<(string, string, DataType)> GetTextContentAsync(DataPackageView dataObj)
+    {
+        var plainText = string.Empty;
+        if (IsDataPlainText(dataObj))
+        {
+            plainText = await dataObj.GetTextAsync() ?? string.Empty;
+        }
+
+        var richText = string.Empty;
+        if (IsDataRichText(dataObj))
+        {
+            richText = await dataObj.GetRtfAsync() ?? string.Empty;
+        }
+
+        return (plainText, richText, string.IsNullOrEmpty(richText) ? DataType.PlainText : DataType.RichText);
+    }
+
+    public static async Task<string[]?> GetFilesContentAsync(DataPackageView dataObj)
+    {
+        // Edited from: FilesystemHelper.cs in https://github.com/files-community/Files
+        if (await dataObj.GetStorageItemsAsync() is IReadOnlyList<IStorageItem> source)
+        {
+            var itemsList = new List<string>();
+            foreach (var item in source)
+            {
+                try
+                {
+                    itemsList.Add(item.Path);
+                }
+                catch (Exception ex) when ((uint)ex.HResult == 0x80040064 || (uint)ex.HResult == 0x8004006A)
+                {
+                    // Not support for files from remote desktop
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            return itemsList.ToArray();
+        }
+
+        return null;
+    }
+
+    #endregion
 
     #endregion
 

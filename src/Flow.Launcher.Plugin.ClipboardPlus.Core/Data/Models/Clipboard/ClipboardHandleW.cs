@@ -198,13 +198,8 @@ internal class ClipboardHandleW : IDisposable
                     // Make sure on the application dispatcher.
                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
                     {
-                        if (dataObj.GetData(DataFormats.Bitmap) is BitmapSource capturedImage)
+                        if (GetImageContent(dataObj) is BitmapSource capturedImage)
                         {
-                            // Enable cross-thread access
-                            if (capturedImage.CanFreeze)
-                            {
-                                capturedImage.Freeze();
-                            }
                             ClipboardMonitorInstance.ClipboardImage = capturedImage;
 
                             if (GetApplicationInfo())
@@ -226,38 +221,13 @@ internal class ClipboardHandleW : IDisposable
                 // Determines whether plain text or rich text has been cut/copied.
                 else if (ClipboardMonitorInstance.ObservableFormats.Texts && IsDataText(dataObj))
                 {
-                    var plainText = string.Empty;
-                    if (IsDataAnsiText(dataObj))
-                    {
-                        plainText = dataObj.GetData(DataFormats.Text) as string ?? string.Empty;
-                    }
-                    else if (IsDataUnicodeText(dataObj))
-                    {
-                        plainText = dataObj.GetData(DataFormats.UnicodeText) as string ?? string.Empty;
-                    }
+                    var (plainText, richText, dataType) = GetTextContent(dataObj);
                     ClipboardMonitorInstance.ClipboardText = plainText;
-
-                    var richText = string.Empty;
-                    if (IsDataRichText(dataObj))
-                    {
-                        var capturedRtfData = dataObj.GetData(DataFormats.Rtf);
-                        if (capturedRtfData is string capturedRtfText)
-                        {
-                            richText = capturedRtfText;
-                        }
-                        else if (capturedRtfData is MemoryStream capturedRtfStream)
-                        {
-                            using var reader = new StreamReader(capturedRtfStream);
-                            capturedRtfText = reader.ReadToEnd();
-                            richText = capturedRtfText;
-                        }
-                    }
                     ClipboardMonitorInstance.ClipboardRtfText = richText;
 
-                    var isPlainText = richText == string.Empty;
                     ClipboardMonitorInstance.Invoke(
-                        isPlainText ? plainText : richText,
-                        isPlainText ? DataType.PlainText : DataType.RichText,
+                        dataType == DataType.PlainText ? plainText : richText,
+                        dataType,
                         new SourceApplication(
                             _executableHandle,
                             _executableName,
@@ -273,26 +243,7 @@ internal class ClipboardHandleW : IDisposable
                     // that the copied content is of a complex object type since the file-drop
                     // format is able to capture more-than-just-file content in the clipboard.
                     // Therefore assign the content its rightful type.
-                    if (dataObj.GetData(DataFormats.FileDrop) is not string[] capturedFiles)
-                    {
-                        ClipboardMonitorInstance.ClipboardObject = dataObj;
-                        ClipboardMonitorInstance.ClipboardText = dataObj.GetData(DataFormats.UnicodeText) as string ?? string.Empty;
-
-                        if (GetApplicationInfo())
-                        {
-                            ClipboardMonitorInstance.Invoke(
-                                dataObj,
-                                DataType.Other,
-                                new SourceApplication(
-                                    _executableHandle,
-                                    _executableName,
-                                    _executableTitle,
-                                    _executablePath
-                                )
-                            );
-                        }
-                    }
-                    else
+                    if (GetFilesContent(dataObj) is string[] capturedFiles)
                     {
                         // Clear all existing files before update.
                         ClipboardMonitorInstance.ClipboardFiles.Clear();
@@ -304,6 +255,25 @@ internal class ClipboardHandleW : IDisposable
                             ClipboardMonitorInstance.Invoke(
                                 capturedFiles,
                                 DataType.Files,
+                                new SourceApplication(
+                                    _executableHandle,
+                                    _executableName,
+                                    _executableTitle,
+                                    _executablePath
+                                )
+                            );
+                        }
+                    }
+                    else
+                    {
+                        ClipboardMonitorInstance.ClipboardObject = dataObj;
+                        ClipboardMonitorInstance.ClipboardText = dataObj.GetData(DataFormats.UnicodeText) as string ?? string.Empty;
+
+                        if (GetApplicationInfo())
+                        {
+                            ClipboardMonitorInstance.Invoke(
+                                dataObj,
+                                DataType.Other,
                                 new SourceApplication(
                                     _executableHandle,
                                     _executableName,
@@ -348,12 +318,14 @@ internal class ClipboardHandleW : IDisposable
         }
     }
 
-    private static bool IsDataImage(IDataObject dataObj)
+    #region Helper Methods
+
+    public static bool IsDataImage(IDataObject dataObj)
     {
         return dataObj.GetDataPresent(DataFormats.Bitmap);
     }
 
-    private static bool IsDataText(IDataObject dataObj)
+    public static bool IsDataText(IDataObject dataObj)
     {
         return IsDataAnsiText(dataObj) || IsDataUnicodeText(dataObj) || IsDataRichText(dataObj);
     }
@@ -373,10 +345,69 @@ internal class ClipboardHandleW : IDisposable
         return dataObj.GetDataPresent(DataFormats.Rtf);
     }
 
-    private static bool IsDataFiles(IDataObject dataObj)
+    public static bool IsDataFiles(IDataObject dataObj)
     {
         return dataObj.GetDataPresent(DataFormats.FileDrop);
     }
+
+    public static BitmapSource? GetImageContent(IDataObject dataObj)
+    {
+        if (dataObj.GetData(DataFormats.Bitmap) is BitmapSource capturedImage)
+        {
+            // Enable cross-thread access
+            if (capturedImage.CanFreeze)
+            {
+                capturedImage.Freeze();
+            }
+
+            return capturedImage;
+        }
+
+        return null;
+    }
+
+    public static (string, string, DataType) GetTextContent(IDataObject dataObj)
+    {
+        var plainText = string.Empty;
+        if (IsDataAnsiText(dataObj))
+        {
+            plainText = dataObj.GetData(DataFormats.Text) as string ?? string.Empty;
+        }
+        else if (IsDataUnicodeText(dataObj))
+        {
+            plainText = dataObj.GetData(DataFormats.UnicodeText) as string ?? string.Empty;
+        }
+
+        var richText = string.Empty;
+        if (IsDataRichText(dataObj))
+        {
+            var capturedRtfData = dataObj.GetData(DataFormats.Rtf);
+            if (capturedRtfData is string capturedRtfText)
+            {
+                richText = capturedRtfText;
+            }
+            else if (capturedRtfData is MemoryStream capturedRtfStream)
+            {
+                using var reader = new StreamReader(capturedRtfStream);
+                capturedRtfText = reader.ReadToEnd();
+                richText = capturedRtfText;
+            }
+        }
+
+        return (plainText, richText, string.IsNullOrEmpty(richText) ? DataType.PlainText : DataType.RichText);
+    }
+
+    public static string[]? GetFilesContent(IDataObject dataObj)
+    {
+        if (dataObj.GetData(DataFormats.FileDrop) is string[] capturedFiles)
+        {
+            return capturedFiles;
+        }
+
+        return null;
+    }
+
+    #endregion
 
     #endregion
 
