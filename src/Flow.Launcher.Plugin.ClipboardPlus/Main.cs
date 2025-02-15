@@ -36,17 +36,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     // Clipboard monitor instance
     // Warning: Do not init the instance in InitAsync function! This will cause issues.
-    private ClipboardMonitorW ClipboardMonitor = new()
-    {
-        ObserveLastEntry = false,
-        ObservableFormats = new()
-        {
-            Images = true,
-            Texts = true,
-            Files = true,
-            Others = false
-        }
-    };
+    private IClipboardMonitor ClipboardMonitor;
 
     // Records list & Score
     private LinkedList<ClipboardDataPair> RecordsList = new();
@@ -88,6 +78,42 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private const int BottomActionScore4 = 2000;
 
     #endregion
+
+    #endregion
+
+    #region Constructor
+
+    public ClipboardPlus()
+    {
+        if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 10240))
+        {
+            ClipboardMonitor = new ClipboardMonitorWin()
+            {
+                ObserveLastEntry = false,
+                ObservableFormats = new()
+                {
+                    Images = true,
+                    Texts = true,
+                    Files = true,
+                    Others = false
+                }
+            };
+        }
+        else
+        {
+            ClipboardMonitor = new ClipboardMonitorW()
+            {
+                ObserveLastEntry = false,
+                ObservableFormats = new()
+                {
+                    Images = true,
+                    Texts = true,
+                    Files = true,
+                    Others = false
+                }
+            };
+        }
+    }
 
     #endregion
 
@@ -256,6 +282,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 Action = _ =>
                 {
                     Win32Helper.StartSTATask(Clipboard.Clear);
+                    ClipboardMonitor.CleanClipboard();
                     return true;
                 },
             });
@@ -363,7 +390,14 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         // init & start clipboard monitor
         ClipboardMonitor.ClipboardChanged += OnClipboardChange;
         ClipboardMonitor.StartMonitoring();
-        Context.API.LogDebug(ClassName, "Init clipboard monitor successfully");
+        if (ClipboardMonitor.GetType() == typeof(ClipboardMonitorWin))
+        {
+            Context.API.LogInfo(ClassName, "Init Windows clipboard monitor successfully");
+        }
+        else
+        {
+            Context.API.LogInfo(ClassName, "Init WPF clipboard monitor successfully");
+        }
     }
 
     #endregion
@@ -688,10 +722,10 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region Clipboard Monitor
 
-    private void OnClipboardChange(object? sender, ClipboardMonitorW.ClipboardChangedEventArgs e)
+    private void OnClipboardChange(object? sender, ClipboardChangedEventArgs e)
     {
         Context.API.LogDebug(ClassName, "Clipboard changed");
-        if (e.Content is null || e.DataType == DataType.Other || sender is not ClipboardMonitorW clipboardMonitor)
+        if (e.Content is null || e.DataType == DataType.Other || sender is not IClipboardMonitor clipboardMonitor)
         {
             return;
         }

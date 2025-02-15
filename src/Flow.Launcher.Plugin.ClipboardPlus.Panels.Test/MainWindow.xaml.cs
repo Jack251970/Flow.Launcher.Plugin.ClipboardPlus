@@ -26,9 +26,9 @@ public partial class MainWindow : Window
 
     private readonly static string _imageSavePath = @"D:\clipboard.png";
 
-    private readonly ClipboardMonitorW ClipboardMonitor = new() { ObserveLastEntry = false };
+    private readonly IClipboardMonitor ClipboardMonitorWPF = new ClipboardMonitorW() { ObserveLastEntry = false };
 
-    private readonly ClipboardMonitorWin ClipboardMonitorWin = new() { ObserveLastEntry = false };
+    private readonly IClipboardMonitor ClipboardMonitorWin = new ClipboardMonitorWin() { ObserveLastEntry = false };
 
     private readonly List<ClipboardData> ClipboardDatas = new();
 
@@ -91,9 +91,9 @@ public partial class MainWindow : Window
 
     private DateTime now;
 
-    private async void OnClipboardChangeW(object? sender, ClipboardMonitorW.ClipboardChangedEventArgs e)
+    private async void OnClipboardChangeW(object? sender, ClipboardChangedEventArgs e)
     {
-        if (e.Content is null || e.DataType == DataType.Other || sender is not ClipboardMonitorW clipboardMonitor)
+        if (e.Content is null || e.DataType == DataType.Other || sender is not IClipboardMonitor clipboardMonitor)
         {
             return;
         }
@@ -125,10 +125,10 @@ public partial class MainWindow : Window
                 $"SourceApplication: {e.SourceApplication.Name}\n" +
                 $"Content: {e.Content}";
             TextBlock2.Text = $"ClipboardMonitor\n" +
-                $"ClipboardText: {ClipboardMonitor.ClipboardText}\n" +
-                $"ClipboardRtfText: {ClipboardMonitor.ClipboardRtfText}\n" +
-                $"ClipboardFiles: {ClipboardMonitor.ClipboardFiles}\n" +
-                $"ClipboardImage: {ClipboardMonitor.ClipboardImage}";
+                $"ClipboardText: {ClipboardMonitorWPF.ClipboardText}\n" +
+                $"ClipboardRtfText: {ClipboardMonitorWPF.ClipboardRtfText}\n" +
+                $"ClipboardFiles: {ClipboardMonitorWPF.ClipboardFiles}\n" +
+                $"ClipboardImage: {ClipboardMonitorWPF.ClipboardImage}";
             TextBlock3.Text = $"ClipboardData\n" +
                 $"DataMd5: {clipboardData.DataMd5}\n" +
                 $"DataToString: {clipboardData.DataToString(false)}\n" +
@@ -147,9 +147,9 @@ public partial class MainWindow : Window
         _count++;
     }
 
-    private async void OnClipboardChangedWin(object? sender, ClipboardMonitorWin.ClipboardChangedEventArgs e)
+    private async void OnClipboardChangedWin(object? sender, ClipboardChangedEventArgs e)
     {
-        if (e.Content is null || e.DataType == DataType.Other || sender is not ClipboardMonitorWin clipboardMonitor)
+        if (e.Content is null || e.DataType == DataType.Other || sender is not IClipboardMonitor clipboardMonitor)
         {
             return;
         }
@@ -181,10 +181,10 @@ public partial class MainWindow : Window
                 $"SourceApplication: {e.SourceApplication.Name}\n" +
                 $"Content: {e.Content}";
         var TextBlock2Text = $"ClipboardMonitor\n" +
-            $"ClipboardText: {ClipboardMonitor.ClipboardText}\n" +
-            $"ClipboardRtfText: {ClipboardMonitor.ClipboardRtfText}\n" +
-            $"ClipboardFiles: {ClipboardMonitor.ClipboardFiles}\n" +
-            $"ClipboardImage: {ClipboardMonitor.ClipboardImage}";
+            $"ClipboardText: {ClipboardMonitorWPF.ClipboardText}\n" +
+            $"ClipboardRtfText: {ClipboardMonitorWPF.ClipboardRtfText}\n" +
+            $"ClipboardFiles: {ClipboardMonitorWPF.ClipboardFiles}\n" +
+            $"ClipboardImage: {ClipboardMonitorWPF.ClipboardImage}";
         var TextBlock3Text = $"ClipboardData\n" +
             $"DataMd5: {clipboardData.DataMd5}\n" +
             $"DataToString: {clipboardData.DataToString(false)}\n" +
@@ -338,8 +338,8 @@ public partial class MainWindow : Window
 
     private void InitializeClipboardMonitor()
     {
-        ClipboardMonitor.ClipboardChanged += OnClipboardChangeW;
-        ClipboardMonitor.StartMonitoring();
+        ClipboardMonitorWPF.ClipboardChanged += OnClipboardChangeW;
+        ClipboardMonitorWPF.StartMonitoring();
 
         ClipboardMonitorWin.ClipboardChanged += OnClipboardChangedWin;
         ClipboardMonitorWin.StartMonitoring();
@@ -347,8 +347,8 @@ public partial class MainWindow : Window
 
     private void Window_Closed(object sender, EventArgs e)
     {
-        ClipboardMonitor.ClipboardChanged -= OnClipboardChangeW;
-        ClipboardMonitor.Dispose();
+        ClipboardMonitorWPF.ClipboardChanged -= OnClipboardChangeW;
+        ClipboardMonitorWPF.Dispose();
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
@@ -365,8 +365,8 @@ public partial class MainWindow : Window
 
     private void Button_Click3(object sender, RoutedEventArgs e)
     {
-        ClipboardMonitor.ClipboardChanged += OnClipboardChangeW;
-        ClipboardMonitor.StartMonitoring();
+        ClipboardMonitorWPF.ClipboardChanged += OnClipboardChangeW;
+        ClipboardMonitorWPF.StartMonitoring();
         TextBlock1.Text = "";
         TextBlock2.Text = "";
         TextBlock3.Text = "Wait something copyed to clipboard...";
@@ -376,7 +376,7 @@ public partial class MainWindow : Window
 
     private void Button_Click4(object sender, RoutedEventArgs e)
     {
-        ClipboardMonitor.PauseMonitoring();
+        ClipboardMonitorWPF.PauseMonitoring();
         TextBlock1.Text = "";
         TextBlock2.Text = "";
         TextBlock3.Text = "Clipboard monitor is paused.";
@@ -386,7 +386,7 @@ public partial class MainWindow : Window
 
     private void Button_Click5(object sender, RoutedEventArgs e)
     {
-        ClipboardMonitor.ResumeMonitoring();
+        ClipboardMonitorWPF.ResumeMonitoring();
         TextBlock1.Text = "";
         TextBlock2.Text = "";
         TextBlock3.Text = "Wait something copyed to clipboard...";
@@ -396,8 +396,8 @@ public partial class MainWindow : Window
 
     private void Button_Click6(object sender, RoutedEventArgs e)
     {
-        ClipboardMonitor.ClipboardChanged -= OnClipboardChangeW;
-        ClipboardMonitor.Dispose();
+        ClipboardMonitorWPF.ClipboardChanged -= OnClipboardChangeW;
+        ClipboardMonitorWPF.Dispose();
         TextBlock1.Text = "";
         TextBlock2.Text = "";
         TextBlock3.Text = "Clipboard monitor is Stopped.";

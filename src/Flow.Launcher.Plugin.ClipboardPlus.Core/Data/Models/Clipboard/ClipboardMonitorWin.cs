@@ -10,7 +10,7 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 /// ClipboardMonitorWin is a class that monitors the clipboard
 /// </summary>
 [SupportedOSPlatform("windows10.0.10240.0")]
-public class ClipboardMonitorWin : IDisposable
+public class ClipboardMonitorWin : IClipboardMonitor
 {
     #region Fields
 
@@ -134,6 +134,19 @@ public class ClipboardMonitorWin : IDisposable
         }
     }
 
+    /// <summary>
+    /// Clears the clipboard of all data.
+    /// </summary>
+    public void CleanClipboard()
+    {
+        ClipboardText = string.Empty;
+        ClipboardRtfText = string.Empty;
+        ClipboardObject = null;
+        ClipboardImage = null;
+        ClipboardFile = string.Empty;
+        ClipboardFiles.Clear();
+    }
+
     #endregion
 
     #region Private
@@ -170,53 +183,6 @@ public class ClipboardMonitorWin : IDisposable
 
     #endregion
 
-    #region Event Arguments
-
-    /// <summary>
-    /// Provides data for the <see cref="ClipboardChanged"/> event.
-    /// </summary>
-    public class ClipboardChangedEventArgs : EventArgs
-    {
-        public ClipboardChangedEventArgs(
-            object? content,
-            DataType dataType,
-            SourceApplication source
-        )
-        {
-            Content = content;
-            DataType = dataType;
-
-            SourceApplication = new SourceApplication(
-                source.Handle,
-                source.Name,
-                source.Title,
-                source.Path
-            );
-        }
-
-        #region Properties
-
-        /// <summary>
-        /// Gets the currently copied clipboard content.
-        /// </summary>
-        public object? Content { get; }
-
-        /// <summary>
-        /// Gets the currently copied clipboard content-type.
-        /// </summary>
-        public DataType DataType { get; }
-
-        /// <summary>
-        /// Gets the application from where the
-        /// clipboard's content were copied.
-        /// </summary>
-        public SourceApplication SourceApplication { get; }
-
-        #endregion
-    }
-
-    #endregion
-
     #endregion
 
     #endregion
@@ -248,8 +214,7 @@ public class ClipboardMonitorWin : IDisposable
             _clipboardHandle.Dispose();
             _clipboardHandle = null!;
             _observableFormats = null!;
-            ClipboardFiles = null!;
-            ClipboardImage = null!;
+            CleanClipboard();
             _disposed = true;
         }
     }
