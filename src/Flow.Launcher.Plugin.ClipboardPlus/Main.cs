@@ -760,7 +760,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         if (dataType == DataType.Image && Settings.CacheImages)
         {
             var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
-                clipboardData.SenderApp ?? Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app"));
+                string.IsNullOrEmpty(clipboardData.SenderApp) ?
+                Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app"):
+                clipboardData.SenderApp);
             var imagePath = FileUtils.SaveImageCache(clipboardData, PathHelper.ImageCachePath, imageName);
             clipboardData.CachedImagePath = imagePath;
         }
@@ -1551,6 +1553,17 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #endregion
 
+    #region Garbage Collect
+
+    private static void GarbageCollect()
+    {
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+    }
+
+    #endregion
+
     #region IAsyncDisposable Interface
 
     private bool _disposed;
@@ -1603,13 +1616,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             Context.API.LogWarn(ClassName, $"Finish dispose");
             _disposed = true;
         }
-    }
-
-    private static void GarbageCollect()
-    {
-        GC.Collect();
-        GC.WaitForPendingFinalizers();
-        GC.Collect();
     }
 
     #endregion
