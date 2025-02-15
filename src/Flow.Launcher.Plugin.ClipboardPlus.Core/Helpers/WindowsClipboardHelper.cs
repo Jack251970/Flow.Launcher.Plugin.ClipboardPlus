@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 Jack251970
+﻿// Copyright (c) 2025 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
 using Windows.ApplicationModel.DataTransfer;
@@ -77,7 +77,7 @@ public class WindowsClipboardHelper
                         CreateTime = item.Timestamp.DateTime,
                         Pinned = false,
                         Saved = false,
-                        UnicodeText = string.Empty,
+                        PlainText = string.Empty,
                         EncryptKeyMd5 = StringUtils.EncryptKeyMd5
                     });
                 }*/

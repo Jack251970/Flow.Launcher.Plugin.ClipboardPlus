@@ -1,3 +1,6 @@
+// Copyright (c) 2025 Jack251970
+// Licensed under the Apache License. See the LICENSE.
+
 using Dapper;
 using Microsoft.Data.Sqlite;
 using System.Collections.Concurrent;
@@ -11,9 +14,11 @@ public class SqliteDatabase : IAsyncDisposable
 
     #region Version
 
-    private const string DatabaseVersion = "1.1";
+    private const string DatabaseVersion = "1.2";
 
     #region History
+
+    private const string DatabaseVersion11 = "1.1";
 
     private const string DatabaseVersion10 = "1.0";
 
@@ -69,7 +74,7 @@ public class SqliteDatabase : IAsyncDisposable
         CREATE TABLE asset (
             id	                    INTEGER NOT NULL UNIQUE,
             data_b64	            TEXT,
-            unicode_text_b64        TEXT,
+            plain_text_b64          TEXT,
             hash_id                 TEXT UNIQUE,
             PRIMARY                 KEY("id" AUTOINCREMENT)
         );
@@ -84,7 +89,7 @@ public class SqliteDatabase : IAsyncDisposable
             "datetime_score"        INTEGER,
             "pinned"	            INTEGER,
             "encrypt_data"          INTEGER,
-            "unicode_text"          TEXT,
+            "plain_text"            TEXT,
             "encrypt_key_md5"       TEXT,
             PRIMARY                 KEY("id" AUTOINCREMENT),
             FOREIGN                 KEY("hash_id") REFERENCES "asset"("hash_id") ON DELETE CASCADE
@@ -93,18 +98,18 @@ public class SqliteDatabase : IAsyncDisposable
 
     private readonly string SqlInsertAsset =
         @"INSERT OR IGNORE INTO asset(
-            data_b64, unicode_text_b64, hash_id)
+            data_b64, plain_text_b64, hash_id)
         VALUES (
-            @DataB64, @UnicodeTextB64, @HashId);";
+            @DataB64, @PlainTextB64, @HashId);";
     private readonly string SqlInsertRecord =
         @"INSERT OR IGNORE INTO record(
             hash_id, data_md5_b64, sender_app, cached_image_path, 
             data_type, create_time, datetime_score, pinned, encrypt_data,
-            unicode_text, encrypt_key_md5)
+            plain_text, encrypt_key_md5)
         VALUES (
             @HashId, @DataMd5B64, @SenderApp, @CachedImagePath, 
             @DataType, @CreateTime, @DatetimeScore, @Pinned, @EncryptData,
-            @UnicodeText, @EncryptKeyMd5);";
+            @PlainText, @EncryptKeyMd5);";
 
     private readonly string SqlSelectRecordCountByMd5 =
         "SELECT COUNT() FROM record WHERE hash_id=@HashId;";
@@ -125,7 +130,7 @@ public class SqliteDatabase : IAsyncDisposable
             r.cached_image_path as CachedImagePath, r.data_type as DataType, 
             r.encrypt_data as EncryptData, r.create_time as CreateTime, 
             r.datetime_score as DatetimeScore, r.pinned as Pinned, 
-            r.hash_id as HashId, a.unicode_text_b64 as UnicodeText,
+            r.hash_id as HashId, a.plain_text_b64 as PlainText,
             r.encrypt_key_md5 as EncryptKeyMd5
         FROM record r
         LEFT JOIN asset a ON r.hash_id=a.hash_id;
@@ -137,7 +142,7 @@ public class SqliteDatabase : IAsyncDisposable
             r.cached_image_path as CachedImagePath, r.data_type as DataType, 
             r.encrypt_data as EncryptData, r.create_time as CreateTime, 
             r.datetime_score as DatetimeScore, r.pinned as Pinned, 
-            r.hash_id as HashId, a.unicode_text_b64 as UnicodeText,
+            r.hash_id as HashId, a.plain_text_b64 as PlainText,
             r.encrypt_key_md5 as EncryptKeyMd5
         FROM record r
         LEFT JOIN asset a ON r.hash_id=a.hash_id
@@ -150,7 +155,7 @@ public class SqliteDatabase : IAsyncDisposable
             r.cached_image_path as CachedImagePath, r.data_type as DataType, 
             r.encrypt_data as EncryptData, r.create_time as CreateTime, 
             r.datetime_score as DatetimeScore, r.pinned as Pinned, 
-            r.hash_id as HashId, a.unicode_text_b64 as UnicodeText,
+            r.hash_id as HashId, a.plain_text_b64 as UnicodeText,
             r.encrypt_key_md5 as EncryptKeyMd5
         FROM record r
         LEFT JOIN asset a ON r.hash_id=a.hash_id
@@ -189,10 +194,7 @@ public class SqliteDatabase : IAsyncDisposable
 
     #region Constructors
 
-    public SqliteDatabase(
-        SqliteConnection connection,
-        int scoreInterval,
-        PluginInitContext? context = null)
+    public SqliteDatabase(SqliteConnection connection, int scoreInterval, PluginInitContext? context = null)
     {
         Connection = connection;
         ScoreInterval = scoreInterval;
@@ -267,6 +269,9 @@ public class SqliteDatabase : IAsyncDisposable
     private readonly string SqlUpdateRecordDatetimeScoreEncryptKeyMd5 =
         "UPDATE record SET datetime_score=@DatetimeScore, encrypt_key_md5=@EncryptKeyMd5 WHERE hash_id=@HashId;";
 
+    private readonly string SqlUpdateColumnNameFromUnicodeToPlain =
+        "ALTER TABLE asset RENAME COLUMN unicode_text_b64 TO plain_text_b64; ALTER TABLE record RENAME COLUMN unicode_text TO plain_text;";
+
     #endregion
 
     private async Task UpdateDatabase(string currentVersion)
@@ -278,9 +283,23 @@ public class SqliteDatabase : IAsyncDisposable
                 return;
             }
 
-            if (currentVersion == DatabaseVersion10)
+            var currentVersionFloat = float.Parse(currentVersion);
+            if (currentVersionFloat < float.Parse(DatabaseVersion10))
             {
-                // 1.0
+                // Drop existing `record` and `asset` tables
+                await Connection.ExecuteAsync(SqlDropTables);
+
+                // Recreate the tables with the updated schema
+                await Connection.ExecuteAsync(SqlCreateDatabase);
+
+                await SetDatabaseVersionAsync(DatabaseVersion);
+
+                return;
+            }
+
+            if (currentVersionFloat < float.Parse(DatabaseVersion11))
+            {
+                // 1.0 -> 1.1
                 // Delete init_score column in `record` table
                 // Add datetime_score & encrypt_key_md5 columns in `record` table
                 await Connection.ExecuteAsync(SqlDeleteInitScoreAddDateTimeScoreEncryptKeyMd5Column);
@@ -292,14 +311,15 @@ public class SqliteDatabase : IAsyncDisposable
                     await Connection.ExecuteAsync(SqlUpdateRecordDatetimeScoreEncryptKeyMd5, record);
                 }
             }
-            else
+
+            if (currentVersionFloat < float.Parse(DatabaseVersion))
             {
-                // 0.0
-                // Drop existing `record` and `asset` tables
-                await Connection.ExecuteAsync(SqlDropTables);
-                // Recreate the tables with the updated schema
-                await Connection.ExecuteAsync(SqlCreateDatabase);
+                // 1.1 -> 1.2
+                // Rename unicode_text_b64 column to plain_text_b64 in `asset` table and
+                // Rename unicode_text column to plain_text in `record` table
+                await Connection.ExecuteAsync(SqlUpdateColumnNameFromUnicodeToPlain);
             }
+
             await SetDatabaseVersionAsync(DatabaseVersion);
         }
         catch (Exception e)

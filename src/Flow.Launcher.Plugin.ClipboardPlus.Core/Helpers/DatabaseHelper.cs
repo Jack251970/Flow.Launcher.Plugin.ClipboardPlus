@@ -1,3 +1,6 @@
+// Copyright (c) 2025 Jack251970
+// Licensed under the Apache License. See the LICENSE.
+
 using Newtonsoft.Json;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;

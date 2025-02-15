@@ -8,16 +8,16 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Utils;
 
 public static class RichTextBoxUtils
 {
-    public static void SetUnicodeText(this RichTextBox richTextBox, string uniText)
+    public static void SetPlainText(this RichTextBox richTextBox, string uniText)
     {
         // Clear the existing contents
         richTextBox.Document.Blocks.Clear();
 
-        // Load the Unicode text into the RichTextBox
+        // Load the plain text into the RichTextBox
         richTextBox.AppendText(uniText);
     }
 
-    public static string GetUnicodeText(this RichTextBox richTextBox)
+    public static string GetPlainText(this RichTextBox richTextBox)
     {
         // Convert the RichTextBox contents to a string
         return new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd).Text;

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 Jack251970
+﻿// Copyright (c) 2025 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 Jack251970
+﻿// Copyright (c) 2025 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
 using System.ComponentModel;
@@ -168,7 +168,7 @@ internal class ClipboardHandleWin : IDisposable
                     }
                 }));
             }
-            // Determines whether unicode text or rich text has been cut/copied.
+            // Determines whether plain text or rich text has been cut/copied.
             else if (ClipboardMonitorInstance.ObservableFormats.Texts && IsDataText(dataObj))
             {
                 var plainText = string.Empty;

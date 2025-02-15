@@ -746,7 +746,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             CreateTime = now,
             Pinned = false,
             Saved = saved,
-            UnicodeText = string.Empty,
+            PlainText = string.Empty,
             EncryptKeyMd5 = StringUtils.EncryptKeyMd5
         };
 
@@ -769,11 +769,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             // due to some bugs, we need to convert rtf to plain text
             if (string.IsNullOrEmpty(clipboardMonitor.ClipboardText))
             {
-                clipboardData.UnicodeText = StringUtils.ConvertRtfToPlainText(clipboardMonitor.ClipboardRtfText);
+                clipboardData.PlainText = StringUtils.ConvertRtfToPlainText(clipboardMonitor.ClipboardRtfText);
             }
             else
             {
-                clipboardData.UnicodeText = clipboardMonitor.ClipboardText;
+                clipboardData.PlainText = clipboardMonitor.ClipboardText;
             }
         }
 
@@ -1239,7 +1239,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             return;
         }
 
-        var validObject = clipboardData.UnicodeTextToValid();
+        var validObject = clipboardData.PlainTextToValid();
         if (validObject is not null)
         {
             var exception = await RetryActionOnSTAThreadAsync(() =>

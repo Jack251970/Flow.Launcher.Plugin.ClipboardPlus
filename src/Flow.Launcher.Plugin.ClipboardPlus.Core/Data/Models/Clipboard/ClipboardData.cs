@@ -86,10 +86,10 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     public string CachedImagePath { get; set; } = string.Empty;
 
     /// <summary>
-    /// Text in unicode format.
+    /// Text in plain format.
     /// Note: Only used for rich text.
     /// </summary>
-    public string UnicodeText { get; set; } = string.Empty;
+    public string PlainText { get; set; } = string.Empty;
 
     /// <summary>
     /// MD5 hash of the encryption key for identifying the database.
@@ -192,7 +192,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     }
 
     /// <summary>
-    /// Get the unicode text as string.
+    /// Get the plain text as string.
     /// </summary>
     /// <param name="encryptData">
     /// Whether to encrypt the data following the setting.
@@ -201,11 +201,11 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     /// If data type is Rich Text, return the data as string.
     /// Else return null.
     /// </returns>
-    public readonly string? UnicodeTextToString(bool encryptData)
+    public readonly string? PlainTextToString(bool encryptData)
     {
         var str = DataType switch
         {
-            DataType.RichText => UnicodeText,
+            DataType.RichText => PlainText,
             _ => null
         };
         if (encryptData && (!string.IsNullOrEmpty(str)) && EncryptData)
@@ -294,15 +294,15 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     }
 
     /// <summary>
-    /// Get the unicode text as valid object.
+    /// Get the plain text as valid object.
     /// </summary>
     /// <returns>
     /// If data type is Rich Text, return the data as valid string.
     /// Else return null.
     /// </returns>
-    public readonly string? UnicodeTextToValid()
+    public readonly string? PlainTextToValid()
     {
-        var stringToCopy = UnicodeText;
+        var stringToCopy = PlainText;
         if (string.IsNullOrEmpty(stringToCopy))
         {
             return null;
@@ -338,7 +338,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             CachedImagePath = record.CachedImagePath,
             Pinned = record.Pinned,
             Saved = true,
-            UnicodeText = StringToUnicodeText(record.UnicodeText, encrypt),
+            PlainText = StringToPlainText(record.PlainText, encrypt),
             EncryptKeyMd5 = record.EncryptKeyMd5
         };
     }
@@ -370,7 +370,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             CachedImagePath = data.CachedImagePath,
             Pinned = data.Pinned,
             Saved = saved,
-            UnicodeText = StringToUnicodeText(data.UnicodeText, false),
+            PlainText = StringToPlainText(data.PlainText, false),
             EncryptKeyMd5 = data.EncryptKeyMd5
         };
     }
@@ -393,7 +393,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         };
     }
 
-    private static string StringToUnicodeText(string str, bool encryptData)
+    private static string StringToPlainText(string str, bool encryptData)
     {
         if (string.IsNullOrEmpty(str))
         {
@@ -418,9 +418,9 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     private CultureInfo currentCultureInfo = CultureInfo.CurrentCulture;
 
     /// <summary>
-    /// Pin symbol in unicode.
+    /// Pin symbol.
     /// </summary>
-    private const string PinUnicode = "📌";
+    private const string PinSymbol = "📌";
 
     /// <summary>
     /// Get display title for the data.
@@ -465,7 +465,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         if (subtitle == null || currentCultureInfo != cultureInfo || pinned != Pinned)
         {
             var dispSubtitle = $"{CreateTime.ToString(cultureInfo)}: {SenderApp}";
-            dispSubtitle = Pinned ? $"{PinUnicode}{dispSubtitle}" : dispSubtitle;
+            dispSubtitle = Pinned ? $"{PinSymbol}{dispSubtitle}" : dispSubtitle;
             subtitle = dispSubtitle;
             currentCultureInfo = cultureInfo;
             pinned = Pinned;
@@ -494,7 +494,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             text = DataType switch
             {
                 DataType.PlainText => Data as string,
-                DataType.RichText => UnicodeText,
+                DataType.RichText => PlainText,
                 DataType.Image => $"Image: {CreateTime.ToString(cultureInfo)}",
                 DataType.Files => (filePaths is null ? Data : filePaths) is string[] t ? string.Join("\n", t.Take(2)) + "\n..." : Data as string,
                 _ => null
@@ -581,7 +581,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             CachedImagePath = CachedImagePath,
             Pinned = Pinned,
             Saved = Saved,
-            UnicodeText = UnicodeText,
+            PlainText = PlainText,
             EncryptKeyMd5 = EncryptKeyMd5
         };
     }
@@ -597,7 +597,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             CachedImagePath = CachedImagePath,
             Pinned = pinned,
             Saved = Saved,
-            UnicodeText = UnicodeText,
+            PlainText = PlainText,
             EncryptKeyMd5 = EncryptKeyMd5
         };
     }
@@ -671,7 +671,7 @@ public class JsonClipboardData
     public DateTime CreateTime { get; set; }
     public string CachedImagePath { get; set; } = string.Empty;
     public bool Pinned { get; set; }
-    public string UnicodeText { get; set; } = string.Empty;
+    public string PlainText { get; set; } = string.Empty;
     public string EncryptKeyMd5 { get; set; } = string.Empty;
 
     public static JsonClipboardData FromClipboardData(ClipboardData data)
@@ -688,7 +688,7 @@ public class JsonClipboardData
             CreateTime = data.CreateTime,
             CachedImagePath = data.CachedImagePath,
             Pinned = data.Pinned,
-            UnicodeText = data.UnicodeTextToString(false)!,
+            PlainText = data.PlainTextToString(false)!,
             EncryptKeyMd5 = data.EncryptKeyMd5
         };
     }

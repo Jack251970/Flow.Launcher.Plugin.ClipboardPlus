@@ -41,17 +41,17 @@ public class PreviewViewModel : BaseModel
 
     #region Text Preview
 
-    public Visibility UnicodeTextPreviewVisibility => ClipboardData.DataType == DataType.PlainText || ClipboardData.DataType == DataType.Files
+    public Visibility PlainTextPreviewVisibility => ClipboardData.DataType == DataType.PlainText || ClipboardData.DataType == DataType.Files
         ? Visibility.Visible
         : Visibility.Collapsed;
 
-    private string _previewUnicodeText = string.Empty;
-    public string PreviewUnicodeText
+    private string _previewPlainText = string.Empty;
+    public string PreviewPlainText
     {
-        get => _previewUnicodeText;
+        get => _previewPlainText;
         set
         {
-            _previewUnicodeText = value;
+            _previewPlainText = value;
             RefreshStatus();
             OnPropertyChanged();
         }
@@ -95,7 +95,7 @@ public class PreviewViewModel : BaseModel
     private void RefreshStatus()
     {
         PreviewStatus = Context.GetTranslation("flowlauncher_plugin_clipboardplus_words_count_prefix") +
-            StringUtils.CountWords(PreviewUnicodeText);
+            StringUtils.CountWords(PreviewPlainText);
     }
 
     #endregion
@@ -106,10 +106,10 @@ public class PreviewViewModel : BaseModel
         {
             case DataType.PlainText:
             case DataType.Files:
-                PreviewUnicodeText = ClipboardData.DataToString(false) ?? string.Empty;
+                PreviewPlainText = ClipboardData.DataToString(false) ?? string.Empty;
                 break;
             case DataType.RichText:
-                _previewUnicodeText = ClipboardData.UnicodeTextToString(false) ?? string.Empty;
+                _previewPlainText = ClipboardData.PlainTextToString(false) ?? string.Empty;
                 PreviewRichText = ClipboardData.DataToString(false) ?? string.Empty;
                 break;
             case DataType.Image:

@@ -28,7 +28,7 @@
             Source="{Binding PreviewImage, Mode=OneWay}"
             Visibility="{Binding ImagePreviewVisibility, Mode=OneTime}" />
 
-        <!--  Unicode Text Preview  -->
+        <!--  Plain Text Preview  -->
         <ScrollViewer
             Grid.Row="0"
             Grid.Column="0"
@@ -37,7 +37,7 @@
             HorizontalContentAlignment="Left"
             HorizontalScrollBarVisibility="Auto"
             VerticalScrollBarVisibility="Auto"
-            Visibility="{Binding UnicodeTextPreviewVisibility, Mode=OneTime}">
+            Visibility="{Binding PlainTextPreviewVisibility, Mode=OneTime}">
             <TextBox
                 MinWidth="320"
                 Margin="5"
@@ -47,7 +47,7 @@
                 HorizontalScrollBarVisibility="Disabled"
                 IsReadOnly="False"
                 IsUndoEnabled="True"
-                Text="{Binding PreviewUnicodeText, Mode=OneWay}"
+                Text="{Binding PreviewPlainText, Mode=OneWay}"
                 TextAlignment="Left"
                 VerticalScrollBarVisibility="Disabled" />
         </ScrollViewer>

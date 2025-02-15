@@ -72,12 +72,12 @@ public class DatabaseHelperTest
             CachedImagePath = string.Empty,
             Pinned = false,
             Saved = true,
-            UnicodeText = string.Empty,
+            PlainText = string.Empty,
             EncryptKeyMd5 = StringUtils.EncryptKeyMd5
         };
         if (type == DataType.RichText)
         {
-            data.UnicodeText = $"DataType.{randStr}";
+            data.PlainText = $"DataType.{randStr}";
         }
         return data;
     }

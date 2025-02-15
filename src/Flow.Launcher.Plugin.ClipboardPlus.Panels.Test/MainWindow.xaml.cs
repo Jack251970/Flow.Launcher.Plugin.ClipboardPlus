@@ -74,12 +74,12 @@ public partial class MainWindow : Window
             CachedImagePath = string.Empty,
             Pinned = pinned,
             Saved = false,
-            UnicodeText = string.Empty,
+            PlainText = string.Empty,
             EncryptKeyMd5 = StringUtils.EncryptKeyMd5
         };
         if (type == DataType.RichText)
         {
-            data.UnicodeText = "DataType.Files";
+            data.PlainText = "DataType.Files";
         }
         ClipboardDatas.Add(data);
         return data;
@@ -109,12 +109,12 @@ public partial class MainWindow : Window
             CachedImagePath = string.Empty,
             Pinned = false,
             Saved = false,
-            UnicodeText = string.Empty,
+            PlainText = string.Empty,
             EncryptKeyMd5 = StringUtils.EncryptKeyMd5
         };
         if (e.DataType == DataType.RichText)
         {
-            clipboardData.UnicodeText = clipboardMonitor.ClipboardText;
+            clipboardData.PlainText = clipboardMonitor.ClipboardText;
         }
 
         Dispatcher.Invoke(() =>
@@ -167,12 +167,12 @@ public partial class MainWindow : Window
             CachedImagePath = string.Empty,
             Pinned = false,
             Saved = false,
-            UnicodeText = string.Empty,
+            PlainText = string.Empty,
             EncryptKeyMd5 = StringUtils.EncryptKeyMd5
         };
         if (e.DataType == DataType.RichText)
         {
-            clipboardData.UnicodeText = clipboardMonitor.ClipboardText;
+            clipboardData.PlainText = clipboardMonitor.ClipboardText;
         }
 
         var TextBlock1Text = $"Count: {_count - 1}\n" +
@@ -204,7 +204,7 @@ public partial class MainWindow : Window
         {
             if (string.IsNullOrEmpty(clipboardMonitor.ClipboardRtfText))
             {
-                RichTextBox.SetUnicodeText(clipboardMonitor.ClipboardText);
+                RichTextBox.SetPlainText(clipboardMonitor.ClipboardText);
             }
             else
             {
@@ -239,7 +239,7 @@ public partial class MainWindow : Window
         grid.Children.Add(settingsPanel);
         PreviewSettingsTabItem.Content = grid;
 
-        // Preview unicode text panel
+        // Preview plain text panel
         var grid1 = new Grid();
         grid1.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         grid1.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
@@ -256,7 +256,7 @@ public partial class MainWindow : Window
         Grid.SetRow(label1, 1);
         grid1.Children.Add(previewPanel1);
         grid1.Children.Add(label1);
-        PreviewUnicodeTextTabItem.Content = grid1;
+        PreviewPlainTextTabItem.Content = grid1;
 
         // Preview rich text panel
         var grid4 = new Grid();
@@ -371,7 +371,7 @@ public partial class MainWindow : Window
         TextBlock2.Text = "";
         TextBlock3.Text = "Wait something copyed to clipboard...";
         TextBox.Text = "";
-        RichTextBox.SetUnicodeText("");
+        RichTextBox.SetPlainText("");
     }
 
     private void Button_Click4(object sender, RoutedEventArgs e)
@@ -381,7 +381,7 @@ public partial class MainWindow : Window
         TextBlock2.Text = "";
         TextBlock3.Text = "Clipboard monitor is paused.";
         TextBox.Text = "";
-        RichTextBox.SetUnicodeText("");
+        RichTextBox.SetPlainText("");
     }
 
     private void Button_Click5(object sender, RoutedEventArgs e)
@@ -391,7 +391,7 @@ public partial class MainWindow : Window
         TextBlock2.Text = "";
         TextBlock3.Text = "Wait something copyed to clipboard...";
         TextBox.Text = "";
-        RichTextBox.SetUnicodeText("");
+        RichTextBox.SetPlainText("");
     }
 
     private void Button_Click6(object sender, RoutedEventArgs e)
@@ -402,7 +402,7 @@ public partial class MainWindow : Window
         TextBlock2.Text = "";
         TextBlock3.Text = "Clipboard monitor is Stopped.";
         TextBox.Text = "";
-        RichTextBox.SetUnicodeText("");
+        RichTextBox.SetPlainText("");
         Button1.IsEnabled = false;
         Button2.IsEnabled = false;
         Button3.IsEnabled = false;

@@ -58,9 +58,9 @@ public class Record
     public string CachedImagePath { get; set; } = string.Empty;
 
     /// <summary>
-    /// Text in unicode format.
+    /// Text in plain format.
     /// </summary>
-    public string UnicodeText { get; set; } = string.Empty;
+    public string PlainText { get; set; } = string.Empty;
 
     /// <summary>
     /// MD5 hash of the encryption key for identifying the database.
@@ -108,7 +108,7 @@ public class Record
             DatetimeScore = GetDateTimeScore(data.CreateTime),
             CachedImagePath = data.CachedImagePath,
             Pinned = data.Pinned,
-            UnicodeText = string.Empty,  // just for getting the unicode text from the database
+            PlainText = string.Empty,  // just for getting the plain text from the database
             EncryptKeyMd5 = data.EncryptKeyMd5
         };
         return record;

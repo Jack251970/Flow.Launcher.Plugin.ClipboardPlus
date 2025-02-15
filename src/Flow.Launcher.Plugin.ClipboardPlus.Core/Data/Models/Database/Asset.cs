@@ -15,9 +15,9 @@ public class Asset
     public required string DataB64 { get; set; }
 
     /// <summary>
-    /// Base64 encoded unicode text.
+    /// Base64 encoded plain text.
     /// </summary>
-    public required string UnicodeTextB64 { get; set; }
+    public required string PlainTextB64 { get; set; }
 
     /// <summary>
     /// MD5 hash of the data, used to identify the asset.
@@ -33,7 +33,7 @@ public class Asset
         return new Asset
         {
             DataB64 = data.DataToString(needEncryptData)!,
-            UnicodeTextB64 = data.UnicodeTextToString(needEncryptData)!,
+            PlainTextB64 = data.PlainTextToString(needEncryptData)!,
             HashId = data.HashId,
         };
     }
