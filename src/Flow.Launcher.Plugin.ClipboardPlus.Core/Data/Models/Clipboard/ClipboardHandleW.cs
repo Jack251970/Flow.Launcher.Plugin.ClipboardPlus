@@ -230,55 +230,19 @@ internal class ClipboardHandleW : IDisposable
                     });
                 }
                 // Determines whether unicode text or rich text has been cut/copied.
-                else if (ClipboardMonitorInstance.ObservableFormats.Texts)
+                else if (ClipboardMonitorInstance.ObservableFormats.Texts && IsDataText(dataObj))
                 {
                     if (IsDataAnsiText(dataObj))
                     {
-                        var capturedText = dataObj.GetData(DataFormats.Text) as string;
-                        ClipboardMonitorInstance.ClipboardText = capturedText ?? string.Empty;
-
-                        ClipboardMonitorInstance.ClipboardRtfText = string.Empty;
-
-                        if (GetApplicationInfo())
-                        {
-                            ClipboardMonitorInstance.Invoke(
-                                capturedText,
-                                DataType.UnicodeText,
-                                new SourceApplicationW(
-                                    _executableHandle,
-                                    _executableName,
-                                    _executableTitle,
-                                    _executablePath
-                                )
-                            );
-                        }
+                        ClipboardMonitorInstance.ClipboardText = dataObj.GetData(DataFormats.Text) as string ?? string.Empty;
                     }
                     else if (IsDataUnicodeText(dataObj))
                     {
-                        var capturedText = dataObj.GetData(DataFormats.UnicodeText) as string;
-                        ClipboardMonitorInstance.ClipboardText = capturedText ?? string.Empty;
-
-                        ClipboardMonitorInstance.ClipboardRtfText = string.Empty;
-
-                        if (GetApplicationInfo())
-                        {
-                            ClipboardMonitorInstance.Invoke(
-                                capturedText,
-                                DataType.UnicodeText,
-                                new SourceApplicationW(
-                                    _executableHandle,
-                                    _executableName,
-                                    _executableTitle,
-                                    _executablePath
-                                )
-                            );
-                        }
+                        ClipboardMonitorInstance.ClipboardText = dataObj.GetData(DataFormats.UnicodeText) as string ?? string.Empty;
                     }
-                    else if (IsDataRtf(dataObj))
-                    {
-                        var capturedText = dataObj.GetData(DataFormats.Text) as string ?? dataObj.GetData(DataFormats.UnicodeText) as string;
-                        ClipboardMonitorInstance.ClipboardText = capturedText ?? string.Empty;
 
+                    if (IsDataRichText(dataObj))
+                    {
                         var capturedRtfData = dataObj.GetData(DataFormats.Rtf);
                         if (capturedRtfData is string capturedRtfText)
                         {
@@ -294,21 +258,20 @@ internal class ClipboardHandleW : IDisposable
                         {
                             ClipboardMonitorInstance.ClipboardRtfText = string.Empty;
                         }
-
-                        if (GetApplicationInfo())
-                        {
-                            ClipboardMonitorInstance.Invoke(
-                                capturedRtfData,
-                                DataType.RichText,
-                                new SourceApplicationW(
-                                    _executableHandle,
-                                    _executableName,
-                                    _executableTitle,
-                                    _executablePath
-                                )
-                            );
-                        }
                     }
+
+                    ClipboardMonitorInstance.Invoke(
+                        ClipboardMonitorInstance.ClipboardText,
+                        ClipboardMonitorInstance.ClipboardRtfText != string.Empty
+                            ? DataType.RichText
+                            : DataType.UnicodeText,
+                        new SourceApplicationW(
+                            _executableHandle,
+                            _executableName,
+                            _executableTitle,
+                            _executablePath
+                        )
+                    );
                 }
                 // Determines whether a file has been cut/copied.
                 else if (ClipboardMonitorInstance.ObservableFormats.Files && IsDataFiles(dataObj))
@@ -320,8 +283,7 @@ internal class ClipboardHandleW : IDisposable
                     if (dataObj.GetData(DataFormats.FileDrop) is not string[] capturedFiles)
                     {
                         ClipboardMonitorInstance.ClipboardObject = dataObj;
-                        var txt = dataObj.GetData(DataFormats.UnicodeText) as string;
-                        ClipboardMonitorInstance.ClipboardText = txt ?? string.Empty;
+                        ClipboardMonitorInstance.ClipboardText = dataObj.GetData(DataFormats.UnicodeText) as string ?? string.Empty;
 
                         if (GetApplicationInfo())
                         {
@@ -398,6 +360,11 @@ internal class ClipboardHandleW : IDisposable
         return dataObj.GetDataPresent(DataFormats.Bitmap);
     }
 
+    private static bool IsDataText(IDataObject dataObj)
+    {
+        return IsDataAnsiText(dataObj) || IsDataUnicodeText(dataObj) || IsDataRichText(dataObj);
+    }
+
     private static bool IsDataAnsiText(IDataObject dataObj)
     {
         return dataObj.GetDataPresent(DataFormats.Text);
@@ -408,7 +375,7 @@ internal class ClipboardHandleW : IDisposable
         return dataObj.GetDataPresent(DataFormats.UnicodeText);
     }
 
-    private static bool IsDataRtf(IDataObject dataObj)
+    private static bool IsDataRichText(IDataObject dataObj)
     {
         return dataObj.GetDataPresent(DataFormats.Rtf);
     }
