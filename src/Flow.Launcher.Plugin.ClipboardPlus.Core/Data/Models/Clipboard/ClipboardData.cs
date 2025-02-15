@@ -9,6 +9,16 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
 {
     #region Public Properties
 
+    public static ClipboardData NULL => new()
+    {
+        HashId = string.Empty,
+        SenderApp = string.Empty,
+        InitScore = 0,
+        CreateTime = DateTime.Now,
+        Pinned = false,
+        Saved = false
+    };
+
     #region Data Properties
 
     /// <summary>
@@ -648,11 +658,11 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     private void Dispose(bool disposing)
     {
         if (disposing)
-    {
-        if (Data is IDisposable disposable)
         {
-            disposable.Dispose();
-        }
+            if (Data is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
             _disposed = true;
         }
     }

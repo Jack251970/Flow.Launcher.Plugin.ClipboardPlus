@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -31,6 +31,8 @@ public partial class MainWindow : Window
     private readonly IClipboardMonitor ClipboardMonitorWin = new ClipboardMonitorWin() { ObserveLastEntry = false };
 
     private readonly List<ClipboardData> ClipboardDatas = new();
+
+    private readonly WindowsClipboardHelper Helper = new();
 
     private List<ClipboardData> RecordList = null!;
 
@@ -147,15 +149,12 @@ public partial class MainWindow : Window
         _count++;
     }
 
-    private async void OnClipboardChangedWin(object? sender, ClipboardChangedEventArgs e)
+    private void OnClipboardChangedWin(object? sender, ClipboardChangedEventArgs e)
     {
         if (e.Content is null || e.DataType == DataType.Other || sender is not IClipboardMonitor clipboardMonitor)
         {
             return;
         }
-
-        // Make sure OnClipboardChangeW is finished
-        await Task.Delay(2400);
 
         // init clipboard data
         var clipboardData = new ClipboardData(e.Content, e.DataType, true)
@@ -222,7 +221,7 @@ public partial class MainWindow : Window
 
     #endregion
 
-    #region Events
+    #region Initialization
 
     private void InitializeWindow()
     {
@@ -343,12 +342,38 @@ public partial class MainWindow : Window
 
         ClipboardMonitorWin.ClipboardChanged += OnClipboardChangedWin;
         ClipboardMonitorWin.StartMonitoring();
+
+        Helper.OnHistoryItemAdded += Helper_OnHistoryItemAdded;
+        Helper.OnHistoryItemRemoved += Helper_OnHistoryItemRemoved;
+        Helper.OnHistoryItemPinUpdated += Helper_OnHistoryItemPinUpdated;
     }
+
+    private void Helper_OnHistoryItemAdded(object? sender, ClipboardData e)
+    {
+        Debug.WriteLine("Clipboard history item added: " + e.HashId);
+    }
+
+    private void Helper_OnHistoryItemRemoved(object? sender, List<string> e)
+    {
+        Debug.WriteLine("Clipboard history item removed: " + string.Join(", ", e));
+    }
+
+    private void Helper_OnHistoryItemPinUpdated(object? sender, ClipboardData e)
+    {
+        Debug.WriteLine("Clipboard history item pin updated");
+    }
+
+    #endregion
+
+    #region Events
 
     private void Window_Closed(object sender, EventArgs e)
     {
         ClipboardMonitorWPF.ClipboardChanged -= OnClipboardChangeW;
         ClipboardMonitorWPF.Dispose();
+        ClipboardMonitorWin.ClipboardChanged -= OnClipboardChangedWin;
+        ClipboardMonitorWin.Dispose();
+        Helper.Dispose();
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
