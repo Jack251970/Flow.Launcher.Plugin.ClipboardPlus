@@ -208,11 +208,13 @@ internal class ClipboardHandleW : IDisposable
                     {
                         if (dataObj.GetData(DataFormats.Bitmap) is BitmapSource capturedImage)
                         {
+                            // Enable cross-thread access
                             if (capturedImage.CanFreeze)
                             {
                                 capturedImage.Freeze();
                             }
                             ClipboardMonitorInstance.ClipboardImage = capturedImage;
+
                             if (GetApplicationInfo())
                             {
                                 ClipboardMonitorInstance.Invoke(
