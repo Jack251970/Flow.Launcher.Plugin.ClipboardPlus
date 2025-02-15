@@ -4,7 +4,6 @@
 using System.Runtime.Versioning;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Application = System.Windows.Application;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
@@ -62,7 +61,6 @@ public class ClipboardMonitorW : IDisposable
     public BitmapSource? ClipboardImage { get; internal set; }
     public string ClipboardFile { get; internal set; } = string.Empty;
     public List<string> ClipboardFiles { get; internal set; } = new();
-    public static string HandleCaption { get; set; } = string.Empty;
 
     #endregion
 
@@ -233,11 +231,11 @@ public class ClipboardMonitorW : IDisposable
     private void Timer_Tick(object? sender, EventArgs e)
     {
         // Wait until the dispatcher is ready & main window is initialized
-        if (Application.Current.Dispatcher == null)
+        if (System.Windows.Application.Current.Dispatcher == null)
         {
             return;
         }
-        else if (Application.Current.MainWindow == null)
+        else if (System.Windows.Application.Current.MainWindow == null)
         {
             return;
         }

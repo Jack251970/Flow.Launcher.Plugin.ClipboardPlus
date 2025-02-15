@@ -10,7 +10,6 @@ using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Windows.Win32;
 using Windows.Win32.Foundation;
-using Application = System.Windows.Application;
 using DataFormats = System.Windows.DataFormats;
 using IDataObject = System.Windows.IDataObject;
 
@@ -88,20 +87,20 @@ internal class ClipboardHandleW : IDisposable
     /// </summary>
     public void StartMonitoring()
     {
-        if (Application.Current.MainWindow.IsLoaded)
+        if (System.Windows.Application.Current.MainWindow.IsLoaded)
         {
             MainWindow_Loaded(null, new RoutedEventArgs());
         }
         else
         {
-            Application.Current.MainWindow.Loaded += MainWindow_Loaded;
+            System.Windows.Application.Current.MainWindow.Loaded += MainWindow_Loaded;
         }
     }
 
     private async void MainWindow_Loaded(object? sender, RoutedEventArgs e)
     {
         // Get the handle of the main window.
-        var handle = new WindowInteropHelper(Application.Current.MainWindow).Handle;
+        var handle = new WindowInteropHelper(System.Windows.Application.Current.MainWindow).Handle;
         _handle = new(handle);
 
         // Add the hook to the window.
@@ -202,7 +201,7 @@ internal class ClipboardHandleW : IDisposable
                 if (ClipboardMonitorInstance.ObservableFormats.Images && IsDataImage(dataObj))
                 {
                     // Make sure on the application dispatcher.
-                    Application.Current.Dispatcher.Invoke(() =>
+                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
                     {
                         if (dataObj.GetData(DataFormats.Bitmap) is BitmapSource capturedImage)
                         {

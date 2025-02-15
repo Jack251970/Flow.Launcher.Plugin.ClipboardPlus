@@ -59,7 +59,6 @@ public class ClipboardMonitorWin : IDisposable
     public BitmapSource? ClipboardImage { get; internal set; }
     public string ClipboardFile { get; internal set; } = string.Empty;
     public List<string> ClipboardFiles { get; internal set; } = new();
-    public static string HandleCaption { get; set; } = string.Empty;
 
     #endregion
 

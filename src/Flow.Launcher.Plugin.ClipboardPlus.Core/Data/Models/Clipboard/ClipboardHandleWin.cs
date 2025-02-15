@@ -11,7 +11,6 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.Win32;
 using Windows.Win32.Foundation;
-using Clipboard = Windows.ApplicationModel.DataTransfer.Clipboard;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
@@ -88,7 +87,7 @@ internal class ClipboardHandleWin : IDisposable
     /// </summary>
     public void StartMonitoring()
     {
-        Clipboard.ContentChanged += OnClipboardChanged;
+        Windows.ApplicationModel.DataTransfer.Clipboard.ContentChanged += OnClipboardChanged;
 
         Ready = true;
     }
@@ -98,7 +97,7 @@ internal class ClipboardHandleWin : IDisposable
     /// </summary>
     public void StopMonitoring()
     {
-        Clipboard.ContentChanged -= OnClipboardChanged;
+        Windows.ApplicationModel.DataTransfer.Clipboard.ContentChanged -= OnClipboardChanged;
     }
 
     /// <summary>
@@ -115,7 +114,7 @@ internal class ClipboardHandleWin : IDisposable
             }
 
             // If the clipboard is empty, return.
-            var dataObj = Clipboard.GetContent();
+            var dataObj = Windows.ApplicationModel.DataTransfer.Clipboard.GetContent();
             if (dataObj is null)
             {
                 return;

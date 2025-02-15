@@ -2,7 +2,6 @@
 // Licensed under the Apache License. See the LICENSE.
 
 using Windows.ApplicationModel.DataTransfer;
-using Clipboard = Windows.ApplicationModel.DataTransfer.Clipboard;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 
@@ -23,7 +22,7 @@ public class WindowsClipboardHelper
     {
         if (IsClipboardHistorySupported())
         {
-            return Clipboard.IsHistoryEnabled();
+            return Windows.ApplicationModel.DataTransfer.Clipboard.IsHistoryEnabled();
         }
 
         return false;
@@ -33,7 +32,7 @@ public class WindowsClipboardHelper
     {
         if (IsClipboardHistorySupported())
         {
-            return Clipboard.ClearHistory();
+            return Windows.ApplicationModel.DataTransfer.Clipboard.ClearHistory();
         }
 
         return false;
@@ -43,13 +42,13 @@ public class WindowsClipboardHelper
     {
         if (IsClipboardHistorySupported())
         {
-            var historyItems = await Clipboard.GetHistoryItemsAsync();
+            var historyItems = await Windows.ApplicationModel.DataTransfer.Clipboard.GetHistoryItemsAsync();
             if (historyItems.Status == ClipboardHistoryItemsResultStatus.Success)
             {
-                Clipboard.ClearHistory();
+                Windows.ApplicationModel.DataTransfer.Clipboard.ClearHistory();
                 foreach (var item in historyItems.Items)
                 {
-                    Clipboard.DeleteItemFromHistory(item);
+                    Windows.ApplicationModel.DataTransfer.Clipboard.DeleteItemFromHistory(item);
                 }
                 return true;
             }
@@ -64,7 +63,7 @@ public class WindowsClipboardHelper
 
         if (IsClipboardHistorySupported())
         {
-            var historyItems = await Clipboard.GetHistoryItemsAsync();
+            var historyItems = await Windows.ApplicationModel.DataTransfer.Clipboard.GetHistoryItemsAsync();
             if (historyItems.Status == ClipboardHistoryItemsResultStatus.Success)
             {
                 /*foreach (var item in historyItems.Items)
