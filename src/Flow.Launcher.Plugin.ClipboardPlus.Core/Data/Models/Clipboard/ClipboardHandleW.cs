@@ -232,39 +232,37 @@ internal class ClipboardHandleW : IDisposable
                 // Determines whether unicode text or rich text has been cut/copied.
                 else if (ClipboardMonitorInstance.ObservableFormats.Texts && IsDataText(dataObj))
                 {
+                    var plainText = string.Empty;
                     if (IsDataAnsiText(dataObj))
                     {
-                        ClipboardMonitorInstance.ClipboardText = dataObj.GetData(DataFormats.Text) as string ?? string.Empty;
+                        plainText = dataObj.GetData(DataFormats.Text) as string ?? string.Empty;
                     }
                     else if (IsDataUnicodeText(dataObj))
                     {
-                        ClipboardMonitorInstance.ClipboardText = dataObj.GetData(DataFormats.UnicodeText) as string ?? string.Empty;
+                        plainText = dataObj.GetData(DataFormats.UnicodeText) as string ?? string.Empty;
                     }
+                    ClipboardMonitorInstance.ClipboardText = plainText;
 
+                    var richText = string.Empty;
                     if (IsDataRichText(dataObj))
                     {
                         var capturedRtfData = dataObj.GetData(DataFormats.Rtf);
                         if (capturedRtfData is string capturedRtfText)
                         {
-                            ClipboardMonitorInstance.ClipboardRtfText = capturedRtfText;
+                            richText = capturedRtfText;
                         }
                         else if (capturedRtfData is MemoryStream capturedRtfStream)
                         {
                             using var reader = new StreamReader(capturedRtfStream);
                             capturedRtfText = reader.ReadToEnd();
-                            ClipboardMonitorInstance.ClipboardRtfText = capturedRtfText;
-                        }
-                        else
-                        {
-                            ClipboardMonitorInstance.ClipboardRtfText = string.Empty;
+                            richText = capturedRtfText;
                         }
                     }
+                    ClipboardMonitorInstance.ClipboardRtfText = richText;
 
                     ClipboardMonitorInstance.Invoke(
-                        ClipboardMonitorInstance.ClipboardText,
-                        ClipboardMonitorInstance.ClipboardRtfText != string.Empty
-                            ? DataType.RichText
-                            : DataType.UnicodeText,
+                        plainText,
+                        richText != string.Empty ? DataType.RichText : DataType.UnicodeText,
                         new SourceApplicationW(
                             _executableHandle,
                             _executableName,
