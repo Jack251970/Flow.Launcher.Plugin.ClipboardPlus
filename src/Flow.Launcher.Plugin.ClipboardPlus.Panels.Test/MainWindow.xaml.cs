@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -26,6 +27,8 @@ public partial class MainWindow : Window
     private readonly static string _imageSavePath = @"D:\clipboard.png";
 
     private readonly ClipboardMonitorW ClipboardMonitor = new() { ObserveLastEntry = false };
+
+    private readonly ClipboardMonitorWin ClipboardMonitorWin = new() { ObserveLastEntry = false };
 
     private readonly List<ClipboardData> ClipboardDatas = new();
 
@@ -86,6 +89,8 @@ public partial class MainWindow : Window
 
     #region Clipboard Monitor
 
+    private DateTime now;
+
     private async void OnClipboardChangeW(object? sender, ClipboardMonitorW.ClipboardChangedEventArgs e)
     {
         if (e.Content is null || e.DataType == DataType.Other || sender is not ClipboardMonitorW clipboardMonitor)
@@ -94,7 +99,7 @@ public partial class MainWindow : Window
         }
 
         // init clipboard data
-        var now = DateTime.Now;
+        now = DateTime.Now;
         var clipboardData = new ClipboardData(e.Content, e.DataType, true)
         {
             HashId = StringUtils.GetGuid(),
@@ -133,6 +138,70 @@ public partial class MainWindow : Window
                 $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
 
             TextBox.Text = clipboardMonitor.ClipboardText;
+        });
+
+        RecordList.Add(clipboardData);
+
+        await ClipboardPlus.Database.AddOneRecordAsync(clipboardData, true);
+
+        _count++;
+    }
+
+    private async void OnClipboardChangedWin(object? sender, ClipboardMonitorWin.ClipboardChangedEventArgs e)
+    {
+        if (e.Content is null || e.DataType == DataType.Other || sender is not ClipboardMonitorWin clipboardMonitor)
+        {
+            return;
+        }
+
+        // Make sure OnClipboardChangeW is finished
+        await Task.Delay(2400);
+
+        // init clipboard data
+        var clipboardData = new ClipboardData(e.Content, e.DataType, true)
+        {
+            HashId = StringUtils.GetGuid(),
+            SenderApp = e.SourceApplication.Name,
+            InitScore = 1,
+            CreateTime = now,
+            CachedImagePath = string.Empty,
+            Pinned = false,
+            Saved = false,
+            UnicodeText = string.Empty,
+            EncryptKeyMd5 = StringUtils.EncryptKeyMd5
+        };
+        if (e.DataType == DataType.RichText)
+        {
+            clipboardData.UnicodeText = clipboardMonitor.ClipboardText;
+        }
+
+        var TextBlock1Text = $"Count: {_count - 1}\n" +
+                $"ClipboardChangedEventArgs\n" +
+                $"DataType: {e.DataType}\n" +
+                $"SourceApplication: {e.SourceApplication.Name}\n" +
+                $"Content: {e.Content}";
+        var TextBlock2Text = $"ClipboardMonitor\n" +
+            $"ClipboardText: {ClipboardMonitor.ClipboardText}\n" +
+            $"ClipboardRtfText: {ClipboardMonitor.ClipboardRtfText}\n" +
+            $"ClipboardFiles: {ClipboardMonitor.ClipboardFiles}\n" +
+            $"ClipboardImage: {ClipboardMonitor.ClipboardImage}";
+        var TextBlock3Text = $"ClipboardData\n" +
+            $"DataMd5: {clipboardData.DataMd5}\n" +
+            $"DataToString: {clipboardData.DataToString(false)}\n" +
+            $"DataToString(Encrypted): {clipboardData.DataToString(true)}\n" +
+            $"Title: {clipboardData.GetTitle(CultureInfo.CurrentCulture)}\n" +
+            $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
+            $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
+
+        var TextBoxText = clipboardMonitor.ClipboardText;
+
+        var right1 = TextBlock1Text == TextBlock1.Text;
+        var right2 = TextBlock2Text == TextBlock2.Text;
+        var right3 = TextBlock3Text == TextBlock3.Text;
+        var right4 = TextBoxText == TextBox.Text;
+
+        Dispatcher.Invoke(() =>
+        {
             if (string.IsNullOrEmpty(clipboardMonitor.ClipboardRtfText))
             {
                 RichTextBox.SetUnicodeText(clipboardMonitor.ClipboardText);
@@ -148,11 +217,7 @@ public partial class MainWindow : Window
             }
         });
 
-        RecordList.Add(clipboardData);
-
-        await ClipboardPlus.Database.AddOneRecordAsync(clipboardData, true);
-
-        _count++;
+        var allRight = right1 && right2 && right3 && right4;
     }
 
     #endregion
@@ -275,6 +340,9 @@ public partial class MainWindow : Window
     {
         ClipboardMonitor.ClipboardChanged += OnClipboardChangeW;
         ClipboardMonitor.StartMonitoring();
+
+        ClipboardMonitorWin.ClipboardChanged += OnClipboardChangedWin;
+        ClipboardMonitorWin.StartMonitoring();
     }
 
     private void Window_Closed(object sender, EventArgs e)
