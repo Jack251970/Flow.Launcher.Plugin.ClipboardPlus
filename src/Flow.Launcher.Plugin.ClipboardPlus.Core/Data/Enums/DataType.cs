@@ -2,7 +2,7 @@
 
 public enum DataType
 {
-    UnicodeText = 0,
+    PlainText = 0,
     Image = 1,
     Files = 2,
     Other = 3,

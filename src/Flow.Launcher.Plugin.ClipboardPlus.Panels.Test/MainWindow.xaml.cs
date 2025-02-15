@@ -57,7 +57,7 @@ public partial class MainWindow : Window
         var rand = new Random();
         object dataContent = type switch
         {
-            DataType.UnicodeText => "Hello, world!",
+            DataType.PlainText => "Hello, world!",
             DataType.RichText => @"{\rtf\ansi{\fonttbl{\f0 Cascadia Mono;}}{\colortbl;\red43\green145\blue175;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue255;}\f0 \fs19 \cf1 \cb2 \highlight2 DataType\cf3 .\cf4 Files}",
             DataType.Image => _defaultImage,
             DataType.Files => new string[] { "D:\\a.txt", "D:\\b.docx", "D:\\c" },
@@ -243,7 +243,7 @@ public partial class MainWindow : Window
         var grid1 = new Grid();
         grid1.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         grid1.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        var dataText = GetRandomClipboardData(DataType.UnicodeText);
+        var dataText = GetRandomClipboardData(DataType.PlainText);
         var previewPanel1 = new PreviewPanel(ClipboardPlus, dataText);
         Grid.SetRow(previewPanel1, 0);
         var label1 = new Label()

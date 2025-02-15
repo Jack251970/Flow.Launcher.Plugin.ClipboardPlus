@@ -414,7 +414,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         // Copy Addition Options
         switch (clipboardData.DataType)
         {
-            case DataType.UnicodeText:
+            case DataType.PlainText:
                 results.Add(new Result
                 {
                     Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_plain_text_title"),
@@ -699,7 +699,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         // init clipboard data
         var now = DateTime.Now;
         var dataType = e.DataType;
-        var saved = Settings.KeepText && dataType == DataType.UnicodeText
+        var saved = Settings.KeepText && dataType == DataType.PlainText
             || Settings.KeepText && dataType == DataType.RichText
             || Settings.KeepImages && dataType == DataType.Image
             || Settings.KeepFiles && dataType == DataType.Files;
@@ -1047,7 +1047,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         var dataType = clipboardData.DataType;
         switch (dataType)
         {
-            case DataType.UnicodeText:
+            case DataType.PlainText:
                 CopyOriginallyToClipboard(clipboardDataPair);
                 break;
             case DataType.RichText:
@@ -1136,7 +1136,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             {
                 switch (dataType)
                 {
-                    case DataType.UnicodeText:
+                    case DataType.PlainText:
                         Clipboard.Clear();
                         Clipboard.SetText((string)validObject);
                         break;
@@ -1175,7 +1175,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             switch (dataType)
             {
-                case DataType.UnicodeText:
+                case DataType.PlainText:
                 case DataType.RichText:
                     Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                         Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));

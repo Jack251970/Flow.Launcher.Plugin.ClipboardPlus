@@ -3,14 +3,15 @@
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
-public class SourceApplicationW
+// TODO: Change Handler to uint type
+public class SourceApplication
 {
     #region Properties
 
     /// <summary>
     /// Gets the appliation's window-handle.
     /// </summary>
-    public IntPtr Handle { get; }
+    public nint Handle { get; }
 
     /// <summary>
     /// Gets the application's name.
@@ -32,13 +33,13 @@ public class SourceApplicationW
     #region Constructor
 
     /// <summary>
-    /// Creates a new <see cref="SourceApplicationW"/> class-instance.
+    /// Creates a new <see cref="SourceApplication"/> class-instance.
     /// </summary>
     /// <param name="handle">The application's handle.</param>
     /// <param name="name">The application's name.</param>
     /// <param name="title">The application's title.</param>
     /// <param name="path">The application's path.</param>
-    public SourceApplicationW(IntPtr handle, string name, string title, string path)
+    public SourceApplication(nint handle, string name, string title, string path)
     {
         Handle = handle;
         Name = name;

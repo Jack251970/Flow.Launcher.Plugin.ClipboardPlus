@@ -32,7 +32,7 @@ internal class ClipboardHandleW : IDisposable
 
     private bool _ready;
 
-    private IntPtr _executableHandle = IntPtr.Zero;
+    private nint _executableHandle = 0;
     private string _executableName = string.Empty;
     private string _executablePath = string.Empty;
     private string _executableTitle = string.Empty;
@@ -220,7 +220,7 @@ internal class ClipboardHandleW : IDisposable
                                 ClipboardMonitorInstance.Invoke(
                                     capturedImage,
                                     DataType.Image,
-                                    new SourceApplicationW(
+                                    new SourceApplication(
                                         _executableHandle,
                                         _executableName,
                                         _executableTitle,
@@ -264,8 +264,8 @@ internal class ClipboardHandleW : IDisposable
 
                     ClipboardMonitorInstance.Invoke(
                         plainText,
-                        richText != string.Empty ? DataType.RichText : DataType.UnicodeText,
-                        new SourceApplicationW(
+                        richText != string.Empty ? DataType.RichText : DataType.PlainText,
+                        new SourceApplication(
                             _executableHandle,
                             _executableName,
                             _executableTitle,
@@ -290,7 +290,7 @@ internal class ClipboardHandleW : IDisposable
                             ClipboardMonitorInstance.Invoke(
                                 dataObj,
                                 DataType.Other,
-                                new SourceApplicationW(
+                                new SourceApplication(
                                     _executableHandle,
                                     _executableName,
                                     _executableTitle,
@@ -311,7 +311,7 @@ internal class ClipboardHandleW : IDisposable
                             ClipboardMonitorInstance.Invoke(
                                 capturedFiles,
                                 DataType.Files,
-                                new SourceApplicationW(
+                                new SourceApplication(
                                     _executableHandle,
                                     _executableName,
                                     _executableTitle,
@@ -329,7 +329,7 @@ internal class ClipboardHandleW : IDisposable
                         ClipboardMonitorInstance.Invoke(
                             dataObj,
                             DataType.Other,
-                            new SourceApplicationW(
+                            new SourceApplication(
                                 _executableHandle,
                                 _executableName,
                                 _executableTitle,
@@ -396,7 +396,7 @@ internal class ClipboardHandleW : IDisposable
 
     private unsafe bool GetApplicationInfo()
     {
-        _executableHandle = IntPtr.Zero;
+        _executableHandle = 0;
         _executableName = string.Empty;
         _executableTitle = string.Empty;
         _executablePath = string.Empty;

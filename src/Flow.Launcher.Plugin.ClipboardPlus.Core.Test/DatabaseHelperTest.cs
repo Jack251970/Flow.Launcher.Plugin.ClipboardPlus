@@ -44,7 +44,7 @@ public class DatabaseHelperTest
         {
             dataContent = type switch
             {
-                DataType.UnicodeText => StringUtils.RandomString(10),
+                DataType.PlainText => StringUtils.RandomString(10),
                 DataType.RichText => @"{\rtf\ansi{\fonttbl{\f0 Cascadia Mono;}}{\colortbl;\red43\green145\blue175;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue255;}\f0 \fs19 \cf1 \cb2 \highlight2 DataType\cf3 .\cf4 " + randStr + @"}",
                 DataType.Image => _defaultImage,
                 DataType.Files => new string[] { _baseDirectory, _defaultImagePath },
@@ -55,7 +55,7 @@ public class DatabaseHelperTest
         {
             dataContent = type switch
             {
-                DataType.UnicodeText => string.Empty,
+                DataType.PlainText => string.Empty,
                 DataType.RichText => string.Empty,
                 DataType.Image => string.Empty,
                 DataType.Files => new string[] { StringUtils.RandomString(10), StringUtils.RandomString(10), StringUtils.RandomString(10) },

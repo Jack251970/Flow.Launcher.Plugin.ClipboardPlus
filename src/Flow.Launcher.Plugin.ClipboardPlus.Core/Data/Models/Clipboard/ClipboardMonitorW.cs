@@ -160,7 +160,7 @@ public class ClipboardMonitorW : IDisposable
         ObserveLastEntry = true;
     }
 
-    internal void Invoke(object? content, DataType type, SourceApplicationW source)
+    internal void Invoke(object? content, DataType type, SourceApplication source)
     {
         ClipboardChanged?.Invoke(this, new ClipboardChangedEventArgs(content, type, source));
     }
@@ -189,13 +189,13 @@ public class ClipboardMonitorW : IDisposable
         public ClipboardChangedEventArgs(
             object? content,
             DataType dataType,
-            SourceApplicationW source
+            SourceApplication source
         )
         {
             Content = content;
             DataType = dataType;
 
-            SourceApplication = new SourceApplicationW(
+            SourceApplication = new SourceApplication(
                 source.Handle,
                 source.Name,
                 source.Title,
@@ -219,7 +219,7 @@ public class ClipboardMonitorW : IDisposable
         /// Gets the application from where the
         /// clipboard's content were copied.
         /// </summary>
-        public SourceApplicationW SourceApplication { get; }
+        public SourceApplication SourceApplication { get; }
 
         #endregion
     }

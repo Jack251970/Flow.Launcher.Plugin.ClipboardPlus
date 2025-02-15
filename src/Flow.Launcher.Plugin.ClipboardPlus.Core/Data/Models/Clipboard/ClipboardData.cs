@@ -178,7 +178,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     {
         var str = DataType switch
         {
-            DataType.UnicodeText => Data as string ?? string.Empty,
+            DataType.PlainText => Data as string ?? string.Empty,
             DataType.RichText => Data as string ?? string.Empty,
             DataType.Image => Data is BitmapSource img ? img.ToBase64() : string.Empty,
             DataType.Files => (Data is string[] s ? string.Join('\n', s) : Data as string) ?? string.Empty,
@@ -235,7 +235,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         // If the data is still null, return the icon.
         return DataType switch
         {
-            DataType.UnicodeText => Icon,
+            DataType.PlainText => Icon,
             DataType.RichText => Icon,
             DataType.Image => img ?? Icon,
             DataType.Files => Icon,
@@ -256,7 +256,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     {
         switch (DataType)
         {
-            case DataType.UnicodeText:
+            case DataType.PlainText:
                 var stringToCopy = Data as string;
                 if (string.IsNullOrEmpty(stringToCopy))
                 {
@@ -385,7 +385,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         }
         return type switch
         {
-            DataType.UnicodeText => str,
+            DataType.PlainText => str,
             DataType.RichText => str,
             DataType.Image => str.ToBitmapImage(),
             DataType.Files => str.Split('\n'),
@@ -493,7 +493,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         {
             text = DataType switch
             {
-                DataType.UnicodeText => Data as string,
+                DataType.PlainText => Data as string,
                 DataType.RichText => UnicodeText,
                 DataType.Image => $"Image: {CreateTime.ToString(cultureInfo)}",
                 DataType.Files => (filePaths is null ? Data : filePaths) is string[] t ? string.Join("\n", t.Take(2)) + "\n..." : Data as string,
@@ -547,7 +547,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
                 case RecordOrder.DataType:
                     score = DataType switch
                     {
-                        DataType.UnicodeText => TextScore,
+                        DataType.PlainText => TextScore,
                         DataType.RichText => TextScore,
                         DataType.Image => ImageScore,
                         DataType.Files => FilesScore,

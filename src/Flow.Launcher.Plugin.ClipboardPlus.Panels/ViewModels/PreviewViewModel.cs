@@ -41,7 +41,7 @@ public class PreviewViewModel : BaseModel
 
     #region Text Preview
 
-    public Visibility UnicodeTextPreviewVisibility => ClipboardData.DataType == DataType.UnicodeText || ClipboardData.DataType == DataType.Files
+    public Visibility UnicodeTextPreviewVisibility => ClipboardData.DataType == DataType.PlainText || ClipboardData.DataType == DataType.Files
         ? Visibility.Visible
         : Visibility.Collapsed;
 
@@ -77,7 +77,7 @@ public class PreviewViewModel : BaseModel
 
     #region Status Preview
 
-    public Visibility StatusPreviewVisibility => ClipboardData.DataType == DataType.UnicodeText || ClipboardData.DataType == DataType.RichText
+    public Visibility StatusPreviewVisibility => ClipboardData.DataType == DataType.PlainText || ClipboardData.DataType == DataType.RichText
         ? Visibility.Visible
         : Visibility.Collapsed;
 
@@ -104,7 +104,7 @@ public class PreviewViewModel : BaseModel
     {
         switch (ClipboardData.DataType)
         {
-            case DataType.UnicodeText:
+            case DataType.PlainText:
             case DataType.Files:
                 PreviewUnicodeText = ClipboardData.DataToString(false) ?? string.Empty;
                 break;
