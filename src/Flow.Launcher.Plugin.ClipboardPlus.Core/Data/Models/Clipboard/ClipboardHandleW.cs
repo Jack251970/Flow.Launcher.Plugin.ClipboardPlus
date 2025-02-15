@@ -64,12 +64,7 @@ internal class ClipboardHandleW : IDisposable
 
     #endregion
 
-    #region Constructor
-
-    public ClipboardHandleW()
-    {
-
-    }
+    #region Initialization
 
     public void SetContext(PluginInitContext context)
     {
