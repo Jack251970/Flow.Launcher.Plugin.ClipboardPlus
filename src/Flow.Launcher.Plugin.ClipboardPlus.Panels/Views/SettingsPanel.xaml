@@ -112,7 +112,7 @@
             VerticalAlignment="Center"
             Content="{DynamicResource flowlauncher_plugin_clipboardplus_sync_windows_clipboard_history}"
             IsChecked="{Binding SyncWindowsClipboardHistory, Mode=TwoWay}"
-            IsEnabled="{Binding SyncWindowsClipboardHistoryEnabled, Mode=OneTime}" />
+            Visibility="{Binding SyncWindowsClipboardHistoryVisibility, Mode=OneTime}" />
 
         <!--  Seperator  -->
         <Separator
