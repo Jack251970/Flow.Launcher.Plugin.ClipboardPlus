@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -149,12 +150,14 @@ public partial class MainWindow : Window
         _count++;
     }
 
-    private void OnClipboardChangedWin(object? sender, ClipboardChangedEventArgs e)
+    private async void OnClipboardChangedWin(object? sender, ClipboardChangedEventArgs e)
     {
         if (e.Content is null || e.DataType == DataType.Other || sender is not IClipboardMonitor clipboardMonitor)
         {
             return;
         }
+
+        await Task.Delay(900);
 
         // init clipboard data
         var clipboardData = new ClipboardData(e.Content, e.DataType, true)
@@ -217,6 +220,10 @@ public partial class MainWindow : Window
         });
 
         var allRight = right1 && right2 && right3 && right4;
+        if (!allRight)
+        {
+            Debug.WriteLine(">>>>>>>>>>>>>>>>>>>>>ClipboardChangedWin: Not all right<<<<<<<<<<<<<<<<<<<<");
+        }
     }
 
     #endregion
@@ -343,6 +350,7 @@ public partial class MainWindow : Window
         ClipboardMonitorWin.ClipboardChanged += OnClipboardChangedWin;
         ClipboardMonitorWin.StartMonitoring();
 
+        Helper.SetClipboardPlus(ClipboardPlus);
         Helper.OnHistoryItemAdded += Helper_OnHistoryItemAdded;
         Helper.OnHistoryItemRemoved += Helper_OnHistoryItemRemoved;
         Helper.OnHistoryItemPinUpdated += Helper_OnHistoryItemPinUpdated;
@@ -353,7 +361,7 @@ public partial class MainWindow : Window
         Debug.WriteLine("Clipboard history item added: " + e.HashId);
     }
 
-    private void Helper_OnHistoryItemRemoved(object? sender, List<string> e)
+    private void Helper_OnHistoryItemRemoved(object? sender, string[] e)
     {
         Debug.WriteLine("Clipboard history item removed: " + string.Join(", ", e));
     }

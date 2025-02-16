@@ -16,6 +16,21 @@ internal class ClipboardPlus : IClipboardPlus
         await Task.CompletedTask;
     }
 
+    public async Task InitRecordsFromSystemAsync()
+    {
+        await Task.CompletedTask;
+    }
+
+    public void RegisterEventsForWindowsClipboardHelper()
+    {
+        
+    }
+
+    public void UnregisterEventsForWindowsClipboardHelper()
+    {
+        
+    }
+
     public ISettings Settings { get; }
 
     public ClipboardPlus()
@@ -36,11 +51,18 @@ internal class ClipboardPlus : IClipboardPlus
 
     public CultureInfo CultureInfo { get; private set; } = new CultureInfo("en-US");
 
+    public IClipboardMonitor ClipboardMonitor => null!;
+
     public event EventHandler<CultureInfo>? CultureInfoChanged;
 
     public void OnCultureInfoChanged(CultureInfo cultureInfo)
     {
         CultureInfo = cultureInfo;
         CultureInfoChanged?.Invoke(this, cultureInfo);
+    }
+
+    public ClipboardData GetClipboardDataItem(object? content, DataType dataType, string hashId, DateTime createTime, SourceApplication source, string clipboardText, string clipboardRtfText)
+    {
+        return ClipboardData.NULL;
     }
 }

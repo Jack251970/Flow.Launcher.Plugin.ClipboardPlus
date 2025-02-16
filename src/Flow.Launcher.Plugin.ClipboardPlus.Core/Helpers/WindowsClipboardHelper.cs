@@ -232,6 +232,13 @@ public class WindowsClipboardHelper : IDisposable
         var hashId = GetHashId(item.Id);
         var createTime = item.Timestamp.DateTime;
 
+#if DEBUG
+        if (_clipboardPlus.ClipboardMonitor == null)
+        {
+            return ClipboardData.NULL;
+        }
+#endif
+
         // Determines whether a file/files have been cut/copied.
         if (_clipboardPlus.ClipboardMonitor.ObservableFormats.Images && ClipboardHandleWin.IsDataImage(dataObj))
         {
