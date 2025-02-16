@@ -84,6 +84,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_max_records">List max records:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">Order records by:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">Set the action options (e.g., Clean clipboard) as topmost / bottommost in the query</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_windows_clipboard_history">Sync with Windows clipboard history</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">Record click action:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_rich_text_copy_option">Rich text default:</system:String>

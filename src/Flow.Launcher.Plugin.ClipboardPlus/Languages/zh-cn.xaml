@@ -84,6 +84,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_max_records">列表最大记录数：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">记录排序方式：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">在查询中置顶/置底操作选项（如清理剪切板）</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_windows_clipboard_history">与Windows剪切板历史同步</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">记录点击动作：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_rich_text_copy_option">富文本默认：</system:String>

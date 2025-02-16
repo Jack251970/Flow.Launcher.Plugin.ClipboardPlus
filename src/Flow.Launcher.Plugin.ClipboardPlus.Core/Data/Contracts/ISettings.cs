@@ -18,6 +18,16 @@ public interface ISettings
     public RecordOrder RecordOrder { get; set; }
 
     /// <summary>
+    /// Whether to put action items on the top of query list
+    /// </summary>
+    public bool ActionTop { get; set; }
+
+    /// <summary>
+    /// Whether to sync with Windows clipboard history
+    /// </summary>
+    public bool SyncWindowsClipboardHistory { get; set; }
+
+    /// <summary>
     /// Action to perform when clicking on a record
     /// </summary>
     public ClickAction ClickAction { get; set; }
@@ -36,11 +46,6 @@ public interface ISettings
     /// Default copy option for files
     /// </summary>
     public DefaultFilesCopyOption DefaultFilesCopyOption { get; set; }
-
-    /// <summary>
-    /// Whether to put action items on the top of query list
-    /// </summary>
-    public bool ActionTop { get; set; }
 
     /// <summary>
     /// Whether to cache images in local folder

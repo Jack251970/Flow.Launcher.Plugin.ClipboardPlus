@@ -14,6 +14,10 @@ public class Settings : ISettings
 
     public RecordOrder RecordOrder { get; set; } = RecordOrder.CreateTime;
 
+    public bool ActionTop { get; set; } = true;
+
+    public bool SyncWindowsClipboardHistory { get; set; } = false;
+
     public ClickAction ClickAction { get; set; } = ClickAction.Copy;
 
     public DefaultRichTextCopyOption DefaultRichTextCopyOption { get; set; } = DefaultRichTextCopyOption.Rtf;
@@ -21,8 +25,6 @@ public class Settings : ISettings
     public DefaultImageCopyOption DefaultImageCopyOption { get; set; } = DefaultImageCopyOption.Image;
 
     public DefaultFilesCopyOption DefaultFilesCopyOption { get; set; } = DefaultFilesCopyOption.Files;
-
-    public bool ActionTop { get; set; } = true;
 
     public bool CacheImages { get; set; } = false;
 

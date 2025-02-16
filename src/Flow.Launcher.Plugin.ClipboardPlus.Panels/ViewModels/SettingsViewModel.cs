@@ -21,7 +21,6 @@ public class SettingsViewModel : BaseModel
     public SettingsViewModel(IClipboardPlus clipboardPlus)
     {
         ClipboardPlus = clipboardPlus;
-        ClipboardPlus.CultureInfoChanged += ClipboardPlus_CultureInfoChanged;
         InitializeRecordOrderSelection();
         InitializeClickActionSelection();
         InitializeDefaultRichTextCopyOptionSelection();
@@ -29,6 +28,7 @@ public class SettingsViewModel : BaseModel
         InitializeDefaultFilesCopyOptionSelection();
         InitializeCacheFormatPreview();
         InitializeKeepTimeSelection();
+        ClipboardPlus.CultureInfoChanged += ClipboardPlus_CultureInfoChanged;
     }
 
     #region Commands
@@ -203,6 +203,22 @@ public class SettingsViewModel : BaseModel
         set
         {
             Settings.ActionTop = value;
+            OnPropertyChanged();
+        }
+    }
+
+    #endregion
+
+    #region Sync Windows Clipboard History
+
+    public bool SyncWindowsClipboardHistoryEnabled => WindowsClipboardHelper.IsClipboardHistorySupported();
+
+    public bool SyncWindowsClipboardHistory
+    {
+        get => Settings.SyncWindowsClipboardHistory;
+        set
+        {
+            Settings.SyncWindowsClipboardHistory = value;
             OnPropertyChanged();
         }
     }
