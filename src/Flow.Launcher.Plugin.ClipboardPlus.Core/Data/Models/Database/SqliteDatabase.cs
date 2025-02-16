@@ -42,7 +42,7 @@ public class SqliteDatabase : IAsyncDisposable
 
     #region Context
 
-    private readonly PluginInitContext? Context;
+    private readonly PluginInitContext Context;
 
     #endregion
 
@@ -194,13 +194,6 @@ public class SqliteDatabase : IAsyncDisposable
 
     #region Constructors
 
-    public SqliteDatabase(SqliteConnection connection, int scoreInterval, PluginInitContext? context = null)
-    {
-        Connection = connection;
-        ScoreInterval = scoreInterval;
-        Context = context;
-    }
-
     public SqliteDatabase(
         string databasePath,
         int scoreInterval,
@@ -218,7 +211,7 @@ public class SqliteDatabase : IAsyncDisposable
             Cache = cache,
         }.ToString();
         Connection = new SqliteConnection(connectionString);
-        Context = context;
+        Context = context!;
     }
 
     #endregion
@@ -324,11 +317,17 @@ public class SqliteDatabase : IAsyncDisposable
         }
         catch (Exception e)
         {
-            Context?.API.LogException(ClassName, $"Update database to version {currentVersion} error!", e);
+#if DEBUG
+            if (Context == null)
+            {
+                return;
+            }
+#endif
+            Context.API.LogException(ClassName, $"Update database to version {currentVersion} error!", e);
         }
     }
 
-    #endregion
+#endregion
 
     public async Task InitializeDatabaseAsync()
     {
@@ -607,7 +606,7 @@ public class SqliteDatabase : IAsyncDisposable
         }
     }
 
-    #endregion
+#endregion
 
     #region Connection Management
 
@@ -671,7 +670,7 @@ public class SqliteDatabase : IAsyncDisposable
 
     #endregion
 
-    #endregion
+#endregion
 
     #region IDisposable Interface
 
