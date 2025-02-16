@@ -6,7 +6,7 @@ using Microsoft.Data.Sqlite;
 using System.Collections.Concurrent;
 using System.Data;
 
-namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
+namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
 public class SqliteDatabase : IAsyncDisposable
 {
