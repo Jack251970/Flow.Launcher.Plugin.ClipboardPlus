@@ -68,8 +68,11 @@ public class WindowsClipboardHelper : IDisposable
 
     public WindowsClipboardHelper()
     {
-        Clipboard_HistoryChanged(this, null!);
-        RegisterHistoryChangedEvent();
+        if (IsClipboardHistorySupported())
+        {
+            Clipboard_HistoryChanged(this, null!);
+            Windows.ApplicationModel.DataTransfer.Clipboard.HistoryChanged += Clipboard_HistoryChanged;
+        }
     }
 
     #endregion
@@ -84,28 +87,6 @@ public class WindowsClipboardHelper : IDisposable
 
     private readonly List<string> _clipboardHistoryItemsIds = new();
     private readonly List<ClipboardHistoryItem> _clipboardHistoryItems = new();
-
-    private bool RegisterHistoryChangedEvent()
-    {
-        if (IsClipboardHistorySupported())
-        {
-            Windows.ApplicationModel.DataTransfer.Clipboard.HistoryChanged += Clipboard_HistoryChanged;
-            return true;
-        }
-
-        return false;
-    }
-
-    private bool UnregisterHistoryChangedEvent()
-    {
-        if (IsClipboardHistorySupported())
-        {
-            Windows.ApplicationModel.DataTransfer.Clipboard.HistoryChanged -= Clipboard_HistoryChanged;
-            return true;
-        }
-
-        return false;
-    }
 
     private void Clipboard_HistoryChanged(object? sender, ClipboardHistoryChangedEventArgs e)
     {
@@ -170,6 +151,8 @@ public class WindowsClipboardHelper : IDisposable
 
     #endregion
 
+    #region History Items
+
     public async Task<List<ClipboardData>?> GetHistoryItemsAsync()
     {
         if (IsClipboardHistorySupported())
@@ -228,6 +211,8 @@ public class WindowsClipboardHelper : IDisposable
         };
     }
 
+    #endregion
+
     #region IDisposable
 
     private bool _disposed;
@@ -249,7 +234,10 @@ public class WindowsClipboardHelper : IDisposable
             OnHistoryItemAdded = null;
             OnHistoryItemRemoved = null;
             OnHistoryItemPinUpdated = null;
-            UnregisterHistoryChangedEvent();
+            if (IsClipboardHistorySupported())
+            {
+                Windows.ApplicationModel.DataTransfer.Clipboard.HistoryChanged -= Clipboard_HistoryChanged;
+            }
             _clipboardHistoryItems.Clear();
             _historyItemLock.Dispose();
             _disposed = true;

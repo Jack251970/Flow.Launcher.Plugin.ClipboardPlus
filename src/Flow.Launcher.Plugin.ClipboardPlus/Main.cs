@@ -38,6 +38,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     // Warning: Do not init the instance in InitAsync function! This will cause issues.
     private IClipboardMonitor ClipboardMonitor;
 
+    // Windows clipboard helper
+    private WindowsClipboardHelper WindowsClipboardHelper = new();
+
     // Records list & Score
     private LinkedList<ClipboardDataPair> RecordsList = new();
 
