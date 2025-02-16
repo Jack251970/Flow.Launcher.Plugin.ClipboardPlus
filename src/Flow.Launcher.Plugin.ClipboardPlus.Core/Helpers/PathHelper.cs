@@ -128,7 +128,7 @@ public static class PathHelper
                 }
             }
         }
-        catch (Exception _)
+        catch (Exception)
         {
             // ignored
         }
