@@ -60,6 +60,16 @@ public class WindowsClipboardHelper : IDisposable
         return false;
     }
 
+    public static bool DeleteItemFromHistory(ClipboardData clipboardData)
+    {
+        if (IsClipboardHistorySupported() && clipboardData.ClipboardHistoryItem is ClipboardHistoryItem item)
+        {
+            return Windows.ApplicationModel.DataTransfer.Clipboard.DeleteItemFromHistory(item);
+        }
+
+        return false;
+    }
+
     #endregion
 
     #region Properties

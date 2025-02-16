@@ -686,6 +686,11 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
 
     #endregion
 
+    public readonly bool FromWindowsClipboardHistory()
+    {
+        return ClipboardHistoryItem != null;
+    }
+
     public readonly bool IsNull()
     {
         return HashId == string.Empty &&
