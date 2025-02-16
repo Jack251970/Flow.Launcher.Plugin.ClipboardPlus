@@ -398,7 +398,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         Context.API.LogDebug(ClassName, "Init database successfully");
 
         // init & start clipboard monitor
-        ClipboardMonitor.ClipboardChanged += OnClipboardChange;
+        ClipboardMonitor.ClipboardChanged += ClipboardMonitor_OnClipboardChanged;
         ClipboardMonitor.StartMonitoring();
         if (ClipboardMonitor.GetType() == typeof(ClipboardMonitorWin))
         {
@@ -408,6 +408,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             Context.API.LogInfo(ClassName, "Init WPF clipboard monitor successfully");
         }
+
+        // init windows clipboard helper
+        RegisterEventsForWindowsClipboardHelper();
     }
 
     #endregion
@@ -752,7 +755,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region Clipboard Monitor
 
-    private async void OnClipboardChange(object? sender, ClipboardChangedEventArgs e)
+    private async void ClipboardMonitor_OnClipboardChanged(object? sender, ClipboardChangedEventArgs e)
     {
         Context.API.LogDebug(ClassName, "Clipboard changed");
         if (sender is not IClipboardMonitor clipboardMonitor)
@@ -860,6 +863,39 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
         // collect garbage
         GarbageCollect();
+    }
+
+    #endregion
+
+    #region Windows Clipboard Helper
+
+    public void RegisterEventsForWindowsClipboardHelper()
+    {
+        WindowsClipboardHelper.OnHistoryItemRemoved += WindowsClipboardHelper_OnHistoryItemRemoved;
+    }
+
+    public void UnregisterEventsForWindowsClipboardHelper()
+    {
+        WindowsClipboardHelper.OnHistoryItemRemoved -= WindowsClipboardHelper_OnHistoryItemRemoved;
+    }
+
+    private async void WindowsClipboardHelper_OnHistoryItemRemoved(object? sender, List<string> e)
+    {
+        await RecordsLock.WaitAsync();
+        try
+        {
+            var records = RecordsList.Where(r => r.ClipboardData.FromWindowsClipboardHistory() && e.Contains(r.ClipboardData.HashId)).ToArray();
+            foreach (var record in records)
+            {
+                record.Dispose();
+                RecordsList.Remove(record);
+            }
+        }
+        finally
+        {
+            RecordsLock.Release();
+            GarbageCollect();
+        }
     }
 
     #endregion
@@ -1753,13 +1789,14 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
             Context.API.LogDebug(ClassName, $"Disposed DatabaseHelper");
 
-            ClipboardMonitor.ClipboardChanged -= OnClipboardChange;
+            ClipboardMonitor.ClipboardChanged -= ClipboardMonitor_OnClipboardChanged;
             ClipboardMonitor.Dispose();
             ClipboardMonitor = null!;
             Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
 
             WindowsClipboardHelper.Dispose();
             WindowsClipboardHelper = null!;
+            UnregisterEventsForWindowsClipboardHelper();
             Context.API.LogDebug(ClassName, $"Disposed WindowsClipboardHelper");
 
             var exception = await FlushClipboardAsync();

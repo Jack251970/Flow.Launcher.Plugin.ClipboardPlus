@@ -14,6 +14,10 @@ public interface IClipboardPlus
 
     Task InitRecordsFromSystemAsync();
 
+    void RegisterEventsForWindowsClipboardHelper();
+
+    void UnregisterEventsForWindowsClipboardHelper();
+
     public ISettings Settings { get; }
 
     public ISettings LoadSettingJsonStorage();

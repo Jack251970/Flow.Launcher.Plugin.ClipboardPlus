@@ -122,6 +122,10 @@ public class SettingsViewModel : BaseModel
         get => Settings.ClearKeyword;
         set
         {
+            if (Settings.ClearKeyword == value)
+            {
+                return;
+            }
             // TODO: Warning user not to use string.Empty here in future version of FL.
             Settings.ClearKeyword = value;
             OnPropertyChanged();
@@ -143,6 +147,10 @@ public class SettingsViewModel : BaseModel
         get => Settings.MaxRecords;
         set
         {
+            if (Settings.MaxRecords == value)
+            {
+                return;
+            }
             Settings.MaxRecords = value;
             OnPropertyChanged();
         }
@@ -158,6 +166,10 @@ public class SettingsViewModel : BaseModel
         get => _recordOrders;
         set
         {
+            if (_recordOrders == value)
+            {
+                return;
+            }
             _recordOrders = value;
             OnPropertyChanged();
         }
@@ -169,6 +181,10 @@ public class SettingsViewModel : BaseModel
         get => _selectedRecordOrder;
         set
         {
+            if (Settings.RecordOrder == value.Value)
+            {
+                return;
+            }
             _selectedRecordOrder = value;
             Settings.RecordOrder = value.Value;
             OnPropertyChanged();
@@ -202,6 +218,10 @@ public class SettingsViewModel : BaseModel
         get => Settings.ActionTop;
         set
         {
+            if (Settings.ActionTop == value)
+            {
+                return;
+            }
             Settings.ActionTop = value;
             OnPropertyChanged();
         }
@@ -222,12 +242,21 @@ public class SettingsViewModel : BaseModel
         get => Settings.SyncWindowsClipboardHistory;
         set
         {
-            if ((!Settings.SyncWindowsClipboardHistory) && value)
+            if (Settings.SyncWindowsClipboardHistory == value)
             {
-                _ = ClipboardPlus.InitRecordsFromSystemAsync();
+                return;
             }
             Settings.SyncWindowsClipboardHistory = value;
             OnPropertyChanged();
+            if (value)
+            {
+                _ = ClipboardPlus.InitRecordsFromSystemAsync();
+                ClipboardPlus.RegisterEventsForWindowsClipboardHelper();
+            }
+            else
+            {
+                ClipboardPlus.UnregisterEventsForWindowsClipboardHelper();
+            }
         }
     }
 
@@ -241,6 +270,10 @@ public class SettingsViewModel : BaseModel
         get => _clickActions;
         set
         {
+            if (_clickActions == value)
+            {
+                return;
+            }
             _clickActions = value;
             OnPropertyChanged();
         }
@@ -252,6 +285,10 @@ public class SettingsViewModel : BaseModel
         get => _selectedClickAction;
         set
         {
+            if (Settings.ClickAction == value.Value)
+            {
+                return;
+            }
             _selectedClickAction = value;
             Settings.ClickAction = value.Value;
             OnPropertyChanged();
@@ -286,6 +323,10 @@ public class SettingsViewModel : BaseModel
         get => _defaultRichTextCopyOptions;
         set
         {
+            if (_defaultRichTextCopyOptions == value)
+            {
+                return;
+            }
             _defaultRichTextCopyOptions = value;
             OnPropertyChanged();
         }
@@ -297,6 +338,10 @@ public class SettingsViewModel : BaseModel
         get => _selectedDefaultRichTextCopyOption;
         set
         {
+            if (Settings.DefaultRichTextCopyOption == value.Value)
+            {
+                return;
+            }
             _selectedDefaultRichTextCopyOption = value;
             Settings.DefaultRichTextCopyOption = value.Value;
             OnPropertyChanged();
@@ -331,6 +376,10 @@ public class SettingsViewModel : BaseModel
         get => _defaultImageCopyOptions;
         set
         {
+            if (_defaultImageCopyOptions == value)
+            {
+                return;
+            }
             _defaultImageCopyOptions = value;
             OnPropertyChanged();
         }
@@ -342,6 +391,10 @@ public class SettingsViewModel : BaseModel
         get => _selectedDefaultImageCopyOption;
         set
         {
+            if (Settings.DefaultImageCopyOption == value.Value)
+            {
+                return;
+            }
             _selectedDefaultImageCopyOption = value;
             Settings.DefaultImageCopyOption = value.Value;
             OnPropertyChanged();
@@ -376,6 +429,10 @@ public class SettingsViewModel : BaseModel
         get => _defaultFilesCopyOptions;
         set
         {
+            if (_defaultFilesCopyOptions == value)
+            {
+                return;
+            }
             _defaultFilesCopyOptions = value;
             OnPropertyChanged();
         }
@@ -387,6 +444,10 @@ public class SettingsViewModel : BaseModel
         get => _selectedDefaultFilesCopyOption;
         set
         {
+            if (Settings.DefaultFilesCopyOption == value.Value)
+            {
+                return;
+            }
             _selectedDefaultFilesCopyOption = value;
             Settings.DefaultFilesCopyOption = value.Value;
             OnPropertyChanged();
@@ -420,6 +481,10 @@ public class SettingsViewModel : BaseModel
         get => Settings.CacheImages;
         set
         {
+            if (Settings.CacheImages == value)
+            {
+                return;
+            }
             Settings.CacheImages = value;
             OnPropertyChanged();
         }
@@ -434,6 +499,10 @@ public class SettingsViewModel : BaseModel
         get => Settings.CacheFormat;
         set
         {
+            if (Settings.CacheFormat == value)
+            {
+                return;
+            }
             Settings.CacheFormat = value;
             CacheFormatPreview = StringUtils.FormatImageName(value, DateTime.Now);
             OnPropertyChanged();
@@ -450,6 +519,10 @@ public class SettingsViewModel : BaseModel
         get => _cacheFormatPreview;
         set
         {
+            if (_cacheFormatPreview == value)
+            {
+                return;
+            }
             _cacheFormatPreview = value;
             OnPropertyChanged();
         }
@@ -471,6 +544,10 @@ public class SettingsViewModel : BaseModel
         get => _importEnabled;
         set
         {
+            if (_importEnabled == value)
+            {
+                return;
+            }
             _importEnabled = value;
             OnPropertyChanged();
         }
@@ -482,6 +559,10 @@ public class SettingsViewModel : BaseModel
         get => _exportEnabled;
         set
         {
+            if (_exportEnabled == value)
+            {
+                return;
+            }
             _exportEnabled = value;
             OnPropertyChanged();
         }
@@ -498,6 +579,10 @@ public class SettingsViewModel : BaseModel
         get => Settings.EncryptData;
         set
         {
+            if (Settings.EncryptData == value)
+            {
+                return;
+            }
             Settings.EncryptData = value;
             OnPropertyChanged();
         }
@@ -512,6 +597,10 @@ public class SettingsViewModel : BaseModel
         get => Settings.KeepText;
         set
         {
+            if (Settings.KeepText == value)
+            {
+                return;
+            }
             Settings.KeepText = value;
             OnPropertyChanged();
         }
@@ -523,6 +612,10 @@ public class SettingsViewModel : BaseModel
         get => _textKeepTimes;
         set
         {
+            if (_textKeepTimes == value)
+            {
+                return;
+            }
             _textKeepTimes = value;
             OnPropertyChanged();
         }
@@ -534,6 +627,10 @@ public class SettingsViewModel : BaseModel
         get => _selectedTextKeepTime;
         set
         {
+            if (Settings.TextKeepTime == value.Value)
+            {
+                return;
+            }
             _selectedTextKeepTime = value;
             Settings.TextKeepTime = value.Value;
             OnPropertyChanged();
@@ -549,6 +646,10 @@ public class SettingsViewModel : BaseModel
         get => Settings.KeepImages;
         set
         {
+            if (Settings.KeepImages == value)
+            {
+                return;
+            }
             Settings.KeepImages = value;
             OnPropertyChanged();
         }
@@ -560,6 +661,10 @@ public class SettingsViewModel : BaseModel
         get => _imagesKeepTimes;
         set
         {
+            if (_imagesKeepTimes == value)
+            {
+                return;
+            }
             _imagesKeepTimes = value;
             OnPropertyChanged();
         }
@@ -571,6 +676,10 @@ public class SettingsViewModel : BaseModel
         get => _selectedImagesKeepTime;
         set
         {
+            if (Settings.ImagesKeepTime == value.Value)
+            {
+                return;
+            }
             _selectedImagesKeepTime = value;
             Settings.ImagesKeepTime = value.Value;
             OnPropertyChanged();
@@ -586,6 +695,10 @@ public class SettingsViewModel : BaseModel
         get => Settings.KeepFiles;
         set
         {
+            if (Settings.KeepFiles == value)
+            {
+                return;
+            }
             Settings.KeepFiles = value;
             OnPropertyChanged();
         }
@@ -597,6 +710,10 @@ public class SettingsViewModel : BaseModel
         get => _filesKeepTimes;
         set
         {
+            if (_filesKeepTimes == value)
+            {
+                return;
+            }
             _filesKeepTimes = value;
             OnPropertyChanged();
         }
@@ -608,6 +725,10 @@ public class SettingsViewModel : BaseModel
         get => _selectedFilesKeepTime;
         set
         {
+            if (Settings.FilesKeepTime == value.Value)
+            {
+                return;
+            }
             _selectedFilesKeepTime = value;
             Settings.FilesKeepTime = value.Value;
             OnPropertyChanged();
