@@ -2,15 +2,12 @@
 // Licensed under the Apache License. See the LICENSE.
 
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Windows.Media.Imaging;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.Win32;
-using Windows.Win32.Foundation;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
@@ -19,7 +16,7 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 /// https://learn.microsoft.com/en-us/uwp/api/windows.applicationmodel.datatransfer.clipboard
 /// </summary>
 [SupportedOSPlatform("windows10.0.10240.0")]
-internal class ClipboardHandleWin : IDisposable
+internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
 {
     #region Fields
 
@@ -27,14 +24,7 @@ internal class ClipboardHandleWin : IDisposable
 
     private PluginInitContext? _context;
 
-    private HWND _handle = HWND.Null;
-
     private bool _ready;
-
-    private nint _executableHandle = 0;
-    private string _executableName = string.Empty;
-    private string _executablePath = string.Empty;
-    private string _executableTitle = string.Empty;
 
     #endregion
 
@@ -64,6 +54,8 @@ internal class ClipboardHandleWin : IDisposable
 
     #endregion
 
+    #region Methods
+
     #region Initialization
 
     public void SetContext(PluginInitContext context)
@@ -73,8 +65,6 @@ internal class ClipboardHandleWin : IDisposable
 
     #endregion
 
-    #region Methods
-
     #region Clipboard Management
 
     /// <summary>
@@ -83,7 +73,7 @@ internal class ClipboardHandleWin : IDisposable
     public void StartMonitoring()
     {
         Windows.ApplicationModel.DataTransfer.Clipboard.ContentChanged += OnClipboardChanged;
-
+        _context?.API.LogDebug(ClassName, "Clipboard content changed listener added.");
         Ready = true;
     }
 
@@ -93,6 +83,7 @@ internal class ClipboardHandleWin : IDisposable
     public void StopMonitoring()
     {
         Windows.ApplicationModel.DataTransfer.Clipboard.ContentChanged -= OnClipboardChanged;
+        _context?.API.LogDebug(ClassName, "Clipboard content changed listener removed.");
     }
 
     /// <summary>
@@ -349,74 +340,6 @@ internal class ClipboardHandleWin : IDisposable
     }
 
     #endregion
-
-    #endregion
-
-    #region Souce App Management
-
-    private unsafe bool GetApplicationInfo()
-    {
-        _executableHandle = 0;
-        _executableName = string.Empty;
-        _executableTitle = string.Empty;
-        _executablePath = string.Empty;
-
-        try
-        {
-            var hwnd = PInvoke.GetForegroundWindow();
-            _executableHandle = hwnd.Value;
-
-            uint processId = 0;
-            _ = PInvoke.GetWindowThreadProcessId(hwnd, &processId);
-            var process = Process.GetProcessById((int)processId);
-            var processName = process.ProcessName;
-            if (process.MainModule is ProcessModule processModule)
-            {
-                _executablePath = processModule.FileName;
-                _executableName = _executablePath[(_executablePath.LastIndexOf(@"\", StringComparison.Ordinal) + 1)..];
-            }
-
-            // Edited from: https://github.com/taooceros
-            const int capacity = 256;
-            Span<char> buffer = capacity < 1024 ? stackalloc char[capacity] : new char[capacity];
-            fixed (char* pBuffer = buffer)
-            {
-                // If the window has no title bar or text, if the title bar is empty,
-                // or if the window or control handle is invalid, the return value is zero.
-                var length = PInvoke.GetWindowText(hwnd, (PWSTR)pBuffer, capacity);
-                _executableTitle = buffer[..length].ToString();
-            }
-
-            return true;
-        }
-        catch (Exception)
-        {
-            // ignored
-            return true;
-        }
-    }
-
-    private static async Task RetryActionAsync(Func<bool> action, int retryInterval = 100, int maxAttemptCount = 3)
-    {
-        for (int i = 0; i < maxAttemptCount; i++)
-        {
-            try
-            {
-                if (action())
-                {
-                    break;
-                }
-            }
-            catch (Exception)
-            {
-                if (i == maxAttemptCount - 1)
-                {
-                    return;
-                }
-                await Task.Delay(retryInterval);
-            }
-        }
-    }
 
     #endregion
 
