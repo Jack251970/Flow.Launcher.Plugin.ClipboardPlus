@@ -12,6 +12,8 @@ public interface IClipboardPlus
 
     Task InitRecordsFromDatabaseAndSystemAsync();
 
+    Task InitRecordsFromSystemAsync();
+
     public ISettings Settings { get; }
 
     public ISettings LoadSettingJsonStorage();

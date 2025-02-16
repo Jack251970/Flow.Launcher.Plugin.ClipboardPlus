@@ -222,6 +222,10 @@ public class SettingsViewModel : BaseModel
         get => Settings.SyncWindowsClipboardHistory;
         set
         {
+            if ((!Settings.SyncWindowsClipboardHistory) && value)
+            {
+                _ = ClipboardPlus.InitRecordsFromSystemAsync();
+            }
             Settings.SyncWindowsClipboardHistory = value;
             OnPropertyChanged();
         }

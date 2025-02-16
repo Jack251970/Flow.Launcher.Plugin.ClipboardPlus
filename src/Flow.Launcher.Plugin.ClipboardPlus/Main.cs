@@ -888,7 +888,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
         // restore database records
         var records = await Database.GetAllRecordsAsync(true);
-        var latestDateTime = DateTime.MinValue;
         if (records.Any())
         {
             var records1 = records.Select(record => new ClipboardDataPair()
@@ -899,7 +898,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             await RecordsLock.WaitAsync();
             RecordsList = new LinkedList<ClipboardDataPair>(records1);
             RecordsLock.Release();
-            latestDateTime = records.Max(r => r.CreateTime);
         }
         else
         {
@@ -911,19 +909,32 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         // restore Windows clipboard history items
         if (Settings.SyncWindowsClipboardHistory)
         {
-            await RecordsLock.WaitAsync();
-            var historyItems = await WindowsClipboardHelper.GetLaterHistoryItemsAsync(latestDateTime);
-            if (historyItems != null && historyItems.Any())
-            {
-                foreach (var item in historyItems)
-                {
-                    AddClipboardDataItem(item);
-                }
-            }
-            RecordsLock.Release();
+            await InitRecordsFromSystemAsync();
         }
 
-        Context.API.LogWarn(ClassName, "Restored records successfully");
+        Context.API.LogInfo(ClassName, "Restored records successfully");
+    }
+
+    public async Task InitRecordsFromSystemAsync()
+    {
+        await RecordsLock.WaitAsync();
+
+        // get latest datetime
+        var latestDateTime = RecordsList.Any() ? RecordsList.Max(p => p.ClipboardData.CreateTime) : DateTime.MinValue;
+
+        // get history items
+        var historyItems = await WindowsClipboardHelper.GetLaterHistoryItemsAsync(latestDateTime);
+
+        // add history items
+        if (historyItems != null && historyItems.Any())
+        {
+            foreach (var item in historyItems)
+            {
+                AddClipboardDataItem(item);
+            }
+        }
+
+        RecordsLock.Release();
     }
 
     private async Task<int> DeleteAllRecordsFromList()
