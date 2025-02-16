@@ -97,7 +97,7 @@ public class WindowsClipboardHelper : IDisposable
     #region Events
 
     public event EventHandler<ClipboardData>? OnHistoryItemAdded;
-    public event EventHandler<List<string>>? OnHistoryItemRemoved;
+    public event EventHandler<string[]>? OnHistoryItemRemoved;
     public event EventHandler<ClipboardData>? OnHistoryItemPinUpdated;
 
     private readonly SemaphoreSlim _historyItemLock = new(1, 1);
@@ -140,8 +140,8 @@ public class WindowsClipboardHelper : IDisposable
                                 var newClipboardHistoryItemsIds = items.Select(x => x.Id).ToList();
                                 var removedItems = _clipboardHistoryItems
                                     .Where(x => !newClipboardHistoryItemsIds.Contains(x.Id))
-                                    .Select(x => x.Id)
-                                    .ToList();
+                                    .Select(x => GetHashId(x.Id))
+                                    .ToArray();
                                 OnHistoryItemRemoved.Invoke(this, removedItems);
 #if DEBUG
                                 _clipboardPlus?.Context?.API.LogDebug(ClassName, $"Clipboard_HistoryChanged: Removed items: {string.Join(", ", removedItems)}");
@@ -229,9 +229,7 @@ public class WindowsClipboardHelper : IDisposable
         }
 
         // Get hash id & create time
-        // item.Id with numbers and capital letters, while StringUtils.GetGuid() with numbers and lowercase letters
-        // Therefore, we need to convert the item.Id to lowercase.
-        var hashId = item.Id.ToLower();
+        var hashId = GetHashId(item.Id);
         var createTime = item.Timestamp.DateTime;
 
         // Determines whether a file/files have been cut/copied.
@@ -342,6 +340,13 @@ public class WindowsClipboardHelper : IDisposable
         }
 
         return ClipboardData.NULL;
+    }
+
+    // item.Id with numbers and capital letters, while StringUtils.GetGuid() with numbers and lowercase letters
+    // Therefore, we need to convert the item.Id to lowercase.
+    private static string GetHashId(string itemId)
+    {
+        return itemId.ToLower();
     }
 
     #endregion
