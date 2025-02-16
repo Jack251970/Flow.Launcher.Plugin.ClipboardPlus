@@ -134,10 +134,9 @@ public class SettingsViewModel : BaseModel
 
     private const int MaximumMaxRecords = 100000;
 
-    public int MaxRecordsMaximum
-    {
-        get => MaximumMaxRecords;
-    }
+#pragma warning disable CA1822 // Mark members as static
+    public int MaxRecordsMaximum => MaximumMaxRecords;
+#pragma warning restore CA1822 // Mark members as static
 
     public int MaxRecords
     {
@@ -212,9 +211,11 @@ public class SettingsViewModel : BaseModel
 
     #region Sync Windows Clipboard History
 
+#pragma warning disable CA1822 // Mark members as static
     public Visibility SyncWindowsClipboardHistoryVisibility => WindowsClipboardHelper.IsClipboardHistorySupported()
         ? Visibility.Visible
         : Visibility.Collapsed;
+#pragma warning restore CA1822 // Mark members as static
 
     public bool SyncWindowsClipboardHistory
     {
