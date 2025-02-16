@@ -329,7 +329,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             }
 
             // clear action
-            // TODO: Fix this when SettingsKeyword is all whitespaces.
             results.Add(new Result
             {
                 Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_title"),

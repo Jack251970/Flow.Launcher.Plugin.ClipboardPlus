@@ -118,6 +118,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_import_succeeded">導入{0}條記録成功！</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_import_failed">導入失敗！</system:String>
 
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption">錯誤</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_text">清除關鍵字不可爲空！</system:String>
+
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">剏建時間</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_source_application">源應用</system:String>

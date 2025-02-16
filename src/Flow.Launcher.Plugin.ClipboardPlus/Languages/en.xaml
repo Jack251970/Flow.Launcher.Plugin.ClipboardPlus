@@ -118,6 +118,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_import_succeeded">Import {0} records succeeded!</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_import_failed">Import failed!</system:String>
 
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption">Error</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_text">Clear keyword should not be empty!</system:String>
+
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">Create time</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_source_application">Source application</system:String>

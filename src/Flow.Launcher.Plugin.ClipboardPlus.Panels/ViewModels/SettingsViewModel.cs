@@ -30,6 +30,19 @@ public class SettingsViewModel : BaseModel
         InitializeCacheFormatPreview();
         InitializeKeepTimeSelection();
         ClipboardPlus.CultureInfoChanged += ClipboardPlus_CultureInfoChanged;
+        if (string.IsNullOrEmpty(ClearKeyword))
+        {
+            ShowClearKeywordEmptyError();
+        }
+    }
+
+    // TODO: Use new api for this.
+    private void ShowClearKeywordEmptyError()
+    {
+        MessageBox.Show(Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_text") ?? "Clear keyword should not be empty!",
+            Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption") ?? "Error",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
     }
 
     #region Commands
@@ -126,7 +139,11 @@ public class SettingsViewModel : BaseModel
             {
                 return;
             }
-            // TODO: Warning user not to use string.Empty here in future version of FL.
+            if (value == string.Empty)
+            {
+                ShowClearKeywordEmptyError();
+                return;
+            }
             Settings.ClearKeyword = value;
             OnPropertyChanged();
         }
