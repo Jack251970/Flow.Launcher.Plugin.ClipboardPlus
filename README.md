@@ -17,6 +17,8 @@
 - Customize copy rules
 - Clean clipboard
 - Copy files by sorting names
+- Manage Windows clipboard history (Windows 10, 11)
+- Sync with Windows clipboard history (Windows 10, 11)
 
 ## 🖼️ Screenshots
 
