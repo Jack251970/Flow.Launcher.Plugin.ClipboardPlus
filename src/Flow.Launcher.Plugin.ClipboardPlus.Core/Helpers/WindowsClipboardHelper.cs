@@ -63,8 +63,7 @@ public class WindowsClipboardHelper : IDisposable
 
     #region Constructors
 
-    public ISettings Settings { get; set; } = null!;
-    public SqliteDatabase Database { get; set; } = null!;
+    private IClipboardPlus _clipboardPlus = null!;
 
     public WindowsClipboardHelper()
     {
@@ -73,6 +72,11 @@ public class WindowsClipboardHelper : IDisposable
             Clipboard_HistoryChanged(this, null!);
             Windows.ApplicationModel.DataTransfer.Clipboard.HistoryChanged += Clipboard_HistoryChanged;
         }
+    }
+
+    public void SetClipboardPlus(IClipboardPlus clipboardPlus)
+    {
+        _clipboardPlus = clipboardPlus;
     }
 
     #endregion
@@ -153,7 +157,7 @@ public class WindowsClipboardHelper : IDisposable
 
     #region History Items
 
-    public async Task<List<ClipboardData>?> GetHistoryItemsAsync()
+    public async Task<List<ClipboardData>?> GetLaterHistoryItemsAsync(DateTime dateTime)
     {
         if (IsClipboardHistorySupported())
         {
@@ -179,7 +183,7 @@ public class WindowsClipboardHelper : IDisposable
     private ClipboardData GetClipboardData(ClipboardHistoryItem item)
     {
 #if DEBUG
-        if (Settings == null || Database == null)
+        if (_clipboardPlus == null)
         {
             return new ClipboardData(item.Content, DataType.Other, false)
             {
@@ -192,22 +196,24 @@ public class WindowsClipboardHelper : IDisposable
                 Pinned = false,
                 Saved = false,
                 PlainText = string.Empty,
-                EncryptKeyMd5 = StringUtils.EncryptKeyMd5
+                EncryptKeyMd5 = StringUtils.EncryptKeyMd5,
+                ClipboardHistoryItem = item
             };
         }
 #endif
-        return new ClipboardData(item.Content, DataType.Other, Settings.EncryptData)
+        return new ClipboardData(item.Content, DataType.Other, _clipboardPlus.Settings.EncryptData)
         {
             // item.Id with numbers and capital letters, while StringUtils.GetGuid() with numbers and lowercase letters
             HashId = item.Id,
             SenderApp = string.Empty,
-            InitScore = Database.CurrentScore,
+            InitScore = _clipboardPlus.Database.CurrentScore,
             CachedImagePath = string.Empty,
             CreateTime = item.Timestamp.DateTime,
             Pinned = false,
             Saved = false,
             PlainText = string.Empty,
-            EncryptKeyMd5 = StringUtils.EncryptKeyMd5
+            EncryptKeyMd5 = StringUtils.EncryptKeyMd5,
+            ClipboardHistoryItem = item
         };
     }
 

@@ -42,6 +42,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private WindowsClipboardHelper WindowsClipboardHelper = new();
 
     // Records list & Score
+    // Latest records are at the beginning of the list.
     private LinkedList<ClipboardDataPair> RecordsList = new();
 
     // Score interval
@@ -368,6 +369,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     {
         Context = context;
         ClipboardMonitor.SetContext(context);
+        WindowsClipboardHelper.SetClipboardPlus(this);
 
         // init path helper
         PathHelper.Init(context, GetType().Assembly.GetName().Name ?? "Flow.Launcher.Plugin.ClipboardPlus");
@@ -1601,6 +1603,10 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             ClipboardMonitor.Dispose();
             ClipboardMonitor = null!;
             Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
+
+            WindowsClipboardHelper.Dispose();
+            WindowsClipboardHelper = null!;
+            Context.API.LogDebug(ClassName, $"Disposed WindowsClipboardHelper");
 
             var exception = await FlushClipboardAsync();
             if (exception == null)
