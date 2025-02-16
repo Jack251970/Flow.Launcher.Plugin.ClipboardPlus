@@ -8,6 +8,11 @@ public class SourceApplication
     #region Properties
 
     /// <summary>
+    /// Gets a <see cref="SourceApplication"/> instance representing a null-application.
+    /// </summary>
+    public static SourceApplication NULL => new(0, string.Empty, string.Empty, string.Empty);
+
+    /// <summary>
     /// Gets the appliation's window-handle.
     /// </summary>
     public nint Handle { get; }

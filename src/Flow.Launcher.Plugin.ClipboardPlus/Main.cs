@@ -23,7 +23,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private PluginInitContext Context = null!;
 
     // Class name for logging
-    private string ClassName => GetType().Name;
+    private string ClassName => nameof(ClipboardPlus);
 
     // Culture info
     private CultureInfo CultureInfo = null!;
@@ -388,7 +388,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         await Database.InitializeDatabaseAsync();
         if (fileExists)
         {
-            await InitRecordsFromDatabaseAsync();
+            await InitRecordsFromDatabaseAndSystemAsync();
         }
         Context.API.LogDebug(ClassName, "Init database successfully");
 
@@ -412,7 +412,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     public async Task ReloadDataAsync()
     {
         // reload records
-        await InitRecordsFromDatabaseAsync();
+        await InitRecordsFromDatabaseAndSystemAsync();
     }
 
     #endregion
@@ -730,25 +730,37 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private void OnClipboardChange(object? sender, ClipboardChangedEventArgs e)
     {
         Context.API.LogDebug(ClassName, "Clipboard changed");
-        if (e.Content is null || e.DataType == DataType.Other || sender is not IClipboardMonitor clipboardMonitor)
+        if (sender is not IClipboardMonitor clipboardMonitor)
         {
             return;
         }
 
+        // get clipboard data
+        var clipboardData = GetClipboardDataItem(e.Content, e.DataType, StringUtils.GetGuid(), DateTime.Now, e.SourceApplication, clipboardMonitor.ClipboardText, clipboardMonitor.ClipboardRtfText);
+
+        // add clipboard data
+        AddClipboardDataItem(clipboardData);
+    }
+
+    public ClipboardData GetClipboardDataItem(object? content, DataType dataType, string hashId, DateTime createTime, SourceApplication source, string clipboardText, string clipboardRtfText)
+    {
+        if (content is null || dataType == DataType.Other)
+        {
+            return ClipboardData.NULL;
+        }
+
         // init clipboard data
-        var now = DateTime.Now;
-        var dataType = e.DataType;
         var saved = Settings.KeepText && dataType == DataType.PlainText
             || Settings.KeepText && dataType == DataType.RichText
             || Settings.KeepImages && dataType == DataType.Image
             || Settings.KeepFiles && dataType == DataType.Files;
-        var clipboardData = new ClipboardData(e.Content, dataType, Settings.EncryptData)
+        var clipboardData = new ClipboardData(content, dataType, Settings.EncryptData)
         {
-            HashId = StringUtils.GetGuid(),
-            SenderApp = e.SourceApplication.Name,
+            HashId = hashId,
+            SenderApp = source.Name,
             InitScore = Database.CurrentScore,
             CachedImagePath = string.Empty,
-            CreateTime = now,
+            CreateTime = createTime,
             Pinned = false,
             Saved = saved,
             PlainText = string.Empty,
@@ -758,7 +770,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         // filter duplicate data
         if (RecordsList.Count != 0 && RecordsList.First().ClipboardData.DataEquals(clipboardData))
         {
-            return;
+            return ClipboardData.NULL;
         }
 
         // process clipboard data
@@ -766,7 +778,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
                 string.IsNullOrEmpty(clipboardData.SenderApp) ?
-                Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app"):
+                Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app") :
                 clipboardData.SenderApp);
             var imagePath = FileUtils.SaveImageCache(clipboardData, PathHelper.ImageCachePath, imageName);
             clipboardData.CachedImagePath = imagePath;
@@ -774,21 +786,26 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         if (dataType == DataType.RichText)
         {
             // due to some bugs, we need to convert rtf to plain text
-            if (string.IsNullOrEmpty(clipboardMonitor.ClipboardText))
+            if (string.IsNullOrEmpty(clipboardText))
             {
-                clipboardData.PlainText = StringUtils.ConvertRtfToPlainText(clipboardMonitor.ClipboardRtfText);
+                clipboardData.PlainText = StringUtils.ConvertRtfToPlainText(clipboardRtfText);
             }
             else
             {
-                clipboardData.PlainText = clipboardMonitor.ClipboardText;
+                clipboardData.PlainText = clipboardText;
             }
         }
 
+        return clipboardData;
+    }
+
+    private void AddClipboardDataItem(ClipboardData clipboardData)
+    {
         // add to list and database if no repeat
-        RecordsList.AddFirst(new ClipboardDataPair() 
-        { 
-            ClipboardData = clipboardData, 
-            PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, clipboardData)) 
+        RecordsList.AddFirst(new ClipboardDataPair()
+        {
+            ClipboardData = clipboardData,
+            PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, clipboardData))
         });
         Context.API.LogDebug(ClassName, "Added to list");
 
@@ -796,7 +813,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         Database.CurrentScore += ScoreInterval;
 
         // save to database if needed
-        if (saved)
+        if (clipboardData.Saved)
         {
             _ = Database.AddOneRecordAsync(clipboardData, true);  // no need to wait
         }
@@ -817,7 +834,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region List & Database
 
-    public async Task InitRecordsFromDatabaseAsync()
+    public async Task InitRecordsFromDatabaseAndSystemAsync()
     {
         // clear expired records
         try
@@ -837,8 +854,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             Context.API.LogWarn(ClassName, $"Cleared expired records failed\n{e}");
         }
 
-        // restore records
+        // restore database records
         var records = await Database.GetAllRecordsAsync(true);
+        var latestDateTime = DateTime.MinValue;
         if (records.Any())
         {
             var records1 = records.Select(record => new ClipboardDataPair()
@@ -847,7 +865,26 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, record))
             });
             RecordsList = new LinkedList<ClipboardDataPair>(records1);
+            latestDateTime = records.Max(r => r.CreateTime);
         }
+        else
+        {
+            RecordsList.Clear();
+        }
+
+        // restore Windows clipboard history items
+        if (Settings.SyncWindowsClipboardHistory)
+        {
+            var historyItems = await WindowsClipboardHelper.GetLaterHistoryItemsAsync(latestDateTime);
+            if (historyItems != null && historyItems.Any())
+            {
+                foreach (var item in historyItems)
+                {
+                    AddClipboardDataItem(item);
+                }
+            }
+        }
+
         Context.API.LogWarn(ClassName, "Restored records successfully");
     }
 
@@ -1537,6 +1574,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     #region IClipboardPlus Interface
 
     PluginInitContext? IClipboardPlus.Context => Context;
+
+    IClipboardMonitor IClipboardPlus.ClipboardMonitor => ClipboardMonitor;
 
     SqliteDatabase IClipboardPlus.Database => Database;
 

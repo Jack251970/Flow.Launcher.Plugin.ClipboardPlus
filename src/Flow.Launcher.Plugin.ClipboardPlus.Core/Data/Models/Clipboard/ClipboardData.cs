@@ -12,12 +12,15 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
 
     #region Public
 
+    /// <summary>
+    /// Gets a <see cref="ClipboardData"/> instance representing a null value.
+    /// </summary>
     public static ClipboardData NULL => new()
     {
         HashId = string.Empty,
         SenderApp = string.Empty,
         InitScore = 0,
-        CreateTime = DateTime.Now,
+        CreateTime = DateTime.MinValue,
         Pinned = false,
         Saved = false
     };
@@ -682,6 +685,12 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     }
 
     #endregion
+
+    public readonly bool IsNull()
+    {
+        return HashId == string.Empty &&
+            CreateTime == DateTime.MinValue;
+    }
 
     public readonly bool DataEquals(ClipboardData b)
     {

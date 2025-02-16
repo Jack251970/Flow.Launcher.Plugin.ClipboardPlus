@@ -23,7 +23,7 @@ internal class ClipboardHandleW : IDisposable
 {
     #region Fields
 
-    private static string ClassName => typeof(ClipboardHandleW).Name;
+    private static string ClassName => nameof(ClipboardHandleW);
 
     private PluginInitContext? _context;
 

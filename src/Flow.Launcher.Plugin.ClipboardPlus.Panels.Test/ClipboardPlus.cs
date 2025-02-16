@@ -11,7 +11,7 @@ internal class ClipboardPlus : IClipboardPlus
 
     public SqliteDatabase Database { get; } = new SqliteDatabase(Path.Combine(AppContext.BaseDirectory, "ClipboardPlus.db"), 1);
 
-    public async Task InitRecordsFromDatabaseAsync()
+    public async Task InitRecordsFromDatabaseAndSystemAsync()
     {
         await Task.CompletedTask;
     }

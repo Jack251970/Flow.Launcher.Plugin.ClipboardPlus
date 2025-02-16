@@ -48,7 +48,7 @@ public class SqliteDatabase : IAsyncDisposable
 
     #region Class Name
 
-    private string ClassName => GetType().Name;
+    private static string ClassName => nameof(SqliteDatabase);
 
     #endregion
 

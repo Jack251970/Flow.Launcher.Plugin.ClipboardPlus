@@ -15,7 +15,7 @@ public class ClipboardMonitorW : IClipboardMonitor
 {
     #region Fields
 
-    private static string ClassName => typeof(ClipboardMonitorW).Name;
+    private static string ClassName => nameof(ClipboardMonitorW);
 
     private PluginInitContext? _context;
 

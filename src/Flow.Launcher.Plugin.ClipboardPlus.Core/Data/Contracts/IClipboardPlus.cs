@@ -6,9 +6,11 @@ public interface IClipboardPlus
 {
     public PluginInitContext? Context { get; }
 
+    public IClipboardMonitor ClipboardMonitor { get; }
+
     public SqliteDatabase Database { get; }
 
-    Task InitRecordsFromDatabaseAsync();
+    Task InitRecordsFromDatabaseAndSystemAsync();
 
     public ISettings Settings { get; }
 
@@ -19,4 +21,6 @@ public interface IClipboardPlus
     public CultureInfo CultureInfo { get; }
 
     public event EventHandler<CultureInfo>? CultureInfoChanged;
+
+    public ClipboardData GetClipboardDataItem(object? content, DataType dataType, string hashId, DateTime createTime, SourceApplication source, string clipboardText, string clipboardRtfText);
 }

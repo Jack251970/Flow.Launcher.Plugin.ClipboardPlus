@@ -23,7 +23,7 @@ internal class ClipboardHandleWin : IDisposable
 {
     #region Fields
 
-    private static string ClassName => typeof(ClipboardHandleWin).Name;
+    private static string ClassName => nameof(ClipboardHandleWin);
 
     private PluginInitContext? _context;
 
@@ -120,7 +120,7 @@ internal class ClipboardHandleWin : IDisposable
             if (ClipboardMonitorInstance.ObservableFormats.Images && IsDataImage(dataObj))
             {
                 // Make sure on the application dispatcher.
-                _ = System.Windows.Application.Current.Dispatcher.Invoke(async () =>
+                _ = System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
                 {
                     if (await GetImageContentAsync(dataObj) is BitmapImage capturedImage)
                     {

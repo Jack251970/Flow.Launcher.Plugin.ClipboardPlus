@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2025 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
+using System.Windows.Media.Imaging;
 using Windows.ApplicationModel.DataTransfer;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
@@ -61,9 +62,15 @@ public class WindowsClipboardHelper : IDisposable
 
     #endregion
 
-    #region Constructors
+    #region Properties
+
+    private static string ClassName => nameof(WindowsClipboardHelper);
 
     private IClipboardPlus _clipboardPlus = null!;
+
+    #endregion
+
+    #region Constructors
 
     public WindowsClipboardHelper()
     {
@@ -112,7 +119,7 @@ public class WindowsClipboardHelper : IDisposable
                             if (OnHistoryItemAdded != null)
                             {
                                 var newItem = items.First(x => !_clipboardHistoryItemsIds.Contains(x.Id));
-                                OnHistoryItemAdded?.Invoke(this, GetClipboardData(newItem));
+                                OnHistoryItemAdded?.Invoke(this, await GetClipboardData(newItem));
                             }
                         }
                         else if (_clipboardHistoryItems.Count > items.Count)  // remove 1 item
@@ -164,10 +171,27 @@ public class WindowsClipboardHelper : IDisposable
             await _historyItemLock.WaitAsync();
             try
             {
-                var clipboardDataItems = new List<ClipboardData>();
-                foreach (var item in _clipboardHistoryItems)
+                // filter and sort the items (later item last)
+                var laterSortedItems = _clipboardHistoryItems
+                    .Where(x => x.Timestamp.DateTime > dateTime)
+                    .OrderBy(x => x.Timestamp.DateTime)
+                    .ToList();
+
+                _clipboardPlus.Context?.API.LogDebug(ClassName, $"{dateTime}");
+                foreach (var item in laterSortedItems)
                 {
-                    clipboardDataItems.Add(GetClipboardData(item));
+                    _clipboardPlus.Context?.API.LogDebug(ClassName, $"{item.Timestamp.DateTime}");
+                }
+
+                // get the clipboard data
+                var clipboardDataItems = new List<ClipboardData>();
+                foreach (var item in laterSortedItems)
+                {
+                    var clipboardData = await GetClipboardData(item);
+                    if (!clipboardData.IsNull())
+                    {
+                        clipboardDataItems.Add(clipboardData);
+                    }
                 }
                 return clipboardDataItems;
             }
@@ -180,41 +204,129 @@ public class WindowsClipboardHelper : IDisposable
         return null;
     }
 
-    private ClipboardData GetClipboardData(ClipboardHistoryItem item)
+    private async Task<ClipboardData> GetClipboardData(ClipboardHistoryItem item)
     {
-#if DEBUG
-        if (_clipboardPlus == null)
+        // If the clipboard is empty, return.
+        var dataObj = item.Content;
+        if (dataObj == null)
         {
-            return new ClipboardData(item.Content, DataType.Other, false)
-            {
-                // item.Id with numbers and capital letters, while StringUtils.GetGuid() with numbers and lowercase letters
-                HashId = item.Id,
-                SenderApp = string.Empty,
-                InitScore = 0,
-                CachedImagePath = string.Empty,
-                CreateTime = item.Timestamp.DateTime,
-                Pinned = false,
-                Saved = false,
-                PlainText = string.Empty,
-                EncryptKeyMd5 = StringUtils.EncryptKeyMd5,
-                ClipboardHistoryItem = item
-            };
+            return ClipboardData.NULL;
         }
-#endif
-        return new ClipboardData(item.Content, DataType.Other, _clipboardPlus.Settings.EncryptData)
+
+        // Get hash id & create time
+        // item.Id with numbers and capital letters, while StringUtils.GetGuid() with numbers and lowercase letters
+        // Therefore, we need to convert the item.Id to lowercase.
+        var hashId = item.Id.ToLower();
+        var createTime = item.Timestamp.DateTime;
+
+        // Determines whether a file/files have been cut/copied.
+        if (_clipboardPlus.ClipboardMonitor.ObservableFormats.Images && ClipboardHandleWin.IsDataImage(dataObj))
         {
-            // item.Id with numbers and capital letters, while StringUtils.GetGuid() with numbers and lowercase letters
-            HashId = item.Id,
-            SenderApp = string.Empty,
-            InitScore = _clipboardPlus.Database.CurrentScore,
-            CachedImagePath = string.Empty,
-            CreateTime = item.Timestamp.DateTime,
-            Pinned = false,
-            Saved = false,
-            PlainText = string.Empty,
-            EncryptKeyMd5 = StringUtils.EncryptKeyMd5,
-            ClipboardHistoryItem = item
-        };
+            // Make sure on the application dispatcher.
+            var clipboardData = await System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
+            {
+                if (await ClipboardHandleWin.GetImageContentAsync(dataObj) is BitmapImage capturedImage)
+                {
+                    var clipboardData = _clipboardPlus.GetClipboardDataItem(
+                        capturedImage,
+                        DataType.Image,
+                        hashId,
+                        createTime,
+                        SourceApplication.NULL,
+                        string.Empty,
+                        string.Empty
+                    );
+                    if (!clipboardData.IsNull())
+                    {
+                        clipboardData.ClipboardHistoryItem = item;
+                    }
+                    return clipboardData;
+                }
+                return ClipboardData.NULL;
+            });
+            return await clipboardData;
+        }
+        // Determines whether plain text or rich text has been cut/copied.
+        else if (_clipboardPlus.ClipboardMonitor.ObservableFormats.Texts && ClipboardHandleWin.IsDataText(dataObj))
+        {
+            var (plainText, richText, dataType) = await ClipboardHandleWin.GetTextContentAsync(dataObj);
+            var clipboardData = _clipboardPlus.GetClipboardDataItem(
+                dataType == DataType.PlainText ? plainText : richText,
+                dataType,
+                hashId,
+                createTime,
+                SourceApplication.NULL,
+                plainText,
+                richText
+            );
+            if (!clipboardData.IsNull())
+            {
+                clipboardData.ClipboardHistoryItem = item;
+            }
+            return clipboardData;
+        }
+        // Determines whether a file has been cut/copied.
+        else if (_clipboardPlus.ClipboardMonitor.ObservableFormats.Files && ClipboardHandleWin.IsDataFiles(dataObj))
+        {
+            // If the 'capturedFiles' string array persists as null, then this means
+            // that the copied content is of a complex object type since the file-drop
+            // format is able to capture more-than-just-file content in the clipboard.
+            // Therefore assign the content its rightful type.
+            if (await ClipboardHandleWin.GetFilesContentAsync(dataObj) is string[] capturedFiles)
+            {
+                var clipboardData = _clipboardPlus.GetClipboardDataItem(
+                    capturedFiles,
+                    DataType.Files,
+                    hashId,
+                    createTime,
+                    SourceApplication.NULL,
+                    string.Empty,
+                    string.Empty
+                );
+                if (!clipboardData.IsNull())
+                {
+                    clipboardData.ClipboardHistoryItem = item;
+                }
+                return clipboardData;
+            }
+            else
+            {
+                var clipboardData = _clipboardPlus.GetClipboardDataItem(
+                    dataObj,
+                    DataType.Other,
+                    hashId,
+                    createTime,
+                    SourceApplication.NULL,
+                    string.Empty,
+                    string.Empty
+                );
+                if (!clipboardData.IsNull())
+                {
+                    clipboardData.ClipboardHistoryItem = item;
+                }
+                return clipboardData;
+            }
+        }
+        // Determines whether an unknown object has been cut/copied.
+        else if (_clipboardPlus.ClipboardMonitor.ObservableFormats.Others && (!ClipboardHandleWin.IsDataFiles(dataObj)))
+        {
+            var clipboardData = _clipboardPlus.GetClipboardDataItem(
+                dataObj,
+                DataType.Other,
+                hashId,
+                createTime,
+                SourceApplication.NULL,
+                string.Empty,
+                string.Empty
+            );
+            if (!clipboardData.IsNull())
+            {
+                clipboardData.ClipboardHistoryItem = item;
+            }
+            return clipboardData;
+        }
+
+        return ClipboardData.NULL;
     }
 
     #endregion
