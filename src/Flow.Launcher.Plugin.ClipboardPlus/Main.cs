@@ -729,8 +729,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     // Warning: This method will be called after dispose.
     public void Save()
     {
-        // We don't need to save plugin settings because all settings will be saved.
-        //Context?.API.SaveSettingJsonStorage<Settings>();
+        // We don't need to save plugin settings because it will be called by FL.
+        // Context?.API.SaveSettingJsonStorage<Settings>();
     }
 
     #endregion

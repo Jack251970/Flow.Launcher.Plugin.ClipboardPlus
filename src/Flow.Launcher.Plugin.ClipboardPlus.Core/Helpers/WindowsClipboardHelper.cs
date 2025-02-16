@@ -130,6 +130,11 @@ public class WindowsClipboardHelper : IDisposable
                             {
                                 var newItem = items.First(x => !_clipboardHistoryItemsIds.Contains(x.Id));
                                 OnHistoryItemAdded?.Invoke(this, await GetClipboardData(newItem));
+#if DEBUG
+                                _clipboardPlus?.Context?.API.LogDebug(ClassName, $"Clipboard_HistoryChanged: Added item: {newItem.Id}");
+#else
+                                _clipboardPlus!.Context!.API.LogDebug(ClassName, $"Clipboard_HistoryChanged: Added item: {newItem.Id}");
+#endif
                             }
                         }
                         else if (_clipboardHistoryItems.Count > items.Count)  // remove 1 item
@@ -142,6 +147,11 @@ public class WindowsClipboardHelper : IDisposable
                                     .Select(x => x.Id)
                                     .ToList();
                                 OnHistoryItemRemoved.Invoke(this, removedItems);
+#if DEBUG
+                                _clipboardPlus?.Context?.API.LogDebug(ClassName, $"Clipboard_HistoryChanged: Removed items: {string.Join(", ", removedItems)}");
+#else
+                                _clipboardPlus!.Context!.API.LogDebug(ClassName, $"Clipboard_HistoryChanged: Removed items: {string.Join(", ", removedItems)}");
+#endif
                             }
                         }
                         else
@@ -150,6 +160,11 @@ public class WindowsClipboardHelper : IDisposable
                             {
                                 // No idea how to get the updated item
                                 OnHistoryItemPinUpdated.Invoke(this, ClipboardData.NULL);
+#if DEBUG
+                                _clipboardPlus?.Context?.API.LogDebug(ClassName, $"Clipboard_HistoryChanged: No idea how to get the updated item.");
+#else
+                                _clipboardPlus!.Context!.API.LogDebug(ClassName, $"Clipboard_HistoryChanged: No idea how to get the updated item."); 
+#endif
                             }
                         }
                     }
@@ -170,7 +185,7 @@ public class WindowsClipboardHelper : IDisposable
         });
     }
 
-    #endregion
+#endregion
 
     #region History Items
 
@@ -186,12 +201,6 @@ public class WindowsClipboardHelper : IDisposable
                     .Where(x => x.Timestamp.DateTime > dateTime)
                     .OrderBy(x => x.Timestamp.DateTime)
                     .ToList();
-
-                _clipboardPlus.Context?.API.LogDebug(ClassName, $"{dateTime}");
-                foreach (var item in laterSortedItems)
-                {
-                    _clipboardPlus.Context?.API.LogDebug(ClassName, $"{item.Timestamp.DateTime}");
-                }
 
                 // get the clipboard data
                 var clipboardDataItems = new List<ClipboardData>();
