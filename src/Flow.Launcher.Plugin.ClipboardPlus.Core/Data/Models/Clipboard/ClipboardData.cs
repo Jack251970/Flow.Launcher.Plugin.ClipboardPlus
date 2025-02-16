@@ -2,12 +2,15 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
 public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
 {
-    #region Public Properties
+    #region Properties
+
+    #region Public
 
     public static ClipboardData NULL => new()
     {
@@ -145,6 +148,14 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     /// Maximum score for pinning feature.
     /// </summary>
     public const int MaximumScore = 1000000000;
+
+    #endregion
+
+    #region Internal
+
+    internal ClipboardHistoryItem? ClipboardHistoryItem { get; set; }
+
+    #endregion
 
     #endregion
 
@@ -663,6 +674,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             {
                 disposable.Dispose();
             }
+            ClipboardHistoryItem = null;
             _disposed = true;
         }
     }
