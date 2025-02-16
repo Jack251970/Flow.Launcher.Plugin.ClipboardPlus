@@ -351,8 +351,6 @@ internal class ClipboardHandleWin : IDisposable
 
     #region Souce App Management
 
-    #region Helper Methods
-
     private unsafe bool GetApplicationInfo()
     {
         _executableHandle = 0;
@@ -375,11 +373,15 @@ internal class ClipboardHandleWin : IDisposable
                 _executableName = _executablePath[(_executablePath.LastIndexOf(@"\", StringComparison.Ordinal) + 1)..];
             }
 
+            // Edited from: https://github.com/taooceros
             const int capacity = 256;
-            fixed (char* content = new char[capacity])
+            Span<char> buffer = capacity < 1024 ? stackalloc char[capacity] : new char[capacity];
+            fixed (char* pBuffer = buffer)
             {
-                _ = PInvoke.GetWindowText(hwnd, content, capacity);
-                _executableTitle = new(content);
+                // If the window has no title bar or text, if the title bar is empty,
+                // or if the window or control handle is invalid, the return value is zero.
+                var length = PInvoke.GetWindowText(hwnd, (PWSTR)pBuffer, capacity);
+                _executableTitle = buffer[..length].ToString();
             }
 
             return true;
@@ -412,8 +414,6 @@ internal class ClipboardHandleWin : IDisposable
             }
         }
     }
-
-    #endregion
 
     #endregion
 
