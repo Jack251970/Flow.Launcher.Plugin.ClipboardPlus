@@ -45,6 +45,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     // Latest records are at the beginning of the list.
     private LinkedList<ClipboardDataPair> RecordsList = new();
 
+    // Record list lock
+    private readonly SemaphoreSlim RecordsLock = new(1, 1);
+
     // Score interval
     // Note: Get scores of the items further apart to make sure the ranking seqence of items is correct.
     // https://github.com/Flow-Launcher/Flow.Launcher/issues/2904
@@ -130,7 +133,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     // TODO: Remove selected count from score.
     // TODO: Add AutoCompleteText & Others properties in Record class.
-    public List<Result> Query(Query query)
+    public async Task<List<Result>> Query(Query query)
     {
         var results = new List<Result>();
         if (query.FirstSearch == Settings.ClearKeyword)
@@ -148,7 +151,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.AppIconPath,
                             Glyph = ResourceHelper.ClearHistoryGlyph,
                             Score = ScoreInterval6,
-                            Action = _ =>
+                            Action = (c) =>
                             {
                                 Win32Helper.StartSTATask(async () => await WindowsClipboardHelper.ClearAllRecordsAsync());
                                 return true;
@@ -161,7 +164,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.AppIconPath,
                             Glyph = ResourceHelper.ClearHistoryGlyph,
                             Score = ScoreInterval5,
-                            Action = _ =>
+                            Action = (c) =>
                             {
                                 Win32Helper.StartSTATask(() => WindowsClipboardHelper.ClearUnpinnnedRecords());
                                 return true;
@@ -181,9 +184,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         IcoPath = PathHelper.ListIconPath,
                         Glyph = ResourceHelper.ListGlyph,
                         Score = ScoreInterval4,
-                        Action = _ =>
+                        AsyncAction = async (c) =>
                         {
-                            var number = DeleteAllRecordsFromList();
+                            var number = await DeleteAllRecordsFromList();
                             if (number != 0)
                             {
                                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
@@ -205,9 +208,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         IcoPath = PathHelper.DatabaseIconPath,
                         Glyph = ResourceHelper.DatabaseGlyph,
                         Score = ScoreInterval3,
-                        Action = _ =>
+                        AsyncAction = async (c) =>
                         {
-                            var number = DeleteAllRecordsFromListDatabase();
+                            var number = await DeleteAllRecordsFromListDatabase();
                             if (number != 0)
                             {
                                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
@@ -229,9 +232,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         IcoPath = PathHelper.UnpinIcon1Path,
                         Glyph = ResourceHelper.UnpinGlyph,
                         Score = ScoreInterval2,
-                        Action = _ =>
+                        AsyncAction = async (c) =>
                         {
-                            var number = DeleteUnpinnedRecordsFromListDatabase();
+                            var number = await DeleteUnpinnedRecordsFromListDatabase();
                             if (number != 0)
                             {
                                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
@@ -253,9 +256,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         IcoPath = PathHelper.ErrorIconPath,
                         Glyph = ResourceHelper.ErrorGlyph,
                         Score = ScoreInterval1,
-                        Action = _ =>
+                        AsyncAction = async (c) =>
                         {
-                            var number = DeleteInvalidRecordsFromListDatabase();
+                            var number = await DeleteInvalidRecordsFromListDatabase();
                             if (number != 0)
                             {
                                 Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
@@ -283,7 +286,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 IcoPath = PathHelper.CleanIconPath,
                 Glyph = ResourceHelper.CleanGlyph,
                 Score = Settings.ActionTop ? TopActionScore1 : BottomActionScore1,
-                Action = _ =>
+                Action = (c) =>
                 {
                     Win32Helper.StartSTATask(Clipboard.Clear);
                     ClipboardMonitor.CleanClipboard();
@@ -301,7 +304,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     IcoPath = PathHelper.DisconnectIconPath,
                     Glyph = ResourceHelper.DisconnectGlyph,
                     Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
-                    Action = _ =>
+                    Action = (c) =>
                     {
                         ClipboardMonitor.PauseMonitoring();
                         return true;
@@ -317,7 +320,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     IcoPath = PathHelper.ConnectIconPath,
                     Glyph = ResourceHelper.ConnectGlyph,
                     Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
-                    Action = _ =>
+                    Action = (c) =>
                     {
                         ClipboardMonitor.ResumeMonitoring();
                         return true;
@@ -334,7 +337,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 IcoPath = PathHelper.ClearIconPath,
                 Glyph = ResourceHelper.ClearGlyph,
                 Score = Settings.ActionTop ? TopActionScore4 : BottomActionScore4,
-                Action = _ =>
+                Action = (c) =>
                 {
                     Context.API.ChangeQuery($"{query.ActionKeyword}{Plugin.Query.TermSeparator}{Settings.ClearKeyword} ", true);
                     return false;
@@ -349,6 +352,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
 
             // records results
+            await RecordsLock.WaitAsync();
             var records = query.Search.Trim().Length == 0
                 ? RecordsList.ToArray()
                 : RecordsList.Where(i => !string.IsNullOrEmpty(i.ClipboardData.GetText(CultureInfo)) && i.ClipboardData.GetText(CultureInfo).ToLower().Contains(query.Search.Trim().ToLower())).ToArray();
@@ -360,6 +364,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     results.Add(result);
                 }
             }
+            RecordsLock.Release();
             Context.API.LogDebug(ClassName, "Added records successfully");
         }
         return results;
@@ -441,7 +446,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     IcoPath = PathHelper.CopyIconPath,
                     Glyph = ResourceHelper.CopyGlyph,
                     Score = ScoreInterval9,
-                    Action = _ =>
+                    Action = (c) =>
                     {
                         CopyToClipboard(clipboardDataPair);
                         return true;
@@ -461,7 +466,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     IcoPath = PathHelper.CopyIconPath,
                     Glyph = ResourceHelper.CopyGlyph,
                     Score = ScoreInterval8,
-                    Action = _ =>
+                    Action = (c) =>
                     {
                         CopyOriginallyToClipboard(clipboardDataPair);
                         return true;
@@ -479,7 +484,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval8,
-                            Action = _ =>
+                            Action = (c) =>
                             {
                                 CopyOriginallyToClipboard(clipboardDataPair);
                                 return true;
@@ -492,7 +497,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval7,
-                            Action = _ =>
+                            Action = (c) =>
                             {
                                 CopyAsPlainTextToClipboard(clipboardDataPair);
                                 return true;
@@ -512,7 +517,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval8,
-                            Action = _ =>
+                            Action = (c) =>
                             {
                                 CopyOriginallyToClipboard(clipboardDataPair);
                                 return true;
@@ -525,7 +530,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval7,
-                            Action = _ =>
+                            Action = (c) =>
                             {
                                 CopyImageFileToClipboard(clipboardDataPair);
                                 return true;
@@ -545,7 +550,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval8,
-                            Action = _ =>
+                            Action = (c) =>
                             {
                                 CopyOriginallyToClipboard(clipboardDataPair);
                                 return true;
@@ -558,7 +563,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval7,
-                            Action = _ =>
+                            Action = (c) =>
                             {
                                 CopyBySortingNameToClipboard(clipboardDataPair, true);
                                 return true;
@@ -571,7 +576,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval6,
-                            Action = _ =>
+                            Action = (c) =>
                             {
                                 CopyBySortingNameToClipboard(clipboardDataPair, false);
                                 return true;
@@ -592,7 +597,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval5,
-                            Action = _ =>
+                            Action = (c) =>
                             {
                                 CopyFilePathToClipboard(clipboardDataPair, filePaths);
                                 return true;
@@ -605,7 +610,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval4,
-                            Action = _ =>
+                            Action = (c) =>
                             {
                                 CopyFileContentToClipboard(clipboardDataPair, filePaths);
                                 return true;
@@ -629,9 +634,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 IcoPath = PathHelper.DatabaseIconPath,
                 Glyph = ResourceHelper.DatabaseGlyph,
                 Score = ScoreInterval3,
-                Action = _ =>
+                Action = (c) =>
                 {
-                    SaveToDatabase(clipboardDataPair, true);
+                    _ = SaveToDatabase(clipboardDataPair, true);
                     return false;
                 }
             });
@@ -647,9 +652,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             IcoPath = PathHelper.GetPinIconPath(pinned),
             Glyph = ResourceHelper.GetPinGlyph(pinned),
             Score = ScoreInterval2,
-            Action = _ =>
+            Action = (c) =>
             {
-                PinOneRecord(clipboardDataPair, true);
+                _ = PinOneRecord(clipboardDataPair, true);
                 return false;
             }
         });
@@ -666,9 +671,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 IcoPath = PathHelper.DeleteIconPath,
                 Glyph = ResourceHelper.DeleteGlyph,
                 Score = ScoreInterval1,
-                Action = _ =>
+                Action = (c) =>
                 {
-                    RemoveFromListDatabase(clipboardDataPair, true);
+                    _ = RemoveFromListDatabase(clipboardDataPair, true);
                     return false;
                 }
             });
@@ -683,9 +688,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 IcoPath = PathHelper.DeleteIconPath,
                 Glyph = ResourceHelper.DeleteGlyph,
                 Score = ScoreInterval1,
-                Action = _ =>
+                Action = (c) =>
                 {
-                    RemoveFromListDatabase(clipboardDataPair, true);
+                    _ = RemoveFromListDatabase(clipboardDataPair, true);
                     WindowsClipboardHelper.DeleteItemFromHistory(clipboardData);
                     return false;
                 }
@@ -747,7 +752,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region Clipboard Monitor
 
-    private void OnClipboardChange(object? sender, ClipboardChangedEventArgs e)
+    private async void OnClipboardChange(object? sender, ClipboardChangedEventArgs e)
     {
         Context.API.LogDebug(ClassName, "Clipboard changed");
         if (sender is not IClipboardMonitor clipboardMonitor)
@@ -755,11 +760,18 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             return;
         }
 
+        await RecordsLock.WaitAsync();
+
         // get clipboard data
         var clipboardData = GetClipboardDataItem(e.Content, e.DataType, StringUtils.GetGuid(), DateTime.Now, e.SourceApplication, clipboardMonitor.ClipboardText, clipboardMonitor.ClipboardRtfText);
 
         // add clipboard data
-        AddClipboardDataItem(clipboardData);
+        if (!clipboardData.IsNull())
+        {
+            AddClipboardDataItem(clipboardData);
+        }
+
+        RecordsLock.Release();
     }
 
     public ClipboardData GetClipboardDataItem(object? content, DataType dataType, string hashId, DateTime createTime, SourceApplication source, string clipboardText, string clipboardRtfText)
@@ -884,17 +896,22 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 ClipboardData = record,
                 PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, record))
             });
+            await RecordsLock.WaitAsync();
             RecordsList = new LinkedList<ClipboardDataPair>(records1);
+            RecordsLock.Release();
             latestDateTime = records.Max(r => r.CreateTime);
         }
         else
         {
+            await RecordsLock.WaitAsync();
             RecordsList.Clear();
+            RecordsLock.Release();  
         }
 
         // restore Windows clipboard history items
         if (Settings.SyncWindowsClipboardHistory)
         {
+            await RecordsLock.WaitAsync();
             var historyItems = await WindowsClipboardHelper.GetLaterHistoryItemsAsync(latestDateTime);
             if (historyItems != null && historyItems.Any())
             {
@@ -903,145 +920,212 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     AddClipboardDataItem(item);
                 }
             }
+            RecordsLock.Release();
         }
 
         Context.API.LogWarn(ClassName, "Restored records successfully");
     }
 
-    private int DeleteAllRecordsFromList()
+    private async Task<int> DeleteAllRecordsFromList()
     {
-        var number = RecordsList.Count;
-        foreach (var record in RecordsList)
+        await RecordsLock.WaitAsync();
+        try
         {
-            record.Dispose();
+            var number = RecordsList.Count;
+            foreach (var record in RecordsList)
+            {
+                record.Dispose();
+            }
+            RecordsList.Clear();
+            return number;
         }
-        RecordsList.Clear();
-        GarbageCollect();
-        return number;
+        finally
+        {
+            RecordsLock.Release();
+            GarbageCollect();
+        }
     }
 
-    private int DeleteAllRecordsFromListDatabase()
+    private async Task<int> DeleteAllRecordsFromListDatabase()
     {
-        var number = RecordsList.Count;
-        foreach (var record in RecordsList)
+        await RecordsLock.WaitAsync();
+        try
         {
-            record.Dispose();
-        }
-        RecordsList.Clear();
-        _ = Database.DeleteAllRecordsAsync();
-        Database.CurrentScore = 1;
-        GarbageCollect();
-        return number;
-    }
-
-    private int DeleteUnpinnedRecordsFromListDatabase()
-    {
-        var unpinnedRecords = RecordsList.Where(r => !r.ClipboardData.Pinned).ToArray();
-        var number = unpinnedRecords.Length;
-        foreach (var record in unpinnedRecords)
-        {
-            record.Dispose();
-            RecordsList.Remove(record);
-        }
-        _ = Database.DeleteUnpinnedRecordsAsync();
-        if (RecordsList.Any())
-        {
-            Database.CurrentScore = RecordsList.Max(r => r.ClipboardData.InitScore);
-        }
-        else
-        {
+            var number = RecordsList.Count;
+            foreach (var record in RecordsList)
+            {
+                record.Dispose();
+            }
+            RecordsList.Clear();
+            _ = Database.DeleteAllRecordsAsync();
             Database.CurrentScore = 1;
+            return number;
         }
-        GarbageCollect();
-        return number;
+        finally
+        {
+            RecordsLock.Release();
+            GarbageCollect();
+        }
     }
 
-    private int DeleteInvalidRecordsFromListDatabase()
+    private async Task<int> DeleteUnpinnedRecordsFromListDatabase()
     {
-        var invalidRecords = RecordsList.Where(r => r.ClipboardData.DataToValid() is null).ToArray();
-        var number = invalidRecords.Length;
-        foreach (var record in invalidRecords)
+        await RecordsLock.WaitAsync();
+        try
         {
-            record.Dispose();
-            RecordsList.Remove(record);
-            _ = Database.DeleteOneRecordAsync(record.ClipboardData);
+            var unpinnedRecords = RecordsList.Where(r => !r.ClipboardData.Pinned).ToArray();
+            var number = unpinnedRecords.Length;
+            foreach (var record in unpinnedRecords)
+            {
+                record.Dispose();
+                RecordsList.Remove(record);
+            }
+            _ = Database.DeleteUnpinnedRecordsAsync();
+            if (RecordsList.Any())
+            {
+                Database.CurrentScore = RecordsList.Max(r => r.ClipboardData.InitScore);
+            }
+            else
+            {
+                Database.CurrentScore = 1;
+            }
+            return number;
         }
-        if (RecordsList.Any())
+        finally
         {
-            Database.CurrentScore = RecordsList.Max(r => r.ClipboardData.InitScore);
+            RecordsLock.Release();
+            GarbageCollect();
         }
-        else
-        {
-            Database.CurrentScore = 1;
-        }
-        GarbageCollect();
-        return number;
     }
 
-    private void SaveToDatabase(ClipboardDataPair clipboardDataPair, bool requery)
+    private async Task<int> DeleteInvalidRecordsFromListDatabase()
     {
-        var clipboardData = clipboardDataPair.ClipboardData;
-        if (!clipboardData.Saved)
+        await RecordsLock.WaitAsync();
+        try
         {
-            clipboardData.Saved = true;
+            var invalidRecords = RecordsList.Where(r => r.ClipboardData.DataToValid() is null).ToArray();
+            var number = invalidRecords.Length;
+            foreach (var record in invalidRecords)
+            {
+                record.Dispose();
+                RecordsList.Remove(record);
+                _ = Database.DeleteOneRecordAsync(record.ClipboardData);
+            }
+            if (RecordsList.Any())
+            {
+                Database.CurrentScore = RecordsList.Max(r => r.ClipboardData.InitScore);
+            }
+            else
+            {
+                Database.CurrentScore = 1;
+            }
+            return number;
+        }
+        finally
+        {
+            RecordsLock.Release();
+            GarbageCollect();
+        }
+    }
+
+    private async Task SaveToDatabase(ClipboardDataPair clipboardDataPair, bool requery)
+    {
+        await RecordsLock.WaitAsync();
+        try
+        {
+            var clipboardData = clipboardDataPair.ClipboardData;
+            if (!clipboardData.Saved)
+            {
+                clipboardData.Saved = true;
+                RecordsList.Remove(clipboardDataPair);
+                RecordsList.AddFirst(clipboardDataPair);
+                if (requery)
+                {
+                    ReQuery();
+                }
+                _ = Database.AddOneRecordAsync(clipboardData, true);
+            }
+        }
+        finally
+        {
+            RecordsLock.Release();
+            GarbageCollect();
+        }
+    }
+
+    private async Task RemoveFromList(ClipboardDataPair clipboardDataPair, bool requery)
+    {
+        await RecordsLock.WaitAsync();
+        try
+        {
+            if (RecordsList.First?.Value == clipboardDataPair)
+            {
+                Database.CurrentScore -= ScoreInterval;
+            }
+            clipboardDataPair.Dispose();
+            RecordsList.Remove(clipboardDataPair);
+            if (requery)
+            {
+                ReQuery();
+            }
+        }
+        finally
+        {
+            RecordsLock.Release();
+            GarbageCollect();
+        }
+    }
+
+    private async Task RemoveFromListDatabase(ClipboardDataPair clipboardDataPair, bool requery)
+    {
+        await RecordsLock.WaitAsync();
+        try
+        {
+            if (RecordsList.First?.Value == clipboardDataPair)
+            {
+                Database.CurrentScore -= ScoreInterval;
+            }
+            var clipboardData = clipboardDataPair.ClipboardData;
+            clipboardDataPair.Dispose();
+            RecordsList.Remove(clipboardDataPair);
+            if (requery)
+            {
+                ReQuery();
+            }
+            _ = Database.DeleteOneRecordAsync(clipboardData);
+        }
+        finally
+        {
+            RecordsLock.Release();
+            GarbageCollect();
+        }
+    }
+
+    private async Task PinOneRecord(ClipboardDataPair clipboardDataPair, bool requery)
+    {
+        await RecordsLock.WaitAsync();
+        try
+        {
+            clipboardDataPair.TogglePinned();
             RecordsList.Remove(clipboardDataPair);
             RecordsList.AddFirst(clipboardDataPair);
             if (requery)
             {
                 ReQuery();
             }
-            _ = Database.AddOneRecordAsync(clipboardData, true);
+            if (!clipboardDataPair.ClipboardData.Saved)
+            {
+                _ = Database.AddOneRecordAsync(clipboardDataPair.ClipboardData, true);
+            }
+            else
+            {
+                _ = Database.PinOneRecordAsync(clipboardDataPair.ClipboardData);
+            }
         }
-    }
-
-    private void RemoveFromList(ClipboardDataPair clipboardDataPair, bool requery)
-    {
-        if (RecordsList.First?.Value == clipboardDataPair)
+        finally
         {
-            Database.CurrentScore -= ScoreInterval;
-        }
-        clipboardDataPair.Dispose();
-        RecordsList.Remove(clipboardDataPair);
-        if (requery)
-        {
-            ReQuery();
-        }
-        GarbageCollect();
-    }
-
-    private void RemoveFromListDatabase(ClipboardDataPair clipboardDataPair, bool requery)
-    {
-        if (RecordsList.First?.Value == clipboardDataPair)
-        {
-            Database.CurrentScore -= ScoreInterval;
-        }
-        var clipboardData = clipboardDataPair.ClipboardData;
-        clipboardDataPair.Dispose();
-        RecordsList.Remove(clipboardDataPair);
-        if (requery)
-        {
-            ReQuery();
-        }
-        _ = Database.DeleteOneRecordAsync(clipboardData);
-        GarbageCollect();
-    }
-
-    private void PinOneRecord(ClipboardDataPair clipboardDataPair, bool requery)
-    {
-        clipboardDataPair.TogglePinned();
-        RecordsList.Remove(clipboardDataPair);
-        RecordsList.AddFirst(clipboardDataPair);
-        if (requery)
-        {
-            ReQuery();
-        }
-        if (!clipboardDataPair.ClipboardData.Saved)
-        {
-            _ = Database.AddOneRecordAsync(clipboardDataPair.ClipboardData, true);
-        }
-        else
-        {
-            _ = Database.PinOneRecordAsync(clipboardDataPair.ClipboardData);
+            RecordsLock.Release();
+            GarbageCollect();
         }
     }
 
@@ -1075,7 +1159,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 TitleToolTip = clipboardData.GetText(CultureInfo),
                 ContextData = clipboardDataPair,
                 PreviewPanel = clipboardDataPair.PreviewPanel,
-                AsyncAction = async _ =>
+                Action = (c) =>
                 {
                     switch (Settings.ClickAction)
                     {
@@ -1085,27 +1169,27 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         case ClickAction.CopyPaste:
                             Context.API.HideMainWindow();
                             CopyToClipboard(clipboardDataPair);
-                            await WaitWindowHideAndSimulatePaste();
+                            _ = WaitWindowHideAndSimulatePaste();
                             break;
                         case ClickAction.CopyDeleteList:
                             CopyToClipboard(clipboardDataPair);
-                            RemoveFromList(clipboardDataPair, false);
+                            _ = RemoveFromList(clipboardDataPair, false);
                             break;
                         case ClickAction.CopyDeleteListDatabase:
                             CopyToClipboard(clipboardDataPair);
-                            RemoveFromListDatabase(clipboardDataPair, false);
+                            _ = RemoveFromListDatabase(clipboardDataPair, false);
                             break;
                         case ClickAction.CopyPasteDeleteList:
                             Context.API.HideMainWindow();
                             CopyToClipboard(clipboardDataPair);
-                            RemoveFromList(clipboardDataPair, false);
-                            await WaitWindowHideAndSimulatePaste();
+                            _ = RemoveFromList(clipboardDataPair, false);
+                            _ = WaitWindowHideAndSimulatePaste();
                             break;
                         case ClickAction.CopyPasteDeleteListDatabase:
                             Context.API.HideMainWindow();
                             CopyToClipboard(clipboardDataPair);
-                            RemoveFromListDatabase(clipboardDataPair, false);
-                            await WaitWindowHideAndSimulatePaste();
+                            _ = RemoveFromListDatabase(clipboardDataPair, false);
+                            _ = WaitWindowHideAndSimulatePaste();
                             break;
                         default:
                             break;
@@ -1680,6 +1764,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             CultureInfoChanged = null;
             Settings = null!;
             RecordsList = null!;
+            RecordsLock.Dispose();
 
             Context.API.LogWarn(ClassName, $"Finish dispose");
             _disposed = true;

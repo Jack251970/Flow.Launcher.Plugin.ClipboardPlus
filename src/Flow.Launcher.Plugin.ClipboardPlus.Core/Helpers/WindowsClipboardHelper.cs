@@ -14,6 +14,8 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 /// </summary>
 public class WindowsClipboardHelper : IDisposable
 {
+    private static string ClassName => nameof(WindowsClipboardHelper);
+
     #region Helper Operations
 
     public static bool IsClipboardHistorySupported()
@@ -72,15 +74,9 @@ public class WindowsClipboardHelper : IDisposable
 
     #endregion
 
-    #region Properties
-
-    private static string ClassName => nameof(WindowsClipboardHelper);
+    #region Constructors
 
     private IClipboardPlus _clipboardPlus = null!;
-
-    #endregion
-
-    #region Constructors
 
     public WindowsClipboardHelper()
     {
