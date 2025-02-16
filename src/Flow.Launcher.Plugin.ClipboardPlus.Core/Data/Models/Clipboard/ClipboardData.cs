@@ -485,7 +485,9 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     {
         if (subtitle == null || currentCultureInfo != cultureInfo || pinned != Pinned)
         {
-            var dispSubtitle = $"{CreateTime.ToString(cultureInfo)}: {SenderApp}";
+            var dispSubtitle = string.IsNullOrEmpty(SenderApp) ?
+                $"{CreateTime.ToString(cultureInfo)}" :
+                $"{CreateTime.ToString(cultureInfo)}: {SenderApp}";
             dispSubtitle = Pinned ? $"{PinSymbol}{dispSubtitle}" : dispSubtitle;
             subtitle = dispSubtitle;
             currentCultureInfo = cultureInfo;
