@@ -225,16 +225,19 @@ internal class ClipboardHandleW : IDisposable
                     ClipboardMonitorInstance.ClipboardText = plainText;
                     ClipboardMonitorInstance.ClipboardRtfText = richText;
 
-                    ClipboardMonitorInstance.Invoke(
-                        dataType == DataType.PlainText ? plainText : richText,
-                        dataType,
-                        new SourceApplication(
-                            _executableHandle,
-                            _executableName,
-                            _executableTitle,
-                            _executablePath
-                        )
-                    );
+                    if (GetApplicationInfo())
+                    {
+                        ClipboardMonitorInstance.Invoke(
+                            dataType == DataType.PlainText ? plainText : richText,
+                            dataType,
+                            new SourceApplication(
+                                _executableHandle,
+                                _executableName,
+                                _executableTitle,
+                                _executablePath
+                            )
+                        );
+                    }
                 }
                 // Determines whether a file has been cut/copied.
                 else if (ClipboardMonitorInstance.ObservableFormats.Files && IsDataFiles(dataObj))
