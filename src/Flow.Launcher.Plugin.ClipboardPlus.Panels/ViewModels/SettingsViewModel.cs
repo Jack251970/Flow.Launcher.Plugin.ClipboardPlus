@@ -34,7 +34,6 @@ public class SettingsViewModel : BaseModel
             ShowClearKeywordEmptyError();
         }
         ClipboardPlus.CultureInfoChanged += ClipboardPlus_CultureInfoChanged;
-        _oldUseWindowsClipboardHistoryOnlyChanged ??= Settings.UseWindowsClipboardHistoryOnly;
     }
 
     #region Commands
@@ -272,13 +271,20 @@ public class SettingsViewModel : BaseModel
             }
             Settings.SyncWindowsClipboardHistory = value;
             OnPropertyChanged();
-            if (value)
+            if (!ClipboardPlus.UseWindowsClipboardHistoryOnly)
             {
-                ClipboardPlus.EnableWindowsClipboardHelper(true);
+                if (value)
+                {
+                    ClipboardPlus.EnableWindowsClipboardHelper(true);
+                }
+                else
+                {
+                    ClipboardPlus.DisableWindowsClipboardHelper(true);
+                }
             }
-            else
+            else if (ShowRestartAppWarning())
             {
-                ClipboardPlus.DisableWindowsClipboardHelper(true);
+                Context?.API.RestartApp();
             }
         }
     }
@@ -286,9 +292,6 @@ public class SettingsViewModel : BaseModel
     #endregion
 
     #region Use Windows Clipboard History Only
-
-    // Cache old value to prevent unnecessary restart notification
-    private static bool? _oldUseWindowsClipboardHistoryOnlyChanged;
 
     public bool UseWindowsClipboardHistoryOnly
     {
@@ -304,10 +307,10 @@ public class SettingsViewModel : BaseModel
                 Settings.UseWindowsClipboardHistoryOnly = value;
                 OnPropertyChanged();
                 base.OnPropertyChanged(nameof(SyncWindowsClipboardHistoryEnabled));
-                if (value != _oldUseWindowsClipboardHistoryOnlyChanged!.Value && ShowRestartAppWarning())
-                {
-                    Context?.API.RestartApp();
-                }
+            }
+            if (value != ClipboardPlus.UseWindowsClipboardHistoryOnly && ShowRestartAppWarning())
+            {
+                Context?.API.RestartApp();
             }
         }
     }

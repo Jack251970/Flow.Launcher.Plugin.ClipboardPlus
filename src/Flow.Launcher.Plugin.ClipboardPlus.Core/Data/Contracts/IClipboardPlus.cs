@@ -6,6 +6,8 @@ public interface IClipboardPlus
 {
     public PluginInitContext? Context { get; }
 
+    public bool UseWindowsClipboardHistoryOnly { get; }
+
     public IClipboardMonitor ClipboardMonitor { get; }
 
     public SqliteDatabase Database { get; }

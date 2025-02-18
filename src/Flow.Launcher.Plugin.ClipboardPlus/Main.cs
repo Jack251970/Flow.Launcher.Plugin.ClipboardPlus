@@ -17,13 +17,16 @@ namespace Flow.Launcher.Plugin.ClipboardPlus;
 public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPluginI18n,
     IResultUpdated, ISavable, ISettingProvider, IClipboardPlus, IAsyncDisposable
 {
+    // Class name for logging
+    private string ClassName => nameof(ClipboardPlus);
+
     #region Properties
 
     // Plugin context
     private PluginInitContext Context = null!;
 
-    // Class name for logging
-    private string ClassName => nameof(ClipboardPlus);
+    // State of using Windows clipboard history only
+    private bool UseWindowsClipboardHistoryOnly;
 
     // Culture info
     private CultureInfo CultureInfo = null!;
@@ -1770,6 +1773,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     #region IClipboardPlus Interface
 
     PluginInitContext? IClipboardPlus.Context => Context;
+
+    bool IClipboardPlus.UseWindowsClipboardHistoryOnly => Settings.UseWindowsClipboardHistoryOnly;
 
     IClipboardMonitor IClipboardPlus.ClipboardMonitor => ClipboardMonitor;
 
