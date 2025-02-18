@@ -170,6 +170,7 @@ public class WindowsClipboardHelper : IDisposable
 
                     // refresh the list
                     _clipboardHistoryItems.Clear();
+                    _clipboardHistoryItemsIds.Clear();
                     foreach (var item in items)
                     {
                         _clipboardHistoryItems.Add(item);
@@ -186,6 +187,15 @@ public class WindowsClipboardHelper : IDisposable
 
     private void Clipboard_HistoryEnabledChanged(object? sender, object e)
     {
+        if (IsHistoryEnabled())
+        {
+            Clipboard_HistoryChanged(this, null!);
+        }
+        else
+        {
+            _clipboardHistoryItems.Clear();
+            _clipboardHistoryItemsIds.Clear();
+        }
         OnHistoryEnabledChanged?.Invoke(this, IsHistoryEnabled());
     }
 
@@ -392,6 +402,7 @@ public class WindowsClipboardHelper : IDisposable
                 Windows.ApplicationModel.DataTransfer.Clipboard.HistoryChanged -= Clipboard_HistoryChanged;
             }
             _clipboardHistoryItems.Clear();
+            _clipboardHistoryItemsIds.Clear();
             _historyItemLock.Dispose();
             _disposed = true;
         }
