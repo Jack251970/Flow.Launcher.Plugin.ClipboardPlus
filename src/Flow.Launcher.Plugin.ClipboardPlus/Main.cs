@@ -383,8 +383,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
         // init settings
         Settings = context.API.LoadSettingJsonStorage<Settings>();
-        Context.API.LogDebug(ClassName, "Init settings successfully");
-        Context.API.LogInfo(ClassName, $"{Settings}");
+        Context.API.LogDebug(ClassName, $"Init: {Settings}");
 
         // init encrypt key
         StringUtils.InitEncryptKey(Settings.EncryptKey);
@@ -752,7 +751,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     public Control CreateSettingPanel()
     {
-        Context.API.LogWarn(ClassName, $"{Settings}");
+        Context.API.LogDebug(ClassName, $"Settings Panel: {Settings}");
         return new SettingsPanel(this);
     }
 
@@ -930,11 +929,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     pair.Item2.ToKeepTime()
                 );
             }
-            Context.API.LogWarn(ClassName, $"Cleared expired records successfully");
+            Context.API.LogDebug(ClassName, $"Cleared expired records successfully");
         }
         catch (Exception e)
         {
-            Context.API.LogWarn(ClassName, $"Cleared expired records failed\n{e}");
+            Context.API.LogException(ClassName, $"Cleared expired records failed", e);
         }
 
         // restore database records
@@ -967,7 +966,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             await InitRecordsFromSystemAsync();
         }
 
-        Context.API.LogInfo(ClassName, "Restored records successfully");
+        Context.API.LogDebug(ClassName, "Restored records successfully");
     }
 
     private async Task InitRecordsFromSystemAsync()
@@ -1828,7 +1827,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     {
         if (disposing)
         {
-            Context.API.LogWarn(ClassName, $"Enter dispose");
+            Context.API.LogDebug(ClassName, $"Enter dispose");
 
             if (Database != null)
             {
@@ -1872,7 +1871,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             CultureInfoChanged = null;
             Settings = null!;
 
-            Context.API.LogWarn(ClassName, $"Finish dispose");
+            Context.API.LogDebug(ClassName, $"Finish dispose");
             _disposed = true;
         }
     }

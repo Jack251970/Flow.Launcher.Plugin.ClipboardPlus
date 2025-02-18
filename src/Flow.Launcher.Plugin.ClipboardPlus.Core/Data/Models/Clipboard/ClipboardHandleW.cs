@@ -343,12 +343,15 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
             // Applications with Administrative privileges can however override
             // this exception when run in a production environment.
         }
-        catch (NullReferenceException) {}
-        catch (COMException)
+        catch (COMException e) when (e.HResult == (int)CLIPBRD_E_CANT_OPEN)
         {
             // Sometimes the clipboard is locked and cannot be accessed.
             // System.Runtime.InteropServices.COMException (0x800401D0)
             // OpenClipboard Failed (0x800401D0 (CLIPBRD_E_CANT_OPEN))
+        }
+        catch (Exception e)
+        {
+            _context?.API.LogException(ClassName, "Clipboard changed event failed.", e);
         }
     }
 

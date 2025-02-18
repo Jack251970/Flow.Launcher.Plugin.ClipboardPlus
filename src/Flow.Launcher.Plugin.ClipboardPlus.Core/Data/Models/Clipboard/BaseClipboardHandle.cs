@@ -16,6 +16,8 @@ internal class BaseClipboardHandle
 {
     #region Fields
 
+    protected readonly HRESULT CLIPBRD_E_CANT_OPEN = unchecked((HRESULT)0x800401D0);
+
     protected nint _executableHandle = 0;
     protected string _executableName = string.Empty;
     protected string _executablePath = string.Empty;
