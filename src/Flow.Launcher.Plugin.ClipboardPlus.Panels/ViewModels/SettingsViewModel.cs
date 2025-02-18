@@ -302,7 +302,7 @@ public class SettingsViewModel : BaseModel
             {
                 return;
             }
-            if (value && ShowUseWindowsClipboardHistoryOnlyWarning())
+            if (!value || ShowUseWindowsClipboardHistoryOnlyWarning())
             {
                 Settings.UseWindowsClipboardHistoryOnly = value;
                 OnPropertyChanged();
