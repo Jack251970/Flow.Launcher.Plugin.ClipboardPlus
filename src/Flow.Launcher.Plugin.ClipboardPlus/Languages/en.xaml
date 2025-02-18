@@ -13,12 +13,14 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_all_files">All files</system:String>
 
     <!--  Main  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">Clean clipboard</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">Clean current clipboard data</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_disconnect_title">Disconnect from clipboard</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_disconnect_subtitle">Disconnect from clipboard to stop monitoring clipboard data</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_connect_title">Connect to clipboard</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_connect_subtitle">Connect to clipboard to start monitoring clipboard data</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">Clean clipboard</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">Clean current clipboard data</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">Clear records</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">Open menu to clear records in system, list or database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_title">Clear all records in system</system:String>
@@ -59,13 +61,16 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_subtitle">Copy this record as file path</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_title">Copy as file content</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_subtitle">Copy this record as file content</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_save_title">Save</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_save_subtitle">Save this record to database</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_title">Pin</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_subtitle">Pin this record in list and database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_title">Unpin</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_subtitle">Unpin this record in list and database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_title">Delete</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_list_subtitle">Delete this record in list</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_both_subtitle">Delete this record in both list and database</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_system_list_subtitle">Delete this record in system and list</system:String>

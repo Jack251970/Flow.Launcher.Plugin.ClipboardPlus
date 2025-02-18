@@ -13,12 +13,14 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_all_files">所有文件</system:String>
 
     <!--  Main  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">清理剪切板</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">清理當前剪切板數據</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_disconnect_title">取消連接剪貼版</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_disconnect_subtitle">從剪貼版取消連接以停止監視剪貼板數據</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_connect_title">連接剪貼板</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_connect_subtitle">連接到剪貼板以開始監視剪貼板數據</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">清理剪切板</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">清理當前剪切板數據</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">清除記録</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">打開菜單以從系統、列錶或數據庫中清除記録</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_title">從系統清除所有記錄</system:String>
@@ -59,12 +61,15 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_subtitle">複製記録為文件路徑</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_title">複製為文件內容</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_subtitle">複製記録為文件內容</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_save_title">保存</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_save_subtitle">保存記録至數據庫</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_title">固定</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_subtitle">固定記録至列錶和數據庫</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_title">取消固定</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_subtitle">從列錶和數據庫中取消固定</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_title">刪除</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_list_subtitle">從列錶中刪除記録</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_both_subtitle">從列錶和數據庫中刪除記録</system:String>
