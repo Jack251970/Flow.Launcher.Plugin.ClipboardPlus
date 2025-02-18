@@ -627,8 +627,6 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
-    #region Keep Time
-
     #region Encrypt Data
 
     public bool EncryptData
@@ -646,6 +644,8 @@ public class SettingsViewModel : BaseModel
     }
 
     #endregion
+
+    #region Keep Time
 
     #region Text
 

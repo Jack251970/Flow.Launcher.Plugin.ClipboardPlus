@@ -1,4 +1,5 @@
 using Dapper;
+using Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Contracts;
 using Microsoft.Data.Sqlite;
 using System.Globalization;
 using System.Windows.Media.Imaging;
@@ -20,6 +21,8 @@ public class DatabaseHelperTest
     private readonly BitmapImage _defaultImage = new(new Uri(_defaultImagePath, UriKind.Absolute));
 
     private readonly ITestOutputHelper _testOutputHelper;
+
+    private readonly IClipboardPlus _clipboardPlus = new ClipboardPlus();
 
     public DatabaseHelperTest(ITestOutputHelper testOutputHelper)
     {
@@ -89,7 +92,7 @@ public class DatabaseHelperTest
     {
         var helper = new SqliteDatabase(
             "TestDb",
-            1,
+            _clipboardPlus,
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
         );
@@ -108,7 +111,7 @@ public class DatabaseHelperTest
         var exampleTextRecord = GetRandomClipboardData();
         var helper = new SqliteDatabase(
             "TestDb",
-            1,
+            _clipboardPlus,
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
         );
@@ -138,7 +141,7 @@ public class DatabaseHelperTest
     {
         var helper = new SqliteDatabase(
             "TestDb",
-            1,
+            _clipboardPlus,
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
         );
@@ -182,7 +185,7 @@ public class DatabaseHelperTest
         var exampleTextRecord = GetRandomClipboardData();
         var helper = new SqliteDatabase(
             "TestDb",
-            1,
+            _clipboardPlus,
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
         );
@@ -202,7 +205,7 @@ public class DatabaseHelperTest
         var exampleTextRecord = GetRandomClipboardData();
         var helper = new SqliteDatabase(
             "TestDb",
-            1,
+            _clipboardPlus,
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
         );
@@ -219,7 +222,7 @@ public class DatabaseHelperTest
     {
         var helper = new SqliteDatabase(
             "TestDb",
-            1,
+            _clipboardPlus,
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
         );
@@ -227,7 +230,7 @@ public class DatabaseHelperTest
         var validNum = 0;
         var invalidNum = 0;
         _testOutputHelper.WriteLine("Add Data");
-        for (int i = 0; i < 10; i++)
+        for (var i = 0; i < 10; i++)
         {
             var valid = _random.NextDouble() > 0.5;
             var exampleTextRecord = GetRandomClipboardData(valid);
@@ -252,7 +255,7 @@ public class DatabaseHelperTest
             num++;
             _testOutputHelper.WriteLine($"{num}: {record}");
         }
-        Assert.Equal(validNum, c.Count());
+        Assert.Equal(validNum, c.Count);
     }
 
     [Fact]
@@ -260,7 +263,7 @@ public class DatabaseHelperTest
     {
         var helper = new SqliteDatabase(
             "TestDb",
-            1,
+            _clipboardPlus,
             mode: SqliteOpenMode.Memory,
             cache: SqliteCacheMode.Private
         );
@@ -294,6 +297,6 @@ public class DatabaseHelperTest
             num++;
             _testOutputHelper.WriteLine($"{num}: {record}");
         }
-        Assert.Equal(pinnedNum, c.Count());
+        Assert.Equal(pinnedNum, c.Count);
     }
 }

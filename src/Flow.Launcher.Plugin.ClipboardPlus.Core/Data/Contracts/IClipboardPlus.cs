@@ -8,15 +8,17 @@ public interface IClipboardPlus
 
     public bool UseWindowsClipboardHistoryOnly { get; }
 
-    public IClipboardMonitor ClipboardMonitor { get; }
+    public ObservableDataFormats ObservableDataFormats { get; }
 
     public SqliteDatabase Database { get; }
 
-    Task InitRecordsFromDatabaseAndSystemAsync();
+    public ScoreHelper ScoreHelper { get; }
 
-    void EnableWindowsClipboardHelper(bool load);
+    public Task InitRecordsFromDatabaseAndSystemAsync(bool database, bool system);
 
-    void DisableWindowsClipboardHelper(bool remove);
+    public void EnableWindowsClipboardHelper(bool load);
+
+    public void DisableWindowsClipboardHelper(bool remove);
 
     public ISettings Settings { get; }
 

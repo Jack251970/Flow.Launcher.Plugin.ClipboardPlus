@@ -26,21 +26,19 @@ public class SqliteDatabase : IAsyncDisposable
 
     #endregion
 
-    #region Score
+    #region ClipboardPlus
 
-    private readonly ScoreHelper ScoreHelper;
+    private readonly IClipboardPlus ClipboardPlus;
+
+    private ScoreHelper ScoreHelper => ClipboardPlus.ScoreHelper;
+
+    private PluginInitContext Context => ClipboardPlus.Context!;
 
     #endregion
 
     #region Connection
 
     public SqliteConnection Connection;
-
-    #endregion
-
-    #region Context
-
-    private readonly PluginInitContext Context;
 
     #endregion
 
@@ -194,13 +192,12 @@ public class SqliteDatabase : IAsyncDisposable
 
     public SqliteDatabase(
         string databasePath,
-        ScoreHelper scoreHelper,
+        IClipboardPlus clipboardPlus,
         SqliteCacheMode cache = SqliteCacheMode.Default,
-        SqliteOpenMode mode = SqliteOpenMode.ReadWriteCreate,
-        PluginInitContext? context = null
+        SqliteOpenMode mode = SqliteOpenMode.ReadWriteCreate
     )
     {
-        ScoreHelper = scoreHelper;
+        ClipboardPlus = clipboardPlus;
         var connectionString = new SqliteConnectionStringBuilder()
         {
             DataSource = databasePath,
@@ -209,7 +206,6 @@ public class SqliteDatabase : IAsyncDisposable
             Cache = cache,
         }.ToString();
         Connection = new SqliteConnection(connectionString);
-        Context = context!;
     }
 
     #endregion

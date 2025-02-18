@@ -35,7 +35,7 @@ public partial class MainWindow : Window
 
     private readonly WindowsClipboardHelper Helper = new();
 
-    private List<ClipboardData> RecordList = null!;
+    private List<ClipboardData> RecordList = new();
 
     private int _count = 0;
 

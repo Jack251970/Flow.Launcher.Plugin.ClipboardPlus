@@ -218,6 +218,40 @@ public class WindowsClipboardHelper : IDisposable
 
     #region History Items
 
+    public async Task<List<ClipboardData>?> GetHistoryItemsAsync()
+    {
+        if (IsClipboardHistorySupported())
+        {
+            await _historyItemLock.WaitAsync();
+            try
+            {
+                // filter and sort the items (later item last)
+                var laterSortedItems = _clipboardHistoryItems
+                    .OrderBy(x => x.Timestamp.DateTime)
+                    .ToList();
+
+                // get the clipboard data
+                var clipboardDataItems = new List<ClipboardData>();
+                foreach (var item in laterSortedItems)
+                {
+                    var clipboardData = await GetClipboardData(item);
+                    if (!clipboardData.IsNull())
+                    {
+                        clipboardDataItems.Add(clipboardData);
+                        _clipboardPlus.ScoreHelper.Add();
+                    }
+                }
+                return clipboardDataItems;
+            }
+            finally
+            {
+                _historyItemLock.Release();
+            }
+        }
+
+        return null;
+    }
+
     public async Task<List<ClipboardData>?> GetLaterHistoryItemsAsync(DateTime dateTime)
     {
         if (IsClipboardHistorySupported())
@@ -239,6 +273,7 @@ public class WindowsClipboardHelper : IDisposable
                     if (!clipboardData.IsNull())
                     {
                         clipboardDataItems.Add(clipboardData);
+                        _clipboardPlus.ScoreHelper.Add();
                     }
                 }
                 return clipboardDataItems;
@@ -265,15 +300,8 @@ public class WindowsClipboardHelper : IDisposable
         var hashId = GetHashId(item.Id);
         var createTime = item.Timestamp.DateTime;
 
-#if DEBUG
-        if (_clipboardPlus.ClipboardMonitor == null)
-        {
-            return ClipboardData.NULL;
-        }
-#endif
-
         // Determines whether a file/files have been cut/copied.
-        if (_clipboardPlus.ClipboardMonitor.ObservableFormats.Images && ClipboardHandleWin.IsDataImage(dataObj))
+        if (_clipboardPlus.ObservableDataFormats.Images && ClipboardHandleWin.IsDataImage(dataObj))
         {
             // Make sure on the application dispatcher.
             var clipboardData = await System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
@@ -300,7 +328,7 @@ public class WindowsClipboardHelper : IDisposable
             return await clipboardData;
         }
         // Determines whether plain text or rich text has been cut/copied.
-        else if (_clipboardPlus.ClipboardMonitor.ObservableFormats.Texts && ClipboardHandleWin.IsDataText(dataObj))
+        else if (_clipboardPlus.ObservableDataFormats.Texts && ClipboardHandleWin.IsDataText(dataObj))
         {
             var (plainText, richText, dataType) = await ClipboardHandleWin.GetTextContentAsync(dataObj);
             var clipboardData = _clipboardPlus.GetClipboardDataItem(
@@ -319,7 +347,7 @@ public class WindowsClipboardHelper : IDisposable
             return clipboardData;
         }
         // Determines whether a file has been cut/copied.
-        else if (_clipboardPlus.ClipboardMonitor.ObservableFormats.Files && ClipboardHandleWin.IsDataFiles(dataObj))
+        else if (_clipboardPlus.ObservableDataFormats.Files && ClipboardHandleWin.IsDataFiles(dataObj))
         {
             // If the 'capturedFiles' string array persists as null, then this means
             // that the copied content is of a complex object type since the file-drop
@@ -361,7 +389,7 @@ public class WindowsClipboardHelper : IDisposable
             }
         }
         // Determines whether an unknown object has been cut/copied.
-        else if (_clipboardPlus.ClipboardMonitor.ObservableFormats.Others && (!ClipboardHandleWin.IsDataFiles(dataObj)))
+        else if (_clipboardPlus.ObservableDataFormats.Others && (!ClipboardHandleWin.IsDataFiles(dataObj)))
         {
             var clipboardData = _clipboardPlus.GetClipboardDataItem(
                 dataObj,

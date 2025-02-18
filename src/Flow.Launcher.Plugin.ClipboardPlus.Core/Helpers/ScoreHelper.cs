@@ -19,6 +19,18 @@ public class ScoreHelper
         CurrentScore = 1;
     }
 
+    public void Reset(LinkedList<ClipboardDataPair> recordsList)
+    {
+        if (recordsList.Any())
+        {
+            CurrentScore = recordsList.Max(r => r.ClipboardData.InitScore);
+        }
+        else
+        {
+            Reset();
+        }
+    }
+
     public void Add()
     {
         CurrentScore += ScoreInterval;
@@ -27,10 +39,5 @@ public class ScoreHelper
     public void Subtract()
     {
         CurrentScore -= ScoreInterval;
-    }
-
-    public void Max(LinkedList<ClipboardDataPair> recordsList)
-    {
-        CurrentScore = recordsList.Max(r => r.ClipboardData.InitScore);
     }
 }

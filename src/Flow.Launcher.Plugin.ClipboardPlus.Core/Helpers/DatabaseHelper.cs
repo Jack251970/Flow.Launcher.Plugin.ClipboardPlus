@@ -66,7 +66,7 @@ public static class DatabaseHelper
             }
             if (addedCount > 0)
             {
-                await clipboardPlus.InitRecordsFromDatabaseAndSystemAsync();
+                await clipboardPlus.InitRecordsFromDatabaseAndSystemAsync(true, true);
             }
             context?.API.ShowMsg(context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                 string.Format(context.GetTranslation("flowlauncher_plugin_clipboardplus_import_succeeded"), addedCount));

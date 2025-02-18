@@ -1,9 +1,7 @@
-﻿using System.Globalization;
-using System;
-using System.IO;
-using System.Threading.Tasks;
+﻿using Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Contracts;
+using System.Globalization;
 
-namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Test;
+namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Test;
 
 internal class ClipboardPlus : IClipboardPlus
 {
@@ -23,7 +21,7 @@ internal class ClipboardPlus : IClipboardPlus
 
     public ScoreHelper ScoreHelper { get; } = new ScoreHelper(1);
 
-    public ISettings Settings { get; }
+    public ISettings Settings { get; } = null!;
 
     public CultureInfo CultureInfo { get; private set; } = new CultureInfo("en-US");
 
@@ -31,8 +29,6 @@ internal class ClipboardPlus : IClipboardPlus
 
     public ClipboardPlus()
     {
-        Settings = new Settings();
-        StringUtils.InitEncryptKey(Settings.EncryptKey);
         Database = new SqliteDatabase(Path.Combine(AppContext.BaseDirectory, "ClipboardPlus.db"), this);
     }
 
@@ -61,14 +57,8 @@ internal class ClipboardPlus : IClipboardPlus
         return Settings;
     }
 
-    public void OnCultureInfoChanged(CultureInfo cultureInfo)
-    {
-        CultureInfo = cultureInfo;
-        CultureInfoChanged?.Invoke(this, cultureInfo);
-    }
-
     public void SaveSettingJsonStorage()
     {
-        
+
     }
 }

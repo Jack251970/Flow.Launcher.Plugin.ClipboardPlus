@@ -42,7 +42,16 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     // Clipboard monitor instance
     // Warning: Do not init the instance in InitAsync function! This will cause issues.
-    private IClipboardMonitor ClipboardMonitor;
+    private IClipboardMonitor? ClipboardMonitor;
+
+    // Observable data formats
+    private readonly ObservableDataFormats ObservableDataFormats = new()
+    {
+        Images = true,
+        Texts = true,
+        Files = true,
+        Others = false
+    };
 
     // Windows clipboard helper
     private WindowsClipboardHelper WindowsClipboardHelper = new();
@@ -103,13 +112,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             ClipboardMonitor = new ClipboardMonitorWin()
             {
                 ObserveLastEntry = false,
-                ObservableFormats = new()
-                {
-                    Images = true,
-                    Texts = true,
-                    Files = true,
-                    Others = false
-                }
+                ObservableFormats = ObservableDataFormats
             };
         }
         else
@@ -117,13 +120,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             ClipboardMonitor = new ClipboardMonitorW()
             {
                 ObserveLastEntry = false,
-                ObservableFormats = new()
-                {
-                    Images = true,
-                    Texts = true,
-                    Files = true,
-                    Others = false
-                }
+                ObservableFormats = ObservableDataFormats
             };
         }
     }
@@ -180,107 +177,110 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             }
 
             // clear list and database actions
-            results.AddRange(
-                new[]
+            results.Add(new Result
+            {
+                Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_title"),
+                SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_subtitle"),
+                IcoPath = PathHelper.ListIconPath,
+                Glyph = ResourceHelper.ListGlyph,
+                Score = ScoreInterval4,
+                AsyncAction = async (c) =>
                 {
-                    new Result
+                    var number = await DeleteAllRecordsFromListAsync();
+                    if (number != 0)
                     {
-                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_title"),
-                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_subtitle"),
-                        IcoPath = PathHelper.ListIconPath,
-                        Glyph = ResourceHelper.ListGlyph,
-                        Score = ScoreInterval4,
-                        AsyncAction = async (c) =>
+                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                            string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle"), number));
+                        return true;
+                    }
+                    else
+                    {
+                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                            Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
+                        return false;
+                    }
+                },
+            });
+            if (!UseWindowsClipboardHistoryOnly)
+            {
+                results.AddRange(
+                    new[]
+                    {
+                        new Result
                         {
-                            var number = await DeleteAllRecordsFromList();
-                            if (number != 0)
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_subtitle"),
+                            IcoPath = PathHelper.DatabaseIconPath,
+                            Glyph = ResourceHelper.DatabaseGlyph,
+                            Score = ScoreInterval3,
+                            AsyncAction = async (c) =>
                             {
-                                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                    string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle"), number));
-                                return true;
-                            }
-                            else
-                            {
-                                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
-                                return false;
+                                var number = await DeleteAllRecordsFromListDatabaseAsync();
+                                if (number != 0)
+                                {
+                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle"), number));
+                                    return true;
+                                }
+                                else
+                                {
+                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
+                                    return false;
+                                }
                             }
                         },
-                    },
-                    new Result
-                    {
-                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_title"),
-                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_subtitle"),
-                        IcoPath = PathHelper.DatabaseIconPath,
-                        Glyph = ResourceHelper.DatabaseGlyph,
-                        Score = ScoreInterval3,
-                        AsyncAction = async (c) =>
+                        new Result
                         {
-                            var number = await DeleteAllRecordsFromListDatabase();
-                            if (number != 0)
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_subtitle"),
+                            IcoPath = PathHelper.UnpinIcon1Path,
+                            Glyph = ResourceHelper.UnpinGlyph,
+                            Score = ScoreInterval2,
+                            AsyncAction = async (c) =>
                             {
-                                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                    string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle"), number));
-                                return true;
+                                var number = await DeleteUnpinnedRecordsFromListDatabaseAsync();
+                                if (number != 0)
+                                {
+                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_msg_subtitle"), number));
+                                    return true;
+                                }
+                                else
+                                {
+                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
+                                    return false;
+                                }
                             }
-                            else
-                            {
-                                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
-                                return false;
-                            }
-                        }
-                    },
-                    new Result
-                    {
-                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_title"),
-                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_subtitle"),
-                        IcoPath = PathHelper.UnpinIcon1Path,
-                        Glyph = ResourceHelper.UnpinGlyph,
-                        Score = ScoreInterval2,
-                        AsyncAction = async (c) =>
+                        },
+                        new Result
                         {
-                            var number = await DeleteUnpinnedRecordsFromListDatabase();
-                            if (number != 0)
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_subtitle"),
+                            IcoPath = PathHelper.ErrorIconPath,
+                            Glyph = ResourceHelper.ErrorGlyph,
+                            Score = ScoreInterval1,
+                            AsyncAction = async (c) =>
                             {
-                                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                    string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_msg_subtitle"), number));
-                                return true;
-                            }
-                            else
-                            {
-                                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
-                                return false;
-                            }
-                        }
-                    },
-                    new Result
-                    {
-                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_title"),
-                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_subtitle"),
-                        IcoPath = PathHelper.ErrorIconPath,
-                        Glyph = ResourceHelper.ErrorGlyph,
-                        Score = ScoreInterval1,
-                        AsyncAction = async (c) =>
-                        {
-                            var number = await DeleteInvalidRecordsFromListDatabase();
-                            if (number != 0)
-                            {
-                                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                    string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle"), number));
-                                return true;
-                            }
-                            else
-                            {
-                                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
-                                return false;
+                                var number = await DeleteInvalidRecordsFromListDatabaseAsync();
+                                if (number != 0)
+                                {
+                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle"), number));
+                                    return true;
+                                }
+                                else
+                                {
+                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
+                                    return false;
+                                }
                             }
                         }
                     }
-                }
-            );
+                );
+            }
         }
         else
         {
@@ -295,43 +295,46 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 Action = (c) =>
                 {
                     Win32Helper.StartSTATask(Clipboard.Clear);
-                    ClipboardMonitor.CleanClipboard();
+                    ClipboardMonitor?.CleanClipboard();
                     return true;
                 },
             });
 
             // connect & disconnect action
-            if (ClipboardMonitor.MonitorClipboard)
+            if (ClipboardMonitor != null)
             {
-                results.Add(new Result
+                if (ClipboardMonitor.MonitorClipboard)
                 {
-                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_disconnect_title"),
-                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_disconnect_subtitle"),
-                    IcoPath = PathHelper.DisconnectIconPath,
-                    Glyph = ResourceHelper.DisconnectGlyph,
-                    Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
-                    Action = (c) =>
+                    results.Add(new Result
                     {
-                        ClipboardMonitor.PauseMonitoring();
-                        return true;
-                    },
-                });
-            }
-            else
-            {
-                results.Add(new Result
+                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_disconnect_title"),
+                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_disconnect_subtitle"),
+                        IcoPath = PathHelper.DisconnectIconPath,
+                        Glyph = ResourceHelper.DisconnectGlyph,
+                        Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
+                        Action = (c) =>
+                        {
+                            ClipboardMonitor.PauseMonitoring();
+                            return true;
+                        },
+                    });
+                }
+                else
                 {
-                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_connect_title"),
-                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_connect_subtitle"),
-                    IcoPath = PathHelper.ConnectIconPath,
-                    Glyph = ResourceHelper.ConnectGlyph,
-                    Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
-                    Action = (c) =>
+                    results.Add(new Result
                     {
-                        ClipboardMonitor.ResumeMonitoring();
-                        return true;
-                    },
-                });
+                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_connect_title"),
+                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_connect_subtitle"),
+                        IcoPath = PathHelper.ConnectIconPath,
+                        Glyph = ResourceHelper.ConnectGlyph,
+                        Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
+                        Action = (c) =>
+                        {
+                            ClipboardMonitor.ResumeMonitoring();
+                            return true;
+                        },
+                    });
+                }
             }
 
             // clear action
@@ -370,7 +373,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 }
             }
             RecordsLock.Release();
-            Context.API.LogDebug(ClassName, "Added records successfully");
+            Context.API.LogDebug(ClassName, $"Added {records.Length} records successfully");
         }
         return results;
     }
@@ -378,7 +381,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     public async Task InitAsync(PluginInitContext context)
     {
         Context = context;
-        ClipboardMonitor.SetContext(context);
+        ClipboardMonitor!.SetContext(context);
         WindowsClipboardHelper.SetClipboardPlus(this);
 
         // init path helper
@@ -394,32 +397,54 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         // init score helper
         ScoreHelper = new ScoreHelper(ScoreInterval);
 
-        // init database & records
-        var fileExists = File.Exists(PathHelper.DatabasePath);
-        Database = new SqliteDatabase(PathHelper.DatabasePath, ScoreHelper, context: context);
-        await Database.InitializeDatabaseAsync();
-        if (fileExists)
-        {
-            await InitRecordsFromDatabaseAndSystemAsync();
-        }
-        Context.API.LogDebug(ClassName, "Init database successfully");
+        // setup use Windows clipboard history only
+        UseWindowsClipboardHistoryOnly = Settings.UseWindowsClipboardHistoryOnly && CheckUseWindowsClipboardHistoryOnly();
+        Context.API.LogInfo(ClassName, $"Use Windows clipboard history only: {UseWindowsClipboardHistoryOnly}");
 
-        // init & start clipboard monitor
-        ClipboardMonitor.ClipboardChanged += ClipboardMonitor_OnClipboardChanged;
-        ClipboardMonitor.StartMonitoring();
-        if (ClipboardMonitor.GetType() == typeof(ClipboardMonitorWin))
+        if (UseWindowsClipboardHistoryOnly)
         {
-            Context.API.LogInfo(ClassName, "Init Windows clipboard monitor successfully");
+            // init database
+            Database = new SqliteDatabase(PathHelper.DatabasePath, this);
+            await Database.InitializeDatabaseAsync();
+            Context.API.LogDebug(ClassName, "Init database successfully");
+
+            // dispose clipboard monitor
+            ClipboardMonitor.ClipboardChanged -= ClipboardMonitor_OnClipboardChanged;
+            ClipboardMonitor.Dispose();
+            ClipboardMonitor = null;
+
+            // init Windows clipboard helper & records from Windows clipboard history
+            EnableWindowsClipboardHelper(true);
         }
         else
         {
-            Context.API.LogInfo(ClassName, "Init WPF clipboard monitor successfully");
-        }
+            // init database
+            var fileExists = File.Exists(PathHelper.DatabasePath);
+            Database = new SqliteDatabase(PathHelper.DatabasePath, this);
+            await Database.InitializeDatabaseAsync();
+            Context.API.LogDebug(ClassName, "Init database successfully");
 
-        // init windows clipboard helper
-        if (Settings.SyncWindowsClipboardHistory)
-        {
-            EnableWindowsClipboardHelper(false);
+            // init records from database
+            await InitRecordsFromDatabaseAndSystemAsync(fileExists, false);
+            Context.API.LogDebug(ClassName, $"Init {RecordsList.Count} records successfully");
+
+            // init & start clipboard monitor
+            ClipboardMonitor.ClipboardChanged += ClipboardMonitor_OnClipboardChanged;
+            ClipboardMonitor.StartMonitoring();
+            if (ClipboardMonitor.GetType() == typeof(ClipboardMonitorWin))
+            {
+                Context.API.LogInfo(ClassName, "Init Windows clipboard monitor successfully");
+            }
+            else
+            {
+                Context.API.LogInfo(ClassName, "Init WPF clipboard monitor successfully");
+            }
+
+            // init Windows clipboard helper & records from Windows clipboard history
+            if (Settings.SyncWindowsClipboardHistory)
+            {
+                EnableWindowsClipboardHelper(true);
+            }
         }
     }
 
@@ -430,7 +455,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     public async Task ReloadDataAsync()
     {
         // reload records
-        await InitRecordsFromDatabaseAndSystemAsync();
+        await InitRecordsFromDatabaseAndSystemAsync(!UseWindowsClipboardHistoryOnly, true);
     }
 
     #endregion
@@ -636,78 +661,101 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 break;
         }
 
-        // Save
-        var saved = clipboardData.Saved;
-        if (!clipboardData.Saved)
+        var pinned = clipboardData.Pinned;
+        if (!UseWindowsClipboardHistoryOnly)
         {
+            // Save
+            var saved = clipboardData.Saved;
+            if (!clipboardData.Saved)
+            {
+                results.Add(new Result
+                {
+                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_save_title"),
+                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_save_subtitle"),
+                    IcoPath = PathHelper.DatabaseIconPath,
+                    Glyph = ResourceHelper.DatabaseGlyph,
+                    Score = ScoreInterval3,
+                    Action = (c) =>
+                    {
+                        _ = SaveToDatabaseAsync(clipboardDataPair, true);
+                        return false;
+                    }
+                });
+            }
+
+            // Pin
+            var pinStr = pinned ? "unpin" : "pin";
             results.Add(new Result
             {
-                Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_save_title"),
-                SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_save_subtitle"),
-                IcoPath = PathHelper.DatabaseIconPath,
-                Glyph = ResourceHelper.DatabaseGlyph,
-                Score = ScoreInterval3,
+                Title = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_title"),
+                SubTitle = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_subtitle"),
+                IcoPath = PathHelper.GetPinIconPath(pinned),
+                Glyph = ResourceHelper.GetPinGlyph(pinned),
+                Score = ScoreInterval2,
                 Action = (c) =>
                 {
-                    _ = SaveToDatabase(clipboardDataPair, true);
+                    _ = PinRecordAsync(clipboardDataPair, true);
                     return false;
                 }
             });
         }
 
-        // Pin
-        var pinned = clipboardData.Pinned;
-        var pinStr = pinned ? "unpin" : "pin";
-        results.Add(new Result
+        if (UseWindowsClipboardHistoryOnly)
         {
-            Title = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_title"),
-            SubTitle = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_{pinStr}_subtitle"),
-            IcoPath = PathHelper.GetPinIconPath(pinned),
-            Glyph = ResourceHelper.GetPinGlyph(pinned),
-            Score = ScoreInterval2,
-            Action = (c) =>
-            {
-                _ = PinOneRecord(clipboardDataPair, true);
-                return false;
-            }
-        });
-
-        // Delete
-        var fromSystem = clipboardData.FromWindowsClipboardHistory();
-        if (!fromSystem)
-        {
-            var deleteStr = pinned ? "both" : "list";
             results.Add(new Result
             {
                 Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_delete_title"),
-                SubTitle = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_delete_{deleteStr}_subtitle"),
+                SubTitle = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_delete_system_list_subtitle"),
                 IcoPath = PathHelper.DeleteIconPath,
                 Glyph = ResourceHelper.DeleteGlyph,
                 Score = ScoreInterval1,
                 Action = (c) =>
                 {
-                    _ = RemoveFromListDatabase(clipboardDataPair, true);
+                    _ = RemoveFromListDatabaseAsync(clipboardDataPair, true);
+                    WindowsClipboardHelper.DeleteItemFromHistory(clipboardData);
                     return false;
                 }
             });
         }
         else
         {
-            var deleteStr = pinned ? "system_both" : "system_list";
-            results.Add(new Result
+            // Delete
+            var fromSystem = clipboardData.FromWindowsClipboardHistory();
+            if (!fromSystem)
             {
-                Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_delete_title"),
-                SubTitle = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_delete_{deleteStr}_subtitle"),
-                IcoPath = PathHelper.DeleteIconPath,
-                Glyph = ResourceHelper.DeleteGlyph,
-                Score = ScoreInterval1,
-                Action = (c) =>
+                var deleteStr = pinned ? "both" : "list";
+                results.Add(new Result
                 {
-                    _ = RemoveFromListDatabase(clipboardDataPair, true);
-                    WindowsClipboardHelper.DeleteItemFromHistory(clipboardData);
-                    return false;
-                }
-            });
+                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_delete_title"),
+                    SubTitle = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_delete_{deleteStr}_subtitle"),
+                    IcoPath = PathHelper.DeleteIconPath,
+                    Glyph = ResourceHelper.DeleteGlyph,
+                    Score = ScoreInterval1,
+                    Action = (c) =>
+                    {
+                        _ = RemoveFromListDatabaseAsync(clipboardDataPair, true);
+                        return false;
+                    }
+                });
+            }
+            else
+            {
+                var deleteStr = pinned ? "system_both" : "system_list";
+                results.Add(new Result
+                {
+                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_delete_title"),
+                    SubTitle = Context.GetTranslation($"flowlauncher_plugin_clipboardplus_delete_{deleteStr}_subtitle"),
+                    IcoPath = PathHelper.DeleteIconPath,
+                    Glyph = ResourceHelper.DeleteGlyph,
+                    Score = ScoreInterval1,
+                    Action = (c) =>
+                    {
+                        _ = RemoveFromListDatabaseAsync(clipboardDataPair, true);
+                        WindowsClipboardHelper.DeleteItemFromHistory(clipboardData);
+                        return false;
+                    }
+                });
+            }
         }
 
         return results;
@@ -768,6 +816,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private async void ClipboardMonitor_OnClipboardChanged(object? sender, ClipboardChangedEventArgs e)
     {
         Context.API.LogDebug(ClassName, "Clipboard changed");
+
         if (sender is not IClipboardMonitor clipboardMonitor)
         {
             return;
@@ -795,10 +844,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
 
         // init clipboard data
-        var saved = Settings.KeepText && dataType == DataType.PlainText
-            || Settings.KeepText && dataType == DataType.RichText
-            || Settings.KeepImages && dataType == DataType.Image
-            || Settings.KeepFiles && dataType == DataType.Files;
+        var saved = 
+            UseWindowsClipboardHistoryOnly != true && 
+            (Settings.KeepText && dataType == DataType.PlainText ||
+            Settings.KeepText && dataType == DataType.RichText ||
+            Settings.KeepImages && dataType == DataType.Image ||
+            Settings.KeepFiles && dataType == DataType.Files);
         var clipboardData = new ClipboardData(content, dataType, Settings.EncryptData)
         {
             HashId = hashId,
@@ -852,7 +903,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             ClipboardData = clipboardData,
             PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, clipboardData))
         });
-        Context.API.LogDebug(ClassName, "Added to list");
 
         // update score
         ScoreHelper.Add();
@@ -861,8 +911,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         if (clipboardData.Saved)
         {
             _ = Database.AddOneRecordAsync(clipboardData, true);  // no need to wait
+            Context.API.LogDebug(ClassName, $"Record {clipboardData.HashId} added to list and database");
         }
-        Context.API.LogDebug(ClassName, "Added to database");
+        else
+        {
+            Context.API.LogDebug(ClassName, $"Record {clipboardData.HashId} added to list");
+        }
 
         // remove last record if needed
         if (RecordsList.Count >= Settings.MaxRecords)
@@ -875,168 +929,247 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         GarbageCollect();
     }
 
+    private void AddClipboardDataItem(List<ClipboardData> clipboardDataList)
+    {
+        var removeCount = RecordsList.Count + clipboardDataList.Count - Settings.MaxRecords;
+
+        foreach (var clipboardData in clipboardDataList)
+        {
+            // add to list and database if no repeat
+            RecordsList.AddFirst(new ClipboardDataPair()
+            {
+                ClipboardData = clipboardData,
+                PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, clipboardData))
+            });
+
+            // save to database if needed
+            if (clipboardData.Saved)
+            {
+                _ = Database.AddOneRecordAsync(clipboardData, true);  // no need to wait
+                Context.API.LogDebug(ClassName, $"Record {clipboardData.HashId} added to list and database");
+            }
+            else
+            {
+                Context.API.LogDebug(ClassName, $"Record {clipboardData.HashId} added to list");
+            }
+        }
+
+        // remove last record if needed
+        for (int i = 0; i < removeCount; i++)
+        {
+            if (RecordsList.Count >= Settings.MaxRecords)
+            {
+                RecordsList.Last?.Value.Dispose();
+                RecordsList.RemoveLast();
+            }
+        }
+
+        // collect garbage
+        GarbageCollect();
+    }
+
     #endregion
 
     #region Windows Clipboard Helper
 
-    public void EnableWindowsClipboardHelper(bool load)
+    public bool CheckUseWindowsClipboardHistoryOnly()
     {
+        if (!WindowsClipboardHelper.IsClipboardHistorySupported())
+        {
+            Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                Context.GetTranslation("flowlauncher_plugin_clipboardplus_windows_history_not_supported"));
+            return false;
+        }
+
+        return true;
+    }
+
+    public async void EnableWindowsClipboardHelper(bool load)
+    {
+        if (UseWindowsClipboardHistoryOnly)
+        {
+            WindowsClipboardHelper.OnHistoryItemAdded += WindowsClipboardHelper_OnHistoryItemAdded;
+        }
         WindowsClipboardHelper.OnHistoryItemRemoved += WindowsClipboardHelper_OnHistoryItemRemoved;
         WindowsClipboardHelper.OnHistoryEnabledChanged += WindowsClipboardHelper_OnHistoryEnabledChanged;
         WindowsClipboardHelper.EnableClipboardHistory();
         if (load)
         {
-            _ = InitRecordsFromSystemAsync();
+            await RecordsLock.WaitAsync();
+            await InitRecordsFromSystemAsync(true);
+            RecordsLock.Release();
         }
     }
 
-    public void DisableWindowsClipboardHelper(bool remove)
+    public async void DisableWindowsClipboardHelper(bool remove)
     {
+        WindowsClipboardHelper.DisableClipboardHistory();
+        if (UseWindowsClipboardHistoryOnly)
+        {
+            WindowsClipboardHelper.OnHistoryItemAdded -= WindowsClipboardHelper_OnHistoryItemAdded;
+        }
         WindowsClipboardHelper.OnHistoryItemRemoved -= WindowsClipboardHelper_OnHistoryItemRemoved;
         WindowsClipboardHelper.OnHistoryEnabledChanged -= WindowsClipboardHelper_OnHistoryEnabledChanged;
-        WindowsClipboardHelper.DisableClipboardHistory();
         if (remove)
         {
-            _ = RemoveRecordsFromSystemAsync();
+            await RecordsLock.WaitAsync();
+            RemoveRecordsFromSystem();
+            RecordsLock.Release();
         }
     }
 
-    private void WindowsClipboardHelper_OnHistoryItemRemoved(object? sender, string[] e)
+    private void WindowsClipboardHelper_OnHistoryItemAdded(object? sender, ClipboardData e)
     {
-        _ = RemoveRecordsFromSystemAsync(r => e.Contains(r.HashId));
+        AddClipboardDataItem(e);
     }
 
-    private void WindowsClipboardHelper_OnHistoryEnabledChanged(object? sender, bool e)
+    private async void WindowsClipboardHelper_OnHistoryItemRemoved(object? sender, string[] e)
     {
+        await RecordsLock.WaitAsync();
+        RemoveRecordsFromSystem(r => e.Contains(r.HashId));
+        RecordsLock.Release();
+    }
+
+    private async void WindowsClipboardHelper_OnHistoryEnabledChanged(object? sender, bool e)
+    {
+        await RecordsLock.WaitAsync();
         if (e)
         {
-            _ = InitRecordsFromSystemAsync();
+            await InitRecordsFromSystemAsync(true);
         }
         else
         {
-            _ = RemoveRecordsFromSystemAsync();
+            RemoveRecordsFromSystem();
         }
+        RecordsLock.Release();
     }
 
     #endregion
 
     #region List & Database & Windows History
 
-    public async Task InitRecordsFromDatabaseAndSystemAsync()
+    public async Task InitRecordsFromDatabaseAndSystemAsync(bool database, bool system)
     {
-        // clear expired records
-        try
+        // manage database
+        IEnumerable<ClipboardDataPair>? databaseDataPairs = null;
+        if (database)
         {
-            foreach (var pair in Settings.KeepTimePairs)
+            if (!UseWindowsClipboardHistoryOnly)
             {
-                Context.API.LogDebug(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
-                await Database.DeleteRecordsByKeepTimeAsync(
-                    (int)pair.Item1,
-                    pair.Item2.ToKeepTime()
-                );
+                // clear expired records
+                try
+                {
+                    foreach (var pair in Settings.KeepTimePairs)
+                    {
+                        Context.API.LogDebug(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
+                        await Database.DeleteRecordsByKeepTimeAsync((int)pair.Item1, pair.Item2.ToKeepTime());
+                    }
+                    Context.API.LogDebug(ClassName, $"Cleared expired records successfully");
+                }
+                catch (Exception e)
+                {
+                    Context.API.LogException(ClassName, $"Cleared expired records failed", e);
+                }
+
+                // restore database records
+                var records = await Database.GetAllRecordsAsync(true);
+                if (records.Any())
+                {
+                    databaseDataPairs = records.Select(record => new ClipboardDataPair()
+                    {
+                        ClipboardData = record,
+                        PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, record))
+                    });
+                }
             }
-            Context.API.LogDebug(ClassName, $"Cleared expired records successfully");
-        }
-        catch (Exception e)
-        {
-            Context.API.LogException(ClassName, $"Cleared expired records failed", e);
         }
 
+        await RecordsLock.WaitAsync();
+
+        // clean records
+        ClearRecordsList();
+
         // restore database records
-        var records = await Database.GetAllRecordsAsync(true);
-        if (records.Any())
+        if (databaseDataPairs != null)
         {
-            var records1 = records.Select(record => new ClipboardDataPair()
-            {
-                ClipboardData = record,
-                PreviewPanel = new Lazy<UserControl>(() => new PreviewPanel(this, record))
-            });
-            await RecordsLock.WaitAsync();
-            RecordsList = new LinkedList<ClipboardDataPair>(records1);
-            RecordsLock.Release();
-        }
-        else
-        {
-            await RecordsLock.WaitAsync();
-            if (records.Any())
-            {
-                RecordsList.Clear();
-                GarbageCollect();
-            }
-            RecordsLock.Release();  
+            RecordsList = new LinkedList<ClipboardDataPair>(databaseDataPairs);
         }
 
         // restore Windows clipboard history items
-        if (Settings.SyncWindowsClipboardHistory)
+        if (system)
         {
-            await InitRecordsFromSystemAsync();
+            if (UseWindowsClipboardHistoryOnly)
+            {
+                await InitRecordsFromSystemAsync(false);
+            }
+            else if (Settings.SyncWindowsClipboardHistory)
+            {
+                await InitRecordsFromSystemAsync(true);
+            }
         }
 
-        Context.API.LogDebug(ClassName, "Restored records successfully");
+        RecordsLock.Release();
+
+        // collect garbage
+        GarbageCollect();
+
+        Context.API.LogDebug(ClassName, $"Restored {RecordsList.Count} records successfully");
     }
 
-    private async Task InitRecordsFromSystemAsync()
+    private async Task InitRecordsFromSystemAsync(bool check)
     {
-        await RecordsLock.WaitAsync();
-
-        // get latest datetime
-        var latestDateTime = RecordsList.Any() ? RecordsList.Max(p => p.ClipboardData.CreateTime) : DateTime.MinValue;
-
         // get history items
-        var historyItems = await WindowsClipboardHelper.GetLaterHistoryItemsAsync(latestDateTime);
+        List<ClipboardData>? historyItems;
+        if (check)
+        {
+            var latestDateTime = RecordsList.Any() ? RecordsList.Max(p => p.ClipboardData.CreateTime) : DateTime.MinValue;
+            historyItems = await WindowsClipboardHelper.GetLaterHistoryItemsAsync(latestDateTime);
+        }
+        else
+        {
+            historyItems = await WindowsClipboardHelper.GetHistoryItemsAsync();
+        }
 
         // add history items
         if (historyItems != null && historyItems.Any())
         {
-            foreach (var item in historyItems)
-            {
-                AddClipboardDataItem(item);
-            }
+            AddClipboardDataItem(historyItems);
         }
 
         RecordsLock.Release();
     }
 
-    private async Task RemoveRecordsFromSystemAsync(Func<ClipboardData, bool>? func = null)
+    private void RemoveRecordsFromSystem(Func<ClipboardData, bool>? func = null)
     {
-        await RecordsLock.WaitAsync();
-        try
+        List<ClipboardDataPair> recordsToRemove;
+        if (func == null)
         {
-            List<ClipboardDataPair> recordsToRemove;
-            if (func == null)
-            {
-                recordsToRemove = RecordsList.Where(r => r.ClipboardData.FromWindowsClipboardHistory()).ToList();
-            }
-            else
-            {
-                recordsToRemove = RecordsList.Where(r => r.ClipboardData.FromWindowsClipboardHistory() && func(r.ClipboardData)).ToList();
-            }
-            while (recordsToRemove.Any())
-            {
-                var record = recordsToRemove.First();
-                RecordsList.Remove(record);
-                recordsToRemove.Remove(record);
-                record.Dispose();
-            }
+            recordsToRemove = RecordsList.Where(r => r.ClipboardData.FromWindowsClipboardHistory()).ToList();
         }
-        finally
+        else
         {
-            RecordsLock.Release();
-            GarbageCollect();
+            recordsToRemove = RecordsList.Where(r => r.ClipboardData.FromWindowsClipboardHistory() && func(r.ClipboardData)).ToList();
         }
+        while (recordsToRemove.Any())
+        {
+            var record = recordsToRemove.First();
+            RecordsList.Remove(record);
+            recordsToRemove.Remove(record);
+            record.Dispose();
+        }
+        ScoreHelper.Reset(RecordsList);
+        GarbageCollect();
     }
 
-    private async Task<int> DeleteAllRecordsFromList()
+    private async Task<int> DeleteAllRecordsFromListAsync()
     {
         await RecordsLock.WaitAsync();
         try
         {
             var number = RecordsList.Count;
-            foreach (var record in RecordsList)
-            {
-                record.Dispose();
-            }
-            RecordsList.Clear();
+            ClearRecordsList();
+            ScoreHelper.Reset();
+            Context.API.LogDebug(ClassName, "Deleted all records from list");
             return number;
         }
         finally
@@ -1046,19 +1179,16 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private async Task<int> DeleteAllRecordsFromListDatabase()
+    private async Task<int> DeleteAllRecordsFromListDatabaseAsync()
     {
         await RecordsLock.WaitAsync();
         try
         {
             var number = RecordsList.Count;
-            foreach (var record in RecordsList)
-            {
-                record.Dispose();
-            }
-            RecordsList.Clear();
+            ClearRecordsList();
             _ = Database.DeleteAllRecordsAsync();
             ScoreHelper.Reset();
+            Context.API.LogDebug(ClassName, "Deleted all records from list and database");
             return number;
         }
         finally
@@ -1068,7 +1198,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private async Task<int> DeleteUnpinnedRecordsFromListDatabase()
+    private async Task<int> DeleteUnpinnedRecordsFromListDatabaseAsync()
     {
         await RecordsLock.WaitAsync();
         try
@@ -1081,14 +1211,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 RecordsList.Remove(record);
             }
             _ = Database.DeleteUnpinnedRecordsAsync();
-            if (RecordsList.Any())
-            {
-                ScoreHelper.Max(RecordsList);
-            }
-            else
-            {
-                ScoreHelper.Reset();
-            }
+            ScoreHelper.Reset(RecordsList);
+            Context.API.LogDebug(ClassName, "Deleted unpinned records from list and database");
             return number;
         }
         finally
@@ -1098,7 +1222,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private async Task<int> DeleteInvalidRecordsFromListDatabase()
+    private async Task<int> DeleteInvalidRecordsFromListDatabaseAsync()
     {
         await RecordsLock.WaitAsync();
         try
@@ -1111,14 +1235,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 RecordsList.Remove(record);
                 _ = Database.DeleteOneRecordAsync(record.ClipboardData);
             }
-            if (RecordsList.Any())
-            {
-                ScoreHelper.Max(RecordsList);
-            }
-            else
-            {
-                ScoreHelper.Reset();
-            }
+            ScoreHelper.Reset(RecordsList);
+            Context.API.LogDebug(ClassName, "Deleted invalid records from list and database");
             return number;
         }
         finally
@@ -1128,7 +1246,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private async Task SaveToDatabase(ClipboardDataPair clipboardDataPair, bool requery)
+    private async Task SaveToDatabaseAsync(ClipboardDataPair clipboardDataPair, bool requery)
     {
         await RecordsLock.WaitAsync();
         try
@@ -1144,6 +1262,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     ReQuery();
                 }
                 _ = Database.AddOneRecordAsync(clipboardData, true);
+                Context.API.LogDebug(ClassName, $"Save record to database: {clipboardDataPair.ClipboardData.HashId}");
             }
         }
         finally
@@ -1153,7 +1272,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private async Task RemoveFromList(ClipboardDataPair clipboardDataPair, bool requery)
+    private async Task RemoveFromListAsync(ClipboardDataPair clipboardDataPair, bool requery)
     {
         await RecordsLock.WaitAsync();
         try
@@ -1168,6 +1287,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             {
                 ReQuery();
             }
+            Context.API.LogDebug(ClassName, $"Remove record from list: {clipboardDataPair.ClipboardData.HashId}");
         }
         finally
         {
@@ -1176,7 +1296,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private async Task RemoveFromListDatabase(ClipboardDataPair clipboardDataPair, bool requery)
+    private async Task RemoveFromListDatabaseAsync(ClipboardDataPair clipboardDataPair, bool requery)
     {
         await RecordsLock.WaitAsync();
         try
@@ -1193,6 +1313,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 ReQuery();
             }
             _ = Database.DeleteOneRecordAsync(clipboardData);
+            Context.API.LogDebug(ClassName, $"Remove record from list and database: {clipboardDataPair.ClipboardData.HashId}");
         }
         finally
         {
@@ -1201,7 +1322,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private async Task PinOneRecord(ClipboardDataPair clipboardDataPair, bool requery)
+    private async Task PinRecordAsync(ClipboardDataPair clipboardDataPair, bool requery)
     {
         await RecordsLock.WaitAsync();
         try
@@ -1221,12 +1342,22 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             {
                 _ = Database.PinOneRecordAsync(clipboardDataPair.ClipboardData);
             }
+            Context.API.LogDebug(ClassName, $"Pin one record: {clipboardDataPair.ClipboardData.HashId}");
         }
         finally
         {
             RecordsLock.Release();
             GarbageCollect();
         }
+    }
+
+    private void ClearRecordsList()
+    {
+        foreach (var record in RecordsList)
+        {
+            record.Dispose();
+        }
+        RecordsList.Clear();
     }
 
     private async void ReQuery()
@@ -1273,22 +1404,22 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             break;
                         case ClickAction.CopyDeleteList:
                             CopyToClipboard(clipboardDataPair);
-                            _ = RemoveFromList(clipboardDataPair, false);
+                            _ = RemoveFromListAsync(clipboardDataPair, false);
                             break;
                         case ClickAction.CopyDeleteListDatabase:
                             CopyToClipboard(clipboardDataPair);
-                            _ = RemoveFromListDatabase(clipboardDataPair, false);
+                            _ = RemoveFromListDatabaseAsync(clipboardDataPair, false);
                             break;
                         case ClickAction.CopyPasteDeleteList:
                             Context.API.HideMainWindow();
                             CopyToClipboard(clipboardDataPair);
-                            _ = RemoveFromList(clipboardDataPair, false);
+                            _ = RemoveFromListAsync(clipboardDataPair, false);
                             _ = WaitWindowHideAndSimulatePaste();
                             break;
                         case ClickAction.CopyPasteDeleteListDatabase:
                             Context.API.HideMainWindow();
                             CopyToClipboard(clipboardDataPair);
-                            _ = RemoveFromListDatabase(clipboardDataPair, false);
+                            _ = RemoveFromListDatabaseAsync(clipboardDataPair, false);
                             _ = WaitWindowHideAndSimulatePaste();
                             break;
                         default:
@@ -1781,36 +1912,21 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     bool IClipboardPlus.UseWindowsClipboardHistoryOnly => Settings.UseWindowsClipboardHistoryOnly;
 
-    IClipboardMonitor IClipboardPlus.ClipboardMonitor => ClipboardMonitor;
+    ObservableDataFormats IClipboardPlus.ObservableDataFormats => ObservableDataFormats;
 
     SqliteDatabase IClipboardPlus.Database => Database;
 
+    ScoreHelper IClipboardPlus.ScoreHelper => ScoreHelper;
+
     ISettings IClipboardPlus.Settings => Settings;
 
-    public ISettings LoadSettingJsonStorage()
-    {
-        return Settings;
-    }
+    public ISettings LoadSettingJsonStorage() => Settings;
 
-    public void SaveSettingJsonStorage()
-    {
-        Context.API.SaveSettingJsonStorage<Settings>();
-    }
+    public void SaveSettingJsonStorage() => Context.API.SaveSettingJsonStorage<Settings>();
 
     CultureInfo IClipboardPlus.CultureInfo => CultureInfo;
 
     public event EventHandler<CultureInfo>? CultureInfoChanged;
-
-    #endregion
-
-    #region Garbage Collect
-
-    private static void GarbageCollect()
-    {
-        GC.Collect();
-        GC.WaitForPendingFinalizers();
-        GC.Collect();
-    }
 
     #endregion
 
@@ -1835,18 +1951,15 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             Context.API.LogDebug(ClassName, $"Enter dispose");
 
-            if (Database != null)
-            {
-                await Database.DisposeAsync();
-                Database = null!;
-                Context.API.LogDebug(ClassName, $"Disposed DatabaseHelper");
-            }
-
+            await Database.DisposeAsync();
+            Database = null!;
             Context.API.LogDebug(ClassName, $"Disposed DatabaseHelper");
 
-            ClipboardMonitor.ClipboardChanged -= ClipboardMonitor_OnClipboardChanged;
-            ClipboardMonitor.Dispose();
-            ClipboardMonitor = null!;
+            if (ClipboardMonitor != null)
+            {
+                ClipboardMonitor.ClipboardChanged -= ClipboardMonitor_OnClipboardChanged;
+                ClipboardMonitor.Dispose();
+            }
             Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
 
             DisableWindowsClipboardHelper(false);
@@ -1864,11 +1977,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 Context.API.LogException(ClassName, $"Flushed Clipboard failed", exception);
             }
 
-            foreach (var record in RecordsList)
-            {
-                record.Dispose();
-            }
-            RecordsList.Clear();
+            ClearRecordsList();
             RecordsList = null!;
             RecordsLock.Dispose();
 
@@ -1880,6 +1989,17 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             Context.API.LogDebug(ClassName, $"Finish dispose");
             _disposed = true;
         }
+    }
+
+    #endregion
+
+    #region Garbage Collect
+
+    private static void GarbageCollect()
+    {
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
     }
 
     #endregion

@@ -13,6 +13,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_all_files">所有文件</system:String>
 
     <!--  Main  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_windows_history_not_supported">Windows版本小于10.0.17763，系统不支持剪切板历史记录！请在剪切板+的设置中关闭仅使用Windows剪切板历史作为数据来源选项！</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">清理剪切板</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">清理当前剪切板数据</system:String>
 
