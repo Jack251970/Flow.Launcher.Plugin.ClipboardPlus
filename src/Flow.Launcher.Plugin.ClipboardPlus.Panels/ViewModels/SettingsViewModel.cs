@@ -226,7 +226,7 @@ public class SettingsViewModel : BaseModel
 
         SelectedRecordOrder = RecordOrders.First(x => x.Value == Settings.RecordOrder);
 
-        OnPropertyChanged(nameof(RecordOrders));
+        base.OnPropertyChanged(nameof(RecordOrders));
     }
 
     #endregion
@@ -303,7 +303,7 @@ public class SettingsViewModel : BaseModel
             {
                 Settings.UseWindowsClipboardHistoryOnly = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(SyncWindowsClipboardHistoryEnabled));
+                base.OnPropertyChanged(nameof(SyncWindowsClipboardHistoryEnabled));
                 if (value != _oldUseWindowsClipboardHistoryOnlyChanged!.Value && ShowRestartAppWarning())
                 {
                     Context?.API.RestartApp();
@@ -364,7 +364,7 @@ public class SettingsViewModel : BaseModel
 
         SelectedClickAction = ClickActions.First(x => x.Value == Settings.ClickAction);
 
-        OnPropertyChanged(nameof(ClickActions));
+        base.OnPropertyChanged(nameof(ClickActions));
     }
 
     #endregion
@@ -417,7 +417,7 @@ public class SettingsViewModel : BaseModel
 
         SelectedDefaultRichTextCopyOption = DefaultRichTextCopyOptions.First(x => x.Value == Settings.DefaultRichTextCopyOption);
 
-        OnPropertyChanged(nameof(DefaultRichTextCopyOptions));
+        base.OnPropertyChanged(nameof(DefaultRichTextCopyOptions));
     }
 
     #endregion
@@ -470,7 +470,7 @@ public class SettingsViewModel : BaseModel
 
         SelectedDefaultImageCopyOption = DefaultImageCopyOptions.First(x => x.Value == Settings.DefaultImageCopyOption);
 
-        OnPropertyChanged(nameof(DefaultImageCopyOptions));
+        base.OnPropertyChanged(nameof(DefaultImageCopyOptions));
     }
 
     #endregion
@@ -523,7 +523,7 @@ public class SettingsViewModel : BaseModel
 
         SelectedDefaultFilesCopyOption = DefaultFilesCopyOptions.First(x => x.Value == Settings.DefaultFilesCopyOption);
 
-        OnPropertyChanged(nameof(DefaultFilesCopyOptions));
+        base.OnPropertyChanged(nameof(DefaultFilesCopyOptions));
     }
 
     #endregion
@@ -818,9 +818,9 @@ public class SettingsViewModel : BaseModel
         SelectedImagesKeepTime = ImagesKeepTimes.First(x => x.Value == Settings.ImagesKeepTime);
         SelectedFilesKeepTime = FilesKeepTimes.First(x => x.Value == Settings.FilesKeepTime);
 
-        OnPropertyChanged(nameof(TextKeepTimes));
-        OnPropertyChanged(nameof(ImagesKeepTimes));
-        OnPropertyChanged(nameof(FilesKeepTimes));
+        base.OnPropertyChanged(nameof(TextKeepTimes));
+        base.OnPropertyChanged(nameof(ImagesKeepTimes));
+        base.OnPropertyChanged(nameof(FilesKeepTimes));
     }
 
     #endregion
