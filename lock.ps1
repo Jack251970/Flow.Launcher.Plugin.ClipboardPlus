@@ -2,7 +2,7 @@
 Set-Location -Path $PSScriptRoot
 
 # Debug: Confirm the directory (optional)
-Write-Host "Running in: $(Get-Location)"
+Write-Host "Lock Clipboard+ in: $(Get-Location)"
 
 # Restore the lock file
 dotnet restore --use-lock-file
