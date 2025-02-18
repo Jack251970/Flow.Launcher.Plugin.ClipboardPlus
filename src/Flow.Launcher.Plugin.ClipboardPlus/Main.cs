@@ -411,7 +411,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         // init windows clipboard helper
         if (Settings.SyncWindowsClipboardHistory)
         {
-            EnableWindowsClipboardHelper();
+            EnableWindowsClipboardHelper(false);
         }
     }
 
@@ -871,18 +871,26 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region Windows Clipboard Helper
 
-    public void EnableWindowsClipboardHelper()
+    public void EnableWindowsClipboardHelper(bool load)
     {
         WindowsClipboardHelper.OnHistoryItemRemoved += WindowsClipboardHelper_OnHistoryItemRemoved;
         WindowsClipboardHelper.OnHistoryEnabledChanged += WindowsClipboardHelper_OnHistoryEnabledChanged;
         WindowsClipboardHelper.EnableClipboardHistory();
+        if (load)
+        {
+            _ = InitRecordsFromSystemAsync();
+        }
     }
 
-    public void DisableWindowsClipboardHelper()
+    public void DisableWindowsClipboardHelper(bool remove)
     {
         WindowsClipboardHelper.OnHistoryItemRemoved -= WindowsClipboardHelper_OnHistoryItemRemoved;
         WindowsClipboardHelper.OnHistoryEnabledChanged -= WindowsClipboardHelper_OnHistoryEnabledChanged;
         WindowsClipboardHelper.DisableClipboardHistory();
+        if (remove)
+        {
+            _ = RemoveRecordsFromSystemAsync();
+        }
     }
 
     private void WindowsClipboardHelper_OnHistoryItemRemoved(object? sender, string[] e)
@@ -959,7 +967,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         Context.API.LogInfo(ClassName, "Restored records successfully");
     }
 
-    public async Task InitRecordsFromSystemAsync()
+    private async Task InitRecordsFromSystemAsync()
     {
         await RecordsLock.WaitAsync();
 
@@ -1831,7 +1839,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             ClipboardMonitor = null!;
             Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
 
-            DisableWindowsClipboardHelper();
+            DisableWindowsClipboardHelper(false);
             WindowsClipboardHelper.Dispose();
             WindowsClipboardHelper = null!;
             Context.API.LogDebug(ClassName, $"Disposed WindowsClipboardHelper");
@@ -1846,10 +1854,18 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 Context.API.LogException(ClassName, $"Flushed Clipboard failed", exception);
             }
 
-            CultureInfoChanged = null;
-            Settings = null!;
+            foreach (var record in RecordsList)
+            {
+                record.Dispose();
+            }
+            RecordsList.Clear();
             RecordsList = null!;
             RecordsLock.Dispose();
+
+            Context.API.LogDebug(ClassName, $"Disposed RecordsList");
+
+            CultureInfoChanged = null;
+            Settings = null!;
 
             Context.API.LogWarn(ClassName, $"Finish dispose");
             _disposed = true;

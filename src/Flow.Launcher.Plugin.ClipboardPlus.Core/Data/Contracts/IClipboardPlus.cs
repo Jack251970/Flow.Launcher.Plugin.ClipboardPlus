@@ -12,11 +12,9 @@ public interface IClipboardPlus
 
     Task InitRecordsFromDatabaseAndSystemAsync();
 
-    Task InitRecordsFromSystemAsync();
+    void EnableWindowsClipboardHelper(bool load);
 
-    void EnableWindowsClipboardHelper();
-
-    void DisableWindowsClipboardHelper();
+    void DisableWindowsClipboardHelper(bool remove);
 
     public ISettings Settings { get; }
 

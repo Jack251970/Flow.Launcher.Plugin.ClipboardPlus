@@ -280,12 +280,11 @@ public class SettingsViewModel : BaseModel
             OnPropertyChanged();
             if (value)
             {
-                _ = ClipboardPlus.InitRecordsFromSystemAsync();
-                ClipboardPlus.EnableWindowsClipboardHelper();
+                ClipboardPlus.EnableWindowsClipboardHelper(true);
             }
             else
             {
-                ClipboardPlus.DisableWindowsClipboardHelper();
+                ClipboardPlus.DisableWindowsClipboardHelper(true);
             }
         }
     }
