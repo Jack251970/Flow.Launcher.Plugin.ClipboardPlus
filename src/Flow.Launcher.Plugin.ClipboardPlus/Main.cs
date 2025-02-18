@@ -409,7 +409,10 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
 
         // init windows clipboard helper
-        RegisterEventsForWindowsClipboardHelper();
+        if (Settings.SyncWindowsClipboardHistory)
+        {
+            EnableWindowsClipboardHelper();
+        }
     }
 
     #endregion
@@ -868,16 +871,18 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region Windows Clipboard Helper
 
-    public void RegisterEventsForWindowsClipboardHelper()
+    public void EnableWindowsClipboardHelper()
     {
         WindowsClipboardHelper.OnHistoryItemRemoved += WindowsClipboardHelper_OnHistoryItemRemoved;
         WindowsClipboardHelper.OnHistoryEnabledChanged += WindowsClipboardHelper_OnHistoryEnabledChanged;
+        WindowsClipboardHelper.EnableClipboardHistory();
     }
 
-    public void UnregisterEventsForWindowsClipboardHelper()
+    public void DisableWindowsClipboardHelper()
     {
         WindowsClipboardHelper.OnHistoryItemRemoved -= WindowsClipboardHelper_OnHistoryItemRemoved;
         WindowsClipboardHelper.OnHistoryEnabledChanged -= WindowsClipboardHelper_OnHistoryEnabledChanged;
+        WindowsClipboardHelper.DisableClipboardHistory();
     }
 
     private void WindowsClipboardHelper_OnHistoryItemRemoved(object? sender, string[] e)
@@ -1826,7 +1831,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             ClipboardMonitor = null!;
             Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
 
-            UnregisterEventsForWindowsClipboardHelper();
+            DisableWindowsClipboardHelper();
             WindowsClipboardHelper.Dispose();
             WindowsClipboardHelper = null!;
             Context.API.LogDebug(ClassName, $"Disposed WindowsClipboardHelper");

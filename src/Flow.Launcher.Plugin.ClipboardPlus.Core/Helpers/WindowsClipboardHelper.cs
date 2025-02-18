@@ -74,11 +74,20 @@ public class WindowsClipboardHelper : IDisposable
 
     #endregion
 
-    #region Constructors
+    #region Initialization
 
     private IClipboardPlus _clipboardPlus = null!;
 
-    public WindowsClipboardHelper()
+    public void SetClipboardPlus(IClipboardPlus clipboardPlus)
+    {
+        _clipboardPlus = clipboardPlus;
+    }
+
+    #endregion
+
+    #region Enable / Disable
+
+    public void EnableClipboardHistory()
     {
         if (IsClipboardHistorySupported())
         {
@@ -88,9 +97,15 @@ public class WindowsClipboardHelper : IDisposable
         }
     }
 
-    public void SetClipboardPlus(IClipboardPlus clipboardPlus)
+    public void DisableClipboardHistory()
     {
-        _clipboardPlus = clipboardPlus;
+        if (IsClipboardHistorySupported())
+        {
+            _clipboardHistoryItems.Clear();
+            _clipboardHistoryItemsIds.Clear();
+            Windows.ApplicationModel.DataTransfer.Clipboard.HistoryChanged -= Clipboard_HistoryChanged;
+            Windows.ApplicationModel.DataTransfer.Clipboard.HistoryEnabledChanged -= Clipboard_HistoryEnabledChanged;
+        }
     }
 
     #endregion
@@ -394,15 +409,10 @@ public class WindowsClipboardHelper : IDisposable
     {
         if (disposing)
         {
+            DisableClipboardHistory();
             OnHistoryItemAdded = null;
             OnHistoryItemRemoved = null;
             OnHistoryItemPinUpdated = null;
-            if (IsClipboardHistorySupported())
-            {
-                Windows.ApplicationModel.DataTransfer.Clipboard.HistoryChanged -= Clipboard_HistoryChanged;
-            }
-            _clipboardHistoryItems.Clear();
-            _clipboardHistoryItemsIds.Clear();
             _historyItemLock.Dispose();
             _disposed = true;
         }

@@ -28,6 +28,11 @@ public interface ISettings
     public bool SyncWindowsClipboardHistory { get; set; }
 
     /// <summary>
+    /// Whether to use Windows clipboard history as data source only
+    /// </summary>
+    public bool UseWindowsClipboardHistoryOnly { get; set; }
+
+    /// <summary>
     /// Action to perform when clicking on a record
     /// </summary>
     public ClickAction ClickAction { get; set; }

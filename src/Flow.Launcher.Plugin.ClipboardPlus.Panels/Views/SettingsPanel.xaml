@@ -38,6 +38,8 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -95,14 +97,14 @@
             ItemsSource="{Binding RecordOrders, Mode=OneWay}"
             SelectedItem="{Binding SelectedRecordOrder, Mode=TwoWay}" />
 
-        <!--  Action Top  -->
-        <CheckBox
+        <!--  Seperator  -->
+        <Separator
             Grid.Row="3"
             Grid.ColumnSpan="2"
-            Margin="10,5,5,5"
-            VerticalAlignment="Center"
-            Content="{DynamicResource flowlauncher_plugin_clipboardplus_action_top}"
-            IsChecked="{Binding ActionTop, Mode=TwoWay}" />
+            Height="1"
+            Margin="-60,10,0,10"
+            BorderBrush="{DynamicResource Color03B}"
+            BorderThickness="1" />
 
         <!--  Action Top  -->
         <CheckBox
@@ -110,13 +112,41 @@
             Grid.ColumnSpan="2"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
-            Content="{DynamicResource flowlauncher_plugin_clipboardplus_sync_windows_clipboard_history}"
-            IsChecked="{Binding SyncWindowsClipboardHistory, Mode=TwoWay}"
+            Content="{DynamicResource flowlauncher_plugin_clipboardplus_action_top}"
+            IsChecked="{Binding ActionTop, Mode=TwoWay}" />
+
+        <!--  Sync Windows Clipboard History  -->
+        <StackPanel
+            Grid.Row="5"
+            Grid.ColumnSpan="2"
+            Margin="10,5,5,5"
+            Orientation="Horizontal"
+            Visibility="{Binding SyncWindowsClipboardHistoryVisibility, Mode=OneTime}">
+            <CheckBox
+                VerticalAlignment="Center"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_sync_windows_clipboard_history}"
+                IsChecked="{Binding SyncWindowsClipboardHistory, Mode=TwoWay}" />
+            <Button
+                Margin="5,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Command="{Binding OpenWindowsClipboardSettingsCommand}"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_open_windows_clipboard_settings}" />
+        </StackPanel>
+
+        <!--  Use Windows Clipboard History Only  -->
+        <CheckBox
+            Grid.Row="6"
+            Grid.ColumnSpan="2"
+            Margin="10,5,5,5"
+            VerticalAlignment="Center"
+            Content="{DynamicResource flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only}"
+            IsChecked="{Binding UseWindowsClipboardHistoryOnly, Mode=TwoWay}"
             Visibility="{Binding SyncWindowsClipboardHistoryVisibility, Mode=OneTime}" />
 
         <!--  Seperator  -->
         <Separator
-            Grid.Row="5"
+            Grid.Row="7"
             Grid.ColumnSpan="2"
             Height="1"
             Margin="-60,10,0,10"
@@ -125,13 +155,13 @@
 
         <!--  Click Action  -->
         <TextBlock
-            Grid.Row="6"
+            Grid.Row="8"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_click_action}" />
         <ComboBox
-            Grid.Row="6"
+            Grid.Row="8"
             Grid.Column="1"
             Margin="10,5,0,5"
             HorizontalAlignment="Left"
@@ -141,13 +171,13 @@
 
         <!--  Default Rich Text Copy Option  -->
         <TextBlock
-            Grid.Row="7"
+            Grid.Row="9"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_default_rich_text_copy_option}" />
         <ComboBox
-            Grid.Row="7"
+            Grid.Row="9"
             Grid.Column="1"
             Margin="10,5,0,5"
             HorizontalAlignment="Left"
@@ -157,13 +187,13 @@
 
         <!--  Default Image Copy Option  -->
         <TextBlock
-            Grid.Row="8"
+            Grid.Row="10"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_default_image_copy_option}" />
         <ComboBox
-            Grid.Row="8"
+            Grid.Row="10"
             Grid.Column="1"
             Margin="10,5,0,5"
             HorizontalAlignment="Left"
@@ -173,13 +203,13 @@
 
         <!--  Default Files Copy Option  -->
         <TextBlock
-            Grid.Row="9"
+            Grid.Row="11"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_default_files_copy_option}" />
         <ComboBox
-            Grid.Row="9"
+            Grid.Row="11"
             Grid.Column="1"
             Margin="10,5,0,5"
             HorizontalAlignment="Left"
@@ -189,7 +219,7 @@
 
         <!--  Seperator  -->
         <Separator
-            Grid.Row="10"
+            Grid.Row="12"
             Grid.ColumnSpan="2"
             Height="1"
             Margin="-60,10,0,10"
@@ -198,8 +228,7 @@
 
         <!--  Cache Images & Cache Images Button  -->
         <StackPanel
-            Grid.Row="11"
-            Grid.Column="0"
+            Grid.Row="13"
             Grid.ColumnSpan="2"
             Margin="10,5,5,5"
             Orientation="Horizontal">
@@ -223,14 +252,14 @@
 
         <!--  Cache Format  -->
         <TextBlock
-            Grid.Row="12"
+            Grid.Row="14"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_cache_format}" />
         <TextBox
             x:Name="CacheFormatTextBox"
-            Grid.Row="12"
+            Grid.Row="14"
             Grid.Column="1"
             MinWidth="200"
             Margin="10,5,0,5"
@@ -242,7 +271,7 @@
 
         <!--  Cache Format Buttons  -->
         <StackPanel
-            Grid.Row="13"
+            Grid.Row="15"
             Grid.Column="2"
             Margin="10,5,0,5"
             HorizontalAlignment="Left"
@@ -335,13 +364,13 @@
 
         <!--  Cache Format Preview  -->
         <TextBlock
-            Grid.Row="14"
+            Grid.Row="16"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_cache_format_preview}" />
         <TextBox
-            Grid.Row="14"
+            Grid.Row="16"
             Grid.Column="1"
             MinWidth="200"
             Margin="10,5,0,5"
@@ -355,7 +384,7 @@
 
         <!--  Seperator  -->
         <Separator
-            Grid.Row="15"
+            Grid.Row="17"
             Grid.ColumnSpan="2"
             Height="1"
             Margin="-60,10,0,10"
@@ -364,8 +393,7 @@
 
         <!--  Encrypt Data & Import & Export Records Button  -->
         <StackPanel
-            Grid.Row="16"
-            Grid.Column="0"
+            Grid.Row="18"
             Grid.ColumnSpan="2"
             Margin="10,5,5,5"
             Orientation="Horizontal">
@@ -389,14 +417,14 @@
 
         <!--  Keep Text  -->
         <CheckBox
-            Grid.Row="17"
+            Grid.Row="19"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Content="{DynamicResource flowlauncher_plugin_clipboardplus_keep_text}"
             IsChecked="{Binding KeepText, Mode=TwoWay}" />
         <ComboBox
-            Grid.Row="17"
+            Grid.Row="19"
             Grid.Column="1"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
@@ -407,14 +435,14 @@
 
         <!--  Keep Images  -->
         <CheckBox
-            Grid.Row="18"
+            Grid.Row="20"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Content="{DynamicResource flowlauncher_plugin_clipboardplus_keep_images}"
             IsChecked="{Binding KeepImages, Mode=TwoWay}" />
         <ComboBox
-            Grid.Row="18"
+            Grid.Row="20"
             Grid.Column="1"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
@@ -425,14 +453,14 @@
 
         <!--  Keep Files  -->
         <CheckBox
-            Grid.Row="19"
+            Grid.Row="21"
             Grid.Column="0"
             Margin="10,5,5,5"
             VerticalAlignment="Center"
             Content="{DynamicResource flowlauncher_plugin_clipboardplus_keep_files}"
             IsChecked="{Binding KeepFiles, Mode=TwoWay}" />
         <ComboBox
-            Grid.Row="19"
+            Grid.Row="21"
             Grid.Column="1"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"

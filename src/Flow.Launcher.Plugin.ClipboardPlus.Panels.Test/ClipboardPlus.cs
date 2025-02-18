@@ -21,12 +21,12 @@ internal class ClipboardPlus : IClipboardPlus
         await Task.CompletedTask;
     }
 
-    public void RegisterEventsForWindowsClipboardHelper()
+    public void EnableWindowsClipboardHelper()
     {
         
     }
 
-    public void UnregisterEventsForWindowsClipboardHelper()
+    public void DisableWindowsClipboardHelper()
     {
         
     }

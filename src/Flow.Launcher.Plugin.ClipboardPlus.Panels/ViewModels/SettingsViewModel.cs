@@ -47,6 +47,17 @@ public class SettingsViewModel : BaseModel
 
     #region Commands
 
+    #region Open Windows Clipboard Settings
+
+    public ICommand OpenWindowsClipboardSettingsCommand => new RelayCommand(OpenWindowsClipboardSettings);
+
+    private void OpenWindowsClipboardSettings(object? parameter)
+    {
+        Context?.API.OpenAppUri("ms-settings:clipboard");
+    }
+
+    #endregion
+
     #region Open Cache Image Folder
 
     public ICommand OpenCacheImageFolderCommand => new RelayCommand(OpenCacheImageFolder);
@@ -254,6 +265,8 @@ public class SettingsViewModel : BaseModel
         : Visibility.Collapsed;
 #pragma warning restore CA1822 // Mark members as static
 
+    #region Sync Windows Clipboard History
+
     public bool SyncWindowsClipboardHistory
     {
         get => Settings.SyncWindowsClipboardHistory;
@@ -268,14 +281,44 @@ public class SettingsViewModel : BaseModel
             if (value)
             {
                 _ = ClipboardPlus.InitRecordsFromSystemAsync();
-                ClipboardPlus.RegisterEventsForWindowsClipboardHelper();
+                ClipboardPlus.EnableWindowsClipboardHelper();
             }
             else
             {
-                ClipboardPlus.UnregisterEventsForWindowsClipboardHelper();
+                ClipboardPlus.DisableWindowsClipboardHelper();
             }
         }
     }
+
+    #endregion
+
+    #region Use Windows Clipboard History Only
+
+    public bool UseWindowsClipboardHistoryOnly
+    {
+        get => Settings.UseWindowsClipboardHistoryOnly;
+        set
+        {
+            if (Settings.UseWindowsClipboardHistoryOnly == value)
+            {
+                return;
+            }
+            if (value && MessageBox.Show(
+                Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text") ??
+                "If you enable this option, query records will fully match the Windows clipboard history. Records from the database will no longer be loaded, and records cannot be saved to the database.",
+                Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption") ??
+                "Are you sure you want to enable this option?",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning) != MessageBoxResult.Yes)
+            {
+                return;
+            }
+            Settings.UseWindowsClipboardHistoryOnly = value;
+            OnPropertyChanged();
+        }
+    }
+
+    #endregion
 
     #endregion
 

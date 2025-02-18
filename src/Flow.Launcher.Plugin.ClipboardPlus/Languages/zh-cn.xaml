@@ -87,7 +87,16 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_max_records">列表最大记录数：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">记录排序方式：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">在查询中置顶/置底操作选项（如清理剪切板）</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_windows_clipboard_history">与Windows剪切板历史同步</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption">清除关键字错误</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_text">清除关键字不可为空！</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_windows_clipboard_history">将Windows剪切板历史合并入数据来源</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_open_windows_clipboard_settings">打开Windows剪切板设置</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only">仅使用Windows剪切板历史作为数据来源</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption">你确定要启用这个选项吗？</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text">如果你启用了这个选项，查询记录将与Windows剪切板历史完全一致。数据库中的记录将不会加载，且记录无法被保存到数据库。</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">记录点击动作：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_rich_text_copy_option">富文本默认：</system:String>
@@ -117,9 +126,6 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_export_succeeded">导出{0}条记录成功！</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_import_succeeded">导入{0}条记录成功！</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_import_failed">导出失败！</system:String>
-
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption">错误</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_text">清除关键字不可为空！</system:String>
 
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">创建时间</system:String>

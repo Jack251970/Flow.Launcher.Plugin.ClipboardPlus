@@ -14,9 +14,9 @@ public interface IClipboardPlus
 
     Task InitRecordsFromSystemAsync();
 
-    void RegisterEventsForWindowsClipboardHelper();
+    void EnableWindowsClipboardHelper();
 
-    void UnregisterEventsForWindowsClipboardHelper();
+    void DisableWindowsClipboardHelper();
 
     public ISettings Settings { get; }
 

@@ -18,6 +18,8 @@ public class Settings : ISettings
 
     public bool SyncWindowsClipboardHistory { get; set; } = false;
 
+    public bool UseWindowsClipboardHistoryOnly { get; set; } = false;
+
     public ClickAction ClickAction { get; set; } = ClickAction.Copy;
 
     public DefaultRichTextCopyOption DefaultRichTextCopyOption { get; set; } = DefaultRichTextCopyOption.Rtf;
