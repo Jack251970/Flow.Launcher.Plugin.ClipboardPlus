@@ -98,6 +98,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption">你确定要启用这个选项吗？</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text">如果你启用了这个选项，查询记录将与Windows剪切板历史完全一致。数据库中的记录将不会加载，且记录无法被保存到数据库。</system:String>
 
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_restart_caption">重启</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_restart_text">需要重启使该选项生效</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">记录点击动作：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_rich_text_copy_option">富文本默认：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_image_copy_option">图片默认：</system:String>

@@ -267,6 +267,8 @@ public class SettingsViewModel : BaseModel
 
     #region Sync Windows Clipboard History
 
+    public bool SyncWindowsClipboardHistoryEnabled => !Settings.UseWindowsClipboardHistoryOnly;
+
     public bool SyncWindowsClipboardHistory
     {
         get => Settings.SyncWindowsClipboardHistory;
@@ -314,6 +316,12 @@ public class SettingsViewModel : BaseModel
             }
             Settings.UseWindowsClipboardHistoryOnly = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(SyncWindowsClipboardHistoryEnabled));
+            MessageBox.Show(Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_restart_text") ?? "Restart is required for this option to take effect",
+                Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_restart_caption") ?? "Restart",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+            Context?.API.RestartApp();
         }
     }
 

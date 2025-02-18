@@ -98,6 +98,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption">Are you sure you want to enable this option?</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text">If you enable this option, query records will fully match the Windows clipboard history. Records from the database will no longer be loaded, and records cannot be saved to the database.</system:String>
 
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_restart_caption">Restart</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_restart_text">Restart is required for this option to take effect</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">Record click action:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_rich_text_copy_option">Rich text default:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_image_copy_option">Image default:</system:String>

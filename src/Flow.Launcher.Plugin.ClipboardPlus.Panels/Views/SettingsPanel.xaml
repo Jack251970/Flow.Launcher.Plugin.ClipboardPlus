@@ -116,16 +116,27 @@
             IsChecked="{Binding ActionTop, Mode=TwoWay}" />
 
         <!--  Sync Windows Clipboard History  -->
-        <StackPanel
+        <CheckBox
             Grid.Row="5"
+            Grid.ColumnSpan="2"
+            Margin="10,5,5,5"
+            VerticalAlignment="Center"
+            Content="{DynamicResource flowlauncher_plugin_clipboardplus_sync_windows_clipboard_history}"
+            IsChecked="{Binding SyncWindowsClipboardHistory, Mode=TwoWay}"
+            IsEnabled="{Binding SyncWindowsClipboardHistoryEnabled, Mode=OneWay}"
+            Visibility="{Binding SyncWindowsClipboardHistoryVisibility, Mode=OneTime}" />
+
+        <!--  Use Windows Clipboard History Only  -->
+        <StackPanel
+            Grid.Row="6"
             Grid.ColumnSpan="2"
             Margin="10,5,5,5"
             Orientation="Horizontal"
             Visibility="{Binding SyncWindowsClipboardHistoryVisibility, Mode=OneTime}">
             <CheckBox
                 VerticalAlignment="Center"
-                Content="{DynamicResource flowlauncher_plugin_clipboardplus_sync_windows_clipboard_history}"
-                IsChecked="{Binding SyncWindowsClipboardHistory, Mode=TwoWay}" />
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only}"
+                IsChecked="{Binding UseWindowsClipboardHistoryOnly, Mode=TwoWay}" />
             <Button
                 Margin="5,0,0,0"
                 HorizontalAlignment="Left"
@@ -133,16 +144,6 @@
                 Command="{Binding OpenWindowsClipboardSettingsCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_open_windows_clipboard_settings}" />
         </StackPanel>
-
-        <!--  Use Windows Clipboard History Only  -->
-        <CheckBox
-            Grid.Row="6"
-            Grid.ColumnSpan="2"
-            Margin="10,5,5,5"
-            VerticalAlignment="Center"
-            Content="{DynamicResource flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only}"
-            IsChecked="{Binding UseWindowsClipboardHistoryOnly, Mode=TwoWay}"
-            Visibility="{Binding SyncWindowsClipboardHistoryVisibility, Mode=OneTime}" />
 
         <!--  Seperator  -->
         <Separator
