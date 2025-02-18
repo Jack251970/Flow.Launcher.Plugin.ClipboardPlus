@@ -28,9 +28,7 @@ public class SqliteDatabase : IAsyncDisposable
 
     #region Score
 
-    public int CurrentScore = 1;
-
-    private readonly int ScoreInterval;
+    private readonly ScoreHelper ScoreHelper;
 
     #endregion
 
@@ -196,13 +194,13 @@ public class SqliteDatabase : IAsyncDisposable
 
     public SqliteDatabase(
         string databasePath,
-        int scoreInterval,
+        ScoreHelper scoreHelper,
         SqliteCacheMode cache = SqliteCacheMode.Default,
         SqliteOpenMode mode = SqliteOpenMode.ReadWriteCreate,
         PluginInitContext? context = null
     )
     {
-        ScoreInterval = scoreInterval;
+        ScoreHelper = scoreHelper;
         var connectionString = new SqliteConnectionStringBuilder()
         {
             DataSource = databasePath,
@@ -493,9 +491,9 @@ public class SqliteDatabase : IAsyncDisposable
         {
             try
             {
-                var data = ClipboardData.FromRecord(record, CurrentScore);
+                var data = ClipboardData.FromRecord(record, ScoreHelper.CurrentScore);
                 allRecord.Add(data);
-                CurrentScore += ScoreInterval;
+                ScoreHelper.Add();
             }
             catch (Exception)
             {

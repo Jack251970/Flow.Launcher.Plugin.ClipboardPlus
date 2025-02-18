@@ -34,6 +34,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     // Settings
     private ISettings Settings = null!;
 
+    // Score helper
+    private ScoreHelper ScoreHelper = null!;
+
     // Database helper
     private SqliteDatabase Database = null!;
 
@@ -388,9 +391,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         // init encrypt key
         StringUtils.InitEncryptKey(Settings.EncryptKey);
 
+        // init score helper
+        ScoreHelper = new ScoreHelper(ScoreInterval);
+
         // init database & records
         var fileExists = File.Exists(PathHelper.DatabasePath);
-        Database = new SqliteDatabase(PathHelper.DatabasePath, scoreInterval: ScoreInterval, context: context);
+        Database = new SqliteDatabase(PathHelper.DatabasePath, ScoreHelper, context: context);
         await Database.InitializeDatabaseAsync();
         if (fileExists)
         {
@@ -797,7 +803,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             HashId = hashId,
             SenderApp = source.Name,
-            InitScore = Database.CurrentScore,
+            InitScore = ScoreHelper.CurrentScore,
             CachedImagePath = string.Empty,
             CreateTime = createTime,
             Pinned = false,
@@ -849,7 +855,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         Context.API.LogDebug(ClassName, "Added to list");
 
         // update score
-        Database.CurrentScore += ScoreInterval;
+        ScoreHelper.Add();
 
         // save to database if needed
         if (clipboardData.Saved)
@@ -1052,7 +1058,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             }
             RecordsList.Clear();
             _ = Database.DeleteAllRecordsAsync();
-            Database.CurrentScore = 1;
+            ScoreHelper.Reset();
             return number;
         }
         finally
@@ -1077,11 +1083,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             _ = Database.DeleteUnpinnedRecordsAsync();
             if (RecordsList.Any())
             {
-                Database.CurrentScore = RecordsList.Max(r => r.ClipboardData.InitScore);
+                ScoreHelper.Max(RecordsList);
             }
             else
             {
-                Database.CurrentScore = 1;
+                ScoreHelper.Reset();
             }
             return number;
         }
@@ -1107,11 +1113,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             }
             if (RecordsList.Any())
             {
-                Database.CurrentScore = RecordsList.Max(r => r.ClipboardData.InitScore);
+                ScoreHelper.Max(RecordsList);
             }
             else
             {
-                Database.CurrentScore = 1;
+                ScoreHelper.Reset();
             }
             return number;
         }
@@ -1154,7 +1160,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             if (RecordsList.First?.Value == clipboardDataPair)
             {
-                Database.CurrentScore -= ScoreInterval;
+                ScoreHelper.Subtract();
             }
             clipboardDataPair.Dispose();
             RecordsList.Remove(clipboardDataPair);
@@ -1177,7 +1183,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             if (RecordsList.First?.Value == clipboardDataPair)
             {
-                Database.CurrentScore -= ScoreInterval;
+                ScoreHelper.Subtract();
             }
             var clipboardData = clipboardDataPair.ClipboardData;
             clipboardDataPair.Dispose();
