@@ -1135,8 +1135,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             AddClipboardDataItem(historyItems);
         }
-
-        RecordsLock.Release();
     }
 
     private void RemoveRecordsFromSystem(Func<ClipboardData, bool>? func = null)
