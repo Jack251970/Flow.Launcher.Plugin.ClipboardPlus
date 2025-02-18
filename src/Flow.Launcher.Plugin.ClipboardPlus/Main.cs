@@ -937,7 +937,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         else
         {
             await RecordsLock.WaitAsync();
-            RecordsList.Clear();
+            if (records.Any())
+            {
+                RecordsList.Clear();
+                GarbageCollect();
+            }
             RecordsLock.Release();  
         }
 
