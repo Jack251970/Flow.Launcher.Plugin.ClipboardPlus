@@ -29,20 +29,12 @@ public class SettingsViewModel : BaseModel
         InitializeDefaultFilesCopyOptionSelection();
         InitializeCacheFormatPreview();
         InitializeKeepTimeSelection();
-        ClipboardPlus.CultureInfoChanged += ClipboardPlus_CultureInfoChanged;
         if (string.IsNullOrEmpty(ClearKeyword))
         {
             ShowClearKeywordEmptyError();
         }
-    }
-
-    // TODO: Use new api for this.
-    private void ShowClearKeywordEmptyError()
-    {
-        MessageBox.Show(Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_text") ?? "Clear keyword should not be empty!",
-            Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption") ?? "Error",
-            MessageBoxButton.OK,
-            MessageBoxImage.Error);
+        ClipboardPlus.CultureInfoChanged += ClipboardPlus_CultureInfoChanged;
+        _oldUseWindowsClipboardHistoryOnlyChanged ??= Settings.UseWindowsClipboardHistoryOnly;
     }
 
     #region Commands
@@ -295,6 +287,9 @@ public class SettingsViewModel : BaseModel
 
     #region Use Windows Clipboard History Only
 
+    // Cache old value to prevent unnecessary restart notification
+    private static bool? _oldUseWindowsClipboardHistoryOnlyChanged;
+
     public bool UseWindowsClipboardHistoryOnly
     {
         get => Settings.UseWindowsClipboardHistoryOnly;
@@ -304,24 +299,16 @@ public class SettingsViewModel : BaseModel
             {
                 return;
             }
-            if (value && MessageBox.Show(
-                Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text") ??
-                "If you enable this option, query records will fully match the Windows clipboard history. Records from the database will no longer be loaded, and records cannot be saved to the database.",
-                Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption") ??
-                "Are you sure you want to enable this option?",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning) != MessageBoxResult.Yes)
+            if (value && ShowUseWindowsClipboardHistoryOnlyWarning())
             {
-                return;
+                Settings.UseWindowsClipboardHistoryOnly = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(SyncWindowsClipboardHistoryEnabled));
+                if (value != _oldUseWindowsClipboardHistoryOnlyChanged!.Value && ShowRestartAppWarning())
+                {
+                    Context?.API.RestartApp();
+                }
             }
-            Settings.UseWindowsClipboardHistoryOnly = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(SyncWindowsClipboardHistoryEnabled));
-            MessageBox.Show(Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_restart_text") ?? "Restart is required for this option to take effect",
-                Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_restart_caption") ?? "Restart",
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
-            Context?.API.RestartApp();
         }
     }
 
@@ -860,6 +847,42 @@ public class SettingsViewModel : BaseModel
         RefreshDefaultImageCopyOptions();
         RefreshDefaultFilesCopyOptions();
         RefreshKeepTimes();
+    }
+
+    #endregion
+
+    #region Message Box
+
+    // TODO: Use new api for this.
+    private void ShowClearKeywordEmptyError()
+    {
+        MessageBox.Show(Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_text") ??
+            "Clear keyword Error!",
+            Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption") ??
+            "Error",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+    }
+
+    private bool ShowUseWindowsClipboardHistoryOnlyWarning()
+    {
+        return MessageBox.Show(
+            Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text") ??
+            "If you enable this option, query records will fully match the Windows clipboard history. Records from the database will no longer be loaded, and records cannot be saved to the database.",
+            Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption") ??
+            "Are you sure you want to enable this option?",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning) == MessageBoxResult.Yes;
+    }
+
+    private bool ShowRestartAppWarning()
+    {
+        return MessageBox.Show(Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_restart_text") ??
+            "Restarting app is required for this option to take effect and do you want to restart now?",
+            Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_restart_caption") ??
+            "Do you want to restart now?",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning) == MessageBoxResult.Yes;
     }
 
     #endregion

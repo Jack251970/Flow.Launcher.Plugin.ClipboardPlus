@@ -88,7 +88,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">记录排序方式：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">在查询中置顶/置底操作选项（如清理剪切板）</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption">清除关键字错误</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption">清除关键字错误！</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_text">清除关键字不可为空！</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_windows_clipboard_history">将Windows剪切板历史合并入数据来源</system:String>
@@ -98,8 +98,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption">你确定要启用这个选项吗？</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text">如果你启用了这个选项，查询记录将与Windows剪切板历史完全一致。数据库中的记录将不会加载，且记录无法被保存到数据库。</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_restart_caption">重启</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_restart_text">需要重启使该选项生效</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_restart_caption">你希望现在重启吗？</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_restart_text">需要重启应用使该选项生效，你希望现在重启吗？</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">记录点击动作：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_default_rich_text_copy_option">富文本默认：</system:String>
