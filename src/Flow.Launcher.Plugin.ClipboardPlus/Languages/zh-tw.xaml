@@ -92,7 +92,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_text">清除關鍵字不可爲空！</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_windows_clipboard_history">將Windows剪切板歷史合併入數據來源</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_open_windows_clipboard_settings">打開Windows剪切板設置</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_open_windows_clipboard_settings">Windows剪切板設置</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only">僅使用Windows剪切板歷史作爲數據來源</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption">你確定要啓用這個選項嗎？</system:String>

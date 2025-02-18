@@ -92,7 +92,7 @@
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">Set the action options (e.g., Clean clipboard) as topmost / bottommost in the query</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_windows_clipboard_history">Merge Windows clipboard history into data source</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_open_windows_clipboard_settings">Open Windows clipboard settings</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_open_windows_clipboard_settings">Windows clipboard settings</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only">Use only Windows clipboard history as data source</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption">Are you sure you want to enable this option?</system:String>
