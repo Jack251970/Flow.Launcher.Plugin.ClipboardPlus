@@ -871,37 +871,35 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     public void RegisterEventsForWindowsClipboardHelper()
     {
         WindowsClipboardHelper.OnHistoryItemRemoved += WindowsClipboardHelper_OnHistoryItemRemoved;
+        WindowsClipboardHelper.OnHistoryEnabledChanged += WindowsClipboardHelper_OnHistoryEnabledChanged;
     }
 
     public void UnregisterEventsForWindowsClipboardHelper()
     {
         WindowsClipboardHelper.OnHistoryItemRemoved -= WindowsClipboardHelper_OnHistoryItemRemoved;
+        WindowsClipboardHelper.OnHistoryEnabledChanged -= WindowsClipboardHelper_OnHistoryEnabledChanged;
     }
 
-    private async void WindowsClipboardHelper_OnHistoryItemRemoved(object? sender, string[] e)
+    private void WindowsClipboardHelper_OnHistoryItemRemoved(object? sender, string[] e)
     {
-        await RecordsLock.WaitAsync();
-        try
+        _ = RemoveRecordsFromSystemAsync(r => e.Contains(r.HashId));
+    }
+
+    private void WindowsClipboardHelper_OnHistoryEnabledChanged(object? sender, bool e)
+    {
+        if (e)
         {
-            var recordsToRemove = RecordsList.Where(r => r.ClipboardData.FromWindowsClipboardHistory() && e.Contains(r.ClipboardData.HashId)).ToList();
-            while (recordsToRemove.Any())
-            {
-                var record = recordsToRemove.First();
-                RecordsList.Remove(record);
-                recordsToRemove.Remove(record);
-                record.Dispose();
-            }
+            _ = InitRecordsFromSystemAsync();
         }
-        finally
+        else
         {
-            RecordsLock.Release();
-            GarbageCollect();
+            _ = RemoveRecordsFromSystemAsync();
         }
     }
 
     #endregion
 
-    #region List & Database
+    #region List & Database & Windows History
 
     public async Task InitRecordsFromDatabaseAndSystemAsync()
     {
@@ -972,6 +970,35 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
 
         RecordsLock.Release();
+    }
+
+    private async Task RemoveRecordsFromSystemAsync(Func<ClipboardData, bool>? func = null)
+    {
+        await RecordsLock.WaitAsync();
+        try
+        {
+            List<ClipboardDataPair> recordsToRemove;
+            if (func == null)
+            {
+                recordsToRemove = RecordsList.Where(r => r.ClipboardData.FromWindowsClipboardHistory()).ToList();
+            }
+            else
+            {
+                recordsToRemove = RecordsList.Where(r => r.ClipboardData.FromWindowsClipboardHistory() && func(r.ClipboardData)).ToList();
+            }
+            while (recordsToRemove.Any())
+            {
+                var record = recordsToRemove.First();
+                RecordsList.Remove(record);
+                recordsToRemove.Remove(record);
+                record.Dispose();
+            }
+        }
+        finally
+        {
+            RecordsLock.Release();
+            GarbageCollect();
+        }
     }
 
     private async Task<int> DeleteAllRecordsFromList()

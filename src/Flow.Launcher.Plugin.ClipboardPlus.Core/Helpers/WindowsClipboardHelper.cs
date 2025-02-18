@@ -84,6 +84,7 @@ public class WindowsClipboardHelper : IDisposable
         {
             Clipboard_HistoryChanged(this, null!);
             Windows.ApplicationModel.DataTransfer.Clipboard.HistoryChanged += Clipboard_HistoryChanged;
+            Windows.ApplicationModel.DataTransfer.Clipboard.HistoryEnabledChanged += Clipboard_HistoryEnabledChanged;
         }
     }
 
@@ -99,6 +100,8 @@ public class WindowsClipboardHelper : IDisposable
     public event EventHandler<ClipboardData>? OnHistoryItemAdded;
     public event EventHandler<string[]>? OnHistoryItemRemoved;
     public event EventHandler<ClipboardData>? OnHistoryItemPinUpdated;
+
+    public event EventHandler<bool>? OnHistoryEnabledChanged;
 
     private readonly SemaphoreSlim _historyItemLock = new(1, 1);
 
@@ -181,7 +184,12 @@ public class WindowsClipboardHelper : IDisposable
         });
     }
 
-#endregion
+    private void Clipboard_HistoryEnabledChanged(object? sender, object e)
+    {
+        OnHistoryEnabledChanged?.Invoke(this, IsHistoryEnabled());
+    }
+
+    #endregion
 
     #region History Items
 
