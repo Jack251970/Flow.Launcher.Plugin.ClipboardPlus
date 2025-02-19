@@ -129,7 +129,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     /// <summary>
     /// Whether the data is saved to database.
     /// </summary>
-    public required readonly bool Saved { get; init; } = false;
+    public required bool Saved { get; set; } = false;
 
     #endregion
 
