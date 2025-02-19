@@ -139,33 +139,4 @@ public class Win32Helper
 
         return taskCompletionSource.Task;
     }
-
-    [SupportedOSPlatform("windows5.0")]
-    public static void StartSTATask(Action action)
-    {
-        Thread thread = new(() =>
-        {
-            PInvoke.OleInitialize();
-
-            try
-            {
-                action();
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-            finally
-            {
-                PInvoke.OleUninitialize();
-            }
-        })
-        {
-            IsBackground = true,
-            Priority = ThreadPriority.Normal
-        };
-
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-    }
 }

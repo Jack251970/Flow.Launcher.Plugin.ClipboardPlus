@@ -154,24 +154,27 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.AppIconPath,
                             Glyph = ResourceHelper.ClearHistoryGlyph,
                             Score = ScoreInterval6,
-                            AsyncAction = async (c) =>
+                            Action = (c) =>
                             {
-                                var number = await Task.Run(WindowsClipboardHelper.ClearAllRecordsAsync);
-                                if (number > 0)
+                                _ = Task.Run(async () =>
                                 {
-                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                        string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_system_msg_subtitle"), number));
-                                }
-                                else if (number == 0)
-                                {
-                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
-                                }
-                                else
-                                {
-                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
-                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_clear_system_msg_subtitle"));
-                                }
+                                    var number = await WindowsClipboardHelper.ClearAllRecordsAsync();
+                                    if (number > 0)
+                                    {
+                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                            string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_system_msg_subtitle"), number));
+                                    }
+                                    else if (number == 0)
+                                    {
+                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                            Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
+                                    }
+                                    else
+                                    {
+                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                                            Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_clear_system_msg_subtitle"));
+                                    }
+                                });
                                 return true;
                             }
                         },
@@ -182,24 +185,27 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.AppIconPath,
                             Glyph = ResourceHelper.ClearHistoryGlyph,
                             Score = ScoreInterval5,
-                            AsyncAction = async (c) =>
+                            Action = (c) =>
                             {
-                                var number = await Task.Run(WindowsClipboardHelper.ClearUnpinnnedRecordsAsync);
-                                if (number > 0)
+                                _ = Task.Run(async () =>
                                 {
-                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                        string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_system_msg_subtitle"), number));
-                                }
-                                else if (number == 0)
-                                {
-                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
-                                }
-                                else
-                                {
-                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
-                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_clear_system_msg_subtitle"));
-                                }
+                                    var number = await WindowsClipboardHelper.ClearUnpinnnedRecordsAsync();
+                                    if (number > 0)
+                                    {
+                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                            string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_system_msg_subtitle"), number));
+                                    }
+                                    else if (number == 0)
+                                    {
+                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                            Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
+                                    }
+                                    else
+                                    {
+                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                                            Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_clear_system_msg_subtitle"));
+                                    }
+                                });
                                 return true;
                             },
                         }
@@ -214,19 +220,22 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 IcoPath = PathHelper.ListIconPath,
                 Glyph = ResourceHelper.ListGlyph,
                 Score = ScoreInterval4,
-                AsyncAction = async (c) =>
+                Action = (c) =>
                 {
-                    var number = await Task.Run(DeleteAllRecordsFromListAsync);
-                    if (number > 0)
+                    _ = Task.Run(async () =>
                     {
-                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                            string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle"), number));
-                    }
-                    else
-                    {
-                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                            Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
-                    }
+                        var number = await DeleteAllRecordsFromListAsync();
+                        if (number > 0)
+                        {
+                            Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle"), number));
+                        }
+                        else
+                        {
+                            Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
+                        }
+                    });
                     return true;
                 },
             });
@@ -242,19 +251,22 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.DatabaseIconPath,
                             Glyph = ResourceHelper.DatabaseGlyph,
                             Score = ScoreInterval3,
-                            AsyncAction = async (c) =>
+                            Action = (c) =>
                             {
-                                var number = await Task.Run(DeleteAllRecordsFromListDatabaseAsync);
-                                if (number > 0)
+                                _ = Task.Run(async () =>
                                 {
-                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                        string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle"), number));
-                                }
-                                else
-                                {
-                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
-                                }
+                                    var number = await DeleteAllRecordsFromListDatabaseAsync();
+                                    if (number > 0)
+                                    {
+                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                            string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle"), number));
+                                    }
+                                    else
+                                    {
+                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                            Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
+                                    }
+                                });
                                 return true;
                             }
                         },
@@ -265,19 +277,22 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.UnpinIcon1Path,
                             Glyph = ResourceHelper.UnpinGlyph,
                             Score = ScoreInterval2,
-                            AsyncAction = async (c) =>
+                            Action = (c) =>
                             {
-                                var number = await Task.Run(DeleteUnpinnedRecordsFromListDatabaseAsync);
-                                if (number > 0)
+                                _ = Task.Run(async () =>
                                 {
-                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                        string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_msg_subtitle"), number));
-                                }
-                                else
-                                {
-                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
-                                }
+                                    var number = await DeleteUnpinnedRecordsFromListDatabaseAsync();
+                                    if (number > 0)
+                                    {
+                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                            string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_msg_subtitle"), number));
+                                    }
+                                    else
+                                    {
+                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                            Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
+                                    }
+                                });
                                 return true;
                             }
                         },
@@ -288,19 +303,22 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.ErrorIconPath,
                             Glyph = ResourceHelper.ErrorGlyph,
                             Score = ScoreInterval1,
-                            AsyncAction = async (c) =>
+                            Action = (c) =>
                             {
-                                var number = await Task.Run(DeleteInvalidRecordsFromListDatabaseAsync);
-                                if (number > 0)
+                                _ = Task.Run(async () =>
                                 {
-                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                        string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle"), number));
-                                }
-                                else
-                                {
-                                    Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
-                                }
+                                    var number = await DeleteInvalidRecordsFromListDatabaseAsync();
+                                    if (number > 0)
+                                    {
+                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                            string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle"), number));
+                                    }
+                                    else
+                                    {
+                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                            Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
+                                    }
+                                });
                                 return true;
                             }
                         }
@@ -320,7 +338,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 Score = Settings.ActionTop ? TopActionScore1 : BottomActionScore1,
                 Action = (c) =>
                 {
-                    Win32Helper.StartSTATask(Clipboard.Clear);
+                    _ = Win32Helper.StartSTATaskAsync(Clipboard.Clear);
                     ClipboardMonitor?.CleanClipboard();
                     return true;
                 },
