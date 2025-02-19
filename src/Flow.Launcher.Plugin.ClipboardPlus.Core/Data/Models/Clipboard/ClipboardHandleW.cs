@@ -125,7 +125,6 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
         if (_handle != HWND.Null)
         {
             var result = PInvoke.AddClipboardFormatListener(_handle);
-            _context.LogDebug(ClassName, "Clipboard format listener added.");
             return result;
         }
 

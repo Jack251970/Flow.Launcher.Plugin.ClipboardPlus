@@ -73,7 +73,6 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
     public void StartMonitoring()
     {
         Windows.ApplicationModel.DataTransfer.Clipboard.ContentChanged += OnClipboardChanged;
-        _context.LogDebug(ClassName, "Clipboard content changed listener added.");
         Ready = true;
     }
 
