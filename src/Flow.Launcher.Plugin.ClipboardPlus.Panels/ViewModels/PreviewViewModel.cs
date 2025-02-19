@@ -120,7 +120,7 @@ public class PreviewViewModel : BaseModel
             default:
                 break;
         }
-        Context?.API.LogDebug(ClassName, $"Preview {ClipboardData.DataType} content: {ClipboardData.HashId}");
+        Context.LogDebug(ClassName, $"Preview {ClipboardData.DataType} content: {ClipboardData.HashId}");
     }
 
     #endregion

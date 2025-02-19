@@ -46,7 +46,7 @@ public class SettingsViewModel : BaseModel
 
     private void OpenWindowsClipboardSettings(object? parameter)
     {
-        Context?.API.OpenAppUri("ms-settings:clipboard");
+        Context.OpenAppUri("ms-settings:clipboard");
     }
 
     #endregion
@@ -61,7 +61,7 @@ public class SettingsViewModel : BaseModel
         {
             Directory.CreateDirectory(PathHelper.ImageCachePath);
         }
-        Context?.API.OpenDirectory(PathHelper.ImageCachePath);
+        Context.OpenDirectory(PathHelper.ImageCachePath);
     }
 
     #endregion
@@ -128,7 +128,7 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
-    #endregion
+#endregion
 
     #region Dependency Properties
 
@@ -286,12 +286,12 @@ public class SettingsViewModel : BaseModel
             }
             else if (ShowRestartAppWarning())
             {
-                Context?.API.RestartApp();
+                Context.RestartApp();
             }
         }
     }
 
-    #endregion
+#endregion
 
     #region Use Windows Clipboard History Only
 
@@ -315,14 +315,14 @@ public class SettingsViewModel : BaseModel
             // If change to non-original value, show restart app warning
             if (value != ClipboardPlus.UseWindowsClipboardHistoryOnly && ShowRestartAppWarning())
             {
-                Context?.API.RestartApp();
+                Context.RestartApp();
             }
         }
     }
 
     #endregion
 
-    #endregion
+#endregion
 
     #region Click Actions
 
@@ -833,7 +833,7 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
-    #endregion
+#endregion
 
     #region OnPropertyChanged
 
@@ -841,7 +841,7 @@ public class SettingsViewModel : BaseModel
     {
         base.OnPropertyChanged(propertyName);
         ClipboardPlus.SaveSettingJsonStorage();
-        Context?.API.LogDebug(ClassName, $"{propertyName} changed and save settings");
+        Context.LogDebug(ClassName, $"{propertyName} changed and save settings");
     }
 
     #endregion
@@ -856,7 +856,7 @@ public class SettingsViewModel : BaseModel
         RefreshDefaultImageCopyOptions();
         RefreshDefaultFilesCopyOptions();
         RefreshKeepTimes();
-        Context?.API.LogDebug(ClassName, "CultureInfo changed and refresh interface");
+        Context.LogDebug(ClassName, "CultureInfo changed and refresh interface");
     }
 
     #endregion
@@ -866,10 +866,8 @@ public class SettingsViewModel : BaseModel
     // TODO: Use new api for this.
     private void ShowClearKeywordEmptyError()
     {
-        MessageBox.Show(Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_text") ??
-            "Clear keyword Error!",
-            Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption") ??
-            "Error",
+        MessageBox.Show(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_text"),
+            Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption"),
             MessageBoxButton.OK,
             MessageBoxImage.Error);
     }
@@ -877,20 +875,16 @@ public class SettingsViewModel : BaseModel
     private bool ShowUseWindowsClipboardHistoryOnlyWarning()
     {
         return MessageBox.Show(
-            Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text") ??
-            "If you enable this option, query records will fully match the Windows clipboard history. Records from the database will no longer be loaded, and records cannot be saved to the database.",
-            Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption") ??
-            "Are you sure you want to enable this option?",
+            Context.GetTranslation("flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text"),
+            Context.GetTranslation("flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption"),
             MessageBoxButton.YesNo,
             MessageBoxImage.Warning) == MessageBoxResult.Yes;
     }
 
     private bool ShowRestartAppWarning()
     {
-        return MessageBox.Show(Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_restart_text") ??
-            "Restarting app is required for this option to take effect and do you want to restart now?",
-            Context?.API.GetTranslation("flowlauncher_plugin_clipboardplus_restart_caption") ??
-            "Do you want to restart now?",
+        return MessageBox.Show(Context.GetTranslation("flowlauncher_plugin_clipboardplus_restart_text"),
+            Context.GetTranslation("flowlauncher_plugin_clipboardplus_restart_caption"),
             MessageBoxButton.YesNo,
             MessageBoxImage.Warning) == MessageBoxResult.Yes;
     }

@@ -4,11 +4,6 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Extensions;
 
 public static class TranslationExtensions
 {
-    public static string GetTranslation(this PluginInitContext? context, string key)
-    {
-        return context?.API.GetTranslation(key) ?? key;
-    }
-
     public static string GetTranslation(this PluginInitContext? context, Enum value)
     {
         var description = GetDescriptionAttr(value);

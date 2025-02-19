@@ -17,7 +17,7 @@ public static class DatabaseHelper
         string json = JsonConvert.SerializeObject(jsonRecords, formatting);
         await File.WriteAllTextAsync(jsonPath, json);
         var context = clipboardPlus.Context;
-        context?.API.ShowMsg(context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+        context.ShowMsg(context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
             string.Format(context.GetTranslation("flowlauncher_plugin_clipboardplus_export_succeeded"), addedCount));
     }
 
@@ -68,12 +68,12 @@ public static class DatabaseHelper
             {
                 await clipboardPlus.InitRecordsFromDatabaseAndSystemAsync(true, true);
             }
-            context?.API.ShowMsg(context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+            context.ShowMsg(context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                 string.Format(context.GetTranslation("flowlauncher_plugin_clipboardplus_import_succeeded"), addedCount));
         }
         else
         {
-            context?.API.ShowMsgError(context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+            context.ShowMsgError(context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                 context.GetTranslation("flowlauncher_plugin_clipboardplus_import_failed"));
         }
     }

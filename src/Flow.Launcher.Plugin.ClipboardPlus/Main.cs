@@ -161,17 +161,17 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                                     var number = await WindowsClipboardHelper.ClearAllRecordsAsync();
                                     if (number > 0)
                                     {
-                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                                             string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_system_msg_subtitle"), number));
                                     }
                                     else if (number == 0)
                                     {
-                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                                             Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
                                     }
                                     else
                                     {
-                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                                        Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                                             Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_clear_system_msg_subtitle"));
                                     }
                                 });
@@ -192,17 +192,17 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                                     var number = await WindowsClipboardHelper.ClearUnpinnnedRecordsAsync();
                                     if (number > 0)
                                     {
-                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                                             string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_system_msg_subtitle"), number));
                                     }
                                     else if (number == 0)
                                     {
-                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                                             Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
                                     }
                                     else
                                     {
-                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                                        Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                                             Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_clear_system_msg_subtitle"));
                                     }
                                 });
@@ -227,12 +227,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         var number = await DeleteAllRecordsFromListAsync();
                         if (number > 0)
                         {
-                            Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                            Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                                 string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle"), number));
                         }
                         else
                         {
-                            Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                            Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
                         }
                     });
@@ -258,12 +258,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                                     var number = await DeleteAllRecordsFromListDatabaseAsync();
                                     if (number > 0)
                                     {
-                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                                             string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle"), number));
                                     }
                                     else
                                     {
-                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                                             Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
                                     }
                                 });
@@ -284,12 +284,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                                     var number = await DeleteUnpinnedRecordsFromListDatabaseAsync();
                                     if (number > 0)
                                     {
-                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                                             string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_unpin_msg_subtitle"), number));
                                     }
                                     else
                                     {
-                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                                             Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
                                     }
                                 });
@@ -310,12 +310,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                                     var number = await DeleteInvalidRecordsFromListDatabaseAsync();
                                     if (number > 0)
                                     {
-                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                                             string.Format(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle"), number));
                                     }
                                     else
                                     {
-                                        Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                                        Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                                             Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle"));
                                     }
                                 });
@@ -417,7 +417,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 }
             }
             RecordsLock.Release();
-            Context.API.LogDebug(ClassName, $"Added {records.Length} records successfully");
+            Context.LogDebug(ClassName, $"Added {records.Length} records successfully");
         }
         return results;
     }
@@ -433,7 +433,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
         // init settings
         Settings = context.API.LoadSettingJsonStorage<Settings>();
-        Context.API.LogDebug(ClassName, $"Init: {Settings}");
+        Context.LogDebug(ClassName, $"Init: {Settings}");
 
         // init encrypt key
         StringUtils.InitEncryptKey(Settings.EncryptKey);
@@ -443,14 +443,14 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
         // setup use Windows clipboard history only
         UseWindowsClipboardHistoryOnly = Settings.UseWindowsClipboardHistoryOnly && CheckUseWindowsClipboardHistoryOnly();
-        Context.API.LogInfo(ClassName, $"Use Windows clipboard history only: {UseWindowsClipboardHistoryOnly}");
+        Context.LogInfo(ClassName, $"Use Windows clipboard history only: {UseWindowsClipboardHistoryOnly}");
 
         if (UseWindowsClipboardHistoryOnly)
         {
             // init database
             Database = new SqliteDatabase(PathHelper.DatabasePath, this);
             await Database.InitializeDatabaseAsync();
-            Context.API.LogDebug(ClassName, "Init database successfully");
+            Context.LogDebug(ClassName, "Init database successfully");
 
             // dispose clipboard monitor
             ClipboardMonitor.ClipboardChanged -= ClipboardMonitor_OnClipboardChanged;
@@ -466,22 +466,22 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             var fileExists = File.Exists(PathHelper.DatabasePath);
             Database = new SqliteDatabase(PathHelper.DatabasePath, this);
             await Database.InitializeDatabaseAsync();
-            Context.API.LogDebug(ClassName, "Init database successfully");
+            Context.LogDebug(ClassName, "Init database successfully");
 
             // init records from database
             await InitRecordsFromDatabaseAndSystemAsync(fileExists, false);
-            Context.API.LogDebug(ClassName, $"Init {RecordsList.Count} records successfully");
+            Context.LogDebug(ClassName, $"Init {RecordsList.Count} records successfully");
 
             // init & start clipboard monitor
             ClipboardMonitor.ClipboardChanged += ClipboardMonitor_OnClipboardChanged;
             ClipboardMonitor.StartMonitoring();
             if (ClipboardMonitor.GetType() == typeof(ClipboardMonitorWin))
             {
-                Context.API.LogInfo(ClassName, "Init Windows clipboard monitor successfully");
+                Context.LogInfo(ClassName, "Init Windows clipboard monitor successfully");
             }
             else
             {
-                Context.API.LogInfo(ClassName, "Init WPF clipboard monitor successfully");
+                Context.LogInfo(ClassName, "Init WPF clipboard monitor successfully");
             }
 
             // init Windows clipboard helper & records from Windows clipboard history
@@ -821,7 +821,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     public void OnCultureInfoChanged(CultureInfo cultureInfo)
     {
-        Context.API.LogDebug(ClassName, $"Culture info changed to {cultureInfo}");
+        Context.LogDebug(ClassName, $"Culture info changed to {cultureInfo}");
         CultureInfo = cultureInfo;
         CultureInfoChanged?.Invoke(this, cultureInfo);
     }
@@ -849,7 +849,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     public Control CreateSettingPanel()
     {
-        Context.API.LogDebug(ClassName, $"Settings Panel: {Settings}");
+        Context.LogDebug(ClassName, $"Settings Panel: {Settings}");
         return new SettingsPanel(this);
     }
 
@@ -859,7 +859,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private async void ClipboardMonitor_OnClipboardChanged(object? sender, ClipboardChangedEventArgs e)
     {
-        Context.API.LogDebug(ClassName, "Clipboard changed");
+        Context.LogDebug(ClassName, "Clipboard changed");
 
         if (sender is not IClipboardMonitor clipboardMonitor)
         {
@@ -954,11 +954,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         if (clipboardData.Saved)
         {
             _ = Database.AddOneRecordAsync(clipboardData, true);  // no need to wait
-            Context.API.LogDebug(ClassName, $"Record {clipboardData.HashId} added to list and database");
+            Context.LogDebug(ClassName, $"Record {clipboardData.HashId} added to list and database");
         }
         else
         {
-            Context.API.LogDebug(ClassName, $"Record {clipboardData.HashId} added to list");
+            Context.LogDebug(ClassName, $"Record {clipboardData.HashId} added to list");
         }
 
         // remove last record if needed
@@ -989,11 +989,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             if (clipboardData.Saved)
             {
                 _ = Database.AddOneRecordAsync(clipboardData, true);  // no need to wait
-                Context.API.LogDebug(ClassName, $"Record {clipboardData.HashId} added to list and database");
+                Context.LogDebug(ClassName, $"Record {clipboardData.HashId} added to list and database");
             }
             else
             {
-                Context.API.LogDebug(ClassName, $"Record {clipboardData.HashId} added to list");
+                Context.LogDebug(ClassName, $"Record {clipboardData.HashId} added to list");
             }
         }
 
@@ -1019,7 +1019,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     {
         if (!WindowsClipboardHelper.IsClipboardHistorySupported())
         {
-            Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+            Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_windows_history_not_supported"));
             return false;
         }
@@ -1104,14 +1104,14 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 {
                     foreach (var pair in Settings.KeepTimePairs)
                     {
-                        Context.API.LogDebug(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
+                        Context.LogDebug(ClassName, $"{pair.Item1}, {pair.Item2}, {pair.Item2.ToKeepTime()}");
                         await Database.DeleteRecordsByKeepTimeAsync((int)pair.Item1, pair.Item2.ToKeepTime());
                     }
-                    Context.API.LogDebug(ClassName, $"Cleared expired records successfully");
+                    Context.LogDebug(ClassName, $"Cleared expired records successfully");
                 }
                 catch (Exception e)
                 {
-                    Context.API.LogException(ClassName, $"Cleared expired records failed", e);
+                    Context.LogException(ClassName, $"Cleared expired records failed", e);
                 }
 
                 // restore database records
@@ -1156,7 +1156,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         // collect garbage
         GarbageCollect();
 
-        Context.API.LogDebug(ClassName, $"Restored {RecordsList.Count} records successfully");
+        Context.LogDebug(ClassName, $"Restored {RecordsList.Count} records successfully");
     }
 
     private async Task InitRecordsFromSystemAsync(bool check)
@@ -1210,7 +1210,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             var number = RecordsList.Count;
             ClearRecordsList();
             ScoreHelper.Reset();
-            Context.API.LogDebug(ClassName, "Deleted all records from list");
+            Context.LogDebug(ClassName, "Deleted all records from list");
             return number;
         }
         finally
@@ -1229,7 +1229,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             ClearRecordsList();
             _ = Database.DeleteAllRecordsAsync();
             ScoreHelper.Reset();
-            Context.API.LogDebug(ClassName, "Deleted all records from list and database");
+            Context.LogDebug(ClassName, "Deleted all records from list and database");
             return number;
         }
         finally
@@ -1253,7 +1253,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             }
             _ = Database.DeleteUnpinnedRecordsAsync();
             ScoreHelper.Reset(RecordsList);
-            Context.API.LogDebug(ClassName, "Deleted unpinned records from list and database");
+            Context.LogDebug(ClassName, "Deleted unpinned records from list and database");
             return number;
         }
         finally
@@ -1277,7 +1277,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 _ = Database.DeleteOneRecordAsync(record.ClipboardData);
             }
             ScoreHelper.Reset(RecordsList);
-            Context.API.LogDebug(ClassName, "Deleted invalid records from list and database");
+            Context.LogDebug(ClassName, "Deleted invalid records from list and database");
             return number;
         }
         finally
@@ -1303,7 +1303,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     ReQuery();
                 }
                 _ = Database.AddOneRecordAsync(clipboardData, true);
-                Context.API.LogDebug(ClassName, $"Save record to database: {clipboardDataPair.ClipboardData.HashId}");
+                Context.LogDebug(ClassName, $"Save record to database: {clipboardDataPair.ClipboardData.HashId}");
             }
         }
         finally
@@ -1328,7 +1328,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             {
                 ReQuery();
             }
-            Context.API.LogDebug(ClassName, $"Remove record from list: {clipboardDataPair.ClipboardData.HashId}");
+            Context.LogDebug(ClassName, $"Remove record from list: {clipboardDataPair.ClipboardData.HashId}");
         }
         finally
         {
@@ -1354,7 +1354,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 ReQuery();
             }
             _ = Database.DeleteOneRecordAsync(clipboardData);
-            Context.API.LogDebug(ClassName, $"Remove record from list and database: {clipboardDataPair.ClipboardData.HashId}");
+            Context.LogDebug(ClassName, $"Remove record from list and database: {clipboardDataPair.ClipboardData.HashId}");
         }
         finally
         {
@@ -1383,7 +1383,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             {
                 _ = Database.PinOneRecordAsync(clipboardDataPair.ClipboardData);
             }
-            Context.API.LogDebug(ClassName, $"Pin one record: {clipboardDataPair.ClipboardData.HashId}");
+            Context.LogDebug(ClassName, $"Pin one record: {clipboardDataPair.ClipboardData.HashId}");
         }
         finally
         {
@@ -1472,7 +1472,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
         catch (Exception e)
         {
-            Context.API.LogException(ClassName, "Get result from clipboard data failed", e);
+            Context.LogException(ClassName, "Get result from clipboard data failed", e);
             return null;
         }
     }
@@ -1614,14 +1614,14 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
             if (exception == null)
             {
-                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
                     StringUtils.CompressString(clipboardData.GetText(CultureInfo, validObject as string[]), StringMaxLength));
             }
             else
             {
-                Context.API.LogException(ClassName, "Copy to clipboard failed", exception);
-                Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                Context.LogException(ClassName, "Copy to clipboard failed", exception);
+                Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception"));
             }
         }
@@ -1631,15 +1631,15 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             {
                 case DataType.PlainText:
                 case DataType.RichText:
-                    Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                    Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                         Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
                     break;
                 case DataType.Image:
-                    Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                    Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                         Context.GetTranslation("flowlauncher_plugin_clipboardplus_image_data_invalid"));
                     break;
                 case DataType.Files:
-                    Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                    Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                         Context.GetTranslation("flowlauncher_plugin_clipboardplus_files_data_invalid"));
                     break;
             }
@@ -1669,20 +1669,20 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
             if (exception == null)
             {
-                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
                     StringUtils.CompressString(clipboardData.GetText(CultureInfo), StringMaxLength));
             }
             else
             {
-                Context.API.LogException(ClassName, "Copy to clipboard failed", exception);
-                Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                Context.LogException(ClassName, "Copy to clipboard failed", exception);
+                Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception"));
             }
         }
         else
         {
-            Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+            Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
         }
     }
@@ -1719,20 +1719,20 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
             if (exception == null)
             {
-                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
                     StringUtils.CompressString(clipboardData.GetText(CultureInfo), StringMaxLength));
             }
             else
             {
-                Context.API.LogException(ClassName, "Copy to clipboard failed", exception);
-                Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                Context.LogException(ClassName, "Copy to clipboard failed", exception);
+                Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception"));
             }
         }
         else
         {
-            Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+            Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_image_data_invalid"));
         }
     }
@@ -1763,20 +1763,20 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
             if (exception == null)
             {
-                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
                     StringUtils.CompressString(clipboardData.GetText(CultureInfo, validObject as string[]), StringMaxLength));
             }
             else
             {
-                Context.API.LogException(ClassName, "Copy to clipboard failed", exception);
-                Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                Context.LogException(ClassName, "Copy to clipboard failed", exception);
+                Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception"));
             }
         }
         else
         {
-            Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+            Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
         }
     }
@@ -1854,20 +1854,20 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
             if (exception == null)
             {
-                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
                     StringUtils.CompressString(clipboardData.GetText(CultureInfo, filePaths), StringMaxLength));
             }
             else
             {
-                Context.API.LogException(ClassName, "Copy to clipboard failed", exception);
-                Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                Context.LogException(ClassName, "Copy to clipboard failed", exception);
+                Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception"));
             }
         }
         else
         {
-            Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+            Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
         }
     }
@@ -1899,20 +1899,20 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
             if (exception == null)
             {
-                Context.API.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
                     StringUtils.CompressString(clipboardData.GetText(CultureInfo, filePaths), StringMaxLength));
             }
             else
             {
-                Context.API.LogException(ClassName, "Copy to clipboard failed", exception);
-                Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+                Context.LogException(ClassName, "Copy to clipboard failed", exception);
+                Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                     Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception"));
             }
         }
         else
         {
-            Context.API.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+            Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_text_data_invalid"));
         }
     }
@@ -1990,44 +1990,44 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     {
         if (disposing)
         {
-            Context.API.LogDebug(ClassName, $"Enter dispose");
+            Context.LogDebug(ClassName, $"Enter dispose");
 
             await Database.DisposeAsync();
             Database = null!;
-            Context.API.LogDebug(ClassName, $"Disposed DatabaseHelper");
+            Context.LogDebug(ClassName, $"Disposed DatabaseHelper");
 
             if (ClipboardMonitor != null)
             {
                 ClipboardMonitor.ClipboardChanged -= ClipboardMonitor_OnClipboardChanged;
                 ClipboardMonitor.Dispose();
             }
-            Context.API.LogDebug(ClassName, $"Disposed ClipboardMonitor");
+            Context.LogDebug(ClassName, $"Disposed ClipboardMonitor");
 
             DisableWindowsClipboardHelper(false);
             WindowsClipboardHelper.Dispose();
             WindowsClipboardHelper = null!;
-            Context.API.LogDebug(ClassName, $"Disposed WindowsClipboardHelper");
+            Context.LogDebug(ClassName, $"Disposed WindowsClipboardHelper");
 
             var exception = await FlushClipboardAsync();
             if (exception == null)
             {
-                Context.API.LogDebug(ClassName, $"Flushed Clipboard succeeded");
+                Context.LogDebug(ClassName, $"Flushed Clipboard succeeded");
             }
             else
             {
-                Context.API.LogException(ClassName, $"Flushed Clipboard failed", exception);
+                Context.LogException(ClassName, $"Flushed Clipboard failed", exception);
             }
 
             ClearRecordsList();
             RecordsList = null!;
             RecordsLock.Dispose();
 
-            Context.API.LogDebug(ClassName, $"Disposed RecordsList");
+            Context.LogDebug(ClassName, $"Disposed RecordsList");
 
             CultureInfoChanged = null;
             Settings = null!;
 
-            Context.API.LogDebug(ClassName, $"Finish dispose");
+            Context.LogDebug(ClassName, $"Finish dispose");
             _disposed = true;
         }
     }

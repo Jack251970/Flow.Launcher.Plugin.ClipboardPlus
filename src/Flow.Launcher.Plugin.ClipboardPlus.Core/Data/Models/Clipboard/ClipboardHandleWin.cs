@@ -73,7 +73,7 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
     public void StartMonitoring()
     {
         Windows.ApplicationModel.DataTransfer.Clipboard.ContentChanged += OnClipboardChanged;
-        _context?.API.LogDebug(ClassName, "Clipboard content changed listener added.");
+        _context.LogDebug(ClassName, "Clipboard content changed listener added.");
         Ready = true;
     }
 
@@ -83,7 +83,8 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
     public void StopMonitoring()
     {
         Windows.ApplicationModel.DataTransfer.Clipboard.ContentChanged -= OnClipboardChanged;
-        _context?.API.LogDebug(ClassName, "Clipboard content changed listener removed.");
+        _context.LogDebug(ClassName, "Clipboard content changed listener removed.");
+        Ready = false;
     }
 
     /// <summary>
@@ -234,7 +235,7 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
         }
         catch (Exception e)
         {
-            _context?.API.LogException(ClassName, "Clipboard changed event failed.", e);
+            _context.LogException(ClassName, "Clipboard changed event failed.", e);
         }
     }
 

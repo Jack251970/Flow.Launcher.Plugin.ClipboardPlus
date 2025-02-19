@@ -311,13 +311,7 @@ public class SqliteDatabase : IAsyncDisposable
         }
         catch (Exception e)
         {
-#if DEBUG
-            if (Context == null)
-            {
-                return;
-            }
-#endif
-            Context.API.LogException(ClassName, $"Update database to version {currentVersion} error!", e);
+            Context.LogException(ClassName, $"Update database to version {currentVersion} error!", e);
         }
     }
 

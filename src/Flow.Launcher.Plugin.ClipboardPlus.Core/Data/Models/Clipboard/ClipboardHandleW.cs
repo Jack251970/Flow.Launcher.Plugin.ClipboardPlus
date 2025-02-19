@@ -97,9 +97,10 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
         win.AddHook(WndProc);
 
         // Add clipboard format listener
-        await RetryActionAsync(AddClipboardFormatListener);
-
-        Ready = true;
+        if (await RetryActionAsync(AddClipboardFormatListener))
+        {
+            Ready = true;
+        }
     }
 
     /// <summary>
@@ -107,7 +108,10 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
     /// </summary>
     public async void StopMonitoring()
     {
-        await RetryActionAsync(RemoveClipboardFormatListener);
+        if (await RetryActionAsync(RemoveClipboardFormatListener))
+        {
+            Ready = false;
+        }
     }
 
     /// <summary>
@@ -121,9 +125,10 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
         if (_handle != HWND.Null)
         {
             var result = PInvoke.AddClipboardFormatListener(_handle);
-            _context?.API.LogDebug(ClassName, "Clipboard format listener added.");
+            _context.LogDebug(ClassName, "Clipboard format listener added.");
             return result;
         }
+
         return false;
     }
 
@@ -142,7 +147,7 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
     /// <returns>
     /// Returns a <see cref="Task"/> representing the asynchronous operation.
     /// </returns>
-    private static async Task RetryActionAsync(Func<bool> action, int retryInterval = 100, int maxAttemptCount = 3)
+    private static async Task<bool> RetryActionAsync(Func<bool> action, int retryInterval = 100, int maxAttemptCount = 3)
     {
         for (int i = 0; i < maxAttemptCount; i++)
         {
@@ -157,11 +162,14 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
             {
                 if (i == maxAttemptCount - 1)
                 {
-                    return;
+                    return false;
                 }
+
                 await Task.Delay(retryInterval);
             }
         }
+
+        return true;
     }
 
     /// <summary>
@@ -175,10 +183,11 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
         if (_handle != HWND.Null)
         {
             var result = PInvoke.RemoveClipboardFormatListener(_handle);
-            _context?.API.LogDebug(ClassName, "Clipboard format listener removed.");
+            _context.LogDebug(ClassName, "Clipboard format listener removed.");
             return result;
         }
-        return true;
+
+        return false;
     }
 
     /// <summary>
@@ -351,7 +360,7 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
         }
         catch (Exception e)
         {
-            _context?.API.LogException(ClassName, "Clipboard changed event failed.", e);
+            _context.LogException(ClassName, "Clipboard changed event failed.", e);
         }
     }
 
@@ -446,9 +455,9 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
 
     #endregion
 
-    #endregion
+#endregion
 
-    #endregion
+#endregion
 
     #region IDisposable
 

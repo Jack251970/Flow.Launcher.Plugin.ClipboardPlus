@@ -113,7 +113,7 @@ public class ClipboardMonitorW : IClipboardMonitor
         if (MonitorClipboard)
         {
             MonitorClipboard = false;
-            _context?.API.LogDebug(ClassName, "Clipboard monitoring paused.");
+            _context.LogDebug(ClassName, "Clipboard monitoring paused.");
         }
     }
 
@@ -125,7 +125,7 @@ public class ClipboardMonitorW : IClipboardMonitor
         if (!MonitorClipboard)
         {
             MonitorClipboard = true;
-            _context?.API.LogDebug(ClassName, "Clipboard monitoring resumed.");
+            _context.LogDebug(ClassName, "Clipboard monitoring resumed.");
         }
     }
 
@@ -139,7 +139,7 @@ public class ClipboardMonitorW : IClipboardMonitor
         {
             _clipboardHandle.StopMonitoring();
             _startMonitoring = false;
-            _context?.API.LogDebug(ClassName, "Clipboard monitoring stopped.");
+            _context.LogDebug(ClassName, "Clipboard monitoring stopped.");
         }
     }
 
@@ -156,7 +156,7 @@ public class ClipboardMonitorW : IClipboardMonitor
         ClipboardFiles.Clear();
     }
 
-    #endregion
+#endregion
 
     #region Private
 
@@ -178,7 +178,7 @@ public class ClipboardMonitorW : IClipboardMonitor
 
     #endregion
 
-    #endregion
+#endregion
 
     #region Events
 
@@ -213,13 +213,13 @@ public class ClipboardMonitorW : IClipboardMonitor
         {
             _clipboardHandle.StartMonitoring();
             _startMonitoring = true;
-            _context?.API.LogDebug(ClassName, "Clipboard monitoring started.");
+            _context.LogDebug(ClassName, "Clipboard monitoring started.");
         }
     }
 
-    #endregion
+#endregion
 
-    #endregion
+#endregion
 
     #region IDisposable
 

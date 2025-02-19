@@ -93,6 +93,7 @@ public class ClipboardMonitorWin : IClipboardMonitor
         {
             _clipboardHandle.StartMonitoring();
             _startMonitoring = true;
+            _context.LogDebug(ClassName, "Clipboard monitoring started.");
         }
     }
 
@@ -104,7 +105,7 @@ public class ClipboardMonitorWin : IClipboardMonitor
         if (MonitorClipboard)
         {
             MonitorClipboard = false;
-            _context?.API.LogDebug(ClassName, "Clipboard monitoring paused.");
+            _context.LogDebug(ClassName, "Clipboard monitoring paused.");
         }
     }
 
@@ -116,7 +117,7 @@ public class ClipboardMonitorWin : IClipboardMonitor
         if (!MonitorClipboard)
         {
             MonitorClipboard = true;
-            _context?.API.LogDebug(ClassName, "Clipboard monitoring resumed.");
+            _context.LogDebug(ClassName, "Clipboard monitoring resumed.");
         }
     }
 
@@ -130,7 +131,7 @@ public class ClipboardMonitorWin : IClipboardMonitor
         {
             _clipboardHandle.StopMonitoring();
             _startMonitoring = false;
-            _context?.API.LogDebug(ClassName, "Clipboard monitoring stopped.");
+            _context.LogDebug(ClassName, "Clipboard monitoring stopped.");
         }
     }
 
