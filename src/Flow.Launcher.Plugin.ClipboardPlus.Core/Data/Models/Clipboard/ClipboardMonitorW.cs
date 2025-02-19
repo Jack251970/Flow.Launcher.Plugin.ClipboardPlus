@@ -213,7 +213,6 @@ public class ClipboardMonitorW : IClipboardMonitor
         {
             _clipboardHandle.StartMonitoring();
             _startMonitoring = true;
-            _context.LogDebug(ClassName, "Clipboard monitoring started.");
         }
     }
 
