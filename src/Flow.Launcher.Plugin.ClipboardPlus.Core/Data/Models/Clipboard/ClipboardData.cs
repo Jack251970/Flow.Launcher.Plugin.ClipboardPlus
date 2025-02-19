@@ -8,9 +8,7 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
 public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
 {
-    #region Properties
-
-    #region Public
+    #region Fields
 
     /// <summary>
     /// Gets a <see cref="ClipboardData"/> instance representing a null value.
@@ -25,17 +23,28 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         Saved = false
     };
 
+    /// <summary>
+    /// Whether the data is valid.
+    /// </summary>
+    public readonly bool IsValid => DataToValid() != null;
+
+    /// <summary>
+    /// Maximum score for pinning feature.
+    /// </summary>
+    public const int MaximumScore = 1000000000;
+
+    #endregion
+
+    #region Properties
+
+    #region Public
+
     #region Data Properties
 
     /// <summary>
     /// Hash id of the data, used to identify the data.
     /// </summary>
-    private readonly string hashId = string.Empty;
-    public required readonly string HashId
-    {
-        get => hashId;
-        init => hashId = value;
-    }
+    public required readonly string HashId { get; init; } = string.Empty;
 
     /// <summary>
     /// Clipboard data of the record.
@@ -44,57 +53,39 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     /// If type is Files, the data is in string[].
     /// Else the data is null.
     /// </summary>
-    private readonly object? data;
-    public readonly object? Data => data!;
+    public readonly object? Data { get; }
 
     /// <summary>
     /// MD5 hash of the data, also used to identify the data.
     /// </summary>
-    private readonly string dataMd5;
-    public readonly string DataMd5 => dataMd5;
+    public readonly string DataMd5 { get; }
 
     /// <summary>
     /// Type of the data.
     /// </summary>
-    private readonly DataType dataType;
-    public readonly DataType DataType => dataType;
+    public readonly DataType DataType { get; }
 
     /// <summary>
-    /// Whether the string is encrypted.
+    /// Whether the data is encrypted.
     /// Note: Currently don't support encrypting image data.
     /// </summary>
-    private readonly bool encryptData;
-    public readonly bool EncryptData => encryptData && dataType != DataType.Image;
+    private readonly bool NeedEncryptData { get; }
+    public readonly bool EncryptData => NeedEncryptData && DataType != DataType.Image;
 
     /// <summary>
     /// Sender application of the data.
     /// </summary>
-    private readonly string senderApp = string.Empty;
-    public required readonly string SenderApp
-    {
-        get => senderApp;
-        init => senderApp = value;
-    }
+    public required readonly string SenderApp { get; init; } = string.Empty;
 
     /// <summary>
     /// Initial score of the record for pinning feature.
     /// </summary>
-    private readonly int initScore;
-    public required readonly int InitScore
-    {
-        get => initScore;
-        init => initScore = value;
-    }
+    public required readonly int InitScore { get; init; } = 0;
 
     /// <summary>
     /// Create time of the record.
     /// </summary>
-    private readonly DateTime createTime;
-    public required readonly DateTime CreateTime
-    {
-        get => createTime;
-        init => createTime = value;
-    }
+    public required readonly DateTime CreateTime { get; init; } = DateTime.MinValue;
 
     /// <summary>
     /// Path of the cached image for preview.
@@ -133,30 +124,20 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     /// <summary>
     /// Whether the record is pinned.
     /// </summary>
-    public required bool Pinned;
+    public required readonly bool Pinned { get; init; } = false;
 
     /// <summary>
     /// Whether the data is saved to database.
     /// </summary>
-    public required bool Saved;
+    public required readonly bool Saved { get; init; } = false;
 
     #endregion
-
-    /// <summary>
-    /// Whether the data is valid.
-    /// </summary>
-    public readonly bool IsValid => DataToValid() != null;
-
-    /// <summary>
-    /// Maximum score for pinning feature.
-    /// </summary>
-    public const int MaximumScore = 1000000000;
 
     #endregion
 
     #region Internal
 
-    internal ClipboardHistoryItem? ClipboardHistoryItem { get; set; }
+    internal ClipboardHistoryItem? ClipboardHistoryItem { get; set; } = null;
 
     #endregion
 
@@ -166,18 +147,19 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
 
     public ClipboardData(object? data, DataType dataType, bool encryptData)
     {
-        this.data = data;
-        this.dataType = dataType;
-        this.encryptData = encryptData;
-        dataMd5 = StringUtils.GetMd5(DataToString(false)!);
+        Data = data;
+        DataType = dataType;
+        NeedEncryptData = encryptData;
+        // We need data & data type & encrypt data to calculate the data MD5.
+        DataMd5 = StringUtils.GetMd5(DataToString(false)!);
     }
 
     public ClipboardData()
     {
-        data = null!;
-        dataType = DataType.Other;
-        encryptData = false;
-        dataMd5 = string.Empty;
+        Data = null!;
+        DataType = DataType.Other;
+        NeedEncryptData = false;
+        DataMd5 = string.Empty;
     }
 
     #endregion
