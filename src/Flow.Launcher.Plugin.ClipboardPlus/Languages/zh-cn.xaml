@@ -25,10 +25,15 @@
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">清除记录</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">打开菜单以从系统、列表或数据库中清除记录</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_title">从系统清除所有记录</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_subtitle">从系统剪切板历史清除所有记录</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_subtitle">从Windows剪切板历史清除所有记录</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_msg_subtitle">从Windows剪切板历史清除了{0}条记录！</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_title">从系统清除未固定记录</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_subtitle">从系统剪切板历史清除未固定记录</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_subtitle">从Windows剪切板历史清除未固定记录</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_msg_subtitle">从Windows剪切板历史清除了{0}条未固定记录！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_fail_clear_system_msg_subtitle">清除Windows剪切板历史失败！</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_title">清除列表</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_subtitle">从列表中清除所有记录</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle">从列表中清除了{0}条记录！</system:String>

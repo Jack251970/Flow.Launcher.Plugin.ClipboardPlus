@@ -33,33 +33,40 @@ public class WindowsClipboardHelper : IDisposable
         return false;
     }
 
-    public static bool ClearUnpinnnedRecords()
+    public static async Task<int> ClearUnpinnnedRecordsAsync()
     {
         if (IsClipboardHistorySupported())
         {
-            return Windows.ApplicationModel.DataTransfer.Clipboard.ClearHistory();
+            var historyItems = await Windows.ApplicationModel.DataTransfer.Clipboard.GetHistoryItemsAsync();
+            if (Windows.ApplicationModel.DataTransfer.Clipboard.ClearHistory() && historyItems.Status == ClipboardHistoryItemsResultStatus.Success)
+            {
+                var historyItemsAfter = await Windows.ApplicationModel.DataTransfer.Clipboard.GetHistoryItemsAsync();
+                if (historyItemsAfter.Status == ClipboardHistoryItemsResultStatus.Success)
+                {
+                    return historyItems.Items.Count - historyItemsAfter.Items.Count;
+                }
+            }
         }
 
-        return false;
+        return -1;
     }
 
-    public static async Task<bool> ClearAllRecordsAsync()
+    public static async Task<int> ClearAllRecordsAsync()
     {
         if (IsClipboardHistorySupported())
         {
             var historyItems = await Windows.ApplicationModel.DataTransfer.Clipboard.GetHistoryItemsAsync();
             if (historyItems.Status == ClipboardHistoryItemsResultStatus.Success)
             {
-                Windows.ApplicationModel.DataTransfer.Clipboard.ClearHistory();
                 foreach (var item in historyItems.Items)
                 {
                     Windows.ApplicationModel.DataTransfer.Clipboard.DeleteItemFromHistory(item);
                 }
-                return true;
+                return historyItems.Items.Count;
             }
         }
 
-        return false;
+        return -1;
     }
 
     public static bool DeleteItemFromHistory(ClipboardData clipboardData)

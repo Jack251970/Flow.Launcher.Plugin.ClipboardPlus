@@ -25,10 +25,15 @@
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">Clear records</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">Open menu to clear records in system, list or database</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_title">Clear all records in system</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_subtitle">Clear all records in system clipboard history</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_subtitle">Clear all records in Windows clipboard history</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_msg_subtitle">Clear {0} records in Windows clipboard history!</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_title">Clear unpinned records in system</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_subtitle">Clear unpinned records in system clipboard history</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_subtitle">Clear unpinned records in Windows clipboard history</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_msg_subtitle">Clear {0} unpinned records in Windows clipboard history!</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_fail_clear_system_msg_subtitle">Failed to clear records in Windows clipboard history!</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_title">Clear in list</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_subtitle">Clear all records in list</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle">Clear {0} records in list!</system:String>

@@ -25,10 +25,15 @@
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">清除記録</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">打開菜單以從系統、列錶或數據庫中清除記録</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_title">從系統清除所有記錄</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_subtitle">從系統剪切板歷史清除所有記錄</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_subtitle">從Windows剪切板歷史清除所有記錄</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_msg_subtitle">從Windows剪切板歷史清除瞭{0}條記錄！</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_title">從系統清除未固定記錄</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_subtitle">從系統剪切板歷史清除未固定記錄</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_subtitle">從Windows剪切板歷史清除未固定記錄</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_msg_subtitle">從Windows剪切板歷史清除瞭{0}條未固定記錄！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_fail_clear_system_msg_subtitle">清除Windows剪切板歷史失敗！</system:String>
+
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_title">清除列錶</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_subtitle">從列錶中清除所有記録</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle">從列錶中清除瞭{0}條記録！</system:String>
