@@ -108,7 +108,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only">仅使用Windows剪切板历史作为数据来源</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption">你确定要启用这个选项吗？</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text">如果你启用了这个选项，查询记录将与Windows剪切板历史完全一致。数据库中的记录将不会加载，且记录无法被保存到数据库。</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text">如果你启用了这个选项，查询记录将与Windows剪切板历史完全一致，且文件格式将不被支持。数据库中的记录将不会加载，且记录无法被保存或固定到数据库。</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_restart_caption">你希望现在重启吗？</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_restart_text">需要重启应用使该选项生效，你希望现在重启吗？</system:String>

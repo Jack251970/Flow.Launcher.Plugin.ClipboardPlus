@@ -108,7 +108,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only">僅使用Windows剪切板歷史作爲數據來源</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption">你確定要啓用這個選項嗎？</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text">如果你啓用了這個選項，查詢記錄將與Windows剪切板歷史完全一致。數據庫中的記錄將不會加載，且記錄無法被保存到數據庫。</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text">如果你啓用了這個選項，查詢記錄將與Windows剪切板歷史完全一致，且文件格式將不被支持。數據庫中的記錄將不會加載，且記錄無法被保存或固定到數據庫。</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_restart_caption">你希望現在重啓嗎？</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_restart_text">需要重啓應用使該選項生效，你希望現在重啓嗎？</system:String>
