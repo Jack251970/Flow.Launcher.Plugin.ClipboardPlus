@@ -13,7 +13,9 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.ViewModels;
 
 public class SettingsViewModel : BaseModel
 {
-    public IClipboardPlus ClipboardPlus { get; private set; }
+    private static string ClassName => nameof(SettingsViewModel);
+
+    private readonly IClipboardPlus ClipboardPlus;
 
     private PluginInitContext? Context => ClipboardPlus.Context;
 
@@ -302,12 +304,15 @@ public class SettingsViewModel : BaseModel
             {
                 return;
             }
-            if (!value || ShowUseWindowsClipboardHistoryOnlyWarning())
+            // If change to true, show warning message
+            if (value && (!ShowUseWindowsClipboardHistoryOnlyWarning()))
             {
-                Settings.UseWindowsClipboardHistoryOnly = value;
-                OnPropertyChanged();
-                base.OnPropertyChanged(nameof(SyncWindowsClipboardHistoryEnabled));
+                return;
             }
+            Settings.UseWindowsClipboardHistoryOnly = value;
+            OnPropertyChanged();
+            base.OnPropertyChanged(nameof(SyncWindowsClipboardHistoryEnabled));
+            // If change to non-original value, show restart app warning
             if (value != ClipboardPlus.UseWindowsClipboardHistoryOnly && ShowRestartAppWarning())
             {
                 Context?.API.RestartApp();
@@ -836,6 +841,7 @@ public class SettingsViewModel : BaseModel
     {
         base.OnPropertyChanged(propertyName);
         ClipboardPlus.SaveSettingJsonStorage();
+        Context?.API.LogDebug(ClassName, $"{propertyName} changed and save settings");
     }
 
     #endregion
@@ -850,6 +856,7 @@ public class SettingsViewModel : BaseModel
         RefreshDefaultImageCopyOptions();
         RefreshDefaultFilesCopyOptions();
         RefreshKeepTimes();
+        Context?.API.LogDebug(ClassName, "CultureInfo changed and refresh interface");
     }
 
     #endregion

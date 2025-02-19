@@ -5,7 +5,9 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.ViewModels;
 
 public class PreviewViewModel : BaseModel
 {
-    public IClipboardPlus ClipboardPlus { get; private set; }
+    private static string ClassName => nameof(PreviewViewModel);
+
+    private readonly IClipboardPlus ClipboardPlus;
 
     private PluginInitContext? Context => ClipboardPlus.Context;
 
@@ -118,6 +120,7 @@ public class PreviewViewModel : BaseModel
             default:
                 break;
         }
+        Context?.API.LogDebug(ClassName, $"Preview {ClipboardData.DataType} content: {ClipboardData.HashId}");
     }
 
     #endregion
