@@ -23,7 +23,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     #region Properties
 
     // Plugin context
-    private PluginInitContext Context = null!;
+    private PluginInitContext? Context = null;
 
     // State of using Windows clipboard history only
     private bool UseWindowsClipboardHistoryOnly;
@@ -391,7 +391,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 Score = Settings.ActionTop ? TopActionScore4 : BottomActionScore4,
                 Action = (c) =>
                 {
-                    Context.API.ChangeQuery($"{query.ActionKeyword}{Plugin.Query.TermSeparator}{Settings.ClearKeyword} ", true);
+                    Context!.API.ChangeQuery($"{query.ActionKeyword}{Plugin.Query.TermSeparator}{Settings.ClearKeyword} ", true);
                     return false;
                 },
             });
@@ -1406,7 +1406,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         // TODO: Improve refresh way here in future version of FL.
         new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
         await Task.Delay(RetryInterval);
-        Context.API.ReQuery(false);
+        Context!.API.ReQuery(false);
     }
 
     #endregion
@@ -1439,7 +1439,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             CopyToClipboard(clipboardDataPair);
                             break;
                         case ClickAction.CopyPaste:
-                            Context.API.HideMainWindow();
+                            Context!.API.HideMainWindow();
                             CopyToClipboard(clipboardDataPair);
                             _ = WaitWindowHideAndSimulatePaste();
                             break;
@@ -1452,13 +1452,13 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             _ = RemoveFromListDatabaseAsync(clipboardDataPair, false);
                             break;
                         case ClickAction.CopyPasteDeleteList:
-                            Context.API.HideMainWindow();
+                            Context!.API.HideMainWindow();
                             CopyToClipboard(clipboardDataPair);
                             _ = RemoveFromListAsync(clipboardDataPair, false);
                             _ = WaitWindowHideAndSimulatePaste();
                             break;
                         case ClickAction.CopyPasteDeleteListDatabase:
-                            Context.API.HideMainWindow();
+                            Context!.API.HideMainWindow();
                             CopyToClipboard(clipboardDataPair);
                             _ = RemoveFromListDatabaseAsync(clipboardDataPair, false);
                             _ = WaitWindowHideAndSimulatePaste();
@@ -1479,7 +1479,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private async Task WaitWindowHideAndSimulatePaste()
     {
-        while (Context.API.IsMainWindowVisible())
+        while (Context!.API.IsMainWindowVisible())
         {
             await Task.Delay(RetryInterval);
         }
@@ -1963,7 +1963,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     public ISettings LoadSettingJsonStorage() => Settings;
 
-    public void SaveSettingJsonStorage() => Context.API.SaveSettingJsonStorage<Settings>();
+    public void SaveSettingJsonStorage() => Context!.API.SaveSettingJsonStorage<Settings>();
 
     CultureInfo IClipboardPlus.CultureInfo => CultureInfo;
 
