@@ -72,11 +72,10 @@ public class DatabaseHelperTest
             SenderApp = StringUtils.RandomString(5) + ".exe",
             InitScore = _random.Next(1000),
             CreateTime = createTime,
+            EncryptKeyMd5 = StringUtils.EncryptKeyMd5,
             CachedImagePath = string.Empty,
             Pinned = false,
-            Saved = true,
-            PlainText = string.Empty,
-            EncryptKeyMd5 = StringUtils.EncryptKeyMd5
+            Saved = true
         };
         if (type == DataType.RichText)
         {

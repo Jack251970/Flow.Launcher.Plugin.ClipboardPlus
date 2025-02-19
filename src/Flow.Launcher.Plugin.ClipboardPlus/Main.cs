@@ -899,12 +899,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             HashId = hashId,
             SenderApp = source.Name,
             InitScore = ScoreHelper.CurrentScore,
-            CachedImagePath = string.Empty,
             CreateTime = createTime,
+            EncryptKeyMd5 = StringUtils.EncryptKeyMd5,
+            CachedImagePath = string.Empty,
             Pinned = false,
-            Saved = saved,
-            PlainText = string.Empty,
-            EncryptKeyMd5 = StringUtils.EncryptKeyMd5
+            Saved = saved
         };
 
         // filter duplicate data

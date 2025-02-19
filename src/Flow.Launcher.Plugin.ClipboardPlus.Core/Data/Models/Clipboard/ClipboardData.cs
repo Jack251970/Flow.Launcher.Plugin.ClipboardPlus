@@ -88,20 +88,20 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     public required readonly DateTime CreateTime { get; init; } = DateTime.MinValue;
 
     /// <summary>
+    /// MD5 hash of the encryption key for identifying the database.
+    /// </summary>
+    public string EncryptKeyMd5 { get; set; } = string.Empty;
+
+    /// <summary>
     /// Path of the cached image for preview.
     /// </summary>
     public string CachedImagePath { get; set; } = string.Empty;
 
     /// <summary>
-    /// Text in plain format.
+    /// Plain text.
     /// Note: Only used for rich text.
     /// </summary>
     public string PlainText { get; set; } = string.Empty;
-
-    /// <summary>
-    /// MD5 hash of the encryption key for identifying the database.
-    /// </summary>
-    public string EncryptKeyMd5 { get; set; } = string.Empty;
 
     #endregion
 
@@ -124,7 +124,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     /// <summary>
     /// Whether the record is pinned.
     /// </summary>
-    public required readonly bool Pinned { get; init; } = false;
+    public required bool Pinned { get; set; } = false;
 
     /// <summary>
     /// Whether the data is saved to database.
@@ -341,11 +341,11 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             SenderApp = record.SenderApp,
             InitScore = initScore,
             CreateTime = record.createTime,
+            EncryptKeyMd5 = record.EncryptKeyMd5,
             CachedImagePath = record.CachedImagePath,
             Pinned = record.Pinned,
             Saved = true,
-            PlainText = StringToPlainText(record.PlainText, encrypt),
-            EncryptKeyMd5 = record.EncryptKeyMd5
+            PlainText = StringToPlainText(record.PlainText, encrypt)
         };
     }
 
@@ -373,11 +373,11 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             SenderApp = data.SenderApp,
             InitScore = 0,
             CreateTime = data.CreateTime,
+            EncryptKeyMd5 = data.EncryptKeyMd5,
             CachedImagePath = data.CachedImagePath,
             Pinned = data.Pinned,
             Saved = saved,
-            PlainText = StringToPlainText(data.PlainText, false),
-            EncryptKeyMd5 = data.EncryptKeyMd5
+            PlainText = StringToPlainText(data.PlainText, false)
         };
     }
 
@@ -586,11 +586,11 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             SenderApp = SenderApp,
             InitScore = InitScore,
             CreateTime = CreateTime,
+            EncryptKeyMd5 = EncryptKeyMd5,
             CachedImagePath = CachedImagePath,
             Pinned = Pinned,
             Saved = Saved,
-            PlainText = PlainText,
-            EncryptKeyMd5 = EncryptKeyMd5
+            PlainText = PlainText
         };
     }
 
@@ -602,11 +602,11 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             SenderApp = SenderApp,
             InitScore = InitScore,
             CreateTime = CreateTime,
+            EncryptKeyMd5 = EncryptKeyMd5,
             CachedImagePath = CachedImagePath,
             Pinned = pinned,
             Saved = Saved,
-            PlainText = PlainText,
-            EncryptKeyMd5 = EncryptKeyMd5
+            PlainText = PlainText
         };
     }
 
@@ -685,6 +685,12 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
             DataMd5 == b.DataMd5;
     }
 
+    public readonly bool RecordEquals(ClipboardData b)
+    {
+        return HashId == b.HashId &&
+            EncryptKeyMd5 == b.EncryptKeyMd5;
+    }
+
     public override readonly int GetHashCode()
     {
         return HashCode.Combine(DataMd5, SenderApp, DataType, CreateTime);
@@ -722,10 +728,10 @@ public class JsonClipboardData
             EncryptData = data.EncryptData,
             SenderApp = data.SenderApp,
             CreateTime = data.CreateTime,
+            EncryptKeyMd5 = data.EncryptKeyMd5,
             CachedImagePath = data.CachedImagePath,
             Pinned = data.Pinned,
-            PlainText = data.PlainTextToString(false)!,
-            EncryptKeyMd5 = data.EncryptKeyMd5
+            PlainText = data.PlainTextToString(false)!
         };
     }
 }

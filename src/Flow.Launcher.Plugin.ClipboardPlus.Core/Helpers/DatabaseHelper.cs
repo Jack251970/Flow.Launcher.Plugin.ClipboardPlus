@@ -55,7 +55,7 @@ public static class DatabaseHelper
                 foreach (var record in records)
                 {
                     // if hashId & encryptKeyMd5 are equal, then the record is already in the database
-                    if (databaseRecords.Any(r => r.HashId == record.HashId && r.EncryptKeyMd5 == record.EncryptKeyMd5))
+                    if (databaseRecords.Any(r => r.RecordEquals(record)))
                     {
                         continue;
                     }
