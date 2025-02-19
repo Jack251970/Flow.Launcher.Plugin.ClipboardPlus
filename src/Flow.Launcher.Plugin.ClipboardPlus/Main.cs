@@ -1908,7 +1908,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     PluginInitContext? IClipboardPlus.Context => Context;
 
-    bool IClipboardPlus.UseWindowsClipboardHistoryOnly => Settings.UseWindowsClipboardHistoryOnly;
+    bool IClipboardPlus.UseWindowsClipboardHistoryOnly => UseWindowsClipboardHistoryOnly;
 
     ObservableDataFormats IClipboardPlus.ObservableDataFormats => ObservableDataFormats;
 
