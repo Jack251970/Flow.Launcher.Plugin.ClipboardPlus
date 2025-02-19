@@ -94,7 +94,7 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
         try
         {
             // If clipboard-monitoring is enabled, proceed to listening.
-            if (!Ready || !ClipboardMonitorInstance.MonitorClipboard)
+            if ((!Ready) || ClipboardMonitorInstance == null || (!ClipboardMonitorInstance.MonitorClipboard))
             {
                 return;
             }
