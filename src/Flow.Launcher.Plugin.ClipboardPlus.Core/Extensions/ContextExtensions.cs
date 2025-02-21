@@ -94,6 +94,7 @@ public static class ContextExtensions
         Debugger.Break();
 #else
         context!.API.LogException(className, message, e, methodName);
+        context!.API.ShowMsgError(context.GetTranslation("flowlauncher_plugin_clipboardplus_exception_title"), context.GetTranslation("flowlauncher_plugin_clipboardplus_exception_subtitle"));
 #endif
     }
 
