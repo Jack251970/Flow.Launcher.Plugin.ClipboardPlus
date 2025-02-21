@@ -12,7 +12,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_json_files">Json文件</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_all_files">所有文件</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_exception_title">剪切闆+遇到了錯誤</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_exception_subtitle">請問您能在Github上創建錯誤並上傳日志文件嗎？謝謝！</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_exception_subtitle">請問您能在本項目的Github上創建錯誤並上傳日志文件嗎？謝謝！</system:String>
 
     <!--  Main  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_windows_history_not_supported">Windows版本小於10.0.17763，系統不支持剪切板歷史記錄！請在剪切闆+的設置中關閉僅使用Windows剪切板歷史作爲數據來源選項！</system:String>

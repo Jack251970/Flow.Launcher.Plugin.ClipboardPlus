@@ -12,7 +12,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_json_files">Json files</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_all_files">All files</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_exception_title">Exception in Clipboard+</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_exception_subtitle">Could you please create a issue in Github with log files? Thank you!</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_exception_subtitle">Could you please create an issue on this project’s GitHub repository and include the log files? Thank you!</system:String>
 
     <!--  Main  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_windows_history_not_supported">Windows version less than 10.0.17763 and system doesn't support clipboard history! Please disable option Use only Windows clipboard history as data source in the settings of Clipboard+!</system:String>
