@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		cake.config = cake.config
 		LICENSE = LICENSE
 		README.md = README.md
+		.github\workflows\publish-action.yml = .github\workflows\publish-action.yml
+		.github\dependabot.yml = .github\dependabot.yml
 	EndProjectSection
 EndProject
 Global
