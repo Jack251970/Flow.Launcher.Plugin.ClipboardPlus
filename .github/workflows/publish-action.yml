@@ -9,6 +9,8 @@ on:
 
 jobs:
   publish:
+    permissions:
+      contents: write
     if: ${{ startsWith(github.event.head_commit.message, 'bump version to') }}
     runs-on: windows-latest
     steps:
