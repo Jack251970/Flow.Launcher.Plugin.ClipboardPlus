@@ -18,13 +18,27 @@ public static class FileUtils
 
         if (!Directory.Exists(imageCachePath))
         {
-            Directory.CreateDirectory(imageCachePath);
+            try
+            {
+                Directory.CreateDirectory(imageCachePath);
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
         }
 
         var imagePath = Path.Join(imageCachePath, $"{name}.png");
         if (File.Exists(imagePath))
         {
-            File.Delete(imagePath);
+            try
+            {
+                File.Delete(imagePath);
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
         }
 
         try
@@ -38,21 +52,37 @@ public static class FileUtils
         }
     }
 
-    public static void ClearImageCache(string imageCachePath)
+    public static bool ClearImageCache(string imageCachePath)
     {
         if (Directory.Exists(imageCachePath))
         {
-            Directory.Delete(imageCachePath, true);
+            try
+            {
+                Directory.Delete(imageCachePath, true);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
+        return true;
     }
 
-    public static void ClearImageCache(string imageCachePath, string name)
+    public static bool ClearImageCache(string imageCachePath, string name)
     {
         var imagePath = Path.Join(imageCachePath, $"{name}.png");
         if (File.Exists(imagePath))
         {
-            File.Delete(imagePath);
+            try
+            {
+                File.Delete(imagePath);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
+        return true;
     }
 
     public static bool Exists(string path)
@@ -143,16 +173,30 @@ public static class FileUtils
 
         if (File.Exists(destinationPath))
         {
-            File.Delete(sourcePath);
+            try
+            {
+                File.Delete(sourcePath);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
             return false;
         }
 
         var destinationDirectory = Path.GetDirectoryName(destinationPath);
-        if (!Directory.Exists(destinationDirectory) && (!string.IsNullOrEmpty(destinationDirectory)))
+        try
         {
-            Directory.CreateDirectory(destinationDirectory);
+            if (!Directory.Exists(destinationDirectory) && (!string.IsNullOrEmpty(destinationDirectory)))
+            {
+                Directory.CreateDirectory(destinationDirectory);
+            }
+            File.Move(sourcePath, destinationPath);
         }
-        File.Move(sourcePath, destinationPath);
+        catch (Exception)
+        {
+            return false;
+        }
         return true;
     }
 
@@ -165,11 +209,25 @@ public static class FileUtils
 
         if (Directory.Exists(destinationPath))
         {
-            Directory.Delete(sourcePath, true);
+            try
+            {
+                Directory.Delete(sourcePath, true);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
             return false;
         }
 
-        Directory.Move(sourcePath, destinationPath);
+        try
+        {
+            Directory.Move(sourcePath, destinationPath);
+        }
+        catch (Exception)
+        {
+            return false;
+        }
         return true;
     }
 }
