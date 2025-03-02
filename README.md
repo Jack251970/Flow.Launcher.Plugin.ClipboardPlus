@@ -67,7 +67,7 @@
   3. Unzip the release zip file
   4. Place the released contents in your `%appdata%/FlowLauncher/Plugins` folder and **restart** Flow Launcher
 
-## 🪧 Tips
+## 📝 Usage
 
 ### 0. Set Action Keyword
 
@@ -99,7 +99,7 @@ This will automatically save the clipboard data of these formats to the database
 
 ### 4. Windows Clipboard History
 
-For Windows 10 +, if you want to merge clipboard history records from Windows Clipboard History, you can enable `Merge Windows Clipboard history into data source` option.
+For Windows 10 and Windows 11, if you want to merge clipboard history records from Windows Clipboard History, you can enable `Merge Windows Clipboard history into data source` option.
 
 If you want to make query records fully match the Windows clipboard history, you can enable `Use only Windows clipboard history as data source option`. Under this mode, records of files format will not shown in the list. Records from the database will no longer be loaded, and records cannot be saved or pinned to the database.
 
