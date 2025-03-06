@@ -18,7 +18,6 @@ jobs:
 
     env:
       Dotnet_Version: 8.0.x
-      Project_Path: src\build\Build.csproj
       Solution_Path: src\Flow.Launcher.Plugin.ClipboardPlus.sln
 
     steps:
@@ -35,7 +34,7 @@ jobs:
 
       # Restore dependencies
       - name: Restore dependencies
-        run: dotnet restore ${{ env.Project_Path }}
+        run: dotnet restore ${{ env.Solution_Path }}
 
       # Build the solution (Not project because we need to run test projects)
       - name: Build
