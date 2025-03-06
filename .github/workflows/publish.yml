@@ -1,0 +1,57 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    permissions:
+      contents: write
+    
+    if: ${{ startsWith(github.event.head_commit.message, 'bump version to') }}
+
+    runs-on: windows-latest
+
+    env:
+      Dotnet_Version: 8.0.x
+      Project_Path: src\build\Build.csproj
+
+    steps:
+
+      # Checkout codes
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Install the .NET Core workload
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.Dotnet_Version }}
+          cache: false
+
+      # Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.Project_Path }}
+
+      # Build the project
+      - name: Build
+        run: dotnet build ${{ env.Project_Path }} --configuration Release --no-restore
+
+      # Get package version
+      - name: Get Package Version
+        id: version
+        uses: notiz-dev/github-action-json-property@release
+        with: 
+          path: "src/Flow.Launcher.Plugin.ClipboardPlus/plugin.json"
+          prop_path: "Version"
+
+      # Publish to GitHub releases
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ".dist/Clipboard+*.zip"
+          tag_name: "v${{ steps.version.outputs.prop }}"
