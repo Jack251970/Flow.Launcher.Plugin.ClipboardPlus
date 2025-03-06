@@ -32,13 +32,13 @@ jobs:
         with:
           dotnet-version: ${{ env.Dotnet_Version }}
 
-      # Restore dependencies
+      # Restore dependencies for entire solution
       - name: Restore dependencies
         run: dotnet restore ${{ env.Solution_Path }}
 
-      # Build the solution (Not project because we need to run test projects)
+      # Build the entire solution
       - name: Build
-        run: dotnet build ${{ env.Solution_Path }} --configuration Release --no-restore
+        run: dotnet build ${{ env.Solution_Path }} --configuration Release
 
       # Execute all unit tests in the solution
       - name: Execute unit tests
