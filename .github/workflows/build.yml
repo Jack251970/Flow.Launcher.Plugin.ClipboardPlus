@@ -37,9 +37,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore ${{ env.Project_Path }}
 
-      # Build the project
+      # Build the solution (Not project because we need to run test projects)
       - name: Build
-        run: dotnet build ${{ env.Project_Path }} --configuration Release --no-restore
+        run: dotnet build ${{ env.Solution_Path }} --configuration Release --no-restore
 
       # Execute all unit tests in the solution
       - name: Execute unit tests
