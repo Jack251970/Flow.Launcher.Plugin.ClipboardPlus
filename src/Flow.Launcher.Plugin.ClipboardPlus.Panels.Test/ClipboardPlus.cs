@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Test;
 
-internal class ClipboardPlus : IClipboardPlus
+internal class ClipboardPlus : IClipboardPlus, IAsyncDisposable
 {
     public PluginInitContext? Context => null;
 
@@ -70,5 +70,36 @@ internal class ClipboardPlus : IClipboardPlus
     public void SaveSettingJsonStorage()
     {
         
+    }
+
+    private bool _disposed;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        await DisposeAsync(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual async ValueTask DisposeAsync(bool disposing)
+    {
+        if (disposing)
+        {
+            await Database.DisposeAsync();
+            Database = null!;
+            GarbageCollect();
+            _disposed = true;
+        }
+    }
+
+    private static void GarbageCollect()
+    {
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
     }
 }

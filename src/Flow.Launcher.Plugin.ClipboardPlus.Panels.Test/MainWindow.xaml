@@ -19,7 +19,17 @@
             <TabItem x:Name="PreviewImageTabItem" Header="Preview Image" />
             <TabItem x:Name="PreviewFilesTabItem" Header="Preview Files" />
             <TabItem Header="Database">
-                <TextBox x:Name="TextBoxDatabase" />
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="30" />
+                    </Grid.RowDefinitions>
+                    <TextBox x:Name="TextBoxDatabase" />
+                    <Button
+                        Grid.Row="1"
+                        Click="DatabaseButton_Click"
+                        Content="Close database" />
+                </Grid>
             </TabItem>
             <TabItem Header="Clipboard Monitor">
                 <Grid HorizontalAlignment="Center">

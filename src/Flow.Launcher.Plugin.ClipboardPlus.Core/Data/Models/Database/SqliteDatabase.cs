@@ -682,6 +682,8 @@ public class SqliteDatabase : IAsyncDisposable
             await WaitTaskQueueAsync();
             await Connection.CloseAsync();
             await Connection.DisposeAsync();
+            // https://github.com/dotnet/efcore/issues/26580
+            SqliteConnection.ClearAllPools();
             Connection = null!;
             _disposed = true;
         }

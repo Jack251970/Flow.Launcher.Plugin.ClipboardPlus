@@ -2027,6 +2027,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             Settings = null!;
             Context.LogDebug(ClassName, $"Finish dispose");
 
+            GarbageCollect();
             _disposed = true;
         }
     }

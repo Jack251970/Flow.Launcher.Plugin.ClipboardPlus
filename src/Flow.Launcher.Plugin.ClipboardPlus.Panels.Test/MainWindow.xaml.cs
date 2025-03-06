@@ -372,13 +372,14 @@ public partial class MainWindow : Window
 
     #region Events
 
-    private void Window_Closed(object sender, EventArgs e)
+    private async void Window_Closed(object sender, EventArgs e)
     {
         ClipboardMonitorWPF.ClipboardChanged -= OnClipboardChangeW;
         ClipboardMonitorWPF.Dispose();
         ClipboardMonitorWin.ClipboardChanged -= OnClipboardChangedWin;
         ClipboardMonitorWin.Dispose();
         Helper.Dispose();
+        await ClipboardPlus.DisposeAsync();
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
@@ -437,6 +438,13 @@ public partial class MainWindow : Window
         Button2.IsEnabled = false;
         Button3.IsEnabled = false;
         Button4.IsEnabled = false;
+    }
+
+    private async void DatabaseButton_Click(object sender, RoutedEventArgs e)
+    {
+        TextBoxDatabase.Text = "Disposed";
+        await ClipboardPlus.DisposeAsync();
+        GC.Collect();
     }
 
     #endregion
