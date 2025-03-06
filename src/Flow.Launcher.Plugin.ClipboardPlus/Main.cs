@@ -2021,13 +2021,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             ClearRecordsList();
             RecordsList = null!;
             RecordsLock.Dispose();
-
             Context.LogDebug(ClassName, $"Disposed RecordsList");
 
             CultureInfoChanged = null;
             Settings = null!;
-
             Context.LogDebug(ClassName, $"Finish dispose");
+
             _disposed = true;
         }
     }
