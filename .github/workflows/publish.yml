@@ -17,7 +17,6 @@ jobs:
     runs-on: windows-latest
 
     env:
-      Dotnet_Version: 8.0.x
       Project_Path: src\build\Build.csproj
 
     steps:
@@ -30,7 +29,8 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.Dotnet_Version }}
+          dotnet-version: |
+            8.0.x
           cache: false
 
       # Restore dependencies

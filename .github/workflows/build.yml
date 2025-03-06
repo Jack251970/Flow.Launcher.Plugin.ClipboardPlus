@@ -17,7 +17,6 @@ jobs:
     runs-on: windows-latest
 
     env:
-      Dotnet_Version: 8.0.x
       Solution_Path: src\Flow.Launcher.Plugin.ClipboardPlus.sln
 
     steps:
@@ -30,7 +29,9 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.Dotnet_Version }}
+          dotnet-version: |
+            7.0.x
+            8.0.x
 
       # Restore dependencies for entire solution
       - name: Restore dependencies
