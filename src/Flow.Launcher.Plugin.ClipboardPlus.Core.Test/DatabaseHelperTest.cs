@@ -155,17 +155,29 @@ public class DatabaseHelperTest
         foreach (var s in spans)
         {
             var tmpRecord = GetRandomClipboardData(ctime + s);
+#if DEBUG
             await helper.AddOneRecordAsync(tmpRecord, true, (str) => _testOutputHelper.WriteLine($"{str}"));
+#else
+            await helper.AddOneRecordAsync(tmpRecord, true);
+#endif
             // test dulplicated data
             if (_random.NextDouble() > 0.99)
             {
                 var cloneRecord = tmpRecord.Clone();
+#if DEBUG
                 await helper.AddOneRecordAsync(cloneRecord, true, (str) => _testOutputHelper.WriteLine($"{str}"));
+#else
+                await helper.AddOneRecordAsync(cloneRecord, true);
+#endif
             }
         }
         // helper.Connection.BackupDatabase(new SqliteConnection("Data Source=a.db"));
         await helper.DeleteRecordsByKeepTimeAsync(type, keepTime);
+#if DEBUG
         var recordsAfterDelete = await helper.GetAllRecordsAsync(true, (str) => _testOutputHelper.WriteLine($"{str}"));
+#else
+        var recordsAfterDelete = await helper.GetAllRecordsAsync(true);
+#endif
         foreach (var record in recordsAfterDelete.Where(r => r.DataType == (DataType)type))
         {
             var expTime = record.CreateTime + TimeSpan.FromHours(keepTime);
