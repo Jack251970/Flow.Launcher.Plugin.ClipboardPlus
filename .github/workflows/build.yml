@@ -19,6 +19,7 @@ jobs:
     env:
       Dotnet_Version: 8.0.x
       Project_Path: src\build\Build.csproj
+      Solution_Path: src\Flow.Launcher.Plugin.ClipboardPlus.sln
 
     steps:
 
@@ -42,8 +43,7 @@ jobs:
 
       # Execute all unit tests in the solution
       - name: Execute unit tests
-        if: github.event_name == 'push' && github.ref != 'refs/heads/main'
-        run: dotnet test --configuration Release --no-build
+        run: dotnet test ${{ env.Solution_Path }} --configuration Release --no-build
 
       # Upload the Build package
       - name: Upload Build package
