@@ -41,6 +41,10 @@ jobs:
       - name: Build
         run: dotnet build ${{ env.Project_Path }} --configuration Release --no-restore
 
+      # Run the build task
+      - name: Run build task
+        run: dotnet run --project ${{ env.Project_Path }}
+
       # Get package version
       - name: Get Package Version
         id: version
@@ -54,6 +58,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            **/Clipboard+*.zip
+            output/Clipboard+*.zip
             src/Flow.Launcher.Plugin.ClipboardPlus/plugin.json
           tag_name: "v${{ steps.version.outputs.prop }}"
