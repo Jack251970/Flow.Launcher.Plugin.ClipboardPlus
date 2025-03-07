@@ -5,7 +5,7 @@ Set-Location -Path $PSScriptRoot
 Write-Host "Build Clipboard+ in: $(Get-Location)"
 
 # Run the build command (path is now relative to the script's location)
-dotnet run --project src/build/Build.csproj
+dotnet run --project build/Build.csproj
 
 # Propagate the exit code
 # exit $LASTEXITCODE

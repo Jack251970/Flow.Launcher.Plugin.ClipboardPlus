@@ -3,23 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flow.Launcher.Plugin.ClipboardPlus.Core", "Flow.Launcher.Plugin.ClipboardPlus.Core\Flow.Launcher.Plugin.ClipboardPlus.Core.csproj", "{EF6857EB-C12A-4361-920E-C739B17E88FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flow.Launcher.Plugin.ClipboardPlus.Core", "src\Flow.Launcher.Plugin.ClipboardPlus.Core\Flow.Launcher.Plugin.ClipboardPlus.Core.csproj", "{EF6857EB-C12A-4361-920E-C739B17E88FC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flow.Launcher.Plugin.ClipboardPlus", "Flow.Launcher.Plugin.ClipboardPlus\Flow.Launcher.Plugin.ClipboardPlus.csproj", "{9F9450B0-3E7A-4633-9B99-45CFF5C509F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flow.Launcher.Plugin.ClipboardPlus", "src\Flow.Launcher.Plugin.ClipboardPlus\Flow.Launcher.Plugin.ClipboardPlus.csproj", "{9F9450B0-3E7A-4633-9B99-45CFF5C509F1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flow.Launcher.Plugin.ClipboardPlus.Panels", "Flow.Launcher.Plugin.ClipboardPlus.Panels\Flow.Launcher.Plugin.ClipboardPlus.Panels.csproj", "{DB894ED7-0905-4CAF-A529-CCF27B3C9410}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flow.Launcher.Plugin.ClipboardPlus.Panels", "src\Flow.Launcher.Plugin.ClipboardPlus.Panels\Flow.Launcher.Plugin.ClipboardPlus.Panels.csproj", "{DB894ED7-0905-4CAF-A529-CCF27B3C9410}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flow.Launcher.Plugin.ClipboardPlus.Core.Test", "Flow.Launcher.Plugin.ClipboardPlus.Core.Test\Flow.Launcher.Plugin.ClipboardPlus.Core.Test.csproj", "{1D2F05B7-1520-4D05-9B2A-0628B29C13AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flow.Launcher.Plugin.ClipboardPlus.Core.Test", "src\Flow.Launcher.Plugin.ClipboardPlus.Core.Test\Flow.Launcher.Plugin.ClipboardPlus.Core.Test.csproj", "{1D2F05B7-1520-4D05-9B2A-0628B29C13AE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Build", "build\Build.csproj", "{8AE1016A-11A6-4A6C-B5F4-97149923841C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flow.Launcher.Plugin.ClipboardPlus.Panels.Test", "Flow.Launcher.Plugin.ClipboardPlus.Panels.Test\Flow.Launcher.Plugin.ClipboardPlus.Panels.Test.csproj", "{B5DC21C9-618A-48D1-969F-E8D5BF7FBFD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flow.Launcher.Plugin.ClipboardPlus.Panels.Test", "src\Flow.Launcher.Plugin.ClipboardPlus.Panels.Test\Flow.Launcher.Plugin.ClipboardPlus.Panels.Test.csproj", "{B5DC21C9-618A-48D1-969F-E8D5BF7FBFD6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D51778AD-3C76-4C6F-AFA0-7D8BE32D9264}"
 	ProjectSection(SolutionItems) = preProject
-		..\.gitignore = ..\.gitignore
-		..\LICENSE = ..\LICENSE
-		..\README.md = ..\README.md
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global

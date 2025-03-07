@@ -17,7 +17,7 @@ jobs:
     runs-on: windows-latest
 
     env:
-      Project_Path: src\build\Build.csproj
+      Project_Path: build\Build.csproj
 
     steps:
 
