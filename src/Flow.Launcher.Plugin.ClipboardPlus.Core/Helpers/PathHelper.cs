@@ -99,7 +99,7 @@ public static class PathHelper
         return pinned ? UnpinIconPath : PinIconPath;
     }
 
-    // TODO: PR to Flow.Launcher to add this property to PluginMetaData
+    // TODO: Use PluginMetaData to get Settings Directory.
     private static string GetDataDirectory(string assemblyName)
     {
         string flowDir = string.Empty;
