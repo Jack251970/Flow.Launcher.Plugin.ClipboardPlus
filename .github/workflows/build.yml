@@ -65,4 +65,5 @@ jobs:
           name: "Clipboard+-${{ steps.version.outputs.prop }}.zip"
           path: |
             output/Clipboard+*.zip
+            src/Flow.Launcher.Plugin.ClipboardPlus/plugin.json
           compression-level: 0
