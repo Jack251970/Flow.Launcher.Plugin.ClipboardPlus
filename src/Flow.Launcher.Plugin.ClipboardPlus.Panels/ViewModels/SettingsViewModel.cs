@@ -256,6 +256,10 @@ public class SettingsViewModel : BaseModel
     public Visibility SyncWindowsClipboardHistoryVisibility => WindowsClipboardHelper.IsClipboardHistorySupported()
         ? Visibility.Visible
         : Visibility.Collapsed;
+
+    public Visibility DatabasePanelVisibility => UseWindowsClipboardHistoryOnly
+        ? Visibility.Hidden
+        : Visibility.Visible;
 #pragma warning restore CA1822 // Mark members as static
 
     #region Sync Windows Clipboard History
@@ -312,6 +316,7 @@ public class SettingsViewModel : BaseModel
             Settings.UseWindowsClipboardHistoryOnly = value;
             OnPropertyChanged();
             base.OnPropertyChanged(nameof(SyncWindowsClipboardHistoryEnabled));
+            base.OnPropertyChanged(nameof(DatabasePanelVisibility));
             // If change to non-original value, show restart app warning
             if (value != ClipboardPlus.UseWindowsClipboardHistoryOnly && ShowRestartAppWarning())
             {

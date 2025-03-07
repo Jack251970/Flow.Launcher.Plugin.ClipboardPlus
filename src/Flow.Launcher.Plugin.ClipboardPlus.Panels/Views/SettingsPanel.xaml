@@ -408,14 +408,16 @@
         <Separator
             Grid.Row="17"
             Grid.ColumnSpan="2"
-            Style="{DynamicResource SettingPanelSeperatorStyle}" />
+            Style="{DynamicResource SettingPanelSeperatorStyle}"
+            Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
 
         <!--  Encrypt Data & Import & Export Records Button  -->
         <StackPanel
             Grid.Row="18"
             Grid.ColumnSpan="2"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
-            Orientation="Horizontal">
+            Orientation="Horizontal"
+            Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}">
             <CheckBox
                 VerticalAlignment="Center"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_encrypt_data}"
@@ -441,7 +443,8 @@
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
             Content="{DynamicResource flowlauncher_plugin_clipboardplus_keep_text}"
-            IsChecked="{Binding KeepText, Mode=TwoWay}" />
+            IsChecked="{Binding KeepText, Mode=TwoWay}"
+            Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
         <ComboBox
             Grid.Row="19"
             Grid.Column="1"
@@ -450,7 +453,8 @@
             VerticalAlignment="Center"
             IsEnabled="{Binding KeepText, Mode=OneWay}"
             ItemsSource="{Binding TextKeepTimes, Mode=OneWay}"
-            SelectedItem="{Binding SelectedTextKeepTime, Mode=TwoWay}" />
+            SelectedItem="{Binding SelectedTextKeepTime, Mode=TwoWay}"
+            Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
 
         <!--  Keep Images  -->
         <CheckBox
@@ -459,7 +463,8 @@
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
             Content="{DynamicResource flowlauncher_plugin_clipboardplus_keep_images}"
-            IsChecked="{Binding KeepImages, Mode=TwoWay}" />
+            IsChecked="{Binding KeepImages, Mode=TwoWay}"
+            Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
         <ComboBox
             Grid.Row="20"
             Grid.Column="1"
@@ -468,7 +473,8 @@
             VerticalAlignment="Center"
             IsEnabled="{Binding KeepImages, Mode=OneWay}"
             ItemsSource="{Binding ImagesKeepTimes, Mode=OneWay}"
-            SelectedItem="{Binding SelectedImagesKeepTime, Mode=TwoWay}" />
+            SelectedItem="{Binding SelectedImagesKeepTime, Mode=TwoWay}"
+            Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
 
         <!--  Keep Files  -->
         <CheckBox
@@ -477,7 +483,8 @@
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
             Content="{DynamicResource flowlauncher_plugin_clipboardplus_keep_files}"
-            IsChecked="{Binding KeepFiles, Mode=TwoWay}" />
+            IsChecked="{Binding KeepFiles, Mode=TwoWay}"
+            Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
         <ComboBox
             Grid.Row="21"
             Grid.Column="1"
@@ -486,7 +493,8 @@
             VerticalAlignment="Center"
             IsEnabled="{Binding KeepFiles, Mode=OneWay}"
             ItemsSource="{Binding FilesKeepTimes, Mode=OneWay}"
-            SelectedItem="{Binding SelectedFilesKeepTime, Mode=TwoWay}" />
+            SelectedItem="{Binding SelectedFilesKeepTime, Mode=TwoWay}"
+            Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
 
     </Grid>
 </UserControl>
