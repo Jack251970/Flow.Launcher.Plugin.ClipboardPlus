@@ -51,6 +51,5 @@ jobs:
         with:
           name: Build Package
           path: |
-            **/Clipboard+*.zip
-            src/Flow.Launcher.Plugin.ClipboardPlus/plugin.json
+            **/Clipboard+*
           compression-level: 0
