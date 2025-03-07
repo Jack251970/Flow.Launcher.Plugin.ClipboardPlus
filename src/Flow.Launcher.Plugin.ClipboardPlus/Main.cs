@@ -77,6 +77,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     // Max length of string
     private const int StringMaxLength = 54;
 
+    // Empty results for cancellation
+    private readonly List<Result> EmptyResults = new();
+
     #region Scores
 
     private const int ScoreInterval1 = 1 * ScoreInterval;
@@ -129,19 +132,28 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region IAsyncPlugin Interface
 
-    public Task<List<Result>> QueryAsync(Query query, CancellationToken token)
+    public async Task<List<Result>> QueryAsync(Query query, CancellationToken token)
     {
-        return Task.Run(() => Query(query));
+        try
+        {
+            return await Task.Run(() => Query(query, token), token);
+        }
+        catch (OperationCanceledException)
+        {
+            // Ignore
+        }
+        return EmptyResults;
     }
 
-    // TODO: Remove selected count from score.
+    // TODO: Remove selected count from score when query.Search.Trim().Length == 0.
     // TODO: Add AutoCompleteText & Others properties in Record class.
-    public async Task<List<Result>> Query(Query query)
+    public async Task<List<Result>> Query(Query query, CancellationToken token)
     {
         var results = new List<Result>();
         if (query.FirstSearch == Settings.ClearKeyword)
         {
             // clean windows clipboard history actions
+            token.ThrowIfCancellationRequested();
             if (WindowsClipboardHelper.IsHistoryEnabled())
             {
                 results.AddRange(
@@ -213,6 +225,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             }
 
             // clear list and database actions
+            token.ThrowIfCancellationRequested();
             results.Add(new Result
             {
                 Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_list_title"),
@@ -329,6 +342,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         else
         {
             // clean action
+            token.ThrowIfCancellationRequested();
             results.Add(new Result
             {
                 Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clean_title"),
@@ -345,6 +359,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
 
             // connect & disconnect action
+            token.ThrowIfCancellationRequested();
             if (ClipboardMonitor != null)
             {
                 if (ClipboardMonitor.MonitorClipboard)
@@ -382,6 +397,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             }
 
             // clear action
+            token.ThrowIfCancellationRequested();
             results.Add(new Result
             {
                 Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_title"),
@@ -397,27 +413,58 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
 
             // update results
+            token.ThrowIfCancellationRequested();
             ResultsUpdated?.Invoke(this, new ResultUpdatedEventArgs
             {
                 Results = results,
                 Query = query
             });
 
-            // records results
-            await RecordsLock.WaitAsync();
-            var records = query.Search.Trim().Length == 0
-                ? RecordsList.ToArray()
-                : RecordsList.Where(i => !string.IsNullOrEmpty(i.ClipboardData.GetText(CultureInfo)) && i.ClipboardData.GetText(CultureInfo).ToLower().Contains(query.Search.Trim().ToLower())).ToArray();
-            foreach (var record in records)
+            await RecordsLock.WaitAsync(token);
+
+            if (query.Search.Trim().Length == 0)
             {
-                var result = GetResultFromClipboardData(record);
-                if (result != null)
+                // just add full query list
+                foreach (var record in RecordsList)
                 {
-                    results.Add(result);
+                    token.ThrowIfCancellationRequested();
+                    var result = GetResultFromClipboardData(record);
+                    if (result != null)
+                    {
+                        results.Add(result);
+                    }
+                }
+
+                Context.LogDebug(ClassName, $"Added {RecordsList.Count} records successfully");
+            }
+            else
+            {
+                // search query list by user input
+                foreach (var record in RecordsList)
+                {
+                    token.ThrowIfCancellationRequested();
+                    if (!string.IsNullOrEmpty(record.ClipboardData.GetText(CultureInfo)) &&
+                        record.ClipboardData.GetText(CultureInfo).ToLower().Contains(query.Search.Trim().ToLower()))
+                    {
+                        var result = GetResultFromClipboardData(record);
+                        if (result != null)
+                        {
+                            results.Add(result);
+                        }
+                    }
+                }
+
+                if (ClipboardMonitor != null)
+                {
+                    Context.LogDebug(ClassName, $"Searched {query.Search.Trim()} and added {results.Count - 3} records successfully");
+                }
+                else
+                {
+                    Context.LogDebug(ClassName, $"Searched {query.Search.Trim()} and added {results.Count - 2} records successfully");
                 }
             }
+
             RecordsLock.Release();
-            Context.LogDebug(ClassName, $"Added {records.Length} records successfully");
         }
         return results;
     }
@@ -506,7 +553,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region IContextMenu Interface
 
-    // TODO: Remove selected count from score.
+    // TODO: Remove selected count from score when query.Search.Trim().Length == 0.
     public List<Result> LoadContextMenus(Result result)
     {
         var results = new List<Result>();
@@ -1413,7 +1460,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region Query Result
 
-    // TODO: Remove selected count from score.
+    // TODO: Remove selected count from score when query.Search.Trim().Length == 0.
     private Result? GetResultFromClipboardData(ClipboardDataPair clipboardDataPair)
     {
         try
