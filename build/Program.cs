@@ -35,7 +35,7 @@ public class BuildContext(ICakeContext context) : FrostingContext(context)
     public const string SlnFile = "../Flow.Launcher.Plugin.ClipboardPlus.sln";
     public Lazy<SolutionParserResult> DefaultSln { get; set; } = new Lazy<SolutionParserResult>(() => context.ParseSolution(SlnFile));
     public const string DeployFramework = "net7.0-windows";
-    public string PublishDir = "Output";
+    public string PublishDir = "output";
     public string PublishVersion = string.Empty;
     public string BuildFor = "win-x64"; // win-x64 win-x86
 }
