@@ -3,7 +3,7 @@
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Version>2.1.1</Version>
+        <Version>2.2.2</Version>
         <TargetFramework>net7.0-windows</TargetFramework>
         <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
         <UseWindowsForms>true</UseWindowsForms>
@@ -93,7 +93,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.1" />
+      <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 

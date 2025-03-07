@@ -53,5 +53,7 @@ jobs:
       - name: Publish
         uses: softprops/action-gh-release@v2
         with:
-          files: ".dist/Clipboard+*"
+          files: |
+            output/Clipboard+*.zip
+            src/Flow.Launcher.Plugin.ClipboardPlus/plugin.json
           tag_name: "v${{ steps.version.outputs.prop }}"

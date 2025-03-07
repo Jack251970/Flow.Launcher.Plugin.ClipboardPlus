@@ -1,5 +1,5 @@
 .idea/
-.dist/
+output/
 .vscode/
 *.svg
 *.xcf

@@ -29,22 +29,15 @@ public static class Program
     }
 }
 
-public class BuildContext : FrostingContext
+public class BuildContext(ICakeContext context) : FrostingContext(context)
 {
-    public string DotNetBuildConfig { get; set; }
+    public string DotNetBuildConfig { get; set; } = context.Argument("configuration", "Release");
     public const string SlnFile = "../Flow.Launcher.Plugin.ClipboardPlus.sln";
-    public Lazy<SolutionParserResult> DefaultSln { get; set; }
+    public Lazy<SolutionParserResult> DefaultSln { get; set; } = new Lazy<SolutionParserResult>(() => context.ParseSolution(SlnFile));
     public const string DeployFramework = "net7.0-windows";
-    public string PublishDir = ".dist";
+    public string PublishDir = "Output";
     public string PublishVersion = string.Empty;
     public string BuildFor = "win-x64"; // win-x64 win-x86
-
-    public BuildContext(ICakeContext context)
-        : base(context)
-    {
-        DefaultSln = new Lazy<SolutionParserResult>(() => context.ParseSolution(SlnFile));
-        DotNetBuildConfig = context.Argument("configuration", "Release");
-    }
 }
 
 public class BuildLifetime : FrostingLifetime<BuildContext>
