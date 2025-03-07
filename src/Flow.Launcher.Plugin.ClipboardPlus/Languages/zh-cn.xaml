@@ -6,7 +6,7 @@
 
     <!--  General  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_name">剪切板+</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">轻松管理你的剪切板历史并自定义复制规则，支持文字、图像和文件</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">轻松管理你的剪切板历史与Windows剪切板历史，支持文字、图像和文件</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_success">成功</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_fail">失败</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_json_files">Json文件</system:String>

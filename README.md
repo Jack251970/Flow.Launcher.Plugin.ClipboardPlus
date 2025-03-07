@@ -4,7 +4,7 @@
 
 # Flow Launcher ClipboardPlus Plugin
 
-**This plugin is a clipboard manager for [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher). It can help you manage your clipboard history and customizing copy rules with support for text, images, and files.**
+**This plugin is a clipboard manager for [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher). It can help you manage your clipboard history and Windows Clipboard History with support for text, images, and files.**
 
 ## ⭐ Features
 
@@ -14,7 +14,7 @@
 - Preview panel for text, images, and files
 - Persistent keep records in database
 - Words count for text
-- Customize copy rules
+- Customize copy actions
 - Clean clipboard
 - Copy files by sorting names
 - Manage Windows clipboard history (Windows 10, 11)
