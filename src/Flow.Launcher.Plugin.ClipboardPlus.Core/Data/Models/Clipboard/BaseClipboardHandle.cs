@@ -18,7 +18,7 @@ internal class BaseClipboardHandle
 
     protected readonly HRESULT CLIPBRD_E_CANT_OPEN = unchecked((HRESULT)0x800401D0);
 
-    protected nint _executableHandle = 0;
+    protected HWND _executableHandle = HWND.Null;
     protected string _executableName = string.Empty;
     protected string _executablePath = string.Empty;
     protected string _executableTitle = string.Empty;
@@ -31,18 +31,17 @@ internal class BaseClipboardHandle
 
     protected unsafe bool GetApplicationInfo()
     {
-        _executableHandle = 0;
+        _executableHandle = HWND.Null;
         _executableName = string.Empty;
         _executableTitle = string.Empty;
         _executablePath = string.Empty;
 
         try
         {
-            var hwnd = PInvoke.GetForegroundWindow();
-            _executableHandle = hwnd.Value;
+            _executableHandle = PInvoke.GetForegroundWindow();
 
             uint processId = 0;
-            _ = PInvoke.GetWindowThreadProcessId(hwnd, &processId);
+            _ = PInvoke.GetWindowThreadProcessId(_executableHandle, &processId);
             var process = Process.GetProcessById((int)processId);
             var processName = process.ProcessName;
             if (process.MainModule is ProcessModule processModule)
@@ -58,7 +57,7 @@ internal class BaseClipboardHandle
             {
                 // If the window has no title bar or text, if the title bar is empty,
                 // or if the window or control handle is invalid, the return value is zero.
-                var length = PInvoke.GetWindowText(hwnd, (PWSTR)pBuffer, capacity);
+                var length = PInvoke.GetWindowText(_executableHandle, (PWSTR)pBuffer, capacity);
                 _executableTitle = buffer[..length].ToString();
             }
 

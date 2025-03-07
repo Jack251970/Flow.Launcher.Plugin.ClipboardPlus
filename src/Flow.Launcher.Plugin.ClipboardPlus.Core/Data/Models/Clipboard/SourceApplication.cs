@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2025 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
+using Windows.Win32.Foundation;
+
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
 public class SourceApplication
@@ -10,12 +12,12 @@ public class SourceApplication
     /// <summary>
     /// Gets a <see cref="SourceApplication"/> instance representing a null-application.
     /// </summary>
-    public static SourceApplication NULL => new(0, string.Empty, string.Empty, string.Empty);
+    public static SourceApplication NULL => new(HWND.Null, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
     /// Gets the appliation's window-handle.
     /// </summary>
-    public nint Handle { get; }
+    internal HWND Handle { get; }
 
     /// <summary>
     /// Gets the application's name.
@@ -43,7 +45,7 @@ public class SourceApplication
     /// <param name="name">The application's name.</param>
     /// <param name="title">The application's title.</param>
     /// <param name="path">The application's path.</param>
-    public SourceApplication(nint handle, string name, string title, string path)
+    internal SourceApplication(HWND handle, string name, string title, string path)
     {
         Handle = handle;
         Name = name;
