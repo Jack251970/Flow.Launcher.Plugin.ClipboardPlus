@@ -70,6 +70,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -127,24 +128,33 @@
             ItemsSource="{Binding RecordOrders, Mode=OneWay}"
             SelectedItem="{Binding SelectedRecordOrder, Mode=TwoWay}" />
 
-        <!--  Seperator  -->
-        <Separator
-            Grid.Row="3"
-            Grid.ColumnSpan="2"
-            Style="{DynamicResource SettingPanelSeperatorStyle}" />
-
         <!--  Action Top  -->
         <CheckBox
-            Grid.Row="4"
+            Grid.Row="3"
             Grid.ColumnSpan="2"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
             Content="{DynamicResource flowlauncher_plugin_clipboardplus_action_top}"
             IsChecked="{Binding ActionTop, Mode=TwoWay}" />
 
+        <!--  Show Notification  -->
+        <CheckBox
+            Grid.Row="4"
+            Grid.ColumnSpan="2"
+            Margin="{StaticResource SettingPanelItemTopBottomMargin}"
+            VerticalAlignment="Center"
+            Content="{DynamicResource flowlauncher_plugin_clipboardplus_show_notification}"
+            IsChecked="{Binding ShowNotification, Mode=TwoWay}" />
+
+        <!--  Seperator  -->
+        <Separator
+            Grid.Row="5"
+            Grid.ColumnSpan="2"
+            Style="{DynamicResource SettingPanelSeperatorStyle}" />
+
         <!--  Sync Windows Clipboard History  -->
         <CheckBox
-            Grid.Row="5"
+            Grid.Row="6"
             Grid.ColumnSpan="2"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
@@ -155,7 +165,7 @@
 
         <!--  Use Windows Clipboard History Only  -->
         <StackPanel
-            Grid.Row="6"
+            Grid.Row="7"
             Grid.ColumnSpan="2"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             Orientation="Horizontal"
@@ -174,19 +184,19 @@
 
         <!--  Seperator  -->
         <Separator
-            Grid.Row="7"
+            Grid.Row="8"
             Grid.ColumnSpan="2"
             Style="{DynamicResource SettingPanelSeperatorStyle}" />
 
         <!--  Click Action  -->
         <TextBlock
-            Grid.Row="8"
+            Grid.Row="9"
             Grid.Column="0"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_click_action}" />
         <ComboBox
-            Grid.Row="8"
+            Grid.Row="9"
             Grid.Column="1"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
@@ -196,13 +206,13 @@
 
         <!--  Default Rich Text Copy Option  -->
         <TextBlock
-            Grid.Row="9"
+            Grid.Row="10"
             Grid.Column="0"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_default_rich_text_copy_option}" />
         <ComboBox
-            Grid.Row="9"
+            Grid.Row="10"
             Grid.Column="1"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
@@ -212,13 +222,13 @@
 
         <!--  Default Image Copy Option  -->
         <TextBlock
-            Grid.Row="10"
+            Grid.Row="11"
             Grid.Column="0"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_default_image_copy_option}" />
         <ComboBox
-            Grid.Row="10"
+            Grid.Row="11"
             Grid.Column="1"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
@@ -228,13 +238,13 @@
 
         <!--  Default Files Copy Option  -->
         <TextBlock
-            Grid.Row="11"
+            Grid.Row="12"
             Grid.Column="0"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_default_files_copy_option}" />
         <ComboBox
-            Grid.Row="11"
+            Grid.Row="12"
             Grid.Column="1"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
@@ -244,13 +254,13 @@
 
         <!--  Seperator  -->
         <Separator
-            Grid.Row="12"
+            Grid.Row="13"
             Grid.ColumnSpan="2"
             Style="{DynamicResource SettingPanelSeperatorStyle}" />
 
         <!--  Cache Images & Cache Images Button  -->
         <StackPanel
-            Grid.Row="13"
+            Grid.Row="14"
             Grid.ColumnSpan="2"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             Orientation="Horizontal">
@@ -274,14 +284,14 @@
 
         <!--  Cache Format  -->
         <TextBlock
-            Grid.Row="14"
+            Grid.Row="15"
             Grid.Column="0"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_cache_format}" />
         <TextBox
             x:Name="CacheFormatTextBox"
-            Grid.Row="14"
+            Grid.Row="15"
             Grid.Column="1"
             MinWidth="200"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
@@ -294,7 +304,7 @@
         <!--  Cache Format Buttons  -->
         <StackPanel
             Grid.Row="15"
-            Grid.Column="1"
+            Grid.Column="2"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
@@ -386,13 +396,13 @@
 
         <!--  Cache Format Preview  -->
         <TextBlock
-            Grid.Row="16"
+            Grid.Row="17"
             Grid.Column="0"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_cache_format_preview}" />
         <TextBox
-            Grid.Row="16"
+            Grid.Row="17"
             Grid.Column="1"
             MinWidth="200"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
@@ -406,14 +416,14 @@
 
         <!--  Seperator  -->
         <Separator
-            Grid.Row="17"
+            Grid.Row="18"
             Grid.ColumnSpan="2"
             Style="{DynamicResource SettingPanelSeperatorStyle}"
             Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
 
         <!--  Encrypt Data & Import & Export Records Button  -->
         <StackPanel
-            Grid.Row="18"
+            Grid.Row="19"
             Grid.ColumnSpan="2"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             Orientation="Horizontal"
@@ -438,7 +448,7 @@
 
         <!--  Keep Text  -->
         <CheckBox
-            Grid.Row="19"
+            Grid.Row="20"
             Grid.Column="0"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
@@ -446,7 +456,7 @@
             IsChecked="{Binding KeepText, Mode=TwoWay}"
             Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
         <ComboBox
-            Grid.Row="19"
+            Grid.Row="20"
             Grid.Column="1"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
@@ -458,7 +468,7 @@
 
         <!--  Keep Images  -->
         <CheckBox
-            Grid.Row="20"
+            Grid.Row="21"
             Grid.Column="0"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
@@ -466,7 +476,7 @@
             IsChecked="{Binding KeepImages, Mode=TwoWay}"
             Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
         <ComboBox
-            Grid.Row="20"
+            Grid.Row="21"
             Grid.Column="1"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
@@ -478,7 +488,7 @@
 
         <!--  Keep Files  -->
         <CheckBox
-            Grid.Row="21"
+            Grid.Row="22"
             Grid.Column="0"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
@@ -486,7 +496,7 @@
             IsChecked="{Binding KeepFiles, Mode=TwoWay}"
             Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
         <ComboBox
-            Grid.Row="21"
+            Grid.Row="22"
             Grid.Column="1"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"

@@ -17,10 +17,10 @@ namespace Flow.Launcher.Plugin.ClipboardPlus;
 public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPluginI18n,
     IResultUpdated, ISavable, ISettingProvider, IClipboardPlus, IAsyncDisposable
 {
-    // Class name for logging
-    private string ClassName => nameof(ClipboardPlus);
+    #region Fields
 
-    #region Properties
+    // Class name for logging
+    private static readonly string ClassName = nameof(ClipboardPlus);
 
     // Plugin context
     private PluginInitContext? Context = null;
@@ -1661,9 +1661,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
             if (exception == null)
             {
-                Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, validObject as string[]), StringMaxLength));
+                if (Settings.ShowNotification)
+                {
+                    Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
+                        StringUtils.CompressString(clipboardData.GetText(CultureInfo, validObject as string[]), StringMaxLength));
+                }
             }
             else
             {
@@ -1716,9 +1719,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
             if (exception == null)
             {
-                Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), StringMaxLength));
+                if (Settings.ShowNotification)
+                {
+                    Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
+                        StringUtils.CompressString(clipboardData.GetText(CultureInfo), StringMaxLength));
+                }
             }
             else
             {
@@ -1766,9 +1772,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
             if (exception == null)
             {
-                Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), StringMaxLength));
+                if (Settings.ShowNotification)
+                {
+                    Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
+                        StringUtils.CompressString(clipboardData.GetText(CultureInfo), StringMaxLength));
+                } 
             }
             else
             {
@@ -1810,9 +1819,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
             if (exception == null)
             {
-                Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, validObject as string[]), StringMaxLength));
+                if (Settings.ShowNotification)
+                {
+                    Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
+                        StringUtils.CompressString(clipboardData.GetText(CultureInfo, validObject as string[]), StringMaxLength));
+                }
             }
             else
             {
@@ -1901,9 +1913,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
             if (exception == null)
             {
-                Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, filePaths), StringMaxLength));
+                if (Settings.ShowNotification)
+                {
+                    Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
+                        StringUtils.CompressString(clipboardData.GetText(CultureInfo, filePaths), StringMaxLength));
+                }
             }
             else
             {
@@ -1946,9 +1961,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             });
             if (exception == null)
             {
-                Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                    Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo, filePaths), StringMaxLength));
+                if (Settings.ShowNotification)
+                {
+                    Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
+                        Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
+                        StringUtils.CompressString(clipboardData.GetText(CultureInfo, filePaths), StringMaxLength));
+                }
             }
             else
             {

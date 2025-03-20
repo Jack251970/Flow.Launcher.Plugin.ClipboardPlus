@@ -23,6 +23,11 @@ public interface ISettings
     public bool ActionTop { get; set; }
 
     /// <summary>
+    /// Whether to show notification when copying
+    /// </summary>
+    public bool ShowNotification { get; set; }
+
+    /// <summary>
     /// Whether to sync with Windows clipboard history
     /// </summary>
     public bool SyncWindowsClipboardHistory { get; set; }

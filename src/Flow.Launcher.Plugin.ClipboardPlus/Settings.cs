@@ -16,6 +16,8 @@ public class Settings : ISettings
 
     public bool ActionTop { get; set; } = true;
 
+    public bool ShowNotification { get; set; } = true;
+
     public bool SyncWindowsClipboardHistory { get; set; } = false;
 
     public bool UseWindowsClipboardHistoryOnly { get; set; } = false;

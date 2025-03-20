@@ -101,6 +101,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_max_records">列表最大记录数：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">记录排序方式：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">在查询中置顶/置底操作选项（如清理剪切板）</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_show_notification">在复制记录时显示通知</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption">清除关键字错误！</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_text">清除关键字不可为空！</system:String>

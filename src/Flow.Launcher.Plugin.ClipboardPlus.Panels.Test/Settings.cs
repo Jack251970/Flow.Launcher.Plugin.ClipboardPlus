@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
-namespace Flow.Launcher.Plugin.ClipboardPlus;
+namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Test;
 
 public class Settings : ISettings
 {
@@ -15,6 +15,8 @@ public class Settings : ISettings
     public RecordOrder RecordOrder { get; set; } = RecordOrder.CreateTime;
 
     public bool ActionTop { get; set; } = true;
+
+    public bool ShowNotification { get; set; } = true;
 
     public bool SyncWindowsClipboardHistory { get; set; } = false;
 
