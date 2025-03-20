@@ -1066,7 +1066,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     {
         if (!WindowsClipboardHelper.IsClipboardHistorySupported())
         {
-            Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
+            Context.ShowMsgError(Context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
                 Context.GetTranslation("flowlauncher_plugin_clipboardplus_windows_history_not_supported"));
             return false;
         }
