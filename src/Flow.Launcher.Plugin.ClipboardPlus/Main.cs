@@ -1449,11 +1449,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         RecordsList.Clear();
     }
 
-    private async void ReQuery()
+    private void ReQuery()
     {
-        // TODO: Improve refresh way here in future version of FL.
-        new InputSimulator().Keyboard.KeyPress(VirtualKeyCode.ESCAPE);
-        await Task.Delay(RetryInterval);
         Context!.API.ReQuery(false);
     }
 
