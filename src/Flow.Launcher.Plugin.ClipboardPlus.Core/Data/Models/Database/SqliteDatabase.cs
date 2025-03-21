@@ -660,7 +660,7 @@ public class SqliteDatabase : IAsyncDisposable
 
 #endregion
 
-    #region IDisposable Interface
+    #region IAsyncDisposable Interface
 
     private bool _disposed;
 
