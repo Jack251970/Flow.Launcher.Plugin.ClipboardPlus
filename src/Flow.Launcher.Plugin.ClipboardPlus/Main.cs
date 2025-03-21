@@ -563,6 +563,10 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
 
         var clipboardData = clipboardDataPair.ClipboardData;
+        var dataType = clipboardData.DataType;
+        var saved = clipboardData.Saved;
+        var pinned = clipboardData.Pinned;
+        var fromSystem = clipboardData.FromWindowsClipboardHistory();
 
         // Copy Default Option
         results.AddRange(
@@ -585,7 +589,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         );
 
         // Copy Addition Options
-        switch (clipboardData.DataType)
+        switch (dataType)
         {
             case DataType.PlainText:
                 results.Add(new Result
@@ -752,12 +756,10 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 break;
         }
 
-        var pinned = clipboardData.Pinned;
         if (!UseWindowsClipboardHistoryOnly)
         {
             // Save
-            var saved = clipboardData.Saved;
-            if (!clipboardData.Saved)
+            if (!saved)
             {
                 results.Add(new Result
                 {
@@ -811,10 +813,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         else
         {
             // Delete
-            var fromSystem = clipboardData.FromWindowsClipboardHistory();
             if (!fromSystem)
             {
-                var deleteStr = pinned ? "both" : "list";
+                var deleteStr = saved ? "both" : "list";
                 results.Add(new Result
                 {
                     Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_delete_title"),
@@ -831,7 +832,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             }
             else
             {
-                var deleteStr = pinned ? "system_both" : "system_list";
+                var deleteStr = saved ? "system_both" : "system_list";
                 results.Add(new Result
                 {
                     Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_delete_title"),
