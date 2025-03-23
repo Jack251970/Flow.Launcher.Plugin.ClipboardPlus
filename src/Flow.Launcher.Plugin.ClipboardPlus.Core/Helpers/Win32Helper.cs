@@ -22,9 +22,9 @@ public class Win32Helper
                 action();
                 taskCompletionSource.SetResult();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                taskCompletionSource.SetResult();
+                taskCompletionSource.SetException(e);
             }
             finally
             {
@@ -55,9 +55,9 @@ public class Win32Helper
                 await func();
                 taskCompletionSource.SetResult();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                taskCompletionSource.SetResult();
+                taskCompletionSource.SetException(e);
             }
             finally
             {
@@ -88,9 +88,9 @@ public class Win32Helper
             {
                 taskCompletionSource.SetResult(func());
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                taskCompletionSource.SetResult(default);
+                taskCompletionSource.SetException(e);
             }
             finally
             {
@@ -120,9 +120,9 @@ public class Win32Helper
             {
                 taskCompletionSource.SetResult(await func());
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                taskCompletionSource.SetResult(default);
+                taskCompletionSource.SetException(e);
             }
             finally
             {
