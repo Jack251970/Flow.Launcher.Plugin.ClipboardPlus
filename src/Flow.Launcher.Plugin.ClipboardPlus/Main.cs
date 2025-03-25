@@ -42,7 +42,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     // Clipboard monitor instance
     // Warning: Do not init the instance in InitAsync function! This will cause issues.
-    private IClipboardMonitor? ClipboardMonitor;
+    private IClipboardMonitor? ClipboardMonitor = null;
 
     // Observable data formats
     private readonly ObservableDataFormats ObservableDataFormats = new()
@@ -54,7 +54,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     };
 
     // Windows clipboard helper
-    private WindowsClipboardHelper WindowsClipboardHelper = new();
+    private WindowsClipboardHelper WindowsClipboardHelper = null!;
 
     // Records list & Score
     // Latest records are at the beginning of the list.
@@ -103,30 +103,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private const int BottomActionScore4 = 2000;
 
     #endregion
-
-    #endregion
-
-    #region Constructor
-
-    public ClipboardPlus()
-    {
-        if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 10240))
-        {
-            ClipboardMonitor = new ClipboardMonitorWin()
-            {
-                ObserveLastEntry = false,
-                ObservableFormats = ObservableDataFormats
-            };
-        }
-        else
-        {
-            ClipboardMonitor = new ClipboardMonitorW()
-            {
-                ObserveLastEntry = false,
-                ObservableFormats = ObservableDataFormats
-            };
-        }
-    }
 
     #endregion
 
@@ -472,8 +448,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     public async Task InitAsync(PluginInitContext context)
     {
         Context = context;
-        ClipboardMonitor!.SetContext(context);
-        WindowsClipboardHelper.SetClipboardPlus(this);
 
         // init path helper
         PathHelper.Init(context, GetType().Assembly.GetName().Name ?? "Flow.Launcher.Plugin.ClipboardPlus");
@@ -488,6 +462,10 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         // init score helper
         ScoreHelper = new ScoreHelper(ScoreInterval);
 
+        // init windows clipboard helper
+        WindowsClipboardHelper = new();
+        WindowsClipboardHelper.SetClipboardPlus(this);
+
         // setup use Windows clipboard history only
         UseWindowsClipboardHistoryOnly = Settings.UseWindowsClipboardHistoryOnly && CheckUseWindowsClipboardHistoryOnly();
         Context.LogInfo(ClassName, $"Use Windows clipboard history only: {UseWindowsClipboardHistoryOnly}");
@@ -500,9 +478,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             Context.LogDebug(ClassName, "Init database successfully");
 
             // dispose clipboard monitor
-            ClipboardMonitor.ClipboardChanged -= ClipboardMonitor_OnClipboardChanged;
-            ClipboardMonitor.Dispose();
-            ClipboardMonitor = null;
+            if (ClipboardMonitor != null)
+            {
+                ClipboardMonitor.ClipboardChanged -= ClipboardMonitor_OnClipboardChanged;
+                ClipboardMonitor.Dispose();
+                ClipboardMonitor = null;
+            }
 
             // init Windows clipboard helper & records from Windows clipboard history
             EnableWindowsClipboardHelper(true);
@@ -520,6 +501,23 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             Context.LogDebug(ClassName, $"Init {RecordsList.Count} records successfully");
 
             // init & start clipboard monitor
+            if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 10240))
+            {
+                ClipboardMonitor = new ClipboardMonitorWin()
+                {
+                    ObserveLastEntry = false,
+                    ObservableFormats = ObservableDataFormats
+                };
+            }
+            else
+            {
+                ClipboardMonitor = new ClipboardMonitorW()
+                {
+                    ObserveLastEntry = false,
+                    ObservableFormats = ObservableDataFormats
+                };
+            }
+            ClipboardMonitor.SetContext(context);
             ClipboardMonitor.ClipboardChanged += ClipboardMonitor_OnClipboardChanged;
             ClipboardMonitor.StartMonitoring();
             if (ClipboardMonitor.GetType() == typeof(ClipboardMonitorWin))
