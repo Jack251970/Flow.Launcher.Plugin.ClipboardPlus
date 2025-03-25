@@ -67,7 +67,7 @@ public class Settings : ISettings
         var props = type.GetProperties();
         foreach (var prop in props)
         {
-            if (CheckJsonIgnoredAttribute(prop))
+            if (CheckJsonIgnoredOrKeyAttribute(prop))
             {
                 continue;
             }
@@ -84,7 +84,7 @@ public class Settings : ISettings
             "Settings(\n",
             (current, prop) =>
             {
-                if (CheckJsonIgnoredAttribute(prop))
+                if (CheckJsonIgnoredOrKeyAttribute(prop))
                 {
                     return current;
                 }
@@ -95,8 +95,12 @@ public class Settings : ISettings
         return s;
     }
 
-    private static bool CheckJsonIgnoredAttribute(PropertyInfo prop)
+    private static bool CheckJsonIgnoredOrKeyAttribute(PropertyInfo prop)
     {
-        return prop.GetCustomAttribute<JsonIgnoreAttribute>() != null;
+        return
+            // JsonIgnored
+            prop.GetCustomAttribute<JsonIgnoreAttribute>() != null ||
+            // Is EncryptKey
+            prop.Name == nameof(EncryptKey);
     }
 }
