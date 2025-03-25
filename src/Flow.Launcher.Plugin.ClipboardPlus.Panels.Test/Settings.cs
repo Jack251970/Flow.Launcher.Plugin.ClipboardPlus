@@ -60,6 +60,22 @@ public class Settings : ISettings
             new(DataType.Files, FilesKeepTime),
         };
 
+    public void RestoreToDefault()
+    {
+        var defaultSettings = new Settings();
+        var type = GetType();
+        var props = type.GetProperties();
+        foreach (var prop in props)
+        {
+            if (CheckJsonIgnoredAttribute(prop))
+            {
+                continue;
+            }
+            var defaultValue = prop.GetValue(defaultSettings);
+            prop.SetValue(this, defaultValue);
+        }
+    }
+
     public override string ToString()
     {
         var type = GetType();

@@ -111,4 +111,9 @@ public interface ISettings
     /// List of data type and keep time pairs
     /// </summary>
     public List<Tuple<DataType, KeepTime>> KeepTimePairs { get; }
+
+    /// <summary>
+    /// Restore settings to default values
+    /// </summary>
+    public void RestoreToDefault();
 }

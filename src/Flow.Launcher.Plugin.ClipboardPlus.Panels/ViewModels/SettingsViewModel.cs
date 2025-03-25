@@ -128,7 +128,35 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
-#endregion
+    #region Restore to Default
+
+    public ICommand RestoreToDefaultCommand => new RelayCommand(RestoreToDefault);
+
+    private void RestoreToDefault(object? parameter)
+    {
+        Settings.RestoreToDefault();
+        InitializeRecordOrderSelection();
+        InitializeClickActionSelection();
+        InitializeDefaultRichTextCopyOptionSelection();
+        InitializeDefaultImageCopyOptionSelection();
+        InitializeDefaultFilesCopyOptionSelection();
+        InitializeCacheFormatPreview();
+        InitializeKeepTimeSelection();
+        OnPropertyChanged(nameof(ClearKeyword));
+        OnPropertyChanged(nameof(MaxRecords));
+        OnPropertyChanged(nameof(ActionTop));
+        OnPropertyChanged(nameof(ShowNotification));
+        OnPropertyChanged(nameof(SyncWindowsClipboardHistory));
+        OnPropertyChanged(nameof(UseWindowsClipboardHistoryOnly));
+        OnPropertyChanged(nameof(CacheImages));
+        OnPropertyChanged(nameof(CacheFormat));
+        OnPropertyChanged(nameof(EncryptData));
+        ClipboardPlus.SaveSettingJsonStorage();
+    }
+
+    #endregion
+
+    #endregion
 
     #region Dependency Properties
 

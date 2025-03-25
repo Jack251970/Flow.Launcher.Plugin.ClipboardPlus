@@ -71,6 +71,8 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -505,6 +507,20 @@
             ItemsSource="{Binding FilesKeepTimes, Mode=OneWay}"
             SelectedItem="{Binding SelectedFilesKeepTime, Mode=TwoWay}"
             Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
+
+        <!--  Seperator  -->
+        <Separator
+            Grid.Row="23"
+            Grid.ColumnSpan="2"
+            Style="{DynamicResource SettingPanelSeparatorStyle}" />
+
+        <!--  Restore to Default  -->
+        <Button
+            Grid.Row="24"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Left"
+            Command="{Binding RestoreToDefaultCommand}"
+            Content="{DynamicResource flowlauncher_plugin_clipboardplus_restore_to_default}" />
 
     </Grid>
 </UserControl>
