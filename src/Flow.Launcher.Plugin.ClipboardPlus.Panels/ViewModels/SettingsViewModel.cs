@@ -29,7 +29,7 @@ public class SettingsViewModel : BaseModel
         InitializeDefaultRichTextCopyOptionSelection();
         InitializeDefaultImageCopyOptionSelection();
         InitializeDefaultFilesCopyOptionSelection();
-        InitializeCacheFormatPreview();
+        _cacheFormatPreview = StringUtils.FormatImageName(Settings.CacheFormat, DateTime.Now);
         InitializeKeepTimeSelection();
         if (string.IsNullOrEmpty(ClearKeyword))
         {
@@ -134,24 +134,58 @@ public class SettingsViewModel : BaseModel
 
     private void RestoreToDefault(object? parameter)
     {
+        var oldSyncWindowsClipboardHistory = SyncWindowsClipboardHistory;
+        var oldUseWindowsClipboardHistoryOnly = UseWindowsClipboardHistoryOnly;
+
         Settings.RestoreToDefault();
-        InitializeRecordOrderSelection();
-        InitializeClickActionSelection();
-        InitializeDefaultRichTextCopyOptionSelection();
-        InitializeDefaultImageCopyOptionSelection();
-        InitializeDefaultFilesCopyOptionSelection();
-        InitializeCacheFormatPreview();
-        InitializeKeepTimeSelection();
-        OnPropertyChanged(nameof(ClearKeyword));
-        OnPropertyChanged(nameof(MaxRecords));
-        OnPropertyChanged(nameof(ActionTop));
-        OnPropertyChanged(nameof(ShowNotification));
-        OnPropertyChanged(nameof(SyncWindowsClipboardHistory));
-        OnPropertyChanged(nameof(UseWindowsClipboardHistoryOnly));
-        OnPropertyChanged(nameof(CacheImages));
-        OnPropertyChanged(nameof(CacheFormat));
-        OnPropertyChanged(nameof(EncryptData));
+
+        RestoreRecordOrders();
+        RestoreClickActions();
+        RestoreDefaultRichTextCopyOptions();
+        RestoreDefaultImageCopyOptions();
+        RestoreDefaultFilesCopyOptions();
+        RestoreKeepTimes();
+
+        base.OnPropertyChanged(nameof(ClearKeyword));
+        base.OnPropertyChanged(nameof(MaxRecords));
+        base.OnPropertyChanged(nameof(ActionTop));
+        base.OnPropertyChanged(nameof(ShowNotification));
+
+        base.OnPropertyChanged(nameof(SyncWindowsClipboardHistory));
+        base.OnPropertyChanged(nameof(UseWindowsClipboardHistoryOnly));
+        base.OnPropertyChanged(nameof(SyncWindowsClipboardHistoryEnabled));
+        base.OnPropertyChanged(nameof(DatabasePanelVisibility));
+
+        base.OnPropertyChanged(nameof(CacheImages));
+        base.OnPropertyChanged(nameof(CacheFormat));
+        base.OnPropertyChanged(nameof(EncryptData));
+        base.OnPropertyChanged(nameof(KeepText));
+        base.OnPropertyChanged(nameof(KeepImages));
+        base.OnPropertyChanged(nameof(KeepFiles));
+
         ClipboardPlus.SaveSettingJsonStorage();
+
+        var showRestartWarning = false;
+        if (oldSyncWindowsClipboardHistory)
+        {
+            if (!ClipboardPlus.UseWindowsClipboardHistoryOnly)
+            {
+                ClipboardPlus.DisableWindowsClipboardHelper(true);
+            }
+            else
+            {
+                showRestartWarning = true;
+            }
+        }
+        if (oldUseWindowsClipboardHistoryOnly && ClipboardPlus.UseWindowsClipboardHistoryOnly)
+        {
+            // If change to non-original value, show restart app warning
+            showRestartWarning = true;
+        }
+        if (showRestartWarning && ShowRestartAppWarning())
+        {
+            Context.RestartApp();
+        }
     }
 
     #endregion
@@ -245,17 +279,22 @@ public class SettingsViewModel : BaseModel
     private void InitializeRecordOrderSelection()
     {
         _recordOrders = EnumBindingModel<RecordOrder>.CreateList(Context);
-
         _selectedRecordOrder = _recordOrders.First(x => x.Value == Settings.RecordOrder);
     }
 
     private void RefreshRecordOrders()
     {
         _recordOrders = EnumBindingModel<RecordOrder>.CreateList(Context);
-
-        SelectedRecordOrder = RecordOrders.First(x => x.Value == Settings.RecordOrder);
+        _selectedRecordOrder = RecordOrders.First(x => x.Value == Settings.RecordOrder);
 
         base.OnPropertyChanged(nameof(RecordOrders));
+        base.OnPropertyChanged(nameof(SelectedRecordOrder));
+    }
+
+    private void RestoreRecordOrders()
+    {
+        _selectedRecordOrder = RecordOrders.First(x => x.Value == Settings.RecordOrder);
+        base.OnPropertyChanged(nameof(SelectedRecordOrder));
     }
 
     #endregion
@@ -413,17 +452,22 @@ public class SettingsViewModel : BaseModel
     private void InitializeClickActionSelection()
     {
         _clickActions = EnumBindingModel<ClickAction>.CreateList(Context);
-
         _selectedClickAction = _clickActions.First(x => x.Value == Settings.ClickAction);
     }
 
     private void RefreshClickActions()
     {
         _clickActions = EnumBindingModel<ClickAction>.CreateList(Context);
-
-        SelectedClickAction = ClickActions.First(x => x.Value == Settings.ClickAction);
+        _selectedClickAction = ClickActions.First(x => x.Value == Settings.ClickAction);
 
         base.OnPropertyChanged(nameof(ClickActions));
+        base.OnPropertyChanged(nameof(SelectedClickAction));
+    }
+
+    private void RestoreClickActions()
+    {
+        _selectedClickAction = ClickActions.First(x => x.Value == Settings.ClickAction);
+        base.OnPropertyChanged(nameof(SelectedClickAction));
     }
 
     #endregion
@@ -466,17 +510,22 @@ public class SettingsViewModel : BaseModel
     private void InitializeDefaultRichTextCopyOptionSelection()
     {
         _defaultRichTextCopyOptions = EnumBindingModel<DefaultRichTextCopyOption>.CreateList(Context);
-
         _selectedDefaultRichTextCopyOption = _defaultRichTextCopyOptions.First(x => x.Value == Settings.DefaultRichTextCopyOption);
     }
 
     private void RefreshDefaultRichTextCopyOptions()
     {
         _defaultRichTextCopyOptions = EnumBindingModel<DefaultRichTextCopyOption>.CreateList(Context);
-
-        SelectedDefaultRichTextCopyOption = DefaultRichTextCopyOptions.First(x => x.Value == Settings.DefaultRichTextCopyOption);
+        _selectedDefaultRichTextCopyOption = DefaultRichTextCopyOptions.First(x => x.Value == Settings.DefaultRichTextCopyOption);
 
         base.OnPropertyChanged(nameof(DefaultRichTextCopyOptions));
+        base.OnPropertyChanged(nameof(SelectedDefaultRichTextCopyOption));
+    }
+
+    private void RestoreDefaultRichTextCopyOptions()
+    {
+        _selectedDefaultRichTextCopyOption = DefaultRichTextCopyOptions.First(x => x.Value == Settings.DefaultRichTextCopyOption);
+        base.OnPropertyChanged(nameof(SelectedDefaultRichTextCopyOption));
     }
 
     #endregion
@@ -519,17 +568,22 @@ public class SettingsViewModel : BaseModel
     private void InitializeDefaultImageCopyOptionSelection()
     {
         _defaultImageCopyOptions = EnumBindingModel<DefaultImageCopyOption>.CreateList(Context);
-
         _selectedDefaultImageCopyOption = _defaultImageCopyOptions.First(x => x.Value == Settings.DefaultImageCopyOption);
     }
 
     private void RefreshDefaultImageCopyOptions()
     {
         _defaultImageCopyOptions = EnumBindingModel<DefaultImageCopyOption>.CreateList(Context);
-
-        SelectedDefaultImageCopyOption = DefaultImageCopyOptions.First(x => x.Value == Settings.DefaultImageCopyOption);
+        _selectedDefaultImageCopyOption = DefaultImageCopyOptions.First(x => x.Value == Settings.DefaultImageCopyOption);
 
         base.OnPropertyChanged(nameof(DefaultImageCopyOptions));
+        base.OnPropertyChanged(nameof(SelectedDefaultImageCopyOption));
+    }
+
+    private void RestoreDefaultImageCopyOptions()
+    {
+        _selectedDefaultImageCopyOption = DefaultImageCopyOptions.First(x => x.Value == Settings.DefaultImageCopyOption);
+        base.OnPropertyChanged(nameof(SelectedDefaultImageCopyOption));
     }
 
     #endregion
@@ -572,17 +626,22 @@ public class SettingsViewModel : BaseModel
     private void InitializeDefaultFilesCopyOptionSelection()
     {
         _defaultFilesCopyOptions = EnumBindingModel<DefaultFilesCopyOption>.CreateList(Context);
-
         _selectedDefaultFilesCopyOption = _defaultFilesCopyOptions.First(x => x.Value == Settings.DefaultFilesCopyOption);
     }
 
     private void RefreshDefaultFilesCopyOptions()
     {
         _defaultFilesCopyOptions = EnumBindingModel<DefaultFilesCopyOption>.CreateList(Context);
-
-        SelectedDefaultFilesCopyOption = DefaultFilesCopyOptions.First(x => x.Value == Settings.DefaultFilesCopyOption);
+        _selectedDefaultFilesCopyOption = DefaultFilesCopyOptions.First(x => x.Value == Settings.DefaultFilesCopyOption);
 
         base.OnPropertyChanged(nameof(DefaultFilesCopyOptions));
+        base.OnPropertyChanged(nameof(SelectedDefaultFilesCopyOption));
+    }
+
+    private void RestoreDefaultFilesCopyOptions()
+    {
+        _selectedDefaultFilesCopyOption = DefaultFilesCopyOptions.First(x => x.Value == Settings.DefaultFilesCopyOption);
+        base.OnPropertyChanged(nameof(SelectedDefaultFilesCopyOption));
     }
 
     #endregion
@@ -639,12 +698,6 @@ public class SettingsViewModel : BaseModel
             _cacheFormatPreview = value;
             OnPropertyChanged();
         }
-    }
-
-    [MemberNotNull(nameof(_cacheFormatPreview))]
-    public void InitializeCacheFormatPreview()
-    {
-        _cacheFormatPreview = StringUtils.FormatImageName(Settings.CacheFormat, DateTime.Now);
     }
 
     #endregion
@@ -861,7 +914,6 @@ public class SettingsViewModel : BaseModel
         _textKeepTimes = EnumBindingModel<KeepTime>.CreateList(Context);
         _imagesKeepTimes = EnumBindingModel<KeepTime>.CreateList(Context);
         _filesKeepTimes = EnumBindingModel<KeepTime>.CreateList(Context);
-
         _selectedTextKeepTime = _textKeepTimes.First(x => x.Value == Settings.TextKeepTime);
         _selectedImagesKeepTime = _imagesKeepTimes.First(x => x.Value == Settings.ImagesKeepTime);
         _selectedFilesKeepTime = _filesKeepTimes.First(x => x.Value == Settings.FilesKeepTime);
@@ -872,19 +924,32 @@ public class SettingsViewModel : BaseModel
         _textKeepTimes = EnumBindingModel<KeepTime>.CreateList(Context);
         _imagesKeepTimes = EnumBindingModel<KeepTime>.CreateList(Context);
         _filesKeepTimes = EnumBindingModel<KeepTime>.CreateList(Context);
-
-        SelectedTextKeepTime = TextKeepTimes.First(x => x.Value == Settings.TextKeepTime);
-        SelectedImagesKeepTime = ImagesKeepTimes.First(x => x.Value == Settings.ImagesKeepTime);
-        SelectedFilesKeepTime = FilesKeepTimes.First(x => x.Value == Settings.FilesKeepTime);
+        _selectedTextKeepTime = TextKeepTimes.First(x => x.Value == Settings.TextKeepTime);
+        _selectedImagesKeepTime = ImagesKeepTimes.First(x => x.Value == Settings.ImagesKeepTime);
+        _selectedFilesKeepTime = FilesKeepTimes.First(x => x.Value == Settings.FilesKeepTime);
 
         base.OnPropertyChanged(nameof(TextKeepTimes));
         base.OnPropertyChanged(nameof(ImagesKeepTimes));
         base.OnPropertyChanged(nameof(FilesKeepTimes));
+        base.OnPropertyChanged(nameof(SelectedTextKeepTime));
+        base.OnPropertyChanged(nameof(SelectedImagesKeepTime));
+        base.OnPropertyChanged(nameof(SelectedFilesKeepTime));
+    }
+
+    private void RestoreKeepTimes()
+    {
+        _selectedTextKeepTime = TextKeepTimes.First(x => x.Value == Settings.TextKeepTime);
+        _selectedImagesKeepTime = ImagesKeepTimes.First(x => x.Value == Settings.ImagesKeepTime);
+        _selectedFilesKeepTime = FilesKeepTimes.First(x => x.Value == Settings.FilesKeepTime);
+
+        base.OnPropertyChanged(nameof(SelectedTextKeepTime));
+        base.OnPropertyChanged(nameof(SelectedImagesKeepTime));
+        base.OnPropertyChanged(nameof(SelectedFilesKeepTime));
     }
 
     #endregion
 
-#endregion
+    #endregion
 
     #region OnPropertyChanged
 
