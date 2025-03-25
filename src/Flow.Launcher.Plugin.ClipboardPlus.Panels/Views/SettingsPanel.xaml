@@ -303,7 +303,7 @@
 
         <!--  Cache Format Buttons  -->
         <StackPanel
-            Grid.Row="15"
+            Grid.Row="16"
             Grid.Column="2"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
