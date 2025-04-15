@@ -403,15 +403,22 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
 
     public static BitmapSource? GetImageContent(IDataObject dataObj)
     {
-        if (dataObj.GetData(DataFormats.Bitmap) is BitmapSource capturedImage)
+        try
         {
-            // Enable cross-thread access
-            if (capturedImage.CanFreeze)
+            if (dataObj.GetData(DataFormats.Bitmap) is BitmapSource capturedImage)
             {
-                capturedImage.Freeze();
-            }
+                // Enable cross-thread access
+                if (capturedImage.CanFreeze)
+                {
+                    capturedImage.Freeze();
+                }
 
-            return capturedImage;
+                return capturedImage;
+            }
+        }
+        catch (COMException)
+        {
+            // Ignored
         }
 
         return null;

@@ -273,31 +273,38 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
 
     public static async Task<BitmapImage?> GetImageContentAsync(DataPackageView dataObj)
     {
-        if (await dataObj.GetBitmapAsync() is RandomAccessStreamReference imageReceived)
+        try
         {
-            // Open the stream reference
-            using var imageStream = await imageReceived.OpenReadAsync();
-
-            // Convert to .NET stream and copy to MemoryStream
-            using var netStream = imageStream.AsStreamForRead();
-            using var memoryStream = new MemoryStream();
-            await netStream.CopyToAsync(memoryStream);
-            memoryStream.Position = 0; // Reset position for reading
-
-            // Create and configure BitmapImage
-            var capturedImage = new BitmapImage();
-            capturedImage.BeginInit();
-            capturedImage.CacheOption = BitmapCacheOption.OnLoad; // Critical for immediate load
-            capturedImage.StreamSource = memoryStream;
-            capturedImage.EndInit();
-
-            // Enable cross-thread access
-            if (capturedImage.CanFreeze)
+            if (await dataObj.GetBitmapAsync() is RandomAccessStreamReference imageReceived)
             {
-                capturedImage.Freeze();
-            }
+                // Open the stream reference
+                using var imageStream = await imageReceived.OpenReadAsync();
 
-            return capturedImage;
+                // Convert to .NET stream and copy to MemoryStream
+                using var netStream = imageStream.AsStreamForRead();
+                using var memoryStream = new MemoryStream();
+                await netStream.CopyToAsync(memoryStream);
+                memoryStream.Position = 0; // Reset position for reading
+
+                // Create and configure BitmapImage
+                var capturedImage = new BitmapImage();
+                capturedImage.BeginInit();
+                capturedImage.CacheOption = BitmapCacheOption.OnLoad; // Critical for immediate load
+                capturedImage.StreamSource = memoryStream;
+                capturedImage.EndInit();
+
+                // Enable cross-thread access
+                if (capturedImage.CanFreeze)
+                {
+                    capturedImage.Freeze();
+                }
+
+                return capturedImage;
+            }
+        }
+        catch (COMException)
+        {
+            // Ignored
         }
 
         return null;
