@@ -16,7 +16,8 @@ internal class BaseClipboardHandle
 {
     #region Fields
 
-    protected readonly HRESULT CLIPBRD_E_CANT_OPEN = unchecked((HRESULT)0x800401D0);
+    protected static readonly HRESULT CLIPBOARD_E_CANT_OPEN = unchecked((HRESULT)0x800401D0);
+    protected static readonly HRESULT RPC_SERVER_UNAVAILABLE = unchecked((HRESULT)0x800706BA);
 
     protected HWND _executableHandle = HWND.Null;
     protected string _executableName = string.Empty;

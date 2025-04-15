@@ -351,11 +351,17 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
             // Applications with Administrative privileges can however override
             // this exception when run in a production environment.
         }
-        catch (COMException e) when (e.HResult == (int)CLIPBRD_E_CANT_OPEN)
+        catch (COMException e) when (e.HResult == CLIPBOARD_E_CANT_OPEN)
         {
             // Sometimes the clipboard is locked and cannot be accessed.
             // System.Runtime.InteropServices.COMException (0x800401D0)
             // OpenClipboard Failed (0x800401D0 (CLIPBRD_E_CANT_OPEN))
+        }
+        catch (COMException e) when (e.HResult == RPC_SERVER_UNAVAILABLE)
+        {
+            // Sometimes the clipboard is locked and cannot be accessed.
+            // System.Runtime.InteropServices.COMException (0x800706BA)
+            // RPC server is unavailable (0x800706BA (RPC_E_SERVER_UNAVAILABLE))
         }
         catch (Exception e)
         {
