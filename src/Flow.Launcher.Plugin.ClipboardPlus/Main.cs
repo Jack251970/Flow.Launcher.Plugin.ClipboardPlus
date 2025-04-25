@@ -1990,7 +1990,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             try
             {
-                await Win32Helper.StartSTATaskAsync(action);
+                await Win32Helper.StartSTATaskAsync(action).ConfigureAwait(false);
                 break;
             }
             catch (Exception e)
