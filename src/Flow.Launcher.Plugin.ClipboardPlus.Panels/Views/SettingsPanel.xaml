@@ -137,7 +137,7 @@
             Visibility="{Binding SyncWindowsClipboardHistoryVisibility, Mode=OneTime}" />
 
         <!--  Use Windows Clipboard History Only  -->
-        <StackPanel
+        <WrapPanel
             Grid.Row="7"
             Grid.ColumnSpan="2"
             Margin="{DynamicResource SettingPanelItemTopBottomMargin}"
@@ -153,7 +153,7 @@
                 VerticalAlignment="Center"
                 Command="{Binding OpenWindowsClipboardSettingsCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_open_windows_clipboard_settings}" />
-        </StackPanel>
+        </WrapPanel>
 
         <!--  Seperator  -->
         <Separator
@@ -275,7 +275,7 @@
             TextWrapping="NoWrap" />
 
         <!--  Cache Format Buttons  -->
-        <StackPanel
+        <WrapPanel
             Grid.Row="16"
             Grid.Column="2"
             Margin="{DynamicResource SettingPanelItemLeftTopBottomMargin}"
@@ -365,7 +365,7 @@
                     </MultiBinding>
                 </Button.CommandParameter>
             </Button>
-        </StackPanel>
+        </WrapPanel>
 
         <!--  Cache Format Preview  -->
         <TextBlock
