@@ -140,15 +140,15 @@
         <WrapPanel
             Grid.Row="7"
             Grid.ColumnSpan="2"
-            Margin="{DynamicResource SettingPanelItemTopBottomMargin}"
             Orientation="Horizontal"
             Visibility="{Binding SyncWindowsClipboardHistoryVisibility, Mode=OneTime}">
             <CheckBox
+                Margin="{DynamicResource SettingPanelItemRightTopBottomMargin}"
                 VerticalAlignment="Center"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only}"
                 IsChecked="{Binding UseWindowsClipboardHistoryOnly, Mode=TwoWay}" />
             <Button
-                Margin="{DynamicResource SettingPanelItemLeftMargin}"
+                Margin="{DynamicResource SettingPanelItemTopBottomMargin}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Command="{Binding OpenWindowsClipboardSettingsCommand}"
@@ -232,28 +232,29 @@
             Style="{DynamicResource SettingPanelSeparatorStyle}" />
 
         <!--  Cache Images & Cache Images Button  -->
-        <StackPanel
+        <WrapPanel
             Grid.Row="14"
             Grid.ColumnSpan="2"
             Margin="{DynamicResource SettingPanelItemTopBottomMargin}"
             Orientation="Horizontal">
             <CheckBox
+                Margin="{DynamicResource SettingPanelItemRightTopBottomMargin}"
                 VerticalAlignment="Center"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_cache_images}"
                 IsChecked="{Binding CacheImages, Mode=TwoWay}" />
             <Button
-                Margin="{DynamicResource SettingPanelItemLeftMargin}"
+                Margin="{DynamicResource SettingPanelItemRightTopBottomMargin}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Command="{Binding OpenCacheImageFolderCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_open_cache_folder}" />
             <Button
-                Margin="{DynamicResource SettingPanelItemLeftMargin}"
+                Margin="{DynamicResource SettingPanelItemTopBottomMargin}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Command="{Binding ClearCacheImageFolderCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_clean_cache_folder}" />
-        </StackPanel>
+        </WrapPanel>
 
         <!--  Cache Format  -->
         <TextBlock
@@ -278,12 +279,13 @@
         <WrapPanel
             Grid.Row="16"
             Grid.Column="2"
-            Margin="{DynamicResource SettingPanelItemLeftTopBottomMargin}"
+            Margin="{DynamicResource SettingPanelItemLeftMargin}"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             Orientation="Horizontal">
             <Button
                 MinWidth="30"
+                Margin="{DynamicResource SettingPanelItemRightTopBottomMargin}"
                 Command="{Binding FormatStringInsertCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_year}">
                 <Button.CommandParameter>
@@ -295,7 +297,7 @@
             </Button>
             <Button
                 MinWidth="30"
-                Margin="{DynamicResource SettingPanelItemLeftMargin}"
+                Margin="{DynamicResource SettingPanelItemRightTopBottomMargin}"
                 Command="{Binding FormatStringInsertCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_month}">
                 <Button.CommandParameter>
@@ -307,7 +309,7 @@
             </Button>
             <Button
                 MinWidth="30"
-                Margin="{DynamicResource SettingPanelItemLeftMargin}"
+                Margin="{DynamicResource SettingPanelItemRightTopBottomMargin}"
                 Command="{Binding FormatStringInsertCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_day}">
                 <Button.CommandParameter>
@@ -319,7 +321,7 @@
             </Button>
             <Button
                 MinWidth="30"
-                Margin="{DynamicResource SettingPanelItemLeftMargin}"
+                Margin="{DynamicResource SettingPanelItemRightTopBottomMargin}"
                 Command="{Binding FormatStringInsertCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_hour}">
                 <Button.CommandParameter>
@@ -331,7 +333,7 @@
             </Button>
             <Button
                 MinWidth="30"
-                Margin="{DynamicResource SettingPanelItemLeftMargin}"
+                Margin="{DynamicResource SettingPanelItemRightTopBottomMargin}"
                 Command="{Binding FormatStringInsertCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_minute}">
                 <Button.CommandParameter>
@@ -343,7 +345,7 @@
             </Button>
             <Button
                 MinWidth="30"
-                Margin="{DynamicResource SettingPanelItemLeftMargin}"
+                Margin="{DynamicResource SettingPanelItemRightTopBottomMargin}"
                 Command="{Binding FormatStringInsertCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_second}">
                 <Button.CommandParameter>
@@ -355,7 +357,7 @@
             </Button>
             <Button
                 MinWidth="30"
-                Margin="{DynamicResource SettingPanelItemLeftMargin}"
+                Margin="{DynamicResource SettingPanelItemTopBottomMargin}"
                 Command="{Binding FormatStringInsertCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_format_app}">
                 <Button.CommandParameter>
@@ -395,29 +397,29 @@
             Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
 
         <!--  Encrypt Data & Import & Export Records Button  -->
-        <StackPanel
+        <WrapPanel
             Grid.Row="19"
             Grid.ColumnSpan="2"
-            Margin="{DynamicResource SettingPanelItemTopBottomMargin}"
             Orientation="Horizontal"
             Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}">
             <CheckBox
+                Margin="{DynamicResource SettingPanelItemRightTopBottomMargin}"
                 VerticalAlignment="Center"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_encrypt_data}"
                 IsChecked="{Binding EncryptData, Mode=TwoWay}" />
             <Button
-                Margin="{DynamicResource SettingPanelItemLeftMargin}"
+                Margin="{DynamicResource SettingPanelItemRightTopBottomMargin}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Command="{Binding ImportJsonRecordsCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_import_records}" />
             <Button
-                Margin="{DynamicResource SettingPanelItemLeftMargin}"
+                Margin="{DynamicResource SettingPanelItemTopBottomMargin}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Command="{Binding ExportJsonRecordsCommand}"
                 Content="{DynamicResource flowlauncher_plugin_clipboardplus_export_records}" />
-        </StackPanel>
+        </WrapPanel>
 
         <!--  Keep Text  -->
         <CheckBox
