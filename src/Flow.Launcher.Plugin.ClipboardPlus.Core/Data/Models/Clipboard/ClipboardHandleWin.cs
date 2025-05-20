@@ -238,6 +238,12 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
             // System.Runtime.InteropServices.COMException (0x800706BA)
             // RPC server is unavailable (0x800706BA (RPC_E_SERVER_UNAVAILABLE))
         }
+        catch (COMException e) when (e.HResult == DV_E_FORMATETC || e.HResult == DV_E_CLIPFORMAT)
+        {
+            // Sometimes the "FileGroupDescriptorW" format provided by the source app contains a virtual folder item, which cannot be represented as a StorageItem object.
+            // System.Runtime.InteropServices.COMException (0x800706BA)
+            // Invalid clipboard format (0x8004006A (DV_E_CLIPFORMAT))
+        }
         catch (Exception e)
         {
             _context.LogException(ClassName, "Clipboard changed event failed.", e);
@@ -339,7 +345,7 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
                 {
                     itemsList.Add(item.Path);
                 }
-                catch (Exception ex) when ((uint)ex.HResult == 0x80040064 || (uint)ex.HResult == 0x8004006A)
+                catch (Exception ex) when (ex.HResult == DV_E_FORMATETC || ex.HResult == DV_E_CLIPFORMAT)
                 {
                     // Not support for files from remote desktop
                 }
