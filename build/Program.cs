@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Cake.Common;
 using Cake.Common.Diagnostics;
 using Cake.Common.IO;
@@ -14,6 +13,7 @@ using Cake.Compression;
 using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
+using Flow.Launcher.Plugin;
 using Newtonsoft.Json;
 
 namespace Build;
@@ -24,7 +24,6 @@ public static class Program
     {
         return new CakeHost()
             .UseContext<BuildContext>()
-            // .UseLifetime<BuildLifetime>()
             .Run(args);
     }
 }
@@ -98,14 +97,6 @@ public class PublishTask : FrostingTask<BuildContext>
         );
         context.CreateDirectory(dstDir);
 
-        // var builder = context.DefaultSln.Value.Projects.First(p => p.Name.EndsWith("Build"));
-        // var midDir = builder.Path.GetDirectory().Combine(new DirectoryPath("bin/Publish"));
-        // if (context.DirectoryExists(midDir))
-        //     context.DeleteDirectory(midDir, new DeleteDirectorySettings { Recursive = true, Force = true });
-        // context.CreateDirectory(midDir);
-
-        // context.CopyDirectory(srcDir, midDir);
-
         var ptn =
             // Plugin
             @"Flow.Launcher.Plugin.ClipboardPlus\.dll|Flow.Launcher.Plugin.ClipboardPlus.+\.dll|"
@@ -176,7 +167,7 @@ public class PublishTask : FrostingTask<BuildContext>
 
         if (versionFile != null)
         {
-            VersionInfo? versionInfoObj = JsonConvert.DeserializeObject<VersionInfo>(
+            PluginMetadata? versionInfoObj = JsonConvert.DeserializeObject<PluginMetadata>(
                 File.ReadAllText(versionFile.ToString()!)
             );
             if (versionInfoObj != null)
@@ -249,76 +240,3 @@ public sealed class CleanTask : FrostingTask<BuildContext>
 [IsDependentOn(typeof(BuildTask))]
 [IsDependentOn(typeof(PublishTask))]
 public class DefaultTask : FrostingTask { }
-
-[TaskName("Deploy")]
-[IsDependentOn(typeof(DefaultTask))]
-public class DeployTask : FrostingTask<BuildContext>
-{
-    public override async void Run(BuildContext context)
-    {
-        // get most recent file
-        var builder = context.DefaultSln.Value.Projects.First(p => p.Name.EndsWith("Build"));
-        var distDir = builder.Path
-            .GetDirectory()
-            .GetParent()
-            .Combine(new DirectoryPath(context.PublishDir));
-        var files = context.GetFiles($"{distDir}/ClipboardPlus*.zip");
-
-        DateTime t = DateTime.FromFileTime(0);
-        FilePath mostRecentFile = files.First();
-        foreach (var f in files)
-        {
-            if (File.GetCreationTime(f.FullPath) <= t)
-            {
-                continue;
-            }
-
-            t = File.GetCreationTime(f.FullPath);
-            mostRecentFile = f;
-        }
-
-        // kill process
-        var processes = System.Diagnostics.Process.GetProcessesByName("Flow.Launcher");
-        foreach (var p in processes)
-        {
-            p.Kill();
-        }
-        await Task.Delay(1000);
-
-        // delete old files
-        var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        var pluginsDir = System.IO.Path.Combine(appData, "FlowLauncher", "Plugins");
-        var oldFiles = context.GetFiles($"{pluginsDir}/ClipboardPlus*");
-        foreach (var f in oldFiles)
-        {
-            context.DeleteFile(f);
-        }
-
-        // copy file
-        context.Unzip(
-            mostRecentFile,
-            new DirectoryPath(
-                pluginsDir + mostRecentFile.GetFilenameWithoutExtension()
-            )
-        );
-
-        // start process
-        var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var exePath = System.IO.Path.Combine(localAppData, "FlowLauncher", "Flow.Launcher.exe");
-        System.Diagnostics.Process.Start(exePath);
-    }
-}
-
-public class VersionInfo
-{
-    public string? ID { get; set; }
-    public string? ActionKeyword { get; set; }
-    public string? Name { get; set; }
-    public string? Description { get; set; }
-    public string? Author { get; set; }
-    public string? Version { get; set; }
-    public string? Language { get; set; }
-    public string? Website { get; set; }
-    public string? IcoPath { get; set; }
-    public string? ExecuteFileName { get; set; }
-}
