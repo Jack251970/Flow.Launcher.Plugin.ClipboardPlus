@@ -17,6 +17,7 @@ internal class BaseClipboardHandle
     #region Fields
 
     protected static readonly HRESULT CLIPBOARD_E_CANT_OPEN = unchecked((HRESULT)0x800401D0);
+    protected static readonly HRESULT CLIPBOARD_E_BAD_DATA = unchecked((HRESULT)0x800401D3);
     protected static readonly HRESULT RPC_SERVER_UNAVAILABLE = unchecked((HRESULT)0x800706BA);
     protected static readonly HRESULT DV_E_FORMATETC = unchecked((HRESULT)0x80040064);
     protected static readonly HRESULT DV_E_CLIPFORMAT = unchecked((HRESULT)0x8004006A);

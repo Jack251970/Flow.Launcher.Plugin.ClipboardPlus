@@ -232,6 +232,12 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
             // System.Runtime.InteropServices.COMException (0x800401D0)
             // OpenClipboard Failed (0x800401D0 (CLIPBRD_E_CANT_OPEN))
         }
+        catch (COMException e) when (e.HResult == CLIPBOARD_E_BAD_DATA)
+        {
+            // Sometimes data on clipboard is invalid.
+            // System.Runtime.InteropServices.COMException (0x800401D3)
+            // Bad data in clipboard (0x800401D3 (CLIPBRD_E_BAD_DATA))
+        }
         catch (COMException e) when (e.HResult == RPC_SERVER_UNAVAILABLE)
         {
             // Sometimes the clipboard is locked and cannot be accessed.
