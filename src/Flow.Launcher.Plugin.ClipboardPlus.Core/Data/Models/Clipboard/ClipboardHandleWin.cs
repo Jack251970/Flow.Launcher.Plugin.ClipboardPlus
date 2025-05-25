@@ -113,23 +113,30 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
                 // Make sure on the application dispatcher.
                 _ = System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
                 {
-                    if (await GetImageContentAsync(dataObj) is BitmapImage capturedImage)
+                    try
                     {
-                        ClipboardMonitorInstance.ClipboardImage = capturedImage;
-
-                        if (GetApplicationInfo())
+                        if (await GetImageContentAsync(dataObj) is BitmapImage capturedImage)
                         {
-                            ClipboardMonitorInstance.Invoke(
-                                capturedImage,
-                                DataType.Image,
-                                new SourceApplication(
-                                    _executableHandle,
-                                    _executableName,
-                                    _executableTitle,
-                                    _executablePath
-                                )
-                            );
+                            ClipboardMonitorInstance.ClipboardImage = capturedImage;
+
+                            if (GetApplicationInfo())
+                            {
+                                ClipboardMonitorInstance.Invoke(
+                                    capturedImage,
+                                    DataType.Image,
+                                    new SourceApplication(
+                                        _executableHandle,
+                                        _executableName,
+                                        _executableTitle,
+                                        _executablePath
+                                    )
+                                );
+                            }
                         }
+                    }
+                    catch (COMException)
+                    {
+                        // Ignored
                     }
                 });
             }

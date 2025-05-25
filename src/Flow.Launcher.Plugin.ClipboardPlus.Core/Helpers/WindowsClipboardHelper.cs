@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2025 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
+using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
 using Windows.ApplicationModel.DataTransfer;
 
@@ -302,23 +303,31 @@ public class WindowsClipboardHelper : IDisposable
             // Make sure on the application dispatcher.
             var clipboardData = await System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
             {
-                if (await ClipboardHandleWin.GetImageContentAsync(dataObj) is BitmapImage capturedImage)
+                try
                 {
-                    var clipboardData = _clipboardPlus.GetClipboardDataItem(
-                        capturedImage,
-                        DataType.Image,
-                        hashId,
-                        createTime,
-                        SourceApplication.NULL,
-                        string.Empty,
-                        string.Empty
-                    );
-                    if (!clipboardData.IsNull())
+                    if (await ClipboardHandleWin.GetImageContentAsync(dataObj) is BitmapImage capturedImage)
                     {
-                        clipboardData.ClipboardHistoryItem = item;
+                        var clipboardData = _clipboardPlus.GetClipboardDataItem(
+                            capturedImage,
+                            DataType.Image,
+                            hashId,
+                            createTime,
+                            SourceApplication.NULL,
+                            string.Empty,
+                            string.Empty
+                        );
+                        if (!clipboardData.IsNull())
+                        {
+                            clipboardData.ClipboardHistoryItem = item;
+                        }
+                        return clipboardData;
                     }
-                    return clipboardData;
                 }
+                catch (COMException)
+                {
+                    // Ignored
+                }
+
                 return ClipboardData.NULL;
             });
             return await clipboardData;
