@@ -422,7 +422,7 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
                 return capturedImage;
             }
         }
-        catch (COMException)
+        catch (Exception)
         {
             // Ignored
         }

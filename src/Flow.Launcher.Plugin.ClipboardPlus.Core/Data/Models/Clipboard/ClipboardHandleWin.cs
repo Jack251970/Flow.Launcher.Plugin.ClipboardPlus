@@ -134,7 +134,7 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
                             }
                         }
                     }
-                    catch (COMException)
+                    catch (Exception)
                     {
                         // Ignored
                     }
@@ -321,7 +321,7 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
                 return capturedImage;
             }
         }
-        catch (COMException)
+        catch (Exception)
         {
             // Ignored
         }

@@ -323,7 +323,7 @@ public class WindowsClipboardHelper : IDisposable
                         return clipboardData;
                     }
                 }
-                catch (COMException)
+                catch (Exception)
                 {
                     // Ignored
                 }
