@@ -305,20 +305,27 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
                 await netStream.CopyToAsync(memoryStream);
                 memoryStream.Position = 0; // Reset position for reading
 
-                // Create and configure BitmapImage
-                var capturedImage = new BitmapImage();
-                capturedImage.BeginInit();
-                capturedImage.CacheOption = BitmapCacheOption.OnLoad; // Critical for immediate load
-                capturedImage.StreamSource = memoryStream;
-                capturedImage.EndInit();
-
-                // Enable cross-thread access
-                if (capturedImage.CanFreeze)
+                try
                 {
-                    capturedImage.Freeze();
-                }
+                    // Create and configure BitmapImage
+                    var capturedImage = new BitmapImage();
+                    capturedImage.BeginInit();
+                    capturedImage.CacheOption = BitmapCacheOption.OnLoad; // Critical for immediate load
+                    capturedImage.StreamSource = memoryStream;
+                    capturedImage.EndInit();
 
-                return capturedImage;
+                    // Enable cross-thread access
+                    if (capturedImage.CanFreeze)
+                    {
+                        capturedImage.Freeze();
+                    }
+
+                    return capturedImage;
+                }
+                catch (NotSupportedException ex) when (ex.InnerException is COMException comEx && (uint)comEx.HResult == 0x88982F50)
+                {
+                    // System.Runtime.InteropServices.COMException (0x88982F50): The component cannot be found. (0x88982F50)
+                }
             }
         }
         catch (Exception)
