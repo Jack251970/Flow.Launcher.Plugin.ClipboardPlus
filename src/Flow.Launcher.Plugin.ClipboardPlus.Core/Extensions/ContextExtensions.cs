@@ -116,4 +116,31 @@ public static class ContextExtensions
         context!.API.OpenAppUri(appUri);
 #endif
     }
+
+    public static void RegisterGlobalKeyboardCallback(this PluginInitContext? context, Func<int, int, SpecialKeyState, bool> callback)
+    {
+#if DEBUG
+        context?.API.RegisterGlobalKeyboardCallback(callback);
+#else
+        context!.API.RegisterGlobalKeyboardCallback(callback);
+#endif
+    }
+
+    public static void RemoveGlobalKeyboardCallback(this PluginInitContext? context, Func<int, int, SpecialKeyState, bool> callback)
+    {
+#if DEBUG
+        context?.API.RemoveGlobalKeyboardCallback(callback);
+#else
+        context!.API.RemoveGlobalKeyboardCallback(callback);
+#endif
+    }
+
+    public static bool Disabled(this PluginInitContext? context)
+    {
+#if DEBUG
+        return context?.CurrentPluginMetadata.Disabled ?? false;
+#else
+        return context!.CurrentPluginMetadata.Disabled;
+#endif
+    }
 }
