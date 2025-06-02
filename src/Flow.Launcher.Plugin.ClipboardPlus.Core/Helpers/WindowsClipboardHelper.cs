@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2025 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
-using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
 using Windows.ApplicationModel.DataTransfer;
 
