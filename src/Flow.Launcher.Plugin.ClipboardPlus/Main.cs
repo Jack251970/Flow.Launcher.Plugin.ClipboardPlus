@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -79,6 +80,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     // Empty results for cancellation
     private readonly List<Result> EmptyResults = new();
+
+    // Minimal count for concurrent operations
+    private const int MinConcurrentCount = 3333;
 
     #region Scores
 
@@ -449,14 +453,36 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             }
             else
             {
-                // search query list by user input
-                foreach (var record in RecordsList)
+                if (RecordsList.Count > MinConcurrentCount)
                 {
-                    token.ThrowIfCancellationRequested();
-                    var result = GetResultFromClipboardData(record, querySearch);
-                    if (result != null)
+                    // use concurrent operations for better performance
+                    // search query list by user input (parallel version)
+                    var concurrentResults = new ConcurrentBag<Result>();
+
+                    Parallel.ForEach(RecordsList, (record, state) =>
                     {
-                        results.Add(result);
+                        token.ThrowIfCancellationRequested();
+                        var result = GetResultFromClipboardData(record, querySearch);
+                        if (result != null)
+                        {
+                            concurrentResults.Add(result);
+                        }
+                    });
+
+                    // Add the results from the concurrent bag to the original list
+                    results.AddRange(concurrentResults);
+                }
+                else
+                {
+                    // search query list by user input
+                    foreach (var record in RecordsList)
+                    {
+                        token.ThrowIfCancellationRequested();
+                        var result = GetResultFromClipboardData(record, querySearch);
+                        if (result != null)
+                        {
+                            results.Add(result);
+                        }
                     }
                 }
 
