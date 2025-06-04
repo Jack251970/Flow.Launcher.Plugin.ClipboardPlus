@@ -82,7 +82,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private readonly List<Result> EmptyResults = new();
 
     // Minimal count for concurrent operations
-    private const int MinConcurrentCount = 3333;
+    private const int MinConcurrentCount = 333;
 
     #region Scores
 
