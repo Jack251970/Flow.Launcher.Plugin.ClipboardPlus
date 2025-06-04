@@ -118,6 +118,15 @@ public static class ContextExtensions
 #endif
     }
 
+    public static void ReQuery(this PluginInitContext? context, bool reselect = true)
+    {
+#if DEBUG
+        context?.API.ReQuery(reselect);
+#else
+        context!.API.ReQuery(reselect);
+#endif
+    }
+
     public static void RegisterGlobalKeyboardCallback(this PluginInitContext? context, Func<int, int, SpecialKeyState, bool> callback)
     {
 #if DEBUG
