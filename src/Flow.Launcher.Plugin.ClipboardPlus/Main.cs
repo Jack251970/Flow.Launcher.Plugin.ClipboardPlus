@@ -145,7 +145,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         return EmptyResults;
     }
 
-    // TODO: Remove selected count from score when query.Search.Trim().Length == 0.
     // TODO: Add AutoCompleteText & Others properties in Record class.
     public async Task<List<Result>> Query(Query query, CancellationToken token)
     {
@@ -166,6 +165,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.AppIconPath,
                             Glyph = ResourceHelper.ClearHistoryGlyph,
                             Score = ScoreInterval6,
+                            AddSelectedCount = false,
                             Action = (c) =>
                             {
                                 _ = Task.Run(async () =>
@@ -197,6 +197,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.AppIconPath,
                             Glyph = ResourceHelper.ClearHistoryGlyph,
                             Score = ScoreInterval5,
+                            AddSelectedCount = false,
                             Action = (c) =>
                             {
                                 _ = Task.Run(async () =>
@@ -233,6 +234,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 IcoPath = PathHelper.ListIconPath,
                 Glyph = ResourceHelper.ListGlyph,
                 Score = ScoreInterval4,
+                AddSelectedCount = false,
                 Action = (c) =>
                 {
                     _ = Task.Run(async () =>
@@ -264,6 +266,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.DatabaseIconPath,
                             Glyph = ResourceHelper.DatabaseGlyph,
                             Score = ScoreInterval3,
+                            AddSelectedCount = false,
                             Action = (c) =>
                             {
                                 _ = Task.Run(async () =>
@@ -290,6 +293,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.UnpinIcon1Path,
                             Glyph = ResourceHelper.UnpinGlyph,
                             Score = ScoreInterval2,
+                            AddSelectedCount = false,
                             Action = (c) =>
                             {
                                 _ = Task.Run(async () =>
@@ -316,6 +320,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.ErrorIconPath,
                             Glyph = ResourceHelper.ErrorGlyph,
                             Score = ScoreInterval1,
+                            AddSelectedCount = false,
                             Action = (c) =>
                             {
                                 _ = Task.Run(async () =>
@@ -350,6 +355,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 IcoPath = PathHelper.CleanIconPath,
                 Glyph = ResourceHelper.CleanGlyph,
                 Score = Settings.ActionTop ? TopActionScore1 : BottomActionScore1,
+                AddSelectedCount = false,
                 Action = (c) =>
                 {
                     _ = Win32Helper.StartSTATaskAsync(Clipboard.Clear);
@@ -371,6 +377,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         IcoPath = PathHelper.DisconnectIconPath,
                         Glyph = ResourceHelper.DisconnectGlyph,
                         Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
+                        AddSelectedCount = false,
                         Action = (c) =>
                         {
                             ClipboardMonitor.PauseMonitoring();
@@ -387,6 +394,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         IcoPath = PathHelper.ConnectIconPath,
                         Glyph = ResourceHelper.ConnectGlyph,
                         Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
+                        AddSelectedCount = false,
                         Action = (c) =>
                         {
                             ClipboardMonitor.ResumeMonitoring();
@@ -405,6 +413,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 IcoPath = PathHelper.ClearIconPath,
                 Glyph = ResourceHelper.ClearGlyph,
                 Score = Settings.ActionTop ? TopActionScore4 : BottomActionScore4,
+                AddSelectedCount = false,
                 Action = (c) =>
                 {
                     Context!.API.ChangeQuery($"{query.ActionKeyword}{Plugin.Query.TermSeparator}{Settings.ClearKeyword} ", true);
@@ -553,7 +562,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region IContextMenu Interface
 
-    // TODO: Remove selected count from score when query.Search.Trim().Length == 0.
     public List<Result> LoadContextMenus(Result result)
     {
         var results = new List<Result>();
@@ -579,6 +587,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     IcoPath = PathHelper.CopyIconPath,
                     Glyph = ResourceHelper.CopyGlyph,
                     Score = ScoreInterval9,
+                    AddSelectedCount = false,
                     Action = (c) =>
                     {
                         CopyToClipboard(clipboardDataPair);
@@ -599,6 +608,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     IcoPath = PathHelper.CopyIconPath,
                     Glyph = ResourceHelper.CopyGlyph,
                     Score = ScoreInterval8,
+                    AddSelectedCount = false,
                     Action = (c) =>
                     {
                         CopyOriginallyToClipboard(clipboardDataPair);
@@ -617,6 +627,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval8,
+                            AddSelectedCount = false,
                             Action = (c) =>
                             {
                                 CopyOriginallyToClipboard(clipboardDataPair);
@@ -630,6 +641,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval7,
+                            AddSelectedCount = false,
                             Action = (c) =>
                             {
                                 CopyAsPlainTextToClipboard(clipboardDataPair);
@@ -650,6 +662,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval8,
+                            AddSelectedCount = false,
                             Action = (c) =>
                             {
                                 CopyOriginallyToClipboard(clipboardDataPair);
@@ -663,6 +676,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval7,
+                            AddSelectedCount = false,
                             Action = (c) =>
                             {
                                 CopyImageFileToClipboard(clipboardDataPair);
@@ -683,6 +697,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval8,
+                            AddSelectedCount = false,
                             Action = (c) =>
                             {
                                 CopyOriginallyToClipboard(clipboardDataPair);
@@ -696,6 +711,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval7,
+                            AddSelectedCount = false,
                             Action = (c) =>
                             {
                                 CopyBySortingNameToClipboard(clipboardDataPair, true);
@@ -709,6 +725,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval6,
+                            AddSelectedCount = false,
                             Action = (c) =>
                             {
                                 CopyBySortingNameToClipboard(clipboardDataPair, false);
@@ -730,6 +747,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval5,
+                            AddSelectedCount = false,
                             Action = (c) =>
                             {
                                 CopyFilePathToClipboard(clipboardDataPair, filePaths);
@@ -743,6 +761,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
                             Score = ScoreInterval4,
+                            AddSelectedCount = false,
                             Action = (c) =>
                             {
                                 CopyFileContentToClipboard(clipboardDataPair, filePaths);
@@ -768,6 +787,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     IcoPath = PathHelper.DatabaseIconPath,
                     Glyph = ResourceHelper.DatabaseGlyph,
                     Score = ScoreInterval3,
+                    AddSelectedCount = false,
                     Action = (c) =>
                     {
                         _ = SaveToDatabaseAsync(clipboardDataPair, true);
@@ -785,6 +805,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 IcoPath = PathHelper.GetPinIconPath(pinned),
                 Glyph = ResourceHelper.GetPinGlyph(pinned),
                 Score = ScoreInterval2,
+                AddSelectedCount = false,
                 Action = (c) =>
                 {
                     _ = PinRecordAsync(clipboardDataPair, true);
@@ -802,6 +823,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 IcoPath = PathHelper.DeleteIconPath,
                 Glyph = ResourceHelper.DeleteGlyph,
                 Score = ScoreInterval1,
+                AddSelectedCount = false,
                 Action = (c) =>
                 {
                     _ = RemoveFromListDatabaseAsync(clipboardDataPair, true);
@@ -823,6 +845,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     IcoPath = PathHelper.DeleteIconPath,
                     Glyph = ResourceHelper.DeleteGlyph,
                     Score = ScoreInterval1,
+                    AddSelectedCount = false,
                     Action = (c) =>
                     {
                         _ = RemoveFromListDatabaseAsync(clipboardDataPair, true);
@@ -840,6 +863,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     IcoPath = PathHelper.DeleteIconPath,
                     Glyph = ResourceHelper.DeleteGlyph,
                     Score = ScoreInterval1,
+                    AddSelectedCount = false,
                     Action = (c) =>
                     {
                         _ = RemoveFromListDatabaseAsync(clipboardDataPair, true);
@@ -1458,7 +1482,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region Query Result
 
-    // TODO: Remove selected count from score when query.Search.Trim().Length == 0.
     private Result? GetResultFromClipboardData(ClipboardDataPair clipboardDataPair)
     {
         try
@@ -1473,6 +1496,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 Glyph = clipboardData.Glyph,
                 CopyText = clipboardData.GetText(CultureInfo),
                 Score = clipboardData.GetScore(Settings.RecordOrder),
+                AddSelectedCount = false,
                 TitleToolTip = clipboardData.GetText(CultureInfo),
                 ContextData = clipboardDataPair,
                 PreviewPanel = clipboardDataPair.PreviewPanel,
