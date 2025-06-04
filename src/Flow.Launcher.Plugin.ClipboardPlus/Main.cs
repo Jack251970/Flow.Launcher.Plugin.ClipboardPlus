@@ -431,7 +431,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
             await RecordsLock.WaitAsync(token);
 
-            if (query.Search.Trim().Length == 0)
+            var querySearch = query.Search;
+            if (string.IsNullOrWhiteSpace(querySearch))
             {
                 // just add full query list
                 foreach (var record in RecordsList)
@@ -453,7 +454,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 {
                     token.ThrowIfCancellationRequested();
                     if (!string.IsNullOrEmpty(record.ClipboardData.GetText(CultureInfo)) &&
-                        record.ClipboardData.GetText(CultureInfo).ToLower().Contains(query.Search.Trim().ToLower()))
+                        record.ClipboardData.GetText(CultureInfo).ToLower().Contains(querySearch.ToLower()))
                     {
                         var result = GetResultFromClipboardData(record);
                         if (result != null)
@@ -465,11 +466,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
                 if (ClipboardMonitor != null)
                 {
-                    Context.LogDebug(ClassName, $"Searched {query.Search.Trim()} and added {results.Count - 3} records successfully");
+                    Context.LogDebug(ClassName, $"Searched {querySearch} and added {results.Count - 3} records successfully");
                 }
                 else
                 {
-                    Context.LogDebug(ClassName, $"Searched {query.Search.Trim()} and added {results.Count - 2} records successfully");
+                    Context.LogDebug(ClassName, $"Searched {querySearch} and added {results.Count - 2} records successfully");
                 }
             }
 
