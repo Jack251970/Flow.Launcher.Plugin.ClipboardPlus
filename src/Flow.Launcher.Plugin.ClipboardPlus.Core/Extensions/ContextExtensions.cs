@@ -4,6 +4,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using Flow.Launcher.Plugin.SharedModels;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Extensions;
 
@@ -160,6 +161,15 @@ public static class ContextExtensions
         return context?.API.ShowMsgBox(messageBoxText, caption, button, icon, defaultResult) ?? MessageBoxResult.OK;
 #else
         return context!.API.ShowMsgBox(messageBoxText, caption, button, icon, defaultResult);
+#endif
+    }
+
+    public static MatchResult FuzzySearch(this PluginInitContext? context, string query, string stringToCompare)
+    {
+#if DEBUG
+        return context?.API.FuzzySearch(query, stringToCompare) ?? new MatchResult(true, SearchPrecisionScore.Regular);
+#else
+        return context!.API.FuzzySearch(query, stringToCompare);
 #endif
     }
 }

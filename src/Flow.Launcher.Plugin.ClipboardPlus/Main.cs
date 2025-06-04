@@ -438,7 +438,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 foreach (var record in RecordsList)
                 {
                     token.ThrowIfCancellationRequested();
-                    var result = GetResultFromClipboardData(record);
+                    var result = GetResultFromClipboardData(record, null);
                     if (result != null)
                     {
                         results.Add(result);
@@ -453,14 +453,10 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 foreach (var record in RecordsList)
                 {
                     token.ThrowIfCancellationRequested();
-                    if (!string.IsNullOrEmpty(record.ClipboardData.GetText(CultureInfo)) &&
-                        record.ClipboardData.GetText(CultureInfo).ToLower().Contains(querySearch.ToLower()))
+                    var result = GetResultFromClipboardData(record, querySearch);
+                    if (result != null)
                     {
-                        var result = GetResultFromClipboardData(record);
-                        if (result != null)
-                        {
-                            results.Add(result);
-                        }
+                        results.Add(result);
                     }
                 }
 
@@ -1483,11 +1479,34 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     #region Query Result
 
-    private Result? GetResultFromClipboardData(ClipboardDataPair clipboardDataPair)
+    private Result? GetResultFromClipboardData(ClipboardDataPair clipboardDataPair, string? querySearch)
     {
         try
         {
             var clipboardData = clipboardDataPair.ClipboardData;
+            
+            // get score
+            int score;
+            if (string.IsNullOrEmpty(querySearch))
+            {
+                score = clipboardData.GetScore(Settings.RecordOrder);
+            }
+            else
+            {
+                var stringToCompare = clipboardData.GetText(CultureInfo);
+                if (string.IsNullOrEmpty(stringToCompare))
+                {
+                    return null;
+                }
+                var match = Context.FuzzySearch(querySearch, clipboardData.GetText(CultureInfo));
+                if (!match.IsSearchPrecisionScoreMet())
+                {
+                    return null;
+                }
+                score = match.Score;
+            }
+
+            // return result
             return new Result
             {
                 Title = clipboardData.GetTitle(CultureInfo),
