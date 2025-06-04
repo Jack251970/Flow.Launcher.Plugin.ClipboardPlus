@@ -87,8 +87,8 @@
 
     <ItemGroup>
       <PackageReference Include="Dapper" Version="2.1.66" />
-      <PackageReference Include="Flow.Launcher.Plugin" Version="4.4.0" />
-      <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.2" />
+      <PackageReference Include="Flow.Launcher.Plugin" Version="4.5.0" />
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.5" />
       <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.183">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
