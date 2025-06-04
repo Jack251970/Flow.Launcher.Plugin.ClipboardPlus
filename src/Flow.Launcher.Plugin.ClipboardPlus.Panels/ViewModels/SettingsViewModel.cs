@@ -979,10 +979,9 @@ public class SettingsViewModel : BaseModel
 
     #region Message Box
 
-    // TODO: Use new api for this.
     private void ShowClearKeywordEmptyError()
     {
-        MessageBox.Show(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_text"),
+        Context.ShowMsgBox(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_text"),
             Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption"),
             MessageBoxButton.OK,
             MessageBoxImage.Error);
@@ -990,7 +989,7 @@ public class SettingsViewModel : BaseModel
 
     private bool ShowUseWindowsClipboardHistoryOnlyWarning()
     {
-        return MessageBox.Show(
+        return Context.ShowMsgBox(
             Context.GetTranslation("flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text"),
             Context.GetTranslation("flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption"),
             MessageBoxButton.YesNo,
@@ -999,7 +998,7 @@ public class SettingsViewModel : BaseModel
 
     private bool ShowRestartAppWarning()
     {
-        return MessageBox.Show(Context.GetTranslation("flowlauncher_plugin_clipboardplus_restart_text"),
+        return Context.ShowMsgBox(Context.GetTranslation("flowlauncher_plugin_clipboardplus_restart_text"),
             Context.GetTranslation("flowlauncher_plugin_clipboardplus_restart_caption"),
             MessageBoxButton.YesNo,
             MessageBoxImage.Warning) == MessageBoxResult.Yes;

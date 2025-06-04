@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Extensions;
 
@@ -141,6 +142,15 @@ public static class ContextExtensions
         return context?.CurrentPluginMetadata.Disabled ?? false;
 #else
         return context!.CurrentPluginMetadata.Disabled;
+#endif
+    }
+
+    public static MessageBoxResult ShowMsgBox(this PluginInitContext? context, string messageBoxText, string caption = "", MessageBoxButton button = MessageBoxButton.OK, MessageBoxImage icon = MessageBoxImage.None, MessageBoxResult defaultResult = MessageBoxResult.OK)
+    {
+#if DEBUG
+        return context?.API.ShowMsgBox(messageBoxText, caption, button, icon, defaultResult) ?? MessageBoxResult.OK;
+#else
+        return context!.API.ShowMsgBox(messageBoxText, caption, button, icon, defaultResult);
 #endif
     }
 }
