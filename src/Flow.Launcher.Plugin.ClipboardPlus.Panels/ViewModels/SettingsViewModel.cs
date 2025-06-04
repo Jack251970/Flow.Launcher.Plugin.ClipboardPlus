@@ -31,7 +31,7 @@ public class SettingsViewModel : BaseModel
         InitializeDefaultFilesCopyOptionSelection();
         _cacheFormatPreview = StringUtils.FormatImageName(Settings.CacheFormat, DateTime.Now);
         InitializeKeepTimeSelection();
-        if (string.IsNullOrEmpty(ClearKeyword))
+        if (string.IsNullOrWhiteSpace(ClearKeyword))
         {
             ShowClearKeywordEmptyError();
         }
@@ -205,7 +205,7 @@ public class SettingsViewModel : BaseModel
             {
                 return;
             }
-            if (value == string.Empty)
+            if (string.IsNullOrWhiteSpace(value))
             {
                 ShowClearKeywordEmptyError();
                 return;
