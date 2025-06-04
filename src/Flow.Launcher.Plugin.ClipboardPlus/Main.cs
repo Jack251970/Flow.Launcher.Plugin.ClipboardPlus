@@ -454,7 +454,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             {
                 if (RecordsList.Count > MinConcurrentCount)
                 {
-                    // use concurrent operations for better performance
                     // search query list by user input (parallel version)
                     var concurrentResults = new ConcurrentBag<Result>();
 
@@ -1510,7 +1509,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             var clipboardData = clipboardDataPair.ClipboardData;
             
-            // get score
+            // Get score
             int score;
             if (string.IsNullOrEmpty(querySearch))
             {
@@ -1518,20 +1517,25 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             }
             else
             {
-                var stringToCompare = clipboardData.GetText(CultureInfo);
-                if (string.IsNullOrEmpty(stringToCompare))
+                var clipboardText = clipboardData.GetText(CultureInfo);
+                if (string.IsNullOrEmpty(clipboardText))
+                {
+                    return null;
+                }
+                // Check if the clipboard text contains the search query to replace search precision score check
+                if (!clipboardText.ToLowerInvariant().Contains(querySearch.ToLowerInvariant()))
                 {
                     return null;
                 }
                 var match = Context.FuzzySearch(querySearch, clipboardData.GetText(CultureInfo));
-                if (!match.IsSearchPrecisionScoreMet())
+                /*if (!match.IsSearchPrecisionScoreMet())
                 {
                     return null;
-                }
+                }*/
                 score = match.Score;
             }
 
-            // return result
+            // Return result
             return new Result
             {
                 Title = clipboardData.GetTitle(CultureInfo),
