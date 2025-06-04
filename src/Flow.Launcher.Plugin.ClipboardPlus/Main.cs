@@ -149,7 +149,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         return EmptyResults;
     }
 
-    // TODO: Add AutoCompleteText & Others properties in Record class.
     public async Task<List<Result>> Query(Query query, CancellationToken token)
     {
         var results = new List<Result>();
