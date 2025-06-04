@@ -349,92 +349,95 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
         else
         {
-            // clean action
-            token.ThrowIfCancellationRequested();
-            results.Add(new Result
+            var querySearch = query.Search;
+            if (string.IsNullOrWhiteSpace(querySearch))
             {
-                Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clean_title"),
-                SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clean_subtitle"),
-                IcoPath = PathHelper.CleanIconPath,
-                Glyph = ResourceHelper.CleanGlyph,
-                Score = Settings.ActionTop ? TopActionScore1 : BottomActionScore1,
-                AddSelectedCount = false,
-                Action = (c) =>
+                // clean action
+                token.ThrowIfCancellationRequested();
+                results.Add(new Result
                 {
-                    _ = Win32Helper.StartSTATaskAsync(Clipboard.Clear);
-                    ClipboardMonitor?.CleanClipboard();
-                    return true;
-                },
-            });
+                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clean_title"),
+                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clean_subtitle"),
+                    IcoPath = PathHelper.CleanIconPath,
+                    Glyph = ResourceHelper.CleanGlyph,
+                    Score = Settings.ActionTop ? TopActionScore1 : BottomActionScore1,
+                    AddSelectedCount = false,
+                    Action = (c) =>
+                    {
+                        _ = Win32Helper.StartSTATaskAsync(Clipboard.Clear);
+                        ClipboardMonitor?.CleanClipboard();
+                        return true;
+                    },
+                });
 
-            // connect & disconnect action
-            token.ThrowIfCancellationRequested();
-            if (ClipboardMonitor != null)
-            {
-                if (ClipboardMonitor.MonitorClipboard)
+                // connect & disconnect action
+                token.ThrowIfCancellationRequested();
+                if (ClipboardMonitor != null)
                 {
-                    results.Add(new Result
+                    if (ClipboardMonitor.MonitorClipboard)
                     {
-                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_disconnect_title"),
-                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_disconnect_subtitle"),
-                        IcoPath = PathHelper.DisconnectIconPath,
-                        Glyph = ResourceHelper.DisconnectGlyph,
-                        Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
-                        AddSelectedCount = false,
-                        Action = (c) =>
+                        results.Add(new Result
                         {
-                            ClipboardMonitor.PauseMonitoring();
-                            return true;
-                        },
-                    });
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_disconnect_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_disconnect_subtitle"),
+                            IcoPath = PathHelper.DisconnectIconPath,
+                            Glyph = ResourceHelper.DisconnectGlyph,
+                            Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
+                            AddSelectedCount = false,
+                            Action = (c) =>
+                            {
+                                ClipboardMonitor.PauseMonitoring();
+                                return true;
+                            },
+                        });
+                    }
+                    else
+                    {
+                        results.Add(new Result
+                        {
+                            Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_connect_title"),
+                            SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_connect_subtitle"),
+                            IcoPath = PathHelper.ConnectIconPath,
+                            Glyph = ResourceHelper.ConnectGlyph,
+                            Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
+                            AddSelectedCount = false,
+                            Action = (c) =>
+                            {
+                                ClipboardMonitor.ResumeMonitoring();
+                                return true;
+                            },
+                        });
+                    }
                 }
-                else
+
+                // clear action
+                token.ThrowIfCancellationRequested();
+                results.Add(new Result
                 {
-                    results.Add(new Result
+                    Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_title"),
+                    SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_subtitle"),
+                    IcoPath = PathHelper.ClearIconPath,
+                    Glyph = ResourceHelper.ClearGlyph,
+                    Score = Settings.ActionTop ? TopActionScore4 : BottomActionScore4,
+                    AddSelectedCount = false,
+                    Action = (c) =>
                     {
-                        Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_connect_title"),
-                        SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_connect_subtitle"),
-                        IcoPath = PathHelper.ConnectIconPath,
-                        Glyph = ResourceHelper.ConnectGlyph,
-                        Score = Settings.ActionTop ? TopActionScore3 : BottomActionScore3,
-                        AddSelectedCount = false,
-                        Action = (c) =>
-                        {
-                            ClipboardMonitor.ResumeMonitoring();
-                            return true;
-                        },
-                    });
-                }
+                        Context!.API.ChangeQuery($"{query.ActionKeyword}{Plugin.Query.TermSeparator}{Settings.ClearKeyword} ", true);
+                        return false;
+                    },
+                });
+
+                // update results
+                token.ThrowIfCancellationRequested();
+                ResultsUpdated?.Invoke(this, new ResultUpdatedEventArgs
+                {
+                    Results = results,
+                    Query = query
+                });
             }
-
-            // clear action
-            token.ThrowIfCancellationRequested();
-            results.Add(new Result
-            {
-                Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_title"),
-                SubTitle = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_subtitle"),
-                IcoPath = PathHelper.ClearIconPath,
-                Glyph = ResourceHelper.ClearGlyph,
-                Score = Settings.ActionTop ? TopActionScore4 : BottomActionScore4,
-                AddSelectedCount = false,
-                Action = (c) =>
-                {
-                    Context!.API.ChangeQuery($"{query.ActionKeyword}{Plugin.Query.TermSeparator}{Settings.ClearKeyword} ", true);
-                    return false;
-                },
-            });
-
-            // update results
-            token.ThrowIfCancellationRequested();
-            ResultsUpdated?.Invoke(this, new ResultUpdatedEventArgs
-            {
-                Results = results,
-                Query = query
-            });
 
             await RecordsLock.WaitAsync(token);
 
-            var querySearch = query.Search;
             if (string.IsNullOrWhiteSpace(querySearch))
             {
                 // just add full query list
@@ -484,14 +487,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     }
                 }
 
-                if (ClipboardMonitor != null)
-                {
-                    Context.LogDebug(ClassName, $"Searched {querySearch} and added {results.Count - 3} records successfully");
-                }
-                else
-                {
-                    Context.LogDebug(ClassName, $"Searched {querySearch} and added {results.Count - 2} records successfully");
-                }
+                Context.LogDebug(ClassName, $"Searched {querySearch} and added {results.Count} records successfully");
             }
 
             RecordsLock.Release();
