@@ -4,7 +4,7 @@
         <TargetFramework>net7.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
-        <Version>2.3.0</Version>
+        <Version>2.4.0</Version>
         <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
     </PropertyGroup>
 
