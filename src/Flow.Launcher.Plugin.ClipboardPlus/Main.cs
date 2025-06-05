@@ -1519,15 +1519,15 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     return null;
                 }
                 // Check if the clipboard text contains the search query to replace search precision score check
-                if (!clipboardText.ToLowerInvariant().Contains(querySearch.ToLowerInvariant()))
-                {
-                    return null;
-                }
-                var match = Context.FuzzySearch(querySearch, clipboardData.GetText(CultureInfo));
-                /*if (!match.IsSearchPrecisionScoreMet())
+                /*if (!clipboardText.ToLowerInvariant().Contains(querySearch.ToLowerInvariant()))
                 {
                     return null;
                 }*/
+                var match = Context.FuzzySearch(querySearch, clipboardData.GetText(CultureInfo));
+                if (!match.IsSearchPrecisionScoreMet())
+                {
+                    return null;
+                }
                 score = match.Score;
             }
 
