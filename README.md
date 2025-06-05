@@ -4,6 +4,14 @@
 
 # Flow Launcher ClipboardPlus Plugin
 
+<p>
+  <img src="https://img.shields.io/maintenance/yes/3000">
+  <a href="https://github.com/Flow-Launcher/Flow.Launcher"><img src="https://img.shields.io/badge/Flow%20Launcher-1.20.0+-orange"></a>
+  <img src="https://img.shields.io/github/release-date/Jack251970/Flow.Launcher.Plugin.ClipboardPlus">
+  <a href="https://github.com/Jack251970/Flow.Launcher.Plugin.ClipboardPlus/releases/latest"><img src="https://img.shields.io/github/v/release/Jack251970/Flow.Launcher.Plugin.ClipboardPlus"></a>
+  <img src="https://img.shields.io/github/license/Jack251970/Flow.Launcher.Plugin.ClipboardPlus">
+</p>
+
 **This plugin is a clipboard manager for [Flow Launcher](https://github.com/Flow-Launcher/Flow.Launcher). It can help you manage your clipboard history and Windows Clipboard History with support for text, images, and files.**
 
 ## ⭐ Features
