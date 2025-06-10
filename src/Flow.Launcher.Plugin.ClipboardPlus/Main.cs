@@ -55,7 +55,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     };
 
     // Windows clipboard helper
-    private WindowsClipboardHelper WindowsClipboardHelper = new();
+    private readonly WindowsClipboardHelper WindowsClipboardHelper = new();
 
     // Records list & Score
     // Latest records are at the beginning of the list.
@@ -2118,32 +2118,36 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             Context.LogDebug(ClassName, $"Enter dispose");
 
-            await Database.DisposeAsync();
-            Database = null!;
-            Context.LogDebug(ClassName, $"Disposed DatabaseHelper");
+            if (Database != null)
+            {
+                await Database.DisposeAsync();
+                Context.LogDebug(ClassName, $"Disposed DatabaseHelper");
+            }
 
             if (ClipboardMonitor != null)
             {
                 ClipboardMonitor.ClipboardChanged -= ClipboardMonitor_OnClipboardChanged;
                 ClipboardMonitor.Dispose();
+                Context.LogDebug(ClassName, $"Disposed ClipboardMonitor");
             }
-            Context.LogDebug(ClassName, $"Disposed ClipboardMonitor");
 
-            DisableWindowsClipboardHelper(false);
-            WindowsClipboardHelper.Dispose();
-            WindowsClipboardHelper = null!;
-            Context.LogDebug(ClassName, $"Disposed WindowsClipboardHelper");
+            if (WindowsClipboardHelper != null)
+            {
+                DisableWindowsClipboardHelper(false);
+                WindowsClipboardHelper.Dispose();
+                Context.LogDebug(ClassName, $"Disposed WindowsClipboardHelper");
+            }
 
-            ClearRecordsList();
-            RecordsList = null!;
-            RecordsLock.Dispose();
-            Context.LogDebug(ClassName, $"Disposed RecordsList");
-
-            CultureInfoChanged = null;
-            Settings = null!;
-            Context.LogDebug(ClassName, $"Finish dispose");
+            if (RecordsList != null)
+            {
+                ClearRecordsList();
+                RecordsLock.Dispose();
+                Context.LogDebug(ClassName, $"Disposed RecordsList");
+            }
 
             GarbageCollect();
+            Context.LogDebug(ClassName, $"Finish dispose");
+
             _disposed = true;
         }
     }
