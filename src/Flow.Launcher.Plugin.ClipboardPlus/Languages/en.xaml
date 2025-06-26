@@ -17,8 +17,8 @@
     <!--  Main  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_windows_history_not_supported">Windows version less than 10.0.17763 and system doesn't support clipboard history! Please disable option Use only Windows clipboard history as data source in the settings of Clipboard+!</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">Clean clipboard</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">Clean current clipboard data</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">Clear clipboard</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">Clear current clipboard data</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_disconnect_title">Disconnect from clipboard</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_disconnect_subtitle">Disconnect from clipboard to stop monitoring clipboard data</system:String>
@@ -100,7 +100,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword">Clear keyword:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_max_records">List max records:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">Order records by:</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">Set the action options (e.g., Clean clipboard) as topmost / bottommost in the query</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">Set the action options (e.g., Clear clipboard) as topmost / bottommost in the query</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_show_notification">Show notification when copying records</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption">Clear keyword Error!</system:String>
