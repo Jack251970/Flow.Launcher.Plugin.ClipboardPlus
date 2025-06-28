@@ -1706,21 +1706,17 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 {
                     case DataType.PlainText:
                         Clipboard.SetText((string)validObject);
-                        Clipboard.Flush();
                         break;
                     case DataType.RichText:
                         Clipboard.SetText((string)validObject, TextDataFormat.Rtf);
-                        Clipboard.Flush();
                         break;
                     case DataType.Image:
                         Clipboard.SetImage((BitmapSource)validObject);
-                        Clipboard.Flush();
                         break;
                     case DataType.Files:
                         var paths = new StringCollection();
                         paths.AddRange((string[])validObject);
                         Clipboard.SetFileDropList(paths);
-                        Clipboard.Flush();
                         break;
                     default:
                         break;
@@ -1782,7 +1778,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             var exception = await RetryActionOnSTAThreadAsync(() =>
             {
                 Clipboard.SetText(validObject);
-                Clipboard.Flush();
             });
             if (exception == null)
             {
@@ -1835,7 +1830,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             var exception = await RetryActionOnSTAThreadAsync(() =>
             {
                 Clipboard.SetFileDropList(new StringCollection { cachePath });
-                Clipboard.Flush();
             });
             if (exception == null)
             {
@@ -1882,7 +1876,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             var exception = await RetryActionOnSTAThreadAsync(() => 
             {
                 Clipboard.SetFileDropList(paths);
-                Clipboard.Flush();
             });
             if (exception == null)
             {
@@ -1976,7 +1969,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             var exception = await RetryActionOnSTAThreadAsync(() =>
             {
                 Clipboard.SetText(filePath);
-                Clipboard.Flush();
             });
             if (exception == null)
             {
@@ -2023,7 +2015,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     var text = File.ReadAllText(filePath);
                     Clipboard.SetText(text);
                 }
-                Clipboard.Flush();
             });
             if (exception == null)
             {
@@ -2143,6 +2134,15 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 ClearRecordsList();
                 RecordsLock.Dispose();
                 Context.LogDebug(ClassName, $"Disposed RecordsList");
+            }
+
+            try
+            {
+                Clipboard.Flush();
+            }
+            catch (Exception e)
+            {
+                Context.LogException(ClassName, "Flush clipboard failed", e);
             }
 
             GarbageCollect();
