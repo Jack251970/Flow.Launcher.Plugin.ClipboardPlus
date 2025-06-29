@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -83,6 +84,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     // Minimal count for concurrent operations
     private const int MinConcurrentCount = 333;
+
+    // Clipboard error codes
+    private static readonly uint CLIPBOARD_E_CANT_OPEN = 0x800401D0;
+    private static readonly uint CLIPBOARD_E_BAD_DATA = 0x800401D3;
+    private static readonly uint RPC_SERVER_UNAVAILABLE = 0x800706BA;
 
     #region Scores
 
@@ -2049,6 +2055,24 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             {
                 await Win32Helper.StartSTATaskAsync(action).ConfigureAwait(false);
                 break;
+            }
+            catch (COMException e) when (e.HResult == CLIPBOARD_E_CANT_OPEN)
+            {
+                // Sometimes the clipboard is locked and cannot be accessed.
+                // System.Runtime.InteropServices.COMException (0x800401D0)
+                // OpenClipboard Failed (0x800401D0 (CLIPBRD_E_CANT_OPEN))
+            }
+            catch (COMException e) when (e.HResult == CLIPBOARD_E_BAD_DATA)
+            {
+                // Sometimes data on clipboard is invalid.
+                // System.Runtime.InteropServices.COMException (0x800401D3)
+                // Bad data in clipboard (0x800401D3 (CLIPBRD_E_BAD_DATA))
+            }
+            catch (COMException e) when (e.HResult == RPC_SERVER_UNAVAILABLE)
+            {
+                // Sometimes the clipboard is locked and cannot be accessed.
+                // System.Runtime.InteropServices.COMException (0x800706BA)
+                // RPC server is unavailable (0x800706BA (RPC_E_SERVER_UNAVAILABLE))
             }
             catch (Exception e)
             {
