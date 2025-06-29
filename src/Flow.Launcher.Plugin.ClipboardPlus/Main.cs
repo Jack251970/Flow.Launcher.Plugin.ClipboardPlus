@@ -2138,7 +2138,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
             try
             {
-                Clipboard.Flush();
+                await RetryActionOnSTAThreadAsync(Clipboard.Flush);
             }
             catch (Exception e)
             {
