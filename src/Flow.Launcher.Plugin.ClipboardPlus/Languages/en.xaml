@@ -87,14 +87,17 @@
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_unknown_app">unknown</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard" xml:space="preserve">Copy to clipboard: </system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard">Copy to clipboard:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception">Copy to clipboard failed!</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_text_data_invalid">Copied text is empty!</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_image_data_invalid">Error in copied image!</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_files_data_invalid">Copied files do not exist!</system:String>
 
     <!--  Preview  -->
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_words_count_prefix" xml:space="preserve">Words count: </system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_source">Source</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_date">Date</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_type">Type</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_words">Words</system:String>
 
     <!--  Settings  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword">Clear keyword:</system:String>
@@ -168,5 +171,11 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_1_month">1 month</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_3_months">3 months</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_1_year">1 year</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_plain_text">Plain text</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_rich_text">Rich text</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_files">File</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_image">Image</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_others">Other</system:String>
 
 </ResourceDictionary>

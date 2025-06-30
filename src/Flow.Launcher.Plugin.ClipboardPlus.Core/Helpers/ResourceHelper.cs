@@ -82,4 +82,20 @@ public static class ResourceHelper
     #endregion
 
     #endregion
+
+    #region Strings
+
+    public static string GetString(IClipboardPlus clipboardPlus, DataType type)
+    {
+        return type switch
+        {
+            DataType.PlainText => clipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_plain_text"),
+            DataType.RichText => clipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_rich_text"),
+            DataType.Files => clipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_files"),
+            DataType.Image => clipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_image"),
+            _ => clipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_others")
+        };
+    }
+
+    #endregion
 }

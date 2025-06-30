@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Media;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.ViewModels;
@@ -77,27 +78,54 @@ public class PreviewViewModel : BaseModel
 
     #endregion
 
-    #region Status Preview
+    #region Source
 
-    public Visibility StatusPreviewVisibility => ClipboardData.DataType == DataType.PlainText || ClipboardData.DataType == DataType.RichText
+    public Visibility SourceVisibility => ClipboardData.SenderApp != null
         ? Visibility.Visible
         : Visibility.Collapsed;
 
-    private string _previewStatus = string.Empty;
-    public string PreviewStatus
+    public string Source => ClipboardData.SenderApp ?? string.Empty;
+
+    #endregion
+
+    #region Date
+
+    public Visibility DateVisibility => ClipboardData.CreateTime != DateTime.MinValue
+        ? Visibility.Visible
+        : Visibility.Collapsed;
+
+    public string Date => ClipboardData.CreateTime.ToString(ClipboardPlus.CultureInfo);
+
+    #endregion
+
+    #region Type
+
+    public Visibility TypeVisibility => Visibility.Visible;
+
+    public string Type => ResourceHelper.GetString(ClipboardPlus, ClipboardData.DataType);
+
+    #endregion
+
+    #region Words
+
+    public Visibility WordsVisibility => ClipboardData.DataType == DataType.PlainText || ClipboardData.DataType == DataType.RichText
+        ? Visibility.Visible
+        : Visibility.Collapsed;
+
+    private string _words = string.Empty;
+    public string Words
     {
-        get => _previewStatus;
+        get => _words;
         set
         {
-            _previewStatus = value;
+            _words = value;
             OnPropertyChanged();
         }
     }
 
     private void RefreshStatus()
     {
-        PreviewStatus = Context.GetTranslation("flowlauncher_plugin_clipboardplus_words_count_prefix") +
-            StringUtils.CountWords(PreviewPlainText);
+        Words = StringUtils.CountWords(PreviewPlainText).ToString();
     }
 
     #endregion

@@ -94,7 +94,10 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_files_data_invalid">複製的文件不存在！</system:String>
 
     <!--  Preview  -->
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_words_count_prefix">詞數：</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_source">來源</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_date">日期</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_type">類型</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_words">字數</system:String>
 
     <!--  Settings  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword">清除關鍵字：</system:String>
@@ -168,5 +171,11 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_1_month">1月</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_3_months">3月</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_1_year">1秊</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_plain_text">純文字</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_rich_text">豐富文字</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_files">檔案</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_image">圖片</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_others">其他</system:String>
 
 </ResourceDictionary>

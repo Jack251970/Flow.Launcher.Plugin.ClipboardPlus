@@ -10,16 +10,15 @@
     d:DataContext="{d:DesignInstance viewModels:PreviewViewModel}"
     mc:Ignorable="d">
 
-    <Grid MinHeight="360" HorizontalAlignment="Center">
+    <Grid x:Name="PreviewGrid" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
+            <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!--  Image Preview  -->
         <Image
             Grid.Row="0"
-            Grid.Column="0"
             MaxWidth="320"
             MaxHeight="320"
             Margin="10"
@@ -28,60 +27,152 @@
             Source="{Binding PreviewImage, Mode=OneWay}"
             Visibility="{Binding ImagePreviewVisibility, Mode=OneTime}" />
 
-        <!--  Plain Text Preview  -->
-        <ScrollViewer
+        <Grid
             Grid.Row="0"
-            Grid.Column="0"
-            Padding="5"
-            HorizontalAlignment="Center"
-            HorizontalContentAlignment="Left"
-            HorizontalScrollBarVisibility="Auto"
-            VerticalScrollBarVisibility="Auto"
-            Visibility="{Binding PlainTextPreviewVisibility, Mode=OneTime}">
-            <TextBox
-                MinWidth="320"
-                Margin="5"
+            MinHeight="270"
+            Margin="0,10,10,10"
+            HorizontalAlignment="Center">
+            <!--  Plain Text Preview  -->
+            <ScrollViewer
                 Padding="5"
-                Focusable="True"
-                GotFocus="TextBox_GotFocus"
-                HorizontalScrollBarVisibility="Disabled"
-                IsReadOnly="False"
-                IsUndoEnabled="True"
-                Text="{Binding PreviewPlainText, Mode=OneWay}"
-                TextAlignment="Left"
-                VerticalScrollBarVisibility="Disabled" />
-        </ScrollViewer>
+                HorizontalAlignment="Center"
+                HorizontalContentAlignment="Left"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto"
+                Visibility="{Binding PlainTextPreviewVisibility, Mode=OneTime}">
+                <TextBox
+                    MinWidth="240"
+                    Margin="5"
+                    Padding="5"
+                    Focusable="True"
+                    GotFocus="TextBox_GotFocus"
+                    HorizontalScrollBarVisibility="Disabled"
+                    IsReadOnly="False"
+                    IsUndoEnabled="True"
+                    Text="{Binding PreviewPlainText, Mode=OneWay}"
+                    TextAlignment="Left"
+                    VerticalScrollBarVisibility="Disabled" />
+            </ScrollViewer>
 
-        <!--  Rich Text Preview  -->
-        <ScrollViewer
-            Grid.Row="0"
-            Grid.Column="0"
-            Padding="5"
-            HorizontalAlignment="Center"
-            HorizontalContentAlignment="Left"
-            HorizontalScrollBarVisibility="Auto"
-            VerticalScrollBarVisibility="Auto"
-            Visibility="{Binding RichTextPreviewVisibility, Mode=OneTime}">
-            <RichTextBox
-                MinWidth="320"
-                Margin="5"
+            <!--  Rich Text Preview  -->
+            <ScrollViewer
                 Padding="5"
-                helper:RichTextBoxHelper.DocumentRtf="{Binding PreviewRichText, Mode=OneWay}"
-                Focusable="True"
-                GotFocus="RichTextBox_GotFocus"
-                HorizontalScrollBarVisibility="Disabled"
-                IsReadOnly="False"
-                IsUndoEnabled="True"
-                VerticalScrollBarVisibility="Disabled" />
-        </ScrollViewer>
+                HorizontalAlignment="Center"
+                HorizontalContentAlignment="Left"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto"
+                Visibility="{Binding RichTextPreviewVisibility, Mode=OneTime}">
+                <RichTextBox
+                    MinWidth="240"
+                    Margin="5"
+                    Padding="5"
+                    helper:RichTextBoxHelper.DocumentRtf="{Binding PreviewRichText, Mode=OneWay}"
+                    Focusable="True"
+                    GotFocus="RichTextBox_GotFocus"
+                    HorizontalScrollBarVisibility="Disabled"
+                    IsReadOnly="False"
+                    IsUndoEnabled="True"
+                    VerticalScrollBarVisibility="Disabled" />
+            </ScrollViewer>
+        </Grid>
+        <StackPanel Grid.Row="1">
+            <Rectangle
+                Width="Auto"
+                Height="1"
+                Margin="0,0,5,0"
+                HorizontalAlignment="Stretch"
+                Style="{DynamicResource SeparatorStyle}" />
+            <Grid Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Top"
+                    Style="{DynamicResource PreviewItemSubTitleStyle}"
+                    Text="{DynamicResource flowlauncher_plugin_clipboardplus_source}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding SourceVisibility, Mode=OneTime}" />
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="0,0,13,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Style="{DynamicResource PreviewItemSubTitleStyle}"
+                    Text="{Binding Source, Mode=OneTime}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding SourceVisibility, Mode=OneTime}" />
 
-        <!--  Status Preview  -->
-        <TextBlock
-            Grid.Row="1"
-            Margin="10,5,10,5"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            Text="{Binding PreviewStatus, Mode=OneWay}"
-            Visibility="{Binding StatusPreviewVisibility, Mode=OneTime}" />
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="5,0,8,0"
+                    VerticalAlignment="Top"
+                    Style="{DynamicResource PreviewItemSubTitleStyle}"
+                    Text="{DynamicResource flowlauncher_plugin_clipboardplus_date}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding DateVisibility, Mode=OneTime}" />
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="0,0,13,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Style="{DynamicResource PreviewItemSubTitleStyle}"
+                    Text="{Binding Date, Mode=OneTime}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding DateVisibility, Mode=OneTime}" />
+
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Margin="5,0,8,0"
+                    VerticalAlignment="Top"
+                    Style="{DynamicResource PreviewItemSubTitleStyle}"
+                    Text="{DynamicResource flowlauncher_plugin_clipboardplus_type}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding TypeVisibility, Mode=OneTime}" />
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Margin="0,0,13,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Style="{DynamicResource PreviewItemSubTitleStyle}"
+                    Text="{Binding Type, Mode=OneTime}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding TypeVisibility, Mode=OneTime}" />
+
+                <TextBlock
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Margin="5,0,8,0"
+                    VerticalAlignment="Top"
+                    Style="{DynamicResource PreviewItemSubTitleStyle}"
+                    Text="{DynamicResource flowlauncher_plugin_clipboardplus_words}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding WordsVisibility, Mode=OneTime}" />
+                <TextBlock
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Margin="0,0,13,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Style="{DynamicResource PreviewItemSubTitleStyle}"
+                    Text="{Binding Words, Mode=OneTime}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding WordsVisibility, Mode=OneTime}" />
+            </Grid>
+        </StackPanel>
     </Grid>
 </UserControl>
