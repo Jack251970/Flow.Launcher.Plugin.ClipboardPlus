@@ -98,6 +98,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_date">日期</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_type">類型</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_words">字數</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_dimension">大小</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_count">數量</system:String>
 
     <!--  Settings  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword">清除關鍵字：</system:String>

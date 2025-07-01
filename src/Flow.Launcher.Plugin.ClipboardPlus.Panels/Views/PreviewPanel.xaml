@@ -33,16 +33,15 @@
             Margin="0,0,10,10">
             <!--  Plain Text Preview  -->
             <ScrollViewer
-                SizeChanged="PlainTextScrollViewer_OnSizeChanged"
                 Padding="5"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Left"
                 HorizontalScrollBarVisibility="Auto"
+                SizeChanged="PlainTextScrollViewer_OnSizeChanged"
                 VerticalScrollBarVisibility="Auto"
                 Visibility="{Binding PlainTextPreviewVisibility, Mode=OneTime}">
                 <TextBox
                     x:Name="PlainTextBox"
-                    TextWrapping="Wrap"
                     Margin="5"
                     Padding="5"
                     Focusable="True"
@@ -52,16 +51,17 @@
                     IsUndoEnabled="True"
                     Text="{Binding PreviewPlainText, Mode=OneWay}"
                     TextAlignment="Left"
+                    TextWrapping="Wrap"
                     VerticalScrollBarVisibility="Disabled" />
             </ScrollViewer>
 
             <!--  Rich Text Preview  -->
             <ScrollViewer
-                SizeChanged="RichTextScrollViewer_OnSizeChanged"
                 Padding="5"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Left"
                 HorizontalScrollBarVisibility="Auto"
+                SizeChanged="RichTextScrollViewer_OnSizeChanged"
                 VerticalScrollBarVisibility="Auto"
                 Visibility="{Binding RichTextPreviewVisibility, Mode=OneTime}">
                 <RichTextBox
@@ -174,6 +174,46 @@
                     Text="{Binding Words, Mode=OneTime}"
                     TextWrapping="Wrap"
                     Visibility="{Binding WordsVisibility, Mode=OneTime}" />
+
+                <TextBlock
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Margin="5,0,8,0"
+                    VerticalAlignment="Top"
+                    Style="{DynamicResource PreviewItemSubTitleStyle}"
+                    Text="{DynamicResource flowlauncher_plugin_clipboardplus_words}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding DimensionVisibility, Mode=OneTime}" />
+                <TextBlock
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Margin="0,0,13,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Style="{DynamicResource PreviewItemSubTitleStyle}"
+                    Text="{Binding Dimension, Mode=OneTime}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding DimensionVisibility, Mode=OneTime}" />
+
+                <TextBlock
+                    Grid.Row="5"
+                    Grid.Column="0"
+                    Margin="5,0,8,0"
+                    VerticalAlignment="Top"
+                    Style="{DynamicResource PreviewItemSubTitleStyle}"
+                    Text="{DynamicResource flowlauncher_plugin_clipboardplus_words}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding CountVisibility, Mode=OneTime}" />
+                <TextBlock
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    Margin="0,0,13,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Style="{DynamicResource PreviewItemSubTitleStyle}"
+                    Text="{Binding Count, Mode=OneTime}"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding CountVisibility, Mode=OneTime}" />
             </Grid>
         </StackPanel>
     </Grid>

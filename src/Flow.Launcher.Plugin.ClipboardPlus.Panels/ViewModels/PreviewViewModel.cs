@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.ViewModels;
 
@@ -127,6 +128,30 @@ public class PreviewViewModel : BaseModel
     {
         Words = StringUtils.CountWords(PreviewPlainText).ToString();
     }
+
+    #endregion
+
+    #region Dimension
+
+    public Visibility DimensionVisibility => ClipboardData.DataType == DataType.Image
+        ? Visibility.Visible
+        : Visibility.Collapsed;
+
+    public string Dimension => ClipboardData.Data is BitmapSource image ?
+        $"{image.PixelWidth}x{image.PixelHeight}" :
+        ClipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app");
+
+    #endregion
+
+    #region Count
+
+    public Visibility CountVisibility => ClipboardData.DataType == DataType.Files
+        ? Visibility.Visible
+        : Visibility.Collapsed;
+
+    public string Count => ClipboardData.Data is string[] files ?
+        files.Length.ToString() :
+        ClipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app");
 
     #endregion
 

@@ -98,6 +98,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_date">Date</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_type">Type</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_words">Words</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_dimension">Dimension</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_count">Count</system:String>
 
     <!--  Settings  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword">Clear keyword:</system:String>
