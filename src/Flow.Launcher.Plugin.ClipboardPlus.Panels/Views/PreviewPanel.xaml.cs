@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Views;
 
@@ -38,6 +39,42 @@ public partial class PreviewPanel : UserControl, IDisposable
                 richTextBox.SelectAll();
             }
         });
+    }
+
+    #endregion
+
+    #region Wrap Text
+
+    private void PlainTextScrollViewer_OnSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (sender is not ScrollViewer plainTextScrollViewer)
+            return;
+
+        SetTextBoxWidth(plainTextScrollViewer, PlainTextBox);
+    }
+
+    private void RichTextScrollViewer_OnSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (sender is not ScrollViewer richTextScrollViewer)
+            return;
+
+        SetTextBoxWidth(richTextScrollViewer, RichTextBox);
+    }
+
+    private static void SetTextBoxWidth(ScrollViewer scrollViewer, Control textBox)
+    {
+        var actualWidth = scrollViewer.ActualWidth;
+        if (double.IsNaN(actualWidth))
+            return;
+
+        var padding = scrollViewer.Padding.Left + scrollViewer.Padding.Right;
+        var margin = textBox.Margin.Left + textBox.Margin.Right;
+        var dpi = VisualTreeHelper.GetDpi(scrollViewer);
+        var scale = dpi.DpiScaleX;
+        var deviation = (padding + margin) * scale;
+        var richTextBoxWidth = Math.Max(0, actualWidth - deviation);
+
+        textBox.Width = richTextBoxWidth;
     }
 
     #endregion
