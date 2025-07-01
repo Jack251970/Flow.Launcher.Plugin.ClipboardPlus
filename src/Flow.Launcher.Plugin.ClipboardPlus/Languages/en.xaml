@@ -85,7 +85,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_system_list_subtitle">Delete this record in system and list</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_system_both_subtitle">Delete this record in system, list and database</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_unknown_app">unknown</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_unknown">unknown</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard">Copy to clipboard:</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception">Copy to clipboard failed!</system:String>

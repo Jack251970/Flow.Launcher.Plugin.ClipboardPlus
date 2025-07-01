@@ -85,7 +85,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_system_list_subtitle">從系統和列錶中刪除記錄</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_system_both_subtitle">從系統、列錶和數據庫中刪除記錄</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_unknown_app">unknown</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_unknown">unknown</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard">複製到剪貼闆：</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception">複製到剪貼闆錯誤！</system:String>

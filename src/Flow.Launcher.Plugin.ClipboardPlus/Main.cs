@@ -1006,7 +1006,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
                 string.IsNullOrEmpty(clipboardData.SenderApp) ?
-                Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app") :
+                Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown") :
                 clipboardData.SenderApp);
             var imagePath = FileUtils.SaveImageCache(clipboardData, PathHelper.ImageCachePath, imageName);
             clipboardData.CachedImagePath = imagePath;

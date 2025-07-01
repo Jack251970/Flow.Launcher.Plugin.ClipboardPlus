@@ -139,7 +139,7 @@ public class PreviewViewModel : BaseModel
 
     public string Dimension => ClipboardData.Data is BitmapSource image ?
         $"{image.PixelWidth}x{image.PixelHeight}" :
-        ClipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app");
+        ClipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown");
 
     #endregion
 
@@ -151,7 +151,7 @@ public class PreviewViewModel : BaseModel
 
     public string Count => ClipboardData.Data is string[] files ?
         files.Length.ToString() :
-        ClipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown_app");
+        ClipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown");
 
     #endregion
 
