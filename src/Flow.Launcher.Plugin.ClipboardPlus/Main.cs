@@ -436,61 +436,70 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 });
             }
 
+            Context.LogDebug(ClassName, $"Wait for record lock");
+
             await RecordsLock.WaitAsync(token);
 
-            if (string.IsNullOrWhiteSpace(querySearch))
+            Context.LogDebug(ClassName, $"Start to add results");
+
+            try
             {
-                // just add full query list
-                foreach (var record in RecordsList)
+                if (string.IsNullOrWhiteSpace(querySearch))
                 {
-                    token.ThrowIfCancellationRequested();
-                    var result = GetResultFromClipboardData(record, null);
-                    if (result != null)
-                    {
-                        results.Add(result);
-                    }
-                }
-
-                Context.LogDebug(ClassName, $"Added {RecordsList.Count} records successfully");
-            }
-            else
-            {
-                if (RecordsList.Count > MinConcurrentCount)
-                {
-                    // search query list by user input (parallel version)
-                    var concurrentResults = new ConcurrentBag<Result>();
-
-                    Parallel.ForEach(RecordsList, (record, state) =>
-                    {
-                        token.ThrowIfCancellationRequested();
-                        var result = GetResultFromClipboardData(record, querySearch);
-                        if (result != null)
-                        {
-                            concurrentResults.Add(result);
-                        }
-                    });
-
-                    // Add the results from the concurrent bag to the original list
-                    results.AddRange(concurrentResults);
-                }
-                else
-                {
-                    // search query list by user input
+                    // just add full query list
                     foreach (var record in RecordsList)
                     {
                         token.ThrowIfCancellationRequested();
-                        var result = GetResultFromClipboardData(record, querySearch);
+                        var result = GetResultFromClipboardData(record, null);
                         if (result != null)
                         {
                             results.Add(result);
                         }
                     }
+
+                    Context.LogDebug(ClassName, $"Added {RecordsList.Count} records successfully");
                 }
+                else
+                {
+                    if (RecordsList.Count > MinConcurrentCount)
+                    {
+                        // search query list by user input (parallel version)
+                        var concurrentResults = new ConcurrentBag<Result>();
 
-                Context.LogDebug(ClassName, $"Searched {querySearch} and added {results.Count} records successfully");
+                        Parallel.ForEach(RecordsList, (record, state) =>
+                        {
+                            token.ThrowIfCancellationRequested();
+                            var result = GetResultFromClipboardData(record, querySearch);
+                            if (result != null)
+                            {
+                                concurrentResults.Add(result);
+                            }
+                        });
+
+                        // Add the results from the concurrent bag to the original list
+                        results.AddRange(concurrentResults);
+                    }
+                    else
+                    {
+                        // search query list by user input
+                        foreach (var record in RecordsList)
+                        {
+                            token.ThrowIfCancellationRequested();
+                            var result = GetResultFromClipboardData(record, querySearch);
+                            if (result != null)
+                            {
+                                results.Add(result);
+                            }
+                        }
+                    }
+
+                    Context.LogDebug(ClassName, $"Searched {querySearch} and added {results.Count} records successfully");
+                }
             }
-
-            RecordsLock.Release();
+            finally
+            {
+                RecordsLock.Release();
+            }
         }
         return results;
     }
@@ -956,17 +965,21 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
 
         await RecordsLock.WaitAsync();
-
-        // get clipboard data
-        var clipboardData = GetClipboardDataItem(e.Content, e.DataType, StringUtils.GetGuid(), DateTime.Now, e.SourceApplication, clipboardMonitor.ClipboardText, clipboardMonitor.ClipboardRtfText);
-
-        // add clipboard data
-        if (!clipboardData.IsNull())
+        try
         {
-            AddClipboardDataItem(clipboardData);
-        }
+            // get clipboard data
+            var clipboardData = GetClipboardDataItem(e.Content, e.DataType, StringUtils.GetGuid(), DateTime.Now, e.SourceApplication, clipboardMonitor.ClipboardText, clipboardMonitor.ClipboardRtfText);
 
-        RecordsLock.Release();
+            // add clipboard data
+            if (!clipboardData.IsNull())
+            {
+                AddClipboardDataItem(clipboardData);
+            }
+        }
+        finally
+        {
+            RecordsLock.Release();
+        }
     }
 
     public ClipboardData GetClipboardDataItem(object? content, DataType dataType, string hashId, DateTime createTime, SourceApplication source, string clipboardText, string clipboardRtfText)
@@ -1128,8 +1141,14 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         if (load)
         {
             await RecordsLock.WaitAsync();
-            await InitRecordsFromSystemAsync(true);
-            RecordsLock.Release();
+            try
+            {
+                await InitRecordsFromSystemAsync(true);
+            }
+            finally
+            {
+                RecordsLock.Release();
+            }
         }
     }
 
@@ -1145,8 +1164,14 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         if (remove)
         {
             await RecordsLock.WaitAsync();
-            RemoveRecordsFromSystem();
-            RecordsLock.Release();
+            try
+            {
+                RemoveRecordsFromSystem();
+            }
+            finally
+            {
+                RecordsLock.Release();
+            }
         }
     }
 
@@ -1158,22 +1183,34 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private async void WindowsClipboardHelper_OnHistoryItemRemoved(object? sender, string[] e)
     {
         await RecordsLock.WaitAsync();
-        RemoveRecordsFromSystem(r => e.Contains(r.HashId));
-        RecordsLock.Release();
+        try
+        {
+            RemoveRecordsFromSystem(r => e.Contains(r.HashId));
+        }
+        finally
+        {
+            RecordsLock.Release();
+        }
     }
 
     private async void WindowsClipboardHelper_OnHistoryEnabledChanged(object? sender, bool e)
     {
         await RecordsLock.WaitAsync();
-        if (e)
+        try
         {
-            await InitRecordsFromSystemAsync(true);
+            if (e)
+            {
+                await InitRecordsFromSystemAsync(true);
+            }
+            else
+            {
+                RemoveRecordsFromSystem();
+            }
         }
-        else
+        finally
         {
-            RemoveRecordsFromSystem();
+            RecordsLock.Release();
         }
-        RecordsLock.Release();
     }
 
     #endregion
@@ -1217,30 +1254,34 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
 
         await RecordsLock.WaitAsync();
-
-        // clean records
-        ClearRecordsList();
-
-        // restore database records
-        if (databaseDataPairs != null)
+        try
         {
-            RecordsList = new LinkedList<ClipboardDataPair>(databaseDataPairs);
-        }
+            // clean records
+            ClearRecordsList();
 
-        // restore Windows clipboard history items
-        if (system)
+            // restore database records
+            if (databaseDataPairs != null)
+            {
+                RecordsList = new LinkedList<ClipboardDataPair>(databaseDataPairs);
+            }
+
+            // restore Windows clipboard history items
+            if (system)
+            {
+                if (UseWindowsClipboardHistoryOnly)
+                {
+                    await InitRecordsFromSystemAsync(false);
+                }
+                else if (Settings.SyncWindowsClipboardHistory)
+                {
+                    await InitRecordsFromSystemAsync(true);
+                }
+            }
+        }
+        finally
         {
-            if (UseWindowsClipboardHistoryOnly)
-            {
-                await InitRecordsFromSystemAsync(false);
-            }
-            else if (Settings.SyncWindowsClipboardHistory)
-            {
-                await InitRecordsFromSystemAsync(true);
-            }
+            RecordsLock.Release();
         }
-
-        RecordsLock.Release();
 
         // collect garbage
         GarbageCollect();
