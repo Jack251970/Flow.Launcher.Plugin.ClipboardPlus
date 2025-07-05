@@ -98,7 +98,7 @@
                 <TextBlock
                     Grid.Row="0"
                     Grid.Column="0"
-                    Margin="5,0,0,0"
+                    Margin="5,0,8,0"
                     VerticalAlignment="Top"
                     Style="{DynamicResource PreviewItemSubTitleStyle}"
                     Text="{DynamicResource flowlauncher_plugin_clipboardplus_source}"
