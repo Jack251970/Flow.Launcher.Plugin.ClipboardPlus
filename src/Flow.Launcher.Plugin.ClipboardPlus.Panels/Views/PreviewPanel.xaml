@@ -12,7 +12,7 @@
 
     <Grid x:Name="PreviewGrid" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition />
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
