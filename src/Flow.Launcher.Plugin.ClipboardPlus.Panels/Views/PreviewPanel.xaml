@@ -25,6 +25,7 @@
             Source="{Binding PreviewImage, Mode=OneWay}"
             Visibility="{Binding ImagePreviewVisibility, Mode=OneTime}" />
 
+        <!--  Text Preview  -->
         <Grid
             Grid.Row="0"
             MinHeight="270"
