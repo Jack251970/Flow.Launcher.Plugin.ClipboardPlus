@@ -32,7 +32,6 @@
             Margin="0,0,10,10">
             <!--  Plain Text Preview  -->
             <ScrollViewer
-                Padding="5"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Left"
                 HorizontalScrollBarVisibility="Auto"
@@ -41,8 +40,6 @@
                 Visibility="{Binding PlainTextPreviewVisibility, Mode=OneTime}">
                 <TextBox
                     x:Name="PlainTextBox"
-                    Margin="5"
-                    Padding="5"
                     Focusable="True"
                     GotFocus="TextBox_GotFocus"
                     HorizontalScrollBarVisibility="Disabled"
@@ -56,7 +53,6 @@
 
             <!--  Rich Text Preview  -->
             <ScrollViewer
-                Padding="5"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Left"
                 HorizontalScrollBarVisibility="Auto"
@@ -65,8 +61,6 @@
                 Visibility="{Binding RichTextPreviewVisibility, Mode=OneTime}">
                 <RichTextBox
                     x:Name="RichTextBox"
-                    Margin="5"
-                    Padding="5"
                     helper:RichTextBoxHelper.DocumentRtf="{Binding PreviewRichText, Mode=OneWay}"
                     Focusable="True"
                     GotFocus="RichTextBox_GotFocus"
