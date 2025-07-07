@@ -143,7 +143,10 @@ public partial class MainWindow : Window
 
         RecordList.Add(clipboardData);
 
-        await ClipboardPlus.Database.AddOneRecordAsync(clipboardData, true);
+        if (ClipboardPlus.Database != null)
+        {
+            await ClipboardPlus.Database.AddOneRecordAsync(clipboardData, true);
+        }
 
         _count++;
     }
