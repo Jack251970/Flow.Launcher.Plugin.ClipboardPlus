@@ -7,6 +7,7 @@
         <UseWPF>true</UseWPF>
         <UseWindowsForms>true</UseWindowsForms>
         <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+        <ApplicationIcon>icon.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Include="icon.ico" />
       <Content Include="Images\clipboard.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
