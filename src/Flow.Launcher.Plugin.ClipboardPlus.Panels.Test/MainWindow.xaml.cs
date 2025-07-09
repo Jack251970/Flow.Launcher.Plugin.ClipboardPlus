@@ -328,9 +328,6 @@ public partial class MainWindow : Window
         grid3.Children.Add(previewPanel3);
         grid3.Children.Add(label3);
         PreviewFilesTabItem.Content = grid3;
-
-        // Clipboard monitor
-        TextBlock2.TextWrapping = TextWrapping.Wrap;
     }
 
     private async void InitializeDatabase()

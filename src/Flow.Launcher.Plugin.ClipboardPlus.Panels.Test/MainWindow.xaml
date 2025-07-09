@@ -27,7 +27,7 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="30" />
                     </Grid.RowDefinitions>
-                    <TextBox x:Name="TextBoxDatabase" />
+                    <TextBox x:Name="TextBoxDatabase" TextWrapping="Wrap" />
                     <Button
                         Grid.Row="1"
                         Click="DatabaseButton_Click"
@@ -45,12 +45,19 @@
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
-                    <TextBlock x:Name="TextBlock1" Grid.Row="0" />
-                    <TextBlock x:Name="TextBlock2" Grid.Row="1" />
+                    <TextBlock
+                        x:Name="TextBlock1"
+                        Grid.Row="0"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        x:Name="TextBlock2"
+                        Grid.Row="1"
+                        TextWrapping="Wrap" />
                     <TextBlock
                         x:Name="TextBlock3"
                         Grid.Row="2"
-                        Text="Wait something copyed to clipboard..." />
+                        Text="Wait something copyed to clipboard..."
+                        TextWrapping="Wrap" />
                     <TextBox x:Name="TextBox" Grid.Row="3" />
                     <RichTextBox x:Name="RichTextBox" Grid.Row="4" />
                     <Grid Grid.Row="5">
