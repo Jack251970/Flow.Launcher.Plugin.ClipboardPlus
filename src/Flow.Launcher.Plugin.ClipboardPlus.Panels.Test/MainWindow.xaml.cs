@@ -233,7 +233,7 @@ public partial class MainWindow : Window
         var grid = new Grid() { Margin = new(4) };
         grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-        var button = new Button() { Content = "Click to invoke OnCultureInfoChanged event", Margin = new(4), HorizontalAlignment = HorizontalAlignment.Center };
+        var button = new Button() { Content = "Click to invoke OnCultureInfoChanged event", Margin = new(4), HorizontalAlignment = HorizontalAlignment.Stretch };
         button.Click += Button_Click;
         Grid.SetRow(button, 0);
         var scrollViewer = new ScrollViewer() { Margin = new(4) };
@@ -289,7 +289,7 @@ public partial class MainWindow : Window
         grid2.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         grid2.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         grid2.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        var button2 = new Button() { Content = $"Click to save image to {_imageSavePath}", Margin = new(4), HorizontalAlignment = HorizontalAlignment.Center };
+        var button2 = new Button() { Content = $"Click to save image to {_imageSavePath}", Margin = new(4), HorizontalAlignment = HorizontalAlignment.Stretch };
         button2.Click += Button_Click2;
         Grid.SetRow(button2, 0);
         var dataImage = GetRandomClipboardData(DataType.Image);
