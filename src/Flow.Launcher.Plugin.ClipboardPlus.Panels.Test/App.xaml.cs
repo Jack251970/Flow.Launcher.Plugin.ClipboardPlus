@@ -8,8 +8,8 @@ public partial class App : Application
 {
     public App()
     {
-        AddResources();
         InitializeComponent();
+        AddResources();
     }
 
     private void AddResources()
