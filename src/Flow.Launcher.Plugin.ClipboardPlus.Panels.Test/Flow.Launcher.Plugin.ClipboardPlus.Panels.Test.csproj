@@ -15,6 +15,15 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Include="..\Flow.Launcher.Plugin.ClipboardPlus\Languages\*.xaml">
+        <Link>Languages\%(FileName)%(Extension)</Link>
+        <Generator>MSBuild:Compile</Generator>
+        <SubType>Designer</SubType>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
       <Content Include="icon.ico" />
       <Content Include="Images\clipboard.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
