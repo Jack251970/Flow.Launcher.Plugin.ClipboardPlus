@@ -35,7 +35,6 @@ public class SettingsViewModel : BaseModel
         {
             ShowClearKeywordEmptyError();
         }
-        ClipboardPlus.CultureInfoChanged += ClipboardPlus_CultureInfoChanged;
     }
 
     #region Commands
