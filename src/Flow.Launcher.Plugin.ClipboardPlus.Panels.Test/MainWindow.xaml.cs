@@ -233,13 +233,15 @@ public partial class MainWindow : Window
         var grid = new Grid();
         grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-        var button = new Button() { Content = "Click to invoke OnCultureInfoChanged event" };
+        var button = new Button() { Content = "Click to invoke OnCultureInfoChanged event", HorizontalAlignment = HorizontalAlignment.Center };
         button.Click += Button_Click;
         Grid.SetRow(button, 0);
+        var scrollViewer = new ScrollViewer();
         var settingsPanel = new SettingsPanel(ClipboardPlus);
-        Grid.SetRow(settingsPanel, 1);
+        scrollViewer.Content = settingsPanel;
+        Grid.SetRow(scrollViewer, 1);
         grid.Children.Add(button);
-        grid.Children.Add(settingsPanel);
+        grid.Children.Add(scrollViewer);
         PreviewSettingsTabItem.Content = grid;
 
         // Preview plain text panel
