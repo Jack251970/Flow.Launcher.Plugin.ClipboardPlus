@@ -50,181 +50,6 @@ public partial class MainWindow : Window
 
     #endregion
 
-    #region Clipboard Data
-
-    private ClipboardData GetRandomClipboardData(DataType type)
-    {
-        var rand = new Random();
-        object dataContent = type switch
-        {
-            DataType.PlainText => "Hello, world!",
-            DataType.RichText => @"{\rtf\ansi{\fonttbl{\f0 Cascadia Mono;}}{\colortbl;\red43\green145\blue175;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue255;}\f0 \fs19 \cf1 \cb2 \highlight2 DataType\cf3 .\cf4 Files}",
-            DataType.Image => _defaultImage,
-            DataType.Files => new string[] { "D:\\a.txt", "D:\\b.docx", "D:\\c" },
-            _ => null!
-        };
-        var encrypt = rand.NextDouble() > 0.5;
-        var pinned = rand.NextDouble() > 0.5;
-        var data = new ClipboardData(dataContent, type, encrypt)
-        {
-            HashId = StringUtils.GetGuid(),
-            SenderApp = "Flow.Launcher.exe",
-            InitScore = 1,
-            CreateTime = DateTime.Now,
-            EncryptKeyMd5 = StringUtils.EncryptKeyMd5,
-            CachedImagePath = string.Empty,
-            Pinned = pinned,
-            Saved = false,
-        };
-        if (type == DataType.RichText)
-        {
-            data.PlainText = "DataType.Files";
-        }
-        ClipboardDatas.Add(data);
-        return data;
-    }
-
-    #endregion
-
-    #region Clipboard Monitor
-
-    private DateTime now;
-
-    private async void OnClipboardChangeW(object? sender, ClipboardChangedEventArgs e)
-    {
-        if (e.Content is null || e.DataType == DataType.Other || sender is not IClipboardMonitor clipboardMonitor)
-        {
-            return;
-        }
-
-        // init clipboard data
-        now = DateTime.Now;
-        var clipboardData = new ClipboardData(e.Content, e.DataType, true)
-        {
-            HashId = StringUtils.GetGuid(),
-            SenderApp = e.SourceApplication.Name,
-            InitScore = 1,
-            CreateTime = now,
-            EncryptKeyMd5 = StringUtils.EncryptKeyMd5,
-            CachedImagePath = string.Empty,
-            Pinned = false,
-            Saved = false,
-        };
-        if (e.DataType == DataType.RichText)
-        {
-            clipboardData.PlainText = clipboardMonitor.ClipboardText;
-        }
-
-        Dispatcher.Invoke(() =>
-        {
-            TextBlock1.Text = $"Count: {_count}\n" +
-                $"ClipboardChangedEventArgs\n" +
-                $"DataType: {e.DataType}\n" +
-                $"SourceApplication: {e.SourceApplication.Name}\n" +
-                $"Content: {e.Content}";
-            TextBlock2.Text = $"ClipboardMonitor\n" +
-                $"ClipboardText: {ClipboardMonitorWPF.ClipboardText}\n" +
-                $"ClipboardRtfText: {ClipboardMonitorWPF.ClipboardRtfText}\n" +
-                $"ClipboardFiles: {ClipboardMonitorWPF.ClipboardFiles}\n" +
-                $"ClipboardImage: {ClipboardMonitorWPF.ClipboardImage}";
-            TextBlock3.Text = $"ClipboardData\n" +
-                $"DataMd5: {clipboardData.DataMd5}\n" +
-                $"DataToString: {clipboardData.DataToString(false)}\n" +
-                $"DataToString(Encrypted): {clipboardData.DataToString(true)}\n" +
-                $"Title: {clipboardData.GetTitle(CultureInfo.CurrentCulture)}\n" +
-                $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
-                $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
-
-            TextBox.Text = clipboardMonitor.ClipboardText;
-        });
-
-        RecordList.Add(clipboardData);
-
-        if (ClipboardPlus.Database != null)
-        {
-            await ClipboardPlus.Database.AddOneRecordAsync(clipboardData, true);
-        }
-
-        _count++;
-    }
-
-    private async void OnClipboardChangedWin(object? sender, ClipboardChangedEventArgs e)
-    {
-        if (e.Content is null || e.DataType == DataType.Other || sender is not IClipboardMonitor clipboardMonitor)
-        {
-            return;
-        }
-
-        await Task.Delay(900);
-
-        // init clipboard data
-        var clipboardData = new ClipboardData(e.Content, e.DataType, true)
-        {
-            HashId = StringUtils.GetGuid(),
-            SenderApp = e.SourceApplication.Name,
-            InitScore = 1,
-            CreateTime = now,
-            EncryptKeyMd5 = StringUtils.EncryptKeyMd5,
-            CachedImagePath = string.Empty,
-            Pinned = false,
-            Saved = false
-        };
-        if (e.DataType == DataType.RichText)
-        {
-            clipboardData.PlainText = clipboardMonitor.ClipboardText;
-        }
-
-        var TextBlock1Text = $"Count: {_count - 1}\n" +
-                $"ClipboardChangedEventArgs\n" +
-                $"DataType: {e.DataType}\n" +
-                $"SourceApplication: {e.SourceApplication.Name}\n" +
-                $"Content: {e.Content}";
-        var TextBlock2Text = $"ClipboardMonitor\n" +
-            $"ClipboardText: {ClipboardMonitorWPF.ClipboardText}\n" +
-            $"ClipboardRtfText: {ClipboardMonitorWPF.ClipboardRtfText}\n" +
-            $"ClipboardFiles: {ClipboardMonitorWPF.ClipboardFiles}\n" +
-            $"ClipboardImage: {ClipboardMonitorWPF.ClipboardImage}";
-        var TextBlock3Text = $"ClipboardData\n" +
-            $"DataMd5: {clipboardData.DataMd5}\n" +
-            $"DataToString: {clipboardData.DataToString(false)}\n" +
-            $"DataToString(Encrypted): {clipboardData.DataToString(true)}\n" +
-            $"Title: {clipboardData.GetTitle(CultureInfo.CurrentCulture)}\n" +
-            $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
-            $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
-
-        var TextBoxText = clipboardMonitor.ClipboardText;
-
-        var right1 = TextBlock1Text == TextBlock1.Text;
-        var right2 = TextBlock2Text == TextBlock2.Text;
-        var right3 = TextBlock3Text == TextBlock3.Text;
-        var right4 = TextBoxText == TextBox.Text;
-
-        Dispatcher.Invoke(() =>
-        {
-            if (string.IsNullOrEmpty(clipboardMonitor.ClipboardRtfText))
-            {
-                RichTextBox.SetPlainText(clipboardMonitor.ClipboardText);
-            }
-            else
-            {
-                RichTextBox.SetRichText(clipboardMonitor.ClipboardRtfText);
-            }
-
-            if (e.DataType is DataType.Image)
-            {
-                Image.Source = clipboardMonitor.ClipboardImage ?? _defaultImage;
-            }
-        });
-
-        var allRight = right1 && right2 && right3 && right4;
-        if (!allRight)
-        {
-            Debug.WriteLine(">>>>>>>>>>>>>>>>>>>>>ClipboardChangedWin: Not all right<<<<<<<<<<<<<<<<<<<<");
-        }
-    }
-
-    #endregion
-
     #region Initialization
 
     private void InitializeWindow()
@@ -448,6 +273,181 @@ public partial class MainWindow : Window
         TextBoxDatabase.Text = "Disposed";
         await ClipboardPlus.DisposeAsync();
         GC.Collect();
+    }
+
+    #endregion
+
+    #region Clipboard Data
+
+    private ClipboardData GetRandomClipboardData(DataType type)
+    {
+        var rand = new Random();
+        object dataContent = type switch
+        {
+            DataType.PlainText => "Hello, world!",
+            DataType.RichText => @"{\rtf\ansi{\fonttbl{\f0 Cascadia Mono;}}{\colortbl;\red43\green145\blue175;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue255;}\f0 \fs19 \cf1 \cb2 \highlight2 DataType\cf3 .\cf4 Files}",
+            DataType.Image => _defaultImage,
+            DataType.Files => new string[] { "D:\\a.txt", "D:\\b.docx", "D:\\c" },
+            _ => null!
+        };
+        var encrypt = rand.NextDouble() > 0.5;
+        var pinned = rand.NextDouble() > 0.5;
+        var data = new ClipboardData(dataContent, type, encrypt)
+        {
+            HashId = StringUtils.GetGuid(),
+            SenderApp = "Flow.Launcher.exe",
+            InitScore = 1,
+            CreateTime = DateTime.Now,
+            EncryptKeyMd5 = StringUtils.EncryptKeyMd5,
+            CachedImagePath = string.Empty,
+            Pinned = pinned,
+            Saved = false,
+        };
+        if (type == DataType.RichText)
+        {
+            data.PlainText = "DataType.Files";
+        }
+        ClipboardDatas.Add(data);
+        return data;
+    }
+
+    #endregion
+
+    #region Clipboard Monitor
+
+    private DateTime now;
+
+    private async void OnClipboardChangeW(object? sender, ClipboardChangedEventArgs e)
+    {
+        if (e.Content is null || e.DataType == DataType.Other || sender is not IClipboardMonitor clipboardMonitor)
+        {
+            return;
+        }
+
+        // init clipboard data
+        now = DateTime.Now;
+        var clipboardData = new ClipboardData(e.Content, e.DataType, true)
+        {
+            HashId = StringUtils.GetGuid(),
+            SenderApp = e.SourceApplication.Name,
+            InitScore = 1,
+            CreateTime = now,
+            EncryptKeyMd5 = StringUtils.EncryptKeyMd5,
+            CachedImagePath = string.Empty,
+            Pinned = false,
+            Saved = false,
+        };
+        if (e.DataType == DataType.RichText)
+        {
+            clipboardData.PlainText = clipboardMonitor.ClipboardText;
+        }
+
+        Dispatcher.Invoke(() =>
+        {
+            TextBlock1.Text = $"Count: {_count}\n" +
+                $"ClipboardChangedEventArgs\n" +
+                $"DataType: {e.DataType}\n" +
+                $"SourceApplication: {e.SourceApplication.Name}\n" +
+                $"Content: {e.Content}";
+            TextBlock2.Text = $"ClipboardMonitor\n" +
+                $"ClipboardText: {ClipboardMonitorWPF.ClipboardText}\n" +
+                $"ClipboardRtfText: {ClipboardMonitorWPF.ClipboardRtfText}\n" +
+                $"ClipboardFiles: {ClipboardMonitorWPF.ClipboardFiles}\n" +
+                $"ClipboardImage: {ClipboardMonitorWPF.ClipboardImage}";
+            TextBlock3.Text = $"ClipboardData\n" +
+                $"DataMd5: {clipboardData.DataMd5}\n" +
+                $"DataToString: {clipboardData.DataToString(false)}\n" +
+                $"DataToString(Encrypted): {clipboardData.DataToString(true)}\n" +
+                $"Title: {clipboardData.GetTitle(CultureInfo.CurrentCulture)}\n" +
+                $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
+                $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
+
+            TextBox.Text = clipboardMonitor.ClipboardText;
+        });
+
+        RecordList.Add(clipboardData);
+
+        if (ClipboardPlus.Database != null)
+        {
+            await ClipboardPlus.Database.AddOneRecordAsync(clipboardData, true);
+        }
+
+        _count++;
+    }
+
+    private async void OnClipboardChangedWin(object? sender, ClipboardChangedEventArgs e)
+    {
+        if (e.Content is null || e.DataType == DataType.Other || sender is not IClipboardMonitor clipboardMonitor)
+        {
+            return;
+        }
+
+        await Task.Delay(900);
+
+        // init clipboard data
+        var clipboardData = new ClipboardData(e.Content, e.DataType, true)
+        {
+            HashId = StringUtils.GetGuid(),
+            SenderApp = e.SourceApplication.Name,
+            InitScore = 1,
+            CreateTime = now,
+            EncryptKeyMd5 = StringUtils.EncryptKeyMd5,
+            CachedImagePath = string.Empty,
+            Pinned = false,
+            Saved = false
+        };
+        if (e.DataType == DataType.RichText)
+        {
+            clipboardData.PlainText = clipboardMonitor.ClipboardText;
+        }
+
+        var TextBlock1Text = $"Count: {_count - 1}\n" +
+                $"ClipboardChangedEventArgs\n" +
+                $"DataType: {e.DataType}\n" +
+                $"SourceApplication: {e.SourceApplication.Name}\n" +
+                $"Content: {e.Content}";
+        var TextBlock2Text = $"ClipboardMonitor\n" +
+            $"ClipboardText: {ClipboardMonitorWPF.ClipboardText}\n" +
+            $"ClipboardRtfText: {ClipboardMonitorWPF.ClipboardRtfText}\n" +
+            $"ClipboardFiles: {ClipboardMonitorWPF.ClipboardFiles}\n" +
+            $"ClipboardImage: {ClipboardMonitorWPF.ClipboardImage}";
+        var TextBlock3Text = $"ClipboardData\n" +
+            $"DataMd5: {clipboardData.DataMd5}\n" +
+            $"DataToString: {clipboardData.DataToString(false)}\n" +
+            $"DataToString(Encrypted): {clipboardData.DataToString(true)}\n" +
+            $"Title: {clipboardData.GetTitle(CultureInfo.CurrentCulture)}\n" +
+            $"Subtitle: {clipboardData.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
+            $"Text: {clipboardData.GetText(CultureInfo.CurrentCulture)}";
+
+        var TextBoxText = clipboardMonitor.ClipboardText;
+
+        var right1 = TextBlock1Text == TextBlock1.Text;
+        var right2 = TextBlock2Text == TextBlock2.Text;
+        var right3 = TextBlock3Text == TextBlock3.Text;
+        var right4 = TextBoxText == TextBox.Text;
+
+        Dispatcher.Invoke(() =>
+        {
+            if (string.IsNullOrEmpty(clipboardMonitor.ClipboardRtfText))
+            {
+                RichTextBox.SetPlainText(clipboardMonitor.ClipboardText);
+            }
+            else
+            {
+                RichTextBox.SetRichText(clipboardMonitor.ClipboardRtfText);
+            }
+
+            if (e.DataType is DataType.Image)
+            {
+                Image.Source = clipboardMonitor.ClipboardImage ?? _defaultImage;
+            }
+        });
+
+        var allRight = right1 && right2 && right3 && right4;
+        if (!allRight)
+        {
+            Debug.WriteLine(">>>>>>>>>>>>>>>>>>>>>ClipboardChangedWin: Not all right<<<<<<<<<<<<<<<<<<<<");
+        }
     }
 
     #endregion
