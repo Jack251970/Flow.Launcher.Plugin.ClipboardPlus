@@ -245,18 +245,19 @@ public partial class MainWindow : Window
         PreviewSettingsTabItem.Content = grid;
 
         // Preview plain text panel
-        var grid1 = new Grid();
+        var grid1 = new Grid() { Margin = new(4) };
         grid1.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         grid1.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         var dataText = GetRandomClipboardData(DataType.PlainText);
-        var previewPanel1 = new PreviewPanel(ClipboardPlus, dataText);
+        var previewPanel1 = new PreviewPanel(ClipboardPlus, dataText) { Margin = new(4) };
         Grid.SetRow(previewPanel1, 0);
         var label1 = new Label()
         {
             Content = $"Title: {dataText.GetTitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {dataText.GetText(CultureInfo.CurrentCulture)}\n" +
             $"Subtitle: {dataText.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
-            $"Encrypt: {dataText.EncryptData}\n"
+            $"Encrypt: {dataText.EncryptData}\n",
+            Margin = new(4),
         };
         Grid.SetRow(label1, 1);
         grid1.Children.Add(previewPanel1);
@@ -264,18 +265,19 @@ public partial class MainWindow : Window
         PreviewPlainTextTabItem.Content = grid1;
 
         // Preview rich text panel
-        var grid4 = new Grid();
+        var grid4 = new Grid() { Margin = new(4) };
         grid4.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         grid4.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         var dataRichText = GetRandomClipboardData(DataType.RichText);
-        var previewPanel4 = new PreviewPanel(ClipboardPlus, dataRichText);
+        var previewPanel4 = new PreviewPanel(ClipboardPlus, dataRichText) { Margin = new(4) };
         Grid.SetRow(previewPanel4, 0);
         var label4 = new Label()
         {
             Content = $"Title: {dataRichText.GetTitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {dataRichText.GetText(CultureInfo.CurrentCulture)}\n" +
             $"Subtitle: {dataRichText.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
-            $"Encrypt: {dataRichText.EncryptData}"
+            $"Encrypt: {dataRichText.EncryptData}",
+            Margin = new(4),
         };
         Grid.SetRow(label4, 1);
         grid4.Children.Add(previewPanel4);
@@ -283,22 +285,23 @@ public partial class MainWindow : Window
         PreviewRichTextTabItem.Content = grid4;
 
         // Preview image panel
-        var grid2 = new Grid();
+        var grid2 = new Grid() { Margin = new(4) };
         grid2.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         grid2.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         grid2.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        var button2 = new Button() { Content = $"Click to save image to {_imageSavePath}" };
+        var button2 = new Button() { Content = $"Click to save image to {_imageSavePath}", Margin = new(4), HorizontalAlignment = HorizontalAlignment.Center };
         button2.Click += Button_Click2;
         Grid.SetRow(button2, 0);
         var dataImage = GetRandomClipboardData(DataType.Image);
-        var previewPanel2 = new PreviewPanel(ClipboardPlus, dataImage);
+        var previewPanel2 = new PreviewPanel(ClipboardPlus, dataImage) { Margin = new(4) };
         Grid.SetRow(previewPanel2, 1);
         var label2 = new Label()
         {
             Content = $"Title: {dataImage.GetTitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {dataImage.GetText(CultureInfo.CurrentCulture)}\n" +
             $"Subtitle: {dataImage.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
-            $"Encrypt: {dataImage.EncryptData}"
+            $"Encrypt: {dataImage.EncryptData}",
+            Margin = new(4),
         };
         Grid.SetRow(label2, 2);
         grid2.Children.Add(button2);
@@ -307,18 +310,19 @@ public partial class MainWindow : Window
         PreviewImageTabItem.Content = grid2;
 
         // Preview files panel
-        var grid3 = new Grid();
+        var grid3 = new Grid() { Margin = new(4) };
         grid3.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         grid3.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         var dataFiles = GetRandomClipboardData(DataType.Files);
-        var previewPanel3 = new PreviewPanel(ClipboardPlus, dataFiles);
+        var previewPanel3 = new PreviewPanel(ClipboardPlus, dataFiles) { Margin = new(4) };
         Grid.SetRow(previewPanel3, 0);
         var label3 = new Label()
         {
             Content = $"Title: {dataFiles.GetTitle(CultureInfo.CurrentCulture)}\n" +
             $"Text: {dataFiles.GetText(CultureInfo.CurrentCulture)}\n" +
             $"Subtitle: {dataFiles.GetSubtitle(CultureInfo.CurrentCulture)}\n" +
-            $"Encrypt: {dataFiles.EncryptData}"
+            $"Encrypt: {dataFiles.EncryptData}",
+            Margin = new(4),
         };
         Grid.SetRow(label3, 1);
         grid3.Children.Add(previewPanel3);
