@@ -5,10 +5,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:panels="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.Views;assembly=Flow.Launcher.Plugin.ClipboardPlus.Panels"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:usercontrol="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.UserControls;assembly=Flow.Launcher.Plugin.ClipboardPlus.Panels"
     Title="ClipboardPlus Test"
     Width="800"
     Height="600"
+    ui:WindowHelper.UseModernWindowStyle="True"
     Closed="Window_Closed"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
     mc:Ignorable="d">

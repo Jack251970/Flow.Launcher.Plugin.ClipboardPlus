@@ -22,6 +22,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="ModernWpfUI" Version="0.9.5" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\Flow.Launcher.Plugin.ClipboardPlus.Panels\Flow.Launcher.Plugin.ClipboardPlus.Panels.csproj" />
     </ItemGroup>
 
