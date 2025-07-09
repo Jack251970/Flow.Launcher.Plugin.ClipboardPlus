@@ -22,20 +22,25 @@
             <TabItem x:Name="PreviewImageTabItem" Header="Preview Image" />
             <TabItem x:Name="PreviewFilesTabItem" Header="Preview Files" />
             <TabItem Header="Database">
-                <Grid>
+                <Grid Margin="4">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
-                        <RowDefinition Height="30" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBox x:Name="TextBoxDatabase" TextWrapping="Wrap" />
+                    <TextBox
+                        x:Name="TextBoxDatabase"
+                        Margin="4"
+                        TextWrapping="Wrap" />
                     <Button
                         Grid.Row="1"
+                        Margin="4"
+                        HorizontalAlignment="Stretch"
                         Click="DatabaseButton_Click"
                         Content="Close database" />
                 </Grid>
             </TabItem>
             <TabItem Header="Clipboard Monitor">
-                <Grid HorizontalAlignment="Center">
+                <Grid Margin="4">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="2*" />
                         <RowDefinition Height="2*" />
@@ -48,18 +53,28 @@
                     <TextBlock
                         x:Name="TextBlock1"
                         Grid.Row="0"
+                        Margin="4"
                         TextWrapping="Wrap" />
                     <TextBlock
                         x:Name="TextBlock2"
                         Grid.Row="1"
+                        Margin="4"
                         TextWrapping="Wrap" />
                     <TextBlock
                         x:Name="TextBlock3"
                         Grid.Row="2"
+                        Margin="4"
                         Text="Wait something copyed to clipboard..."
                         TextWrapping="Wrap" />
-                    <TextBox x:Name="TextBox" Grid.Row="3" />
-                    <RichTextBox x:Name="RichTextBox" Grid.Row="4" />
+                    <TextBox
+                        x:Name="TextBox"
+                        Grid.Row="3"
+                        Margin="4"
+                        TextWrapping="Wrap" />
+                    <RichTextBox
+                        x:Name="RichTextBox"
+                        Grid.Row="4"
+                        Margin="4" />
                     <Grid Grid.Row="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
@@ -70,27 +85,36 @@
                         <Button
                             x:Name="Button1"
                             Grid.Column="0"
+                            Margin="4"
+                            HorizontalAlignment="Stretch"
                             Click="Button_Click3"
                             Content="Start Monitor" />
                         <Button
                             x:Name="Button2"
                             Grid.Column="1"
+                            Margin="4"
+                            HorizontalAlignment="Stretch"
                             Click="Button_Click4"
                             Content="Pause Monitor" />
                         <Button
                             x:Name="Button3"
                             Grid.Column="2"
+                            Margin="4"
+                            HorizontalAlignment="Stretch"
                             Click="Button_Click5"
                             Content="Resume Monitor" />
                         <Button
                             x:Name="Button4"
                             Grid.Column="3"
+                            Margin="4"
+                            HorizontalAlignment="Stretch"
                             Click="Button_Click6"
                             Content="Stop Monitor" />
                     </Grid>
                     <Image
                         x:Name="Image"
                         Grid.Row="6"
+                        Margin="4"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center" />
                 </Grid>
