@@ -10,6 +10,7 @@
     Width="800"
     Height="600"
     Closed="Window_Closed"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}"
     mc:Ignorable="d">
     <Grid>
         <TabControl SelectedIndex="0">
