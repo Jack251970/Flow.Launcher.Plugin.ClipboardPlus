@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.IO;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -6,13 +8,16 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Test;
 
 public partial class App : Application
 {
+    private readonly static string LanguageResourcePath = Path.Combine(AppContext.BaseDirectory, "Languages", "en.xaml");
+
     public App()
     {
         InitializeComponent();
-        AddResources();
+        AddDesignResources();
+        AddLanguageResources();
     }
 
-    private void AddResources()
+    private void AddDesignResources()
     {
         // Colors
         var color03B = new SolidColorBrush(Color.FromRgb(29, 29, 29));
@@ -61,5 +66,21 @@ public partial class App : Application
         Resources.Add("SettingPanelPathTextBoxWidth", settingsPanelPathTextBoxWidth);
         Resources.Add("SettingPanelAreaTextBoxMinHeight", settingsPanelAreaTextBoxMinHeight);
         Resources.Add("SettingPanelTextBlockDescriptionStyle", settingsPanelTextBlockDescriptionStyle);
+    }
+
+    private void AddLanguageResources()
+    {
+        if (File.Exists(LanguageResourcePath))
+        {
+            var languageResourceDictionary = new ResourceDictionary
+            {
+                Source = new Uri(LanguageResourcePath, UriKind.Absolute)
+            };
+            Resources.MergedDictionaries.Add(languageResourceDictionary);
+        }
+        else
+        {
+            throw new FileNotFoundException($"Language resource file not found: {LanguageResourcePath}");
+        }
     }
 }
