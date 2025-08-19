@@ -26,6 +26,9 @@ public class PreviewViewModel : BaseModel
         switch (ClipboardData.DataType)
         {
             case DataType.PlainText:
+                PreviewPlainText = ClipboardData.DataToString(false) ?? string.Empty;
+                RefreshStatus();
+                break;
             case DataType.Files:
                 PreviewPlainText = ClipboardData.DataToString(false) ?? string.Empty;
                 break;
@@ -33,6 +36,7 @@ public class PreviewViewModel : BaseModel
                 // Use private property to avoid 
                 _previewPlainText = ClipboardData.PlainTextToString(false) ?? string.Empty;
                 PreviewRichText = ClipboardData.DataToString(false) ?? string.Empty;
+                RefreshStatus();
                 break;
             case DataType.Image:
                 PreviewImage = ClipboardData.DataToImage();
@@ -77,7 +81,6 @@ public class PreviewViewModel : BaseModel
         set
         {
             _previewPlainText = value;
-            RefreshStatus();
             OnPropertyChanged();
         }
     }
@@ -93,7 +96,6 @@ public class PreviewViewModel : BaseModel
         set
         {
             _previewRichText = value;
-            RefreshStatus();
             OnPropertyChanged();
         }
     }
