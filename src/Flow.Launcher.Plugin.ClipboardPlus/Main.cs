@@ -84,6 +84,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     // Minimal count for concurrent operations
     private const int MinConcurrentCount = 333;
 
+    // Maximum characters for result title & title tooltip
+    private const int MaxTitleToolTipCharacters = 99;
+
     #region Scores
 
     private const int ScoreInterval1 = 1 * ScoreInterval;
@@ -1574,8 +1577,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
             // Return result
             var title = clipboardData.GetTitle(CultureInfo);
+            title = title.Length > MaxTitleToolTipCharacters ? string.Concat(title.AsSpan(0, MaxTitleToolTipCharacters), "...") : title;
             var titleText = clipboardData.GetText(CultureInfo);
-            var titleToolTip = titleText.Length > 100 ? string.Concat(titleText.AsSpan(0, 40), "...") : titleText;
+            var titleToolTip = titleText.Length > MaxTitleToolTipCharacters ? string.Concat(titleText.AsSpan(0, MaxTitleToolTipCharacters), "...") : titleText;
             return new Result
             {
                 Title = title,
