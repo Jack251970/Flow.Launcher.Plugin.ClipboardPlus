@@ -100,6 +100,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_words">Words</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_dimension">Dimension</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_count">Count</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_preview">Preview</system:String>
 
     <!--  Settings  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword">Clear keyword:</system:String>

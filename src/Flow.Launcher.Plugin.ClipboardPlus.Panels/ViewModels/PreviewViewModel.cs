@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -19,6 +20,7 @@ public class PreviewViewModel : BaseModel
     {
         ClipboardPlus = clipboardPlus;
         ClipboardData = clipboardData;
+        _isTextPreviewEnabled = ClipboardData.DataType == DataType.Files || ClipboardData.DataType == DataType.Image;
     }
 
     public void InitializeContent()
@@ -26,24 +28,31 @@ public class PreviewViewModel : BaseModel
         switch (ClipboardData.DataType)
         {
             case DataType.PlainText:
-                PreviewPlainText = ClipboardData.DataToString(false) ?? string.Empty;
+                _previewPlainText = ClipboardData.DataToString(false) ?? string.Empty;
                 RefreshStatus();
+                if (_wordsCount!.Value < MaxTextPreviewWords)
+                {
+                    IsTextPreviewEnabled = true;
+                }
                 break;
             case DataType.Files:
                 PreviewPlainText = ClipboardData.DataToString(false) ?? string.Empty;
                 break;
             case DataType.RichText:
-                // Use private property to avoid property change notification
                 _previewPlainText = ClipboardData.PlainTextToString(false) ?? string.Empty;
-                PreviewRichText = ClipboardData.DataToString(false) ?? string.Empty;
+                _previewRichText = ClipboardData.DataToString(false) ?? string.Empty;
                 RefreshStatus();
+                if (_wordsCount!.Value < MaxTextPreviewWords)
+                {
+                    IsTextPreviewEnabled = true;
+                }
                 break;
             case DataType.Image:
                 PreviewImage = ClipboardData.DataToImage();
                 break;
             default:
                 break;
-    }
+        }
         Context.LogDebug(ClassName, $"Preview {ClipboardData.DataType} content: {ClipboardData.HashId}");
     }
 
@@ -70,7 +79,7 @@ public class PreviewViewModel : BaseModel
 
     #region Text Preview
 
-    public Visibility PlainTextPreviewVisibility => ClipboardData.DataType == DataType.PlainText || ClipboardData.DataType == DataType.Files
+    public Visibility PlainTextPreviewVisibility => IsTextPreviewEnabled && (ClipboardData.DataType == DataType.PlainText || ClipboardData.DataType == DataType.Files)
         ? Visibility.Visible
         : Visibility.Collapsed;
 
@@ -85,7 +94,7 @@ public class PreviewViewModel : BaseModel
         }
     }
 
-    public Visibility RichTextPreviewVisibility => ClipboardData.DataType == DataType.RichText
+    public Visibility RichTextPreviewVisibility => IsTextPreviewEnabled && ClipboardData.DataType == DataType.RichText
         ? Visibility.Visible
         : Visibility.Collapsed;
 
@@ -98,6 +107,44 @@ public class PreviewViewModel : BaseModel
             _previewRichText = value;
             OnPropertyChanged();
         }
+    }
+
+    #endregion
+
+    #region Show Text Preview
+
+    private const int MaxTextPreviewWords = 10000;
+
+    private bool _isTextPreviewEnabled = false;
+    public bool IsTextPreviewEnabled
+    {
+        get => _isTextPreviewEnabled;
+        set
+        {
+            _isTextPreviewEnabled = value;
+            OnPropertyChanged(nameof(ShowTextPreviewButtonVisibility));
+            if (ClipboardData.DataType == DataType.RichText)
+            {
+                OnPropertyChanged(nameof(RichTextPreviewVisibility));
+                OnPropertyChanged(nameof(PreviewRichText));
+            }
+            else
+            {
+                OnPropertyChanged(nameof(PlainTextPreviewVisibility));
+                OnPropertyChanged(nameof(PreviewPlainText));
+            }
+        }
+    }
+
+    public Visibility ShowTextPreviewButtonVisibility => !IsTextPreviewEnabled
+        ? Visibility.Visible
+        : Visibility.Collapsed;
+
+    public ICommand ShowTextPreviewCommand => new RelayCommand(ShowTextPreview);
+
+    private void ShowTextPreview(object? parameter)
+    {
+        IsTextPreviewEnabled = true;
     }
 
     #endregion

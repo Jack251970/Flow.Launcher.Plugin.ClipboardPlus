@@ -27,6 +27,15 @@
 
         <!--  Text Preview  -->
         <Grid Grid.Row="0" Margin="0,0,10,10">
+            <!--  Show Text Preview  -->
+            <Button
+                x:Name="ShowTextPreviewButton"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Command="{Binding ShowTextPreviewCommand}"
+                Content="{DynamicResource flowlauncher_plugin_clipboardplus_preview}"
+                Visibility="{Binding ShowTextPreviewButtonVisibility, Mode=OneWay}" />
+
             <!--  Plain Text Preview  -->
             <ScrollViewer
                 HorizontalAlignment="Stretch"
@@ -34,7 +43,7 @@
                 HorizontalScrollBarVisibility="Auto"
                 SizeChanged="PlainTextScrollViewer_OnSizeChanged"
                 VerticalScrollBarVisibility="Auto"
-                Visibility="{Binding PlainTextPreviewVisibility, Mode=OneTime}">
+                Visibility="{Binding PlainTextPreviewVisibility, Mode=OneWay}">
                 <TextBox
                     x:Name="PlainTextBox"
                     Focusable="True"
@@ -55,7 +64,7 @@
                 HorizontalScrollBarVisibility="Auto"
                 SizeChanged="RichTextScrollViewer_OnSizeChanged"
                 VerticalScrollBarVisibility="Auto"
-                Visibility="{Binding RichTextPreviewVisibility, Mode=OneTime}">
+                Visibility="{Binding RichTextPreviewVisibility, Mode=OneWay}">
                 <RichTextBox
                     x:Name="RichTextBox"
                     helper:RichTextBoxHelper.DocumentRtf="{Binding PreviewRichText, Mode=OneWay}"
@@ -161,7 +170,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
                     Style="{DynamicResource PreviewItemSubTitleStyle}"
-                    Text="{Binding Words, Mode=OneTime}"
+                    Text="{Binding Words, Mode=OneWay}"
                     TextWrapping="Wrap"
                     Visibility="{Binding WordsVisibility, Mode=OneTime}" />
 
