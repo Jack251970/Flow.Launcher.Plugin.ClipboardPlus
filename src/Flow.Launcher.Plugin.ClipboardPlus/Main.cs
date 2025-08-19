@@ -1577,12 +1577,16 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
             // Return result
             var title = clipboardData.GetTitle(CultureInfo);
-            title = title.Length > MaxTitleToolTipCharacters ? string.Concat(title.AsSpan(0, MaxTitleToolTipCharacters), "...") : title;
+            var limitedTitle = title.Length > MaxTitleToolTipCharacters ? title.AsSpan(0, MaxTitleToolTipCharacters).ToString() : title;
+            var limitedDisplayTitle = title.Length > MaxTitleToolTipCharacters ? string.Concat(title.AsSpan(0, MaxTitleToolTipCharacters), "...") : title;
             var titleText = clipboardData.GetText(CultureInfo);
             var titleToolTip = titleText.Length > MaxTitleToolTipCharacters ? string.Concat(titleText.AsSpan(0, MaxTitleToolTipCharacters), "...") : titleText;
             return new Result
             {
-                Title = title,
+                Title = limitedDisplayTitle,
+                AutoCompleteText = limitedTitle,
+                // TODO
+                /*QuerySuggestionText = limitedTitle,*/
                 TitleToolTip = titleToolTip,
                 SubTitle = clipboardData.GetSubtitle(CultureInfo),
                 SubTitleToolTip = clipboardData.GetSubtitle(CultureInfo),
