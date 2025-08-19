@@ -19,7 +19,28 @@ public class PreviewViewModel : BaseModel
     {
         ClipboardPlus = clipboardPlus;
         ClipboardData = clipboardData;
-        InitializeContent();
+    }
+
+    public void InitializeContent()
+    {
+        switch (ClipboardData.DataType)
+        {
+            case DataType.PlainText:
+            case DataType.Files:
+                PreviewPlainText = ClipboardData.DataToString(false) ?? string.Empty;
+                break;
+            case DataType.RichText:
+                // Use private property to avoid 
+                _previewPlainText = ClipboardData.PlainTextToString(false) ?? string.Empty;
+                PreviewRichText = ClipboardData.DataToString(false) ?? string.Empty;
+                break;
+            case DataType.Image:
+                PreviewImage = ClipboardData.DataToImage();
+                break;
+            default:
+                break;
+    }
+        Context.LogDebug(ClassName, $"Preview {ClipboardData.DataType} content: {ClipboardData.HashId}");
     }
 
     #region Dependency Properties
@@ -154,27 +175,6 @@ public class PreviewViewModel : BaseModel
         ClipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_unknown");
 
     #endregion
-
-    private void InitializeContent()
-    {
-        switch (ClipboardData.DataType)
-        {
-            case DataType.PlainText:
-            case DataType.Files:
-                PreviewPlainText = ClipboardData.DataToString(false) ?? string.Empty;
-                break;
-            case DataType.RichText:
-                _previewPlainText = ClipboardData.PlainTextToString(false) ?? string.Empty;
-                PreviewRichText = ClipboardData.DataToString(false) ?? string.Empty;
-                break;
-            case DataType.Image:
-                PreviewImage = ClipboardData.DataToImage();
-                break;
-            default:
-                break;
-        }
-        Context.LogDebug(ClassName, $"Preview {ClipboardData.DataType} content: {ClipboardData.HashId}");
-    }
 
     #endregion
 }

@@ -15,6 +15,7 @@ public partial class PreviewPanel : UserControl, IDisposable
         DataContext = ViewModel;
         InitializeComponent();
         DataContext = ViewModel;
+        ViewModel.InitializeContent();
     }
 
     #region Auto Select
