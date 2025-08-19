@@ -1583,7 +1583,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 SubTitleToolTip = clipboardData.GetSubtitle(CultureInfo),
                 Icon = () => clipboardData.Icon,
                 Glyph = clipboardData.Glyph,
-                CopyText = clipboardData.GetText(CultureInfo),
+                CopyText = titleText,
                 Score = clipboardData.GetScore(Settings.RecordOrder),
                 AddSelectedCount = false,
                 ContextData = clipboardDataPair,
