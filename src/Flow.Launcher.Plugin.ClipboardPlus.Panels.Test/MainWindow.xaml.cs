@@ -306,7 +306,7 @@ public partial class MainWindow : Window
         };
         if (type == DataType.PlainText)
         {
-            dataContent = string.Join(" ", Enumerable.Repeat(dataContent.ToString(), 10000));
+            dataContent = string.Join(" ", Enumerable.Repeat(dataContent.ToString(), 40000));
         }
         var encrypt = rand.NextDouble() > 0.5;
         var pinned = rand.NextDouble() > 0.5;
