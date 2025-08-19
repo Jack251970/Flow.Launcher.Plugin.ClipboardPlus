@@ -75,7 +75,7 @@ public partial class MainWindow : Window
         grid1.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         grid1.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         var dataText = GetRandomClipboardData(DataType.PlainText);
-        var previewPanel1 = new PreviewPanel(ClipboardPlus, dataText) { Margin = new(4) };
+        var previewPanel1 = new ContentControl();
         Grid.SetRow(previewPanel1, 0);
         var label1 = new Label()
         {
@@ -89,6 +89,19 @@ public partial class MainWindow : Window
         grid1.Children.Add(previewPanel1);
         grid1.Children.Add(label1);
         PreviewPlainTextTabItem.Content = grid1;
+
+        // Register selected index changed event
+        if (ItemsControl.ItemsControlFromItemContainer(PreviewPlainTextTabItem) is TabControl tabControl)
+        {
+            tabControl.SelectionChanged += (sender, e) =>
+            {
+                if (sender is TabControl tabControl && tabControl.SelectedItem is TabItem selected &&
+                    selected == PreviewPlainTextTabItem)
+                {
+                    previewPanel1.Content ??= new PreviewPanel(ClipboardPlus, dataText) { Margin = new(4) };
+                }
+            };
+        }
 
         // Preview rich text panel
         var grid4 = new Grid() { Margin = new(4) };
