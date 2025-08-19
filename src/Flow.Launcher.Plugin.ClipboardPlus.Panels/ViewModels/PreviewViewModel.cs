@@ -29,7 +29,7 @@ public class PreviewViewModel : BaseModel
         {
             case DataType.PlainText:
                 _previewPlainText = ClipboardData.DataToString(false) ?? string.Empty;
-                RefreshStatus();
+                RefreshWordsCount();
                 if (_wordsCount!.Value < MaxTextPreviewWords)
                 {
                     IsTextPreviewEnabled = true;
@@ -41,7 +41,7 @@ public class PreviewViewModel : BaseModel
             case DataType.RichText:
                 _previewPlainText = ClipboardData.PlainTextToString(false) ?? string.Empty;
                 _previewRichText = ClipboardData.DataToString(false) ?? string.Empty;
-                RefreshStatus();
+                RefreshWordsCount();
                 if (_wordsCount!.Value < MaxTextPreviewWords)
                 {
                     IsTextPreviewEnabled = true;
@@ -196,7 +196,7 @@ public class PreviewViewModel : BaseModel
         }
     }
 
-    private void RefreshStatus()
+    private void RefreshWordsCount()
     {
         if (_wordsCount.HasValue)
             return;
