@@ -4,7 +4,7 @@
   "Name": "Clipboard+",
   "Description": "Easily manage your clipboard history and Windows Clipboard History with support for text, images, and files",
   "Author": "Jack251970",
-  "Version": "2.4.4",
+  "Version": "2.4.5",
   "Language": "csharp",
   "Website": "https://github.com/Jack251970/Flow.Launcher.Plugin.ClipboardPlus",
   "IcoPath": "Images/clipboard.png",
