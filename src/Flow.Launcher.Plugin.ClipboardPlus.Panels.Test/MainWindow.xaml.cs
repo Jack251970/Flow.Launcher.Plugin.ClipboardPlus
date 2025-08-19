@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -290,6 +291,10 @@ public partial class MainWindow : Window
             DataType.Files => new string[] { "D:\\a.txt", "D:\\b.docx", "D:\\c" },
             _ => null!
         };
+        if (type == DataType.PlainText)
+        {
+            dataContent = string.Join(" ", Enumerable.Repeat(dataContent.ToString(), 10000));
+        }
         var encrypt = rand.NextDouble() > 0.5;
         var pinned = rand.NextDouble() > 0.5;
         var data = new ClipboardData(dataContent, type, encrypt)
