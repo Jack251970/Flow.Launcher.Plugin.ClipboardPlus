@@ -1573,9 +1573,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             }
 
             // Return result
+            var titleText = clipboardData.GetText(CultureInfo);
+            var titleToolTip = titleText.Length > 100 ? string.Concat(titleText.AsSpan(0, 40), "...") : titleText;
             return new Result
             {
                 Title = clipboardData.GetTitle(CultureInfo),
+                TitleToolTip = titleToolTip,
                 SubTitle = clipboardData.GetSubtitle(CultureInfo),
                 SubTitleToolTip = clipboardData.GetSubtitle(CultureInfo),
                 Icon = () => clipboardData.Icon,
@@ -1583,7 +1586,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 CopyText = clipboardData.GetText(CultureInfo),
                 Score = clipboardData.GetScore(Settings.RecordOrder),
                 AddSelectedCount = false,
-                TitleToolTip = clipboardData.GetText(CultureInfo),
                 ContextData = clipboardDataPair,
                 PreviewPanel = clipboardDataPair.PreviewPanel,
                 Action = (c) =>
