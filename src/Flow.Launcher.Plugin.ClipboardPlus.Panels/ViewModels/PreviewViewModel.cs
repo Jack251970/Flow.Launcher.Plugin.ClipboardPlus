@@ -33,7 +33,7 @@ public class PreviewViewModel : BaseModel
                 PreviewPlainText = ClipboardData.DataToString(false) ?? string.Empty;
                 break;
             case DataType.RichText:
-                // Use private property to avoid 
+                // Use private property to avoid property change notification
                 _previewPlainText = ClipboardData.PlainTextToString(false) ?? string.Empty;
                 PreviewRichText = ClipboardData.DataToString(false) ?? string.Empty;
                 RefreshStatus();
