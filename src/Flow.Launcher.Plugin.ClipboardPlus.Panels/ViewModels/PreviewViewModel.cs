@@ -132,6 +132,8 @@ public class PreviewViewModel : BaseModel
 
     #region Words
 
+    private int? _wordsCount = null;
+
     public Visibility WordsVisibility => ClipboardData.DataType == DataType.PlainText || ClipboardData.DataType == DataType.RichText
         ? Visibility.Visible
         : Visibility.Collapsed;
@@ -149,7 +151,11 @@ public class PreviewViewModel : BaseModel
 
     private void RefreshStatus()
     {
-        Words = StringUtils.CountWords(PreviewPlainText).ToString();
+        if (_wordsCount.HasValue)
+            return;
+
+        _wordsCount = StringUtils.CountWords(PreviewPlainText);
+        Words = _wordsCount!.Value.ToString();
     }
 
     #endregion
