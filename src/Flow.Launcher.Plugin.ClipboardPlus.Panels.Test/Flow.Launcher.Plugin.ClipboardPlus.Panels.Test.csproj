@@ -38,4 +38,10 @@
       <ProjectReference Include="..\Flow.Launcher.Plugin.ClipboardPlus.Panels\Flow.Launcher.Plugin.ClipboardPlus.Panels.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="param_data.csv">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

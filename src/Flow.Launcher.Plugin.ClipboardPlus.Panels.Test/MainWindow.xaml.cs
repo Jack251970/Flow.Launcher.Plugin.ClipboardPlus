@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,6 +35,8 @@ public partial class MainWindow : Window
     private List<ClipboardData> RecordList = new();
 
     private int _count = 0;
+
+    private static readonly string _largeDataFile = Path.Combine(_baseDirectory, "param_data.csv");
 
     #endregion
 
@@ -306,7 +307,8 @@ public partial class MainWindow : Window
         };
         if (type == DataType.PlainText)
         {
-            dataContent = string.Join(" ", Enumerable.Repeat(dataContent.ToString(), 40000));
+            // Read large data from file
+            dataContent = File.ReadAllText(_largeDataFile);
         }
         var encrypt = rand.NextDouble() > 0.5;
         var pinned = rand.NextDouble() > 0.5;
