@@ -8,5 +8,6 @@
   "Language": "csharp",
   "Website": "https://github.com/Jack251970/Flow.Launcher.Plugin.ClipboardPlus",
   "IcoPath": "Images/clipboard.png",
-  "ExecuteFileName": "Flow.Launcher.Plugin.ClipboardPlus.dll"
+  "ExecuteFileName": "Flow.Launcher.Plugin.ClipboardPlus.dll",
+  "MinimumAppVersion": "2.0.0"
 }
