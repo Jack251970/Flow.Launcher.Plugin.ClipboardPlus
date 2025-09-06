@@ -7,12 +7,10 @@
     <RepositoryUrl>https://github.com/Jack251970/Flow.Launcher.Plugin.ClipboardPlus</RepositoryUrl>
     <PackageTags>flow-launcher flow-plugin</PackageTags>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	  <LangVersion>11</LangVersion>
 	  <Nullable>enable</Nullable>
 	  <TargetFramework>net9.0-windows</TargetFramework>
 	  <Version>3.0.0</Version>
     <ReleaseOutputPath>./bin/Release</ReleaseOutputPath>
-    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
