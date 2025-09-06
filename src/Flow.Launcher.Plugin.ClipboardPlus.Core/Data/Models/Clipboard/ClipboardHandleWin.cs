@@ -13,7 +13,7 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
 /// <summary>
 /// ClipboardHandleWin is a class that handles the clipboard
-/// https://learn.microsoft.com/en-us/uwp/api/windows.applicationmodel.datatransfer.clipboard
+/// https://learn.microsoft.com/en-us/uwp/api/clipboard
 /// </summary>
 [SupportedOSPlatform("windows10.0.10240.0")]
 internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
@@ -72,7 +72,7 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
     /// </summary>
     public void StartMonitoring()
     {
-        Windows.ApplicationModel.DataTransfer.Clipboard.ContentChanged += OnClipboardChanged;
+        Clipboard.ContentChanged += OnClipboardChanged;
         Ready = true;
     }
 
@@ -81,7 +81,7 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
     /// </summary>
     public void StopMonitoring()
     {
-        Windows.ApplicationModel.DataTransfer.Clipboard.ContentChanged -= OnClipboardChanged;
+        Clipboard.ContentChanged -= OnClipboardChanged;
         _context.LogDebug(ClassName, "Clipboard content changed listener removed.");
         Ready = false;
     }
@@ -100,7 +100,7 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
             }
 
             // If the clipboard is empty, return.
-            var dataObj = Windows.ApplicationModel.DataTransfer.Clipboard.GetContent();
+            var dataObj = Clipboard.GetContent();
             if (dataObj is null)
             {
                 return;

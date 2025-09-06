@@ -1,4 +1,5 @@
-﻿using System.Windows.Media.Imaging;
+﻿using Microsoft.Win32;
+using System.Windows.Media.Imaging;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Utils;
 
@@ -127,7 +128,7 @@ public static class FileUtils
             AddExtension = true
         };
 
-        if (saveFileDialog.ShowDialog() != DialogResult.OK)
+        if (saveFileDialog.ShowDialog() != true)
         {
             return string.Empty;
         }
@@ -142,7 +143,7 @@ public static class FileUtils
             Filter = GetJsonFileFilter(clipboardPlus)
         };
 
-        if (openFileDialog.ShowDialog() != DialogResult.OK)
+        if (openFileDialog.ShowDialog() != true)
         {
             return string.Empty;
         }

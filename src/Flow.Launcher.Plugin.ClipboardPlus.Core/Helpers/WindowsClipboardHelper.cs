@@ -9,7 +9,7 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 #pragma warning disable CA1416 // Validate platform compatibility
 
 /// <summary>
-/// https://learn.microsoft.com/en-us/uwp/api/windows.applicationmodel.datatransfer.clipboard
+/// https://learn.microsoft.com/en-us/uwp/api/clipboard
 /// https://docs.microsoft.com/windows/release-health/release-information
 /// </summary>
 public class WindowsClipboardHelper : IDisposable
@@ -27,7 +27,7 @@ public class WindowsClipboardHelper : IDisposable
     {
         if (IsClipboardHistorySupported())
         {
-            return Windows.ApplicationModel.DataTransfer.Clipboard.IsHistoryEnabled();
+            return Clipboard.IsHistoryEnabled();
         }
 
         return false;
@@ -37,10 +37,10 @@ public class WindowsClipboardHelper : IDisposable
     {
         if (IsClipboardHistorySupported())
         {
-            var historyItems = await Windows.ApplicationModel.DataTransfer.Clipboard.GetHistoryItemsAsync();
-            if (Windows.ApplicationModel.DataTransfer.Clipboard.ClearHistory() && historyItems.Status == ClipboardHistoryItemsResultStatus.Success)
+            var historyItems = await Clipboard.GetHistoryItemsAsync();
+            if (Clipboard.ClearHistory() && historyItems.Status == ClipboardHistoryItemsResultStatus.Success)
             {
-                var historyItemsAfter = await Windows.ApplicationModel.DataTransfer.Clipboard.GetHistoryItemsAsync();
+                var historyItemsAfter = await Clipboard.GetHistoryItemsAsync();
                 if (historyItemsAfter.Status == ClipboardHistoryItemsResultStatus.Success)
                 {
                     return historyItems.Items.Count - historyItemsAfter.Items.Count;
@@ -55,12 +55,12 @@ public class WindowsClipboardHelper : IDisposable
     {
         if (IsClipboardHistorySupported())
         {
-            var historyItems = await Windows.ApplicationModel.DataTransfer.Clipboard.GetHistoryItemsAsync();
+            var historyItems = await Clipboard.GetHistoryItemsAsync();
             if (historyItems.Status == ClipboardHistoryItemsResultStatus.Success)
             {
                 foreach (var item in historyItems.Items)
                 {
-                    Windows.ApplicationModel.DataTransfer.Clipboard.DeleteItemFromHistory(item);
+                    Clipboard.DeleteItemFromHistory(item);
                 }
                 return historyItems.Items.Count;
             }
@@ -73,7 +73,7 @@ public class WindowsClipboardHelper : IDisposable
     {
         if (IsClipboardHistorySupported() && clipboardData.ClipboardHistoryItem is ClipboardHistoryItem item)
         {
-            return Windows.ApplicationModel.DataTransfer.Clipboard.DeleteItemFromHistory(item);
+            return Clipboard.DeleteItemFromHistory(item);
         }
 
         return false;
@@ -100,8 +100,8 @@ public class WindowsClipboardHelper : IDisposable
         if (IsClipboardHistorySupported())
         {
             Clipboard_HistoryChanged(this, null!);
-            Windows.ApplicationModel.DataTransfer.Clipboard.HistoryChanged += Clipboard_HistoryChanged;
-            Windows.ApplicationModel.DataTransfer.Clipboard.HistoryEnabledChanged += Clipboard_HistoryEnabledChanged;
+            Clipboard.HistoryChanged += Clipboard_HistoryChanged;
+            Clipboard.HistoryEnabledChanged += Clipboard_HistoryEnabledChanged;
         }
     }
 
@@ -111,8 +111,8 @@ public class WindowsClipboardHelper : IDisposable
         {
             _clipboardHistoryItems.Clear();
             _clipboardHistoryItemsIds.Clear();
-            Windows.ApplicationModel.DataTransfer.Clipboard.HistoryChanged -= Clipboard_HistoryChanged;
-            Windows.ApplicationModel.DataTransfer.Clipboard.HistoryEnabledChanged -= Clipboard_HistoryEnabledChanged;
+            Clipboard.HistoryChanged -= Clipboard_HistoryChanged;
+            Clipboard.HistoryEnabledChanged -= Clipboard_HistoryEnabledChanged;
         }
     }
 
@@ -138,7 +138,7 @@ public class WindowsClipboardHelper : IDisposable
             await _historyItemLock.WaitAsync();
             try
             {
-                var historyItems = await Windows.ApplicationModel.DataTransfer.Clipboard.GetHistoryItemsAsync();
+                var historyItems = await Clipboard.GetHistoryItemsAsync();
                 if (historyItems.Status == ClipboardHistoryItemsResultStatus.Success)
                 {
                     var items = historyItems.Items;
