@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0-windows</TargetFramework>
+        <TargetFramework>net9.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
         <Version>2.4.6</Version>
@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Flow.Launcher.Plugin" Version="4.5.0" />
+      <PackageReference Include="Flow.Launcher.Plugin" Version="5.0.0" />
     </ItemGroup>
 
 </Project>

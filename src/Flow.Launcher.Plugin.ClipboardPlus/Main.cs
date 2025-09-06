@@ -1583,8 +1583,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             {
                 Title = limitedDisplayTitle,
                 AutoCompleteText = limitedTitle,
-                // TODO
-                /*QuerySuggestionText = limitedTitle,*/
+                QuerySuggestionText = limitedTitle,
                 TitleToolTip = limitedDisplayTitleText,
                 SubTitle = subtitle,
                 SubTitleToolTip = subtitle,
