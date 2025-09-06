@@ -31,7 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="ModernWpfUI" Version="0.9.5" />
+      <PackageReference Include="ModernWpfUI" Version="0.9.6" />
     </ItemGroup>
 
     <ItemGroup>
