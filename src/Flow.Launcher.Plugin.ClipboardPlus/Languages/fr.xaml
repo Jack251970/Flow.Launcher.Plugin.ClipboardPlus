@@ -15,14 +15,14 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_exception_subtitle">Pourriez-vous créer une "Issue" sur le dépôt GitHub de ce projet et y déposer les fichiers de log ? Merci !</system:String>
 
     <!--  Main  -->
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_windows_history_not_supported">Les systèmes Windows dont la version est inférieur à la 10.0.17763 ne prennent pas en charge l'historique du presse-papiers ! Veuillez désactiver l'option "Utiliser uniquement l'hitorique du presse-papiers Windows comme source de données" dans les paramètres de Clipboard+ !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_windows_history_not_supported">Les systèmes Windows dont la version est inférieur à la 10.0.17763 ne prennent pas en charge l'historique du presse-papiers ! Veuillez désactiver l'option "Utiliser uniquement l'historique du presse-papiers Windows comme source de données" dans les paramètres de Clipboard+ !</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">Vider le presse-papiers</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">Efface les données actuellement contenues dans le presse-papiers.</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_disconnect_title">Déconnecter le presse-papiers</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_disconnect_subtitle">Arrête la récupération des données du presse-papiers.</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_connect_title">Connecter le presse-papier</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_connect_title">Connecter le presse-papiers</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_connect_subtitle">Démarre la récupération des données du presse-papiers.</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">Effacer l'historique</system:String>
@@ -103,14 +103,14 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_preview">Aperçu</system:String>
 
     <!--  Settings  -->
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword">Mot-clé pour l'éffacement :</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword">Mot-clé pour l'effacement :</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_max_records">Limite maximale d'entrées dans la liste :</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">Trier les entrées par :</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">Placer les options (ex : "Vider le presse-papiers") en haut / bas de la liste</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_show_notification">Afficher une notification lors de la copie d'une entrée</system:String>
 
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption">Erreur dans le mot-clé pour l'éffacement !</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_text">Le mot-clé pour l'éffacement ne doit pas être vide !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption">Erreur dans le mot-clé pour l'effacement !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_text">Le mot-clé pour l'effacement ne doit pas être vide !</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_windows_clipboard_history">Intégrer l'historique du presse-papiers Windows dans la source de données</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_open_windows_clipboard_settings">Paramètres du presse-papiers Windows</system:String>
