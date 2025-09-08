@@ -1,0 +1,184 @@
+<?xml version="1.0" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!--  General  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_name">Clipboard+</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_plugin_description">Gérer simplement l'historique de votre presse-papiers et l'historique du presse-papiers Windows grâce à la prise en charge du texte, des images et des fichiers.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_success">Succès</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_fail">Échec</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_json_files">Fichiers JSON</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_all_files">Tous les fichiers</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_exception_title">Clipboard+ a rencontré une erreur</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_exception_subtitle">Pourriez-vous créer une "Issue" sur le dépôt GitHub de ce projet et y déposer les fichiers de log ? Merci !</system:String>
+
+    <!--  Main  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_windows_history_not_supported">Les systèmes Windows dont la version est inférieur à la 10.0.17763 ne prennent pas en charge l'historique du presse-papiers ! Veuillez désactiver l'option "Utiliser uniquement l'historique du presse-papiers Windows comme source de données" dans les paramètres de Clipboard+ !</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_title">Vider le presse-papiers</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_subtitle">Efface les données actuellement contenues dans le presse-papiers.</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_disconnect_title">Déconnecter le presse-papiers</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_disconnect_subtitle">Arrête la récupération des données du presse-papiers.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_connect_title">Connecter le presse-papiers</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_connect_subtitle">Démarre la récupération des données du presse-papiers.</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_title">Effacer l'historique</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_subtitle">Ouvre le menu pour effacer l'historique du système, de la liste ou de la base de données.</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_title">Effacer tout l'historique du système</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_subtitle">Supprime l'historique du presse-papiers Windows.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_all_system_msg_subtitle">Suppression de {0} entrées de l'historique du presse-papiers Windows !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_title">Effacer les entrées non épinglées du système</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_subtitle">Efface les entrées non épinglées de l'historique du presse-papiers Windows.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_system_msg_subtitle">Suppression de {0} entrées non épinglées de l'historique du presse-papiers Windows !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_fail_clear_system_msg_subtitle">Échec de la suppression des entrées de l'historique du presse-papiers Windows !</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_title">Effacer la liste</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_subtitle">Efface toutes les entrées de la liste.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_list_msg_subtitle">Suppression de {0} entrées de la liste !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_title">Effacer la liste et la base de données</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_subtitle">Efface toutes les entrées dans la liste et la base de données.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_both_msg_subtitle">Suppression de {0} entrées de la liste et la base de données !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_title">Effacer les entrées non épinglées</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_subtitle">Efface toutes les entrées non épinglées de la liste et la base de données.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_unpin_msg_subtitle">Suppression de {0} entrées non épinglées de la liste et la base de données !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_title">Effacer les entrées non valables</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_subtitle">Supprime les textes vides, les fichiers inexistants et les entrées vides de la liste et la base de données.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_invalid_msg_subtitle">Suppression de {0} entrées non valables de la liste et la base de données !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_fail_msg_subtitle">Il n'y a aucune entrée pouvant être effacée !</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_title">Copier</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_subtitle">Copie cette entrée avec l'option par défaut.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_plain_text_title">Copier en tant que texte brut</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_plain_text_subtitle">Copie cette entrée sous forme de texte brut.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_rich_text_title">Copier en tant que texte enrichi (RTF)</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_rich_text_subtitle">Copie cette entrée au format RTF, de texte enrichi.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_image_title">Copier en tant qu'image</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_image_subtitle">Copie cette entrée en tant qu'image.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_image_file_title">Copier en tant que fichier image</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_image_file_subtitle">Copie cette entrée en tant que fichier image.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_files_title">Copier en tant que fichiers</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_files_subtitle">Copie cette entrée en tant que fichiers.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_asc_title">Copier en tant que fichiers par chemins croissants</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_asc_subtitle">Copie cette entrée en tant que fichiers en triant les chemins des fichiers par ordre croissant.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_desc_title">Copier en tant que fichiers par chemins décroissants</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_desc_subtitle">Copie cette entrée en tant que fichiers en triant les chemins des fichiers par ordre décroissant.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_title">Copier en tant que chemin de fichier</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_subtitle">Copie cette entrée en tant que chemin de fichier.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_title">Copier en tant que contenu de fichier</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_subtitle">Copie cette entrée en tant que contenu de fichier.</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_save_title">Enregistrer</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_save_subtitle">Enregistre cette entrée dans la base de données.</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_title">Épingler</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_pin_subtitle">Épingle cette entrée de la liste et la base de données.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_title">Désépingler</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_unpin_subtitle">Désépingle cette entrée de la liste et la base de données.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_title">Supprimer</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_list_subtitle">Supprime cette entrée de la liste.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_both_subtitle">Supprime cette entrée de la liste et la base de données.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_system_list_subtitle">Supprime cette entrée du système et de la liste.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_delete_system_both_subtitle">Supprime cette entrée du système, de la liste et de la base de données.</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_unknown">inconnu</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard">Copier dans le presse-papiers :</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception">Échec de la copie dans le presse-papiers !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_text_data_invalid">Le texte copié est vide !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_image_data_invalid">Erreur dans l'image copiée !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_files_data_invalid">Les fichiers copiés n'existent pas !</system:String>
+
+    <!--  Preview  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_source">Source</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_date">Date</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_type">Type</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_words">Mots</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_dimension">Dimensions</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_count">Compte</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_preview">Aperçu</system:String>
+
+    <!--  Settings  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword">Mot-clé pour l'effacement :</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_max_records">Limite maximale d'entrées dans la liste :</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_order_by">Trier les entrées par :</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_action_top">Placer les options (ex : "Vider le presse-papiers") en haut / bas de la liste</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_show_notification">Afficher une notification lors de la copie d'une entrée</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption">Erreur dans le mot-clé pour l'effacement !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clear_keyword_empty_text">Le mot-clé pour l'effacement ne doit pas être vide !</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_sync_windows_clipboard_history">Intégrer l'historique du presse-papiers Windows dans la source de données</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_open_windows_clipboard_settings">Paramètres du presse-papiers Windows</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only">Utiliser uniquement l'historique du presse-papiers Windows comme source de données</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption">Êtes-vous sûr de vouloir activer cette option ?</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text">Si vous activez cette option, l'historique des entrées sera identique à l'historique du presse-papiers Windows et le format des fichiers ne sera pas pris en charge. Les entrées de la base de données ne seront plus chargées et ne pourront plus être enregistrées ou épinglées dans la base de données.</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_restart_caption">Voulez-vous redémarrer maintenant ?</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_restart_text">Pour que cette option prenne effet, il est nécessaire de redémarrer l'application. Voulez-vous redémarrer maintenant ?</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action">Comportement lors de la sélection d'une entrée :</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_default_rich_text_copy_option">Type de copie pour du texte enrichi :</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_default_image_copy_option">Type de copie pour une image :</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_default_files_copy_option">Type de copie pour des fichiers :</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_images">Mettre les images du presse-papiers en cache dans un dossier</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_open_cache_folder">Ouvrir le dossier du cache</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_clean_cache_folder">Vider le dossier du cache</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format">Format du nom des images :</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_format_year">Année</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_format_month">Mois</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_format_day">Jour</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_format_hour">Heure</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_format_minute">Minute</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_format_second">Seconde</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_format_app">App</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cache_format_preview">Aperçu :</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_encrypt_data">Chiffrer les données dans la base de données</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_text">Conserver le texte :</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_images">Conserver les images :</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_keep_files">Conserver les fichiers :</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_import_records">Importer des entrées</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_export_records">Exporter les entrées</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_export_succeeded">Export de {0} entrées avec succès !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_import_succeeded">Import de {0} entrées avec succès !</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_import_failed">Échec de l'importation !</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_restore_to_default">Rétablir tous les paramètres aux valeurs par défaut</system:String>
+
+    <!--  Enum  -->
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">Date d'ajout</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_source_application">Application d'origine</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_data_type">Type de données</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action_copy">Copier</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action_copy_paste">Copier et coller</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action_copy_delete_list">Copier et supprimer de la liste</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action_copy_delete_both">Copier et supprimer de la liste et de la base de données</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action_copy_paste_delete_list">Copier, coller et supprimer de la liste</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_click_action_copy_paste_delete_both">Copier, coller et supprimer de la liste et de la base de données</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_always">Toujours</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_1_hour">1 heure</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_12_hours">12 heures</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_24_hours">24 heures</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_3_days">3 jours</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_7_days">7 jours</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_1_month">1 mois</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_3_months">3 mois</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_record_keep_time_1_year">1 année</system:String>
+
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_plain_text">Texte brut</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_rich_text">Texte enrichi</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_files">Fichier</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_image">Image</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_others">Autre</system:String>
+
+</ResourceDictionary>
