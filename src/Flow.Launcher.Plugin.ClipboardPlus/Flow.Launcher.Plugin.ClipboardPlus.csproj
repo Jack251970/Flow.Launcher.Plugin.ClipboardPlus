@@ -9,7 +9,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	  <Nullable>enable</Nullable>
 	  <TargetFramework>net9.0-windows</TargetFramework>
-	  <Version>3.0.1</Version>
+	  <Version>3.0.2</Version>
     <ReleaseOutputPath>./bin/Release</ReleaseOutputPath>
   </PropertyGroup>
 
