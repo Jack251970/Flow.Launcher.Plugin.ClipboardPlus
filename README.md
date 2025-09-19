@@ -57,7 +57,7 @@
 * Manually Build
 
   1. Clone the repository
-  2. Run `build.ps1` or `build.sh` to publish the plugin in `.dist` folder
+  2. Run `build.ps1` or `build.sh` to publish the plugin in `output` folder
   3. Unzip the release zip file
   4. Place the released contents in your `%appdata%/FlowLauncher/Plugins` folder and **restart** Flow Launcher
 
