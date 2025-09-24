@@ -43,12 +43,17 @@ internal class ClipboardPlus : IClipboardPlus, IAsyncDisposable
         Database = new SqliteDatabase(Path.Combine(AppContext.BaseDirectory, "ClipboardPlus.db"), this);
     }
 
-    public void DisableWindowsClipboardHelper(bool remove)
+    public bool CheckUseWindowsClipboardHistoryOnly()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EnableWindowsClipboardHelper(bool load)
     {
 
     }
 
-    public void EnableWindowsClipboardHelper(bool load)
+    public void DisableWindowsClipboardHelper(bool remove)
     {
 
     }
