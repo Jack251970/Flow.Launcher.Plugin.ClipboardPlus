@@ -103,7 +103,7 @@ public class PublishTask : FrostingTask<BuildContext>
             // Nuget Packages
             + @"Dapper.dll|"
             + @"H.InputSimulator.dll|"
-            //+ @"Newtonsoft.Json.dll|"  // No need to add it because it's already in Flow.Launcher
+            + @"Flow.Launcher.Localization.Attributes.dll|"
             + @"SQLitePCLRaw.+\.dll|Microsoft.+(S|s)qlite\.dll";
         var files = context.GetFiles($"{srcDir}/**/*");
         FilePath? versionFile = null;
