@@ -315,7 +315,7 @@ public class SqliteDatabase : IAsyncDisposable
         }
     }
 
-#endregion
+    #endregion
 
     public async Task InitializeDatabaseAsync()
     {
@@ -471,7 +471,7 @@ public class SqliteDatabase : IAsyncDisposable
         if (!needSort)
         {
             var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
-            return results.Select(ClipboardData.FromRecord).ToList();
+            return [.. results.Select(ClipboardData.FromRecord)];
         }
 
         // query all records & build record list
@@ -498,7 +498,7 @@ public class SqliteDatabase : IAsyncDisposable
     public async Task<List<ClipboardData>> GetLocalRecordsAsync()
     {
         var results = await Connection.QueryAsync<Record>(SqlSelectLocalRecord);
-        return results.Select(ClipboardData.FromRecord).ToList();
+        return [.. results.Select(ClipboardData.FromRecord)];
     }
 
     public async Task DeleteRecordsByKeepTimeAsync(int dataType, int keepTime)
@@ -553,10 +553,10 @@ public class SqliteDatabase : IAsyncDisposable
         await ProcessTaskQueueAsync(async () =>
         {
             // query records by encrypt key md5
-           var results = await Connection.QueryAsync<Record>(
-               SqlSelectRecordsByEncryptKeyMd5, 
-               new { EncryptKeyMd5 = encryptKeyMd5 }
-            );
+            var results = await Connection.QueryAsync<Record>(
+                SqlSelectRecordsByEncryptKeyMd5,
+                new { EncryptKeyMd5 = encryptKeyMd5 }
+             );
 
             // delete records by encrypt key md5
             await Connection.ExecuteAsync(
@@ -594,7 +594,7 @@ public class SqliteDatabase : IAsyncDisposable
         }
     }
 
-#endregion
+    #endregion
 
     #region Connection Management
 
@@ -658,7 +658,7 @@ public class SqliteDatabase : IAsyncDisposable
 
     #endregion
 
-#endregion
+    #endregion
 
     #region IAsyncDisposable Interface
 

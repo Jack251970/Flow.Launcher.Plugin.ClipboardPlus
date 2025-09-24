@@ -79,7 +79,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private const int StringMaxLength = 54;
 
     // Empty results for cancellation
-    private readonly List<Result> EmptyResults = new();
+    private readonly List<Result> EmptyResults = [];
 
     // Minimal count for concurrent operations
     private const int MinConcurrentCount = 333;
@@ -993,8 +993,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
 
         // init clipboard data
-        var saved = 
-            UseWindowsClipboardHistoryOnly != true && 
+        var saved =
+            UseWindowsClipboardHistoryOnly != true &&
             (Settings.KeepText && dataType == DataType.PlainText ||
             Settings.KeepText && dataType == DataType.RichText ||
             Settings.KeepImages && dataType == DataType.Image ||
@@ -1318,11 +1318,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         List<ClipboardDataPair> recordsToRemove;
         if (func == null)
         {
-            recordsToRemove = RecordsList.Where(r => r.ClipboardData.FromWindowsClipboardHistory()).ToList();
+            recordsToRemove = [.. RecordsList.Where(r => r.ClipboardData.FromWindowsClipboardHistory())];
         }
         else
         {
-            recordsToRemove = RecordsList.Where(r => r.ClipboardData.FromWindowsClipboardHistory() && func(r.ClipboardData)).ToList();
+            recordsToRemove = [.. RecordsList.Where(r => r.ClipboardData.FromWindowsClipboardHistory() && func(r.ClipboardData))];
         }
         while (recordsToRemove.Any())
         {
@@ -1548,7 +1548,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         try
         {
             var clipboardData = clipboardDataPair.ClipboardData;
-            
+
             // Get score
             int score;
             if (string.IsNullOrEmpty(querySearch))
@@ -1878,7 +1878,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             var exception = await RetryActionOnSTAThreadAsync(() =>
             {
-                Clipboard.SetFileDropList(new StringCollection { cachePath });
+                Clipboard.SetFileDropList([cachePath]);
             });
             if (exception == null)
             {
@@ -1887,7 +1887,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     Context.ShowMsg(Context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
                         Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_to_clipboard") +
                         StringUtils.CompressString(clipboardData.GetText(CultureInfo), StringMaxLength));
-                } 
+                }
             }
             else
             {
@@ -1922,7 +1922,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             var filePaths = ascend ? SortAscending((string[])validObject) : SortDescending((string[])validObject);
             var paths = new StringCollection();
             paths.AddRange(filePaths);
-            var exception = await RetryActionOnSTAThreadAsync(() => 
+            var exception = await RetryActionOnSTAThreadAsync(() =>
             {
                 Clipboard.SetFileDropList(paths);
             });
@@ -1951,12 +1951,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     private static string[] SortAscending(string[] strings)
     {
-        return strings.OrderBy(path => path, new NaturalStringComparer()).ToArray();
+        return [.. strings.OrderBy(path => path, new NaturalStringComparer())];
     }
 
     private static string[] SortDescending(string[] strings)
     {
-        return strings.OrderByDescending(path => path, new NaturalStringComparer()).ToArray();
+        return [.. strings.OrderByDescending(path => path, new NaturalStringComparer())];
     }
 
     public class NaturalStringComparer : IComparer<string>

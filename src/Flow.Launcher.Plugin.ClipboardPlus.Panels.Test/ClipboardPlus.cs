@@ -76,7 +76,7 @@ internal class ClipboardPlus : IClipboardPlus, IAsyncDisposable
 
     public void SaveSettingJsonStorage()
     {
-        
+
     }
 
     private bool _disposed;

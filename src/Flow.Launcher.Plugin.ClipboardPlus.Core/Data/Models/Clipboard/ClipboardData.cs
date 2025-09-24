@@ -631,7 +631,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
 
     public readonly bool Equals(ClipboardData b)
     {
-        return DataType == b.DataType && 
+        return DataType == b.DataType &&
             DataMd5 == b.DataMd5 &&
             SenderApp == b.SenderApp &&
             CreateTime == b.CreateTime;

@@ -17,7 +17,7 @@ public static partial class StringUtils
     {
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
         return new string(
-            Enumerable.Repeat(chars, length).Select(s => s[_random.Next(s.Length)]).ToArray()
+            [.. Enumerable.Repeat(chars, length).Select(s => s[_random.Next(s.Length)])]
         );
     }
 

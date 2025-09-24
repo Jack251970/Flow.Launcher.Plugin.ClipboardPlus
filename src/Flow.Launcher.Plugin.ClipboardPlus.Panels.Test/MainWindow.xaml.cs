@@ -24,15 +24,15 @@ public partial class MainWindow : Window
 
     private readonly static string _imageSavePath = @"D:\clipboard.png";
 
-    private readonly IClipboardMonitor ClipboardMonitorWPF = new ClipboardMonitorW() { ObserveLastEntry = false };
+    private readonly ClipboardMonitorW ClipboardMonitorWPF = new() { ObserveLastEntry = false };
 
-    private readonly IClipboardMonitor ClipboardMonitorWin = new ClipboardMonitorWin() { ObserveLastEntry = false };
+    private readonly ClipboardMonitorWin ClipboardMonitorWin = new() { ObserveLastEntry = false };
 
-    private readonly List<ClipboardData> ClipboardDatas = new();
+    private readonly List<ClipboardData> ClipboardDatas = [];
 
     private readonly WindowsClipboardHelper Helper = new();
 
-    private List<ClipboardData> RecordList = new();
+    private List<ClipboardData> RecordList = [];
 
     private int _count = 0;
 

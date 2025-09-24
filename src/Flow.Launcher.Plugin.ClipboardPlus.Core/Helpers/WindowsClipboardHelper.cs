@@ -128,8 +128,8 @@ public class WindowsClipboardHelper : IDisposable
 
     private readonly SemaphoreSlim _historyItemLock = new(1, 1);
 
-    private readonly List<string> _clipboardHistoryItemsIds = new();
-    private readonly List<ClipboardHistoryItem> _clipboardHistoryItems = new();
+    private readonly List<string> _clipboardHistoryItemsIds = [];
+    private readonly List<ClipboardHistoryItem> _clipboardHistoryItems = [];
 
     private void Clipboard_HistoryChanged(object? sender, ClipboardHistoryChangedEventArgs e)
     {

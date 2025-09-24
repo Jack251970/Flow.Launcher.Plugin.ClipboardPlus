@@ -9,7 +9,7 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Helpers;
 
 public class RichTextBoxHelper : DependencyObject
 {
-    private static readonly HashSet<Thread> _recursionProtection = new();
+    private static readonly HashSet<Thread> _recursionProtection = [];
 
     public static string GetDocumentRtf(DependencyObject obj)
     {
@@ -30,7 +30,8 @@ public class RichTextBoxHelper : DependencyObject
         new FrameworkPropertyMetadata(
             "",
             FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-            (obj, e) => {
+            (obj, e) =>
+            {
                 if (_recursionProtection.Contains(Thread.CurrentThread))
                 {
                     return;

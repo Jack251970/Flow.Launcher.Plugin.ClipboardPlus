@@ -473,9 +473,9 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
 
     #endregion
 
-#endregion
+    #endregion
 
-#endregion
+    #endregion
 
     #region IDisposable
 

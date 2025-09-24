@@ -60,7 +60,7 @@ public class ClipboardMonitorW : IClipboardMonitor
     public object? ClipboardObject { get; internal set; } = null;
     public BitmapSource? ClipboardImage { get; internal set; }
     public string ClipboardFile { get; internal set; } = string.Empty;
-    public List<string> ClipboardFiles { get; internal set; } = new();
+    public List<string> ClipboardFiles { get; internal set; } = [];
 
     #endregion
 
@@ -156,7 +156,7 @@ public class ClipboardMonitorW : IClipboardMonitor
         ClipboardFiles.Clear();
     }
 
-#endregion
+    #endregion
 
     #region Private
 
@@ -178,7 +178,7 @@ public class ClipboardMonitorW : IClipboardMonitor
 
     #endregion
 
-#endregion
+    #endregion
 
     #region Events
 
@@ -216,9 +216,9 @@ public class ClipboardMonitorW : IClipboardMonitor
         }
     }
 
-#endregion
+    #endregion
 
-#endregion
+    #endregion
 
     #region IDisposable
 

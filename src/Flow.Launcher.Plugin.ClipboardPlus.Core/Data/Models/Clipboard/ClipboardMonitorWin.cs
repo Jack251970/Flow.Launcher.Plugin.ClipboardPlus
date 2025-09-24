@@ -58,7 +58,7 @@ public class ClipboardMonitorWin : IClipboardMonitor
     public object? ClipboardObject { get; internal set; } = null;
     public BitmapSource? ClipboardImage { get; internal set; }
     public string ClipboardFile { get; internal set; } = string.Empty;
-    public List<string> ClipboardFiles { get; internal set; } = new();
+    public List<string> ClipboardFiles { get; internal set; } = [];
 
     #endregion
 

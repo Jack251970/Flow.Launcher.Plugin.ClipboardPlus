@@ -375,7 +375,7 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
                 }
             }
 
-            return itemsList.ToArray();
+            return [.. itemsList];
         }
 
         return null;

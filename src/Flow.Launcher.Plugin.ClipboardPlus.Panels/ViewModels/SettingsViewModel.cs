@@ -379,7 +379,7 @@ public class SettingsViewModel : BaseModel
         }
     }
 
-#endregion
+    #endregion
 
     #region Use Windows Clipboard History Only
 
@@ -411,7 +411,7 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
-#endregion
+    #endregion
 
     #region Click Actions
 

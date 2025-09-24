@@ -51,14 +51,13 @@ public class Settings : ISettings
     public KeepTime FilesKeepTime { get; set; } = 0;
 
     [JsonIgnore]
-    public List<Tuple<DataType, KeepTime>> KeepTimePairs => 
-        new ()
-        {
+    public List<Tuple<DataType, KeepTime>> KeepTimePairs =>
+        [
             new(DataType.PlainText, TextKeepTime),
             new(DataType.RichText, TextKeepTime),
             new(DataType.Image, ImagesKeepTime),
             new(DataType.Files, FilesKeepTime),
-        };
+        ];
 
     public void RestoreToDefault()
     {

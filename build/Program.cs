@@ -1,7 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Cake.Common;
 using Cake.Common.Diagnostics;
 using Cake.Common.IO;
@@ -15,6 +11,10 @@ using Cake.Core.IO;
 using Cake.Frosting;
 using Flow.Launcher.Plugin;
 using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Build;
 

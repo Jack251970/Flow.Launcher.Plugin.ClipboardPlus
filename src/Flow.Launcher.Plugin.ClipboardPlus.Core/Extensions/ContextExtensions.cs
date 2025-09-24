@@ -1,10 +1,10 @@
 ﻿// Copyright (c) 2025 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
+using Flow.Launcher.Plugin.SharedModels;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using Flow.Launcher.Plugin.SharedModels;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Extensions;
 
