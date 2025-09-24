@@ -24,7 +24,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private static readonly string ClassName = nameof(ClipboardPlus);
 
     // Plugin context
-    internal static PluginInitContext Context { get; private set; } = null!;
+    private PluginInitContext? Context = null;
 
     // State of using Windows clipboard history only
     private bool UseWindowsClipboardHistoryOnly;
@@ -1542,7 +1542,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         RecordsList.Clear();
     }
 
-    private static void ReQuery()
+    private void ReQuery()
     {
         Context.ReQuery(false);
     }
@@ -1648,7 +1648,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private static async Task WaitWindowHideAndSimulatePaste()
+    private async Task WaitWindowHideAndSimulatePaste()
     {
         while (Context!.API.IsMainWindowVisible())
         {
@@ -1861,41 +1861,41 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
         #endregion
 
-        #region Image File Format
+    #region Image File Format
 
-        private async void CopyImageFileToClipboard(ClipboardDataPair clipboardDataPair)
+    private async void CopyImageFileToClipboard(ClipboardDataPair clipboardDataPair)
+    {
+        var clipboardData = clipboardDataPair.ClipboardData;
+        var dataType = clipboardData.DataType;
+        if (dataType != DataType.Image)
         {
-            var clipboardData = clipboardDataPair.ClipboardData;
-            var dataType = clipboardData.DataType;
-            if (dataType != DataType.Image)
-            {
-                return;
-            }
+            return;
+        }
 
-            var cachePath = string.Empty;
-            if ((!string.IsNullOrEmpty(clipboardData.CachedImagePath)) && File.Exists(clipboardData.CachedImagePath))
-            {
-                cachePath = clipboardData.CachedImagePath;
-            }
-            else
-            {
-                cachePath = FileUtils.SaveImageCache(clipboardData, PathHelper.ImageCachePath, PathHelper.TempCacheImageName);
-            }
+        var cachePath = string.Empty;
+        if ((!string.IsNullOrEmpty(clipboardData.CachedImagePath)) && File.Exists(clipboardData.CachedImagePath))
+        {
+            cachePath = clipboardData.CachedImagePath;
+        }
+        else
+        {
+            cachePath = FileUtils.SaveImageCache(clipboardData, PathHelper.ImageCachePath, PathHelper.TempCacheImageName);
+        }
 
-            if (!string.IsNullOrEmpty(cachePath))
+        if (!string.IsNullOrEmpty(cachePath))
+        {
+            var exception = await RetryActionOnSTAThreadAsync(() =>
             {
-                var exception = await RetryActionOnSTAThreadAsync(() =>
+                Clipboard.SetFileDropList([cachePath]);
+            });
+            if (exception == null)
+            {
+                if (Settings.ShowNotification)
                 {
-                    Clipboard.SetFileDropList([cachePath]);
-                });
-                if (exception == null)
-                {
-                    if (Settings.ShowNotification)
-                    {
-                    Context.ShowMsg(Localize.flowlauncher_plugin_clipboardplus_success(),
-                        Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard()+
-                        StringUtils.CompressString(clipboardData.GetText(CultureInfo), StringMaxLength));
-                }
+                Context.ShowMsg(Localize.flowlauncher_plugin_clipboardplus_success(),
+                    Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard()+
+                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), StringMaxLength));
+            }
             }
             else
             {
