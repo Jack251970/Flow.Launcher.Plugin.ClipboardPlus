@@ -100,7 +100,7 @@
             VerticalAlignment="Center"
             DisplayMemberPath="Display"
             ItemsSource="{Binding AllRecordOrders, Mode=OneWay}"
-            SelectedItem="{Binding SelectedRecordOrder, Mode=TwoWay}"
+            SelectedValue="{Binding SelectedRecordOrder, Mode=TwoWay}"
             SelectedValuePath="Value" />
 
         <!--  Action Top  -->
@@ -178,7 +178,7 @@
             VerticalAlignment="Center"
             DisplayMemberPath="Display"
             ItemsSource="{Binding AllClickActions, Mode=OneWay}"
-            SelectedItem="{Binding SelectedClickAction, Mode=TwoWay}"
+            SelectedValue="{Binding SelectedClickAction, Mode=TwoWay}"
             SelectedValuePath="Value" />
 
         <!--  Default Rich Text Copy Option  -->
@@ -196,7 +196,7 @@
             VerticalAlignment="Center"
             DisplayMemberPath="Display"
             ItemsSource="{Binding AllDefaultRichTextCopyOptions, Mode=OneWay}"
-            SelectedItem="{Binding SelectedDefaultRichTextCopyOption, Mode=TwoWay}"
+            SelectedValue="{Binding SelectedDefaultRichTextCopyOption, Mode=TwoWay}"
             SelectedValuePath="Value" />
 
         <!--  Default Image Copy Option  -->
@@ -214,7 +214,7 @@
             VerticalAlignment="Center"
             DisplayMemberPath="Display"
             ItemsSource="{Binding AllDefaultImageCopyOptions, Mode=OneWay}"
-            SelectedItem="{Binding SelectedDefaultImageCopyOption, Mode=TwoWay}"
+            SelectedValue="{Binding SelectedDefaultImageCopyOption, Mode=TwoWay}"
             SelectedValuePath="Value" />
 
         <!--  Default Files Copy Option  -->
@@ -232,7 +232,7 @@
             VerticalAlignment="Center"
             DisplayMemberPath="Display"
             ItemsSource="{Binding AllDefaultFilesCopyOptions, Mode=OneWay}"
-            SelectedItem="{Binding SelectedDefaultFilesCopyOption, Mode=TwoWay}"
+            SelectedValue="{Binding SelectedDefaultFilesCopyOption, Mode=TwoWay}"
             SelectedValuePath="Value" />
 
         <!--  Seperator  -->
@@ -449,7 +449,7 @@
             DisplayMemberPath="Display"
             IsEnabled="{Binding KeepText, Mode=OneWay}"
             ItemsSource="{Binding AllTextKeepTimes, Mode=OneWay}"
-            SelectedItem="{Binding SelectedTextKeepTime, Mode=TwoWay}"
+            SelectedValue="{Binding SelectedTextKeepTime, Mode=TwoWay}"
             SelectedValuePath="Value"
             Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
 
@@ -471,7 +471,7 @@
             DisplayMemberPath="Display"
             IsEnabled="{Binding KeepImages, Mode=OneWay}"
             ItemsSource="{Binding AllImagesKeepTimes, Mode=OneWay}"
-            SelectedItem="{Binding SelectedImagesKeepTime, Mode=TwoWay}"
+            SelectedValue="{Binding SelectedImagesKeepTime, Mode=TwoWay}"
             SelectedValuePath="Value"
             Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
 
@@ -493,7 +493,7 @@
             DisplayMemberPath="Display"
             IsEnabled="{Binding KeepFiles, Mode=OneWay}"
             ItemsSource="{Binding AllFilesKeepTimes, Mode=OneWay}"
-            SelectedItem="{Binding SelectedFilesKeepTime, Mode=TwoWay}"
+            SelectedValue="{Binding SelectedFilesKeepTime, Mode=TwoWay}"
             SelectedValuePath="Value"
             Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
 
