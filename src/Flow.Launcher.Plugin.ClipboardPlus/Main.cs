@@ -1245,7 +1245,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
                 // restore database records
                 var records = await Database.GetAllRecordsAsync(true);
-                if (records.Any())
+                if (records.Count != 0)
                 {
                     databaseDataPairs = records.Select(record => new ClipboardDataPair()
                     {
@@ -1298,7 +1298,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         List<ClipboardData>? historyItems;
         if (check)
         {
-            var latestDateTime = RecordsList.Any() ? RecordsList.Max(p => p.ClipboardData.CreateTime) : DateTime.MinValue;
+            var latestDateTime = RecordsList.Count != 0 ? RecordsList.Max(p => p.ClipboardData.CreateTime) : DateTime.MinValue;
             historyItems = await WindowsClipboardHelper.GetLaterHistoryItemsAsync(latestDateTime);
         }
         else
@@ -1307,7 +1307,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
 
         // add history items
-        if (historyItems != null && historyItems.Any())
+        if (historyItems != null && historyItems.Count != 0)
         {
             AddClipboardDataItem(historyItems);
         }
@@ -1324,7 +1324,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             recordsToRemove = [.. RecordsList.Where(r => r.ClipboardData.FromWindowsClipboardHistory() && func(r.ClipboardData))];
         }
-        while (recordsToRemove.Any())
+        while (recordsToRemove.Count != 0)
         {
             var record = recordsToRemove.First();
             RecordsList.Remove(record);

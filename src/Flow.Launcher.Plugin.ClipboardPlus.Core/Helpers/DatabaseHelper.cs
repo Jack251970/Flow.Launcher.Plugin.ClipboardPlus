@@ -45,7 +45,7 @@ public static class DatabaseHelper
             var records = jsonRecords.Select(r => ClipboardData.FromJsonClipboardData(r, true));
             var databaseRecords = await database.GetAllRecordsAsync(false);
             var addedCount = 0;
-            if (!databaseRecords.Any())  // if there are no records in the database, then add all records
+            if (databaseRecords.Count == 0)  // if there are no records in the database, then add all records
             {
                 await database.AddRecordsAsync(records, true);
                 addedCount = records.Count();

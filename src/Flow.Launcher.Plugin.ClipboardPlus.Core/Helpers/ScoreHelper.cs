@@ -21,7 +21,7 @@ public class ScoreHelper
 
     public void Reset(LinkedList<ClipboardDataPair> recordsList)
     {
-        if (recordsList.Any())
+        if (recordsList.Count != 0)
         {
             CurrentScore = recordsList.Max(r => r.ClipboardData.InitScore);
         }
