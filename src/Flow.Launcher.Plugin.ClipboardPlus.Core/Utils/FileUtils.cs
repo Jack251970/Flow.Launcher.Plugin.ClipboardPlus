@@ -160,8 +160,8 @@ public static class FileUtils
         }
         else
         {
-            return $"{context.GetTranslation("flowlauncher_plugin_clipboardplus_json_files")} (*.json)|*.json|" +
-                $"{context.GetTranslation("flowlauncher_plugin_clipboardplus_json_files")} (*.*)|*.*";
+            return $"{Localize.flowlauncher_plugin_clipboardplus_json_files()} (*.json)|*.json|" +
+                $"{Localize.flowlauncher_plugin_clipboardplus_json_files()} (*.*)|*.*";
         }
     }
 

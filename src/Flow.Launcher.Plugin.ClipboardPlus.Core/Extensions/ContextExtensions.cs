@@ -2,7 +2,9 @@
 // Licensed under the Apache License. See the LICENSE.
 
 using Flow.Launcher.Plugin.SharedModels;
+#if DEBUG
 using System.Diagnostics;
+#endif
 using System.Runtime.CompilerServices;
 using System.Windows;
 
@@ -18,7 +20,7 @@ public static class ContextExtensions
 #if DEBUG
         context?.API.RestartApp();
 #else
-        context!.API.RestartApp();
+        PublicApi.Instance.RestartApp();
 #endif
     }
 
@@ -27,7 +29,7 @@ public static class ContextExtensions
 #if DEBUG
         context?.API.ShowMsgError(title, subTitle);
 #else
-        context!.API.ShowMsgError(title, subTitle);
+        PublicApi.Instance.ShowMsgError(title, subTitle);
 #endif
     }
 
@@ -36,7 +38,7 @@ public static class ContextExtensions
 #if DEBUG
         context?.API.ShowMsg(title, subTitle, iconPath);
 #else
-        context!.API.ShowMsg(title, subTitle, iconPath);
+        PublicApi.Instance.ShowMsg(title, subTitle, iconPath);
 #endif
     }
 
@@ -45,7 +47,7 @@ public static class ContextExtensions
 #if DEBUG
         context?.API.ShowMsg(title, subTitle, iconPath, useMainWindowAsOwner);
 #else
-        context!.API.ShowMsg(title, subTitle, iconPath, useMainWindowAsOwner);
+        PublicApi.Instance.ShowMsg(title, subTitle, iconPath, useMainWindowAsOwner);
 #endif
     }
 
@@ -54,7 +56,7 @@ public static class ContextExtensions
 #if DEBUG
         return context?.API.GetTranslation(key) ?? key;
 #else
-        return context!.API.GetTranslation(key);
+        return PublicApi.Instance.GetTranslation(key);
 #endif
     }
 
@@ -64,7 +66,7 @@ public static class ContextExtensions
         context?.API.LogDebug(className, message, methodName);
         Debug.WriteLine($"Debug|{className}|{methodName}|{message}");
 #else
-        context!.API.LogDebug(className, message, methodName);
+        PublicApi.Instance.LogDebug(className, message, methodName);
 #endif
     }
 
@@ -74,7 +76,7 @@ public static class ContextExtensions
         context?.API.LogInfo(className, message, methodName);
         Debug.WriteLine($"Info|{className}|{methodName}|{message}");
 #else
-        context!.API.LogInfo(className, message, methodName);
+        PublicApi.Instance.LogInfo(className, message, methodName);
 #endif
     }
 
@@ -84,7 +86,7 @@ public static class ContextExtensions
         context?.API.LogWarn(className, message, methodName);
         Debug.WriteLine($"Warn|{className}|{methodName}|{message}");
 #else
-        context!.API.LogWarn(className, message, methodName);
+        PublicApi.Instance.LogWarn(className, message, methodName);
 #endif
     }
 
@@ -96,8 +98,8 @@ public static class ContextExtensions
         Debugger.Break();
         context?.API.LogException(className, message, e, methodName);
 #else
-        context!.API.LogException(className, message, e, methodName);
-        context!.ShowMsgError(context.GetTranslation("flowlauncher_plugin_clipboardplus_exception_title"), context.GetTranslation("flowlauncher_plugin_clipboardplus_exception_subtitle"));
+        PublicApi.Instance.LogException(className, message, e, methodName);
+        context!.ShowMsgError(Localize.flowlauncher_plugin_clipboardplus_exception_title(), Localize.flowlauncher_plugin_clipboardplus_exception_subtitle());
 #endif
     }
 
@@ -106,7 +108,7 @@ public static class ContextExtensions
 #if DEBUG
         context?.API.OpenDirectory(DirectoryPath, FileNameOrFilePath);
 #else
-        context!.API.OpenDirectory(DirectoryPath, FileNameOrFilePath);
+        PublicApi.Instance.OpenDirectory(DirectoryPath, FileNameOrFilePath);
 #endif
     }
 
@@ -115,7 +117,7 @@ public static class ContextExtensions
 #if DEBUG
         context?.API.OpenAppUri(appUri);
 #else
-        context!.API.OpenAppUri(appUri);
+        PublicApi.Instance.OpenAppUri(appUri);
 #endif
     }
 
@@ -124,7 +126,7 @@ public static class ContextExtensions
 #if DEBUG
         context?.API.ReQuery(reselect);
 #else
-        context!.API.ReQuery(reselect);
+        PublicApi.Instance.ReQuery(reselect);
 #endif
     }
 
@@ -133,7 +135,7 @@ public static class ContextExtensions
 #if DEBUG
         context?.API.RegisterGlobalKeyboardCallback(callback);
 #else
-        context!.API.RegisterGlobalKeyboardCallback(callback);
+        PublicApi.Instance.RegisterGlobalKeyboardCallback(callback);
 #endif
     }
 
@@ -142,7 +144,7 @@ public static class ContextExtensions
 #if DEBUG
         context?.API.RemoveGlobalKeyboardCallback(callback);
 #else
-        context!.API.RemoveGlobalKeyboardCallback(callback);
+        PublicApi.Instance.RemoveGlobalKeyboardCallback(callback);
 #endif
     }
 
@@ -160,7 +162,7 @@ public static class ContextExtensions
 #if DEBUG
         return context?.API.ShowMsgBox(messageBoxText, caption, button, icon, defaultResult) ?? MessageBoxResult.OK;
 #else
-        return context!.API.ShowMsgBox(messageBoxText, caption, button, icon, defaultResult);
+        return PublicApi.Instance.ShowMsgBox(messageBoxText, caption, button, icon, defaultResult);
 #endif
     }
 
@@ -169,7 +171,7 @@ public static class ContextExtensions
 #if DEBUG
         return context?.API.FuzzySearch(query, stringToCompare) ?? new MatchResult(true, SearchPrecisionScore.Regular);
 #else
-        return context!.API.FuzzySearch(query, stringToCompare);
+        return PublicApi.Instance.FuzzySearch(query, stringToCompare);
 #endif
     }
 }

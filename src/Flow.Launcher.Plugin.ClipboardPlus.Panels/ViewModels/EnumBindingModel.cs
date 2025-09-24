@@ -12,14 +12,13 @@ public class EnumBindingModel<T> where T : struct, Enum
 
     public static IReadOnlyList<EnumBindingModel<T>> CreateList(PluginInitContext? context)
     {
-        return Enum.GetValues<T>()
+        return [.. Enum.GetValues<T>()
             .Select(value => new EnumBindingModel<T>
             {
                 Name = value.ToString(),
                 LocalizationString = context.GetTranslation(value),
                 Value = value
-            })
-            .ToArray();
+            })];
     }
 
     public EnumBindingModel<T> From(T value, PluginInitContext? context)

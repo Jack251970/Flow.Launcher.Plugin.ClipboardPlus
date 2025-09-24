@@ -980,8 +980,8 @@ public class SettingsViewModel : BaseModel
 
     private void ShowClearKeywordEmptyError()
     {
-        Context.ShowMsgBox(Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_text"),
-            Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption"),
+        Context.ShowMsgBox(Localize.flowlauncher_plugin_clipboardplus_clear_keyword_empty_text(),
+            Localize.flowlauncher_plugin_clipboardplus_clear_keyword_empty_caption(),
             MessageBoxButton.OK,
             MessageBoxImage.Error);
     }
@@ -989,16 +989,16 @@ public class SettingsViewModel : BaseModel
     private bool ShowUseWindowsClipboardHistoryOnlyWarning()
     {
         return Context.ShowMsgBox(
-            Context.GetTranslation("flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text"),
-            Context.GetTranslation("flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption"),
+            Localize.flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_text(),
+            Localize.flowlauncher_plugin_clipboardplus_use_windows_clipboard_history_only_caption(),
             MessageBoxButton.YesNo,
             MessageBoxImage.Warning) == MessageBoxResult.Yes;
     }
 
     private bool ShowRestartAppWarning()
     {
-        return Context.ShowMsgBox(Context.GetTranslation("flowlauncher_plugin_clipboardplus_restart_text"),
-            Context.GetTranslation("flowlauncher_plugin_clipboardplus_restart_caption"),
+        return Context.ShowMsgBox(Localize.flowlauncher_plugin_clipboardplus_restart_text(),
+            Localize.flowlauncher_plugin_clipboardplus_restart_caption(),
             MessageBoxButton.YesNo,
             MessageBoxImage.Warning) == MessageBoxResult.Yes;
     }

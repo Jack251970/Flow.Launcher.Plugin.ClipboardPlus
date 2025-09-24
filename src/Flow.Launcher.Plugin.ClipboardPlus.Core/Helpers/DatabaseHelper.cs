@@ -18,8 +18,8 @@ public static class DatabaseHelper
         string json = JsonSerializer.Serialize(jsonRecords, IndentedOption);
         await File.WriteAllTextAsync(jsonPath, json);
         var context = clipboardPlus.Context;
-        context.ShowMsg(context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-            string.Format(context.GetTranslation("flowlauncher_plugin_clipboardplus_export_succeeded"), addedCount));
+        context.ShowMsg(Localize.flowlauncher_plugin_clipboardplus_success(),
+            Localize.flowlauncher_plugin_clipboardplus_export_succeeded(addedCount));
     }
 
     public static async Task ImportDatabase(IClipboardPlus clipboardPlus, string jsonPath)
@@ -69,13 +69,13 @@ public static class DatabaseHelper
             {
                 await clipboardPlus.InitRecordsFromDatabaseAndSystemAsync(true, true);
             }
-            context.ShowMsg(context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
-                string.Format(context.GetTranslation("flowlauncher_plugin_clipboardplus_import_succeeded"), addedCount));
+            context.ShowMsg(Localize.flowlauncher_plugin_clipboardplus_success(),
+                Localize.flowlauncher_plugin_clipboardplus_import_succeeded(addedCount));
         }
         else
         {
-            context.ShowMsgError(context.GetTranslation("flowlauncher_plugin_clipboardplus_fail"),
-                context.GetTranslation("flowlauncher_plugin_clipboardplus_import_failed"));
+            context.ShowMsgError(Localize.flowlauncher_plugin_clipboardplus_fail(),
+                Localize.flowlauncher_plugin_clipboardplus_import_failed());
         }
     }
 }

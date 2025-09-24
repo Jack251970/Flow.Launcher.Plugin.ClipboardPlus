@@ -89,12 +89,11 @@ public static class ResourceHelper
     {
         return type switch
         {
-            DataType.PlainText => clipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_plain_text"),
-            DataType.RichText => clipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_rich_text"),
-            DataType.Files => clipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_files"),
-            DataType.Image => clipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_image"),
-            _ => clipboardPlus.Context.GetTranslation("flowlauncher_plugin_clipboardplus_others")
-        };
+            DataType.PlainText => Localize.flowlauncher_plugin_clipboardplus_plain_text(),
+            DataType.RichText => Localize.flowlauncher_plugin_clipboardplus_rich_text(),
+            DataType.Files => Localize.flowlauncher_plugin_clipboardplus_files(),
+            DataType.Image => Localize.flowlauncher_plugin_clipboardplus_image(),
+            _ => Localize.flowlauncher_plugin_clipboardplus_others()        };
     }
 
     #endregion
