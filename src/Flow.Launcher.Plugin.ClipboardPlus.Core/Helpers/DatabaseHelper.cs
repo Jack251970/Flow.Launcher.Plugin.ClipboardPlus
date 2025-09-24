@@ -1,20 +1,21 @@
 // Copyright (c) 2025 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 
 public static class DatabaseHelper
 {
+    private static readonly JsonSerializerOptions IndentedOption = new() { WriteIndented = true };
+
     public static async Task ExportDatabase(IClipboardPlus clipboardPlus, string jsonPath)
     {
         var database = clipboardPlus.Database;
         var records = await database.GetAllRecordsAsync(false);
         var jsonRecords = records.Select(JsonClipboardData.FromClipboardData);
         var addedCount = jsonRecords.Count();
-        var formatting = Formatting.Indented;
-        string json = JsonConvert.SerializeObject(jsonRecords, formatting);
+        string json = JsonSerializer.Serialize(jsonRecords, IndentedOption);
         await File.WriteAllTextAsync(jsonPath, json);
         var context = clipboardPlus.Context;
         context.ShowMsg(context.GetTranslation("flowlauncher_plugin_clipboardplus_success"),
@@ -31,7 +32,7 @@ public static class DatabaseHelper
         try
         {
             string json = await File.ReadAllTextAsync(jsonPath);
-            jsonRecords = JsonConvert.DeserializeObject<List<JsonClipboardData>>(json);
+            jsonRecords = JsonSerializer.Deserialize<List<JsonClipboardData>>(json);
         }
         catch (Exception)
         {

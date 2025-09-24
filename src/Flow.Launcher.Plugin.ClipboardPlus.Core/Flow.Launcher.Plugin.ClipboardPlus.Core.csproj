@@ -95,7 +95,6 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
     <!-- Edited from: https://stackoverflow.com/questions/66374508/how-to-disable-compiler-warnings-in-only-generated-code-without-editing-files -->
