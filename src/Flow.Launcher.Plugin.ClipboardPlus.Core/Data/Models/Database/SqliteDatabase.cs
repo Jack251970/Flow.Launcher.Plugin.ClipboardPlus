@@ -525,7 +525,7 @@ public class SqliteDatabase : IAsyncDisposable
         {
             // query all records
             var results = await Connection.QueryAsync<Record>(SqlSelectAllRecord);
-            List<ClipboardData> allRecords = new(results.Select(ClipboardData.FromRecord));
+            List<ClipboardData> allRecords = [.. results.Select(ClipboardData.FromRecord)];
 
             // delete invalid records
             var invalidRecords = allRecords.Where(x => !x.IsValid);

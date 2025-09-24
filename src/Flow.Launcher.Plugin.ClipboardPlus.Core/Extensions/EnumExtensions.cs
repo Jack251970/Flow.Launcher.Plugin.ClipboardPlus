@@ -6,8 +6,7 @@ public static class EnumExtensions
 
     private static readonly Dictionary<KeepTime, int> KeepTimeDict =
         new(
-            new List<KeyValuePair<KeepTime, int>>()
-            {
+            [
                 new(KeepTime.Always, int.MaxValue),
                 new(KeepTime.Hour1, 1),
                 new(KeepTime.Hours12, 12),
@@ -17,7 +16,7 @@ public static class EnumExtensions
                 new(KeepTime.Month1, 720),
                 new(KeepTime.Months6, 4320),
                 new(KeepTime.Year1, 8640),
-            }
+            ]
         );
 
     public static int ToKeepTime(this KeepTime idx)
