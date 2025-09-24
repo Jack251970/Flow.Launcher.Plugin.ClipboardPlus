@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,9 +15,21 @@ public partial class App : Application
 
     public App()
     {
+        InitializeDependencyInjection();
         InitializeComponent();
         AddDesignResources();
         AddLanguageResources();
+    }
+
+    private static void InitializeDependencyInjection()
+    {
+        // Configure the dependency injection container
+        var host = Host.CreateDefaultBuilder()
+            .UseContentRoot(AppContext.BaseDirectory)
+            .ConfigureServices(services => services
+                .AddSingleton<IPublicAPI, PublicAPIInstance>()
+            ).Build();
+        Ioc.Default.ConfigureServices(host.Services);
     }
 
     private void AddDesignResources()
