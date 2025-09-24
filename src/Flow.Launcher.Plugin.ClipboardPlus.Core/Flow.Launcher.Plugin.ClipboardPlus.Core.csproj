@@ -1,108 +1,121 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <Version>3.0.2</Version>
-        <TargetFramework>net9.0-windows</TargetFramework>
-        <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
-    </PropertyGroup>
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>3.0.2</Version>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <DebugType>full</DebugType>
-      <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-    </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+		<NoWarn>$(NoWarn);FLSG0007</NoWarn>
+	</PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <DebugType>none</DebugType>
-      <DebugSymbols>true</DebugSymbols>
-      <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-    </PropertyGroup>
-
-    <!-- CsWinRT related properties for projections generation -->
-    <PropertyGroup>
-      <CsWinRTEmbedded>true</CsWinRTEmbedded>
-      <CsWinRTWindowsMetadata>10.0.19041.0</CsWinRTWindowsMetadata>
-      <CsWinRTIncludes>
-        Windows.ApplicationModel.DataTransfer;
-        Windows.ApplicationModel.DataTransfer.ShareTargetInfo;
-        Windows.ApplicationModel.AddResourcePackageOptions;
-        Windows.ApplicationModel.AppDisplayInfo;
-        Windows.ApplicationModel.AppInstallerInfo;
-        Windows.ApplicationModel.Core.AppDisplayInfo;
-        Windows.ApplicationModel.Core.AppListEntry;
-        Windows.ApplicationModel.Core.IAppListEntry;
-        Windows.ApplicationModel.IAppDisplayInfo;
-        Windows.ApplicationModel.IAppInstallerInfo;
-        Windows.ApplicationModel.IPackage;
-        Windows.ApplicationModel.IPackageCatalog;
-        Windows.ApplicationModel.Package;
-        Windows.Data.Text.TextSegment;
-        Windows.Devices.Geolocation;
-        Windows.Foundation;
-        Windows.Globalization.DayOfWeek;
-        Windows.Management.Deployment;
-        Windows.Security.EnterpriseData.ProtectionPolicyEvaluationResult;
-        Windows.Storage;
-        Windows.System.IUser;
-        Windows.System.ProcessorArchitecture;
-        Windows.System.User;
-        Windows.UI;
-      </CsWinRTIncludes>
-      <CsWinRTExcludes>
-        Windows.Foundation.Diagnostics;
-        Windows.Foundation.PropertyType;
-        Windows.Storage.BulkAccess;
-        Windows.ApplicationModel.DataTransfer.DragDrop;
-        Windows.ApplicationModel.DataTransfer.ShareTarget;
-        Windows.UI.ApplicationSettings;
-        Windows.UI.Composition;
-        Windows.UI.Core;
-        Windows.UI.Input.Core;
-        Windows.UI.Notifications;
-        Windows.UI.Shell;
-        Windows.UI.StartScreen;
-        Windows.UI.Text.Core;
-        Windows.UI.ViewManagement;
-        Windows.UI.WebUI;
-        Windows.UI.WindowManagement;
-        Windows.UI.Input;
-        Windows.UI.Xaml;
-        Windows.UI.Xaml.Input;
-      </CsWinRTExcludes>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>full</DebugType>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+  </PropertyGroup>
+	
+  <!-- CsWinRT related properties for projections generation -->
+  <PropertyGroup>
+    <CsWinRTEmbedded>true</CsWinRTEmbedded>
+    <CsWinRTWindowsMetadata>10.0.19041.0</CsWinRTWindowsMetadata>
+    <CsWinRTIncludes>
+      Windows.ApplicationModel.DataTransfer;
+      Windows.ApplicationModel.DataTransfer.ShareTargetInfo;
+      Windows.ApplicationModel.AddResourcePackageOptions;
+      Windows.ApplicationModel.AppDisplayInfo;
+      Windows.ApplicationModel.AppInstallerInfo;
+      Windows.ApplicationModel.Core.AppDisplayInfo;
+      Windows.ApplicationModel.Core.AppListEntry;
+      Windows.ApplicationModel.Core.IAppListEntry;
+      Windows.ApplicationModel.IAppDisplayInfo;
+      Windows.ApplicationModel.IAppInstallerInfo;
+      Windows.ApplicationModel.IPackage;
+      Windows.ApplicationModel.IPackageCatalog;
+      Windows.ApplicationModel.Package;
+      Windows.Data.Text.TextSegment;
+      Windows.Devices.Geolocation;
+      Windows.Foundation;
+      Windows.Globalization.DayOfWeek;
+      Windows.Management.Deployment;
+      Windows.Security.EnterpriseData.ProtectionPolicyEvaluationResult;
+      Windows.Storage;
+      Windows.System.IUser;
+      Windows.System.ProcessorArchitecture;
+      Windows.System.User;
+      Windows.UI;
+    </CsWinRTIncludes>
+    <CsWinRTExcludes>
+      Windows.Foundation.Diagnostics;
+      Windows.Foundation.PropertyType;
+      Windows.Storage.BulkAccess;
+      Windows.ApplicationModel.DataTransfer.DragDrop;
+      Windows.ApplicationModel.DataTransfer.ShareTarget;
+      Windows.UI.ApplicationSettings;
+      Windows.UI.Composition;
+      Windows.UI.Core;
+      Windows.UI.Input.Core;
+      Windows.UI.Notifications;
+      Windows.UI.Shell;
+      Windows.UI.StartScreen;
+      Windows.UI.Text.Core;
+      Windows.UI.ViewManagement;
+      Windows.UI.WebUI;
+      Windows.UI.WindowManagement;
+      Windows.UI.Input;
+      Windows.UI.Xaml;
+      Windows.UI.Xaml.Input;
+    </CsWinRTExcludes>
+  </PropertyGroup>
     
-    <!-- Link CsWinRT generated files to project directory -->
-    <ItemGroup>
-      <None Include="$(ProjectDir)obj\$(Configuration)\$(TargetFramework)\Generated Files\CsWinRT\**\*.rsp" Exclude="@(Compile)">
-        <Link>Generated Files\CsWinRT\%(RecursiveDir)%(Filename)%(Extension)</Link>
-        <Visible>true</Visible>
-        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      </None>
-      <Compile Include="$(ProjectDir)obj\$(Configuration)\$(TargetFramework)\Generated Files\CsWinRT\**\*.cs" Exclude="@(Compile)">
-        <Link>Generated Files\CsWinRT\%(RecursiveDir)%(Filename)%(Extension)</Link>
-        <Visible>true</Visible>
-        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-      </Compile>
-    </ItemGroup>
+  <!-- Link CsWinRT generated files to project directory -->
+  <ItemGroup>
+    <None Include="$(ProjectDir)obj\$(Configuration)\$(TargetFramework)\Generated Files\CsWinRT\**\*.rsp" Exclude="@(Compile)">
+      <Link>Generated Files\CsWinRT\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <Visible>true</Visible>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <Compile Include="$(ProjectDir)obj\$(Configuration)\$(TargetFramework)\Generated Files\CsWinRT\**\*.cs" Exclude="@(Compile)">
+      <Link>Generated Files\CsWinRT\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <Visible>true</Visible>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Dapper" Version="2.1.66" />
-      <PackageReference Include="Flow.Launcher.Plugin" Version="5.0.0" />
-      <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.8" />
-      <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.183">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Flow.Launcher.Localization" Version="0.0.6" />
+    <PackageReference Include="Flow.Launcher.Plugin" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.183">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
+  </ItemGroup>
 
-    <!-- Edited from: https://stackoverflow.com/questions/66374508/how-to-disable-compiler-warnings-in-only-generated-code-without-editing-files -->
-    <Target Name="DisableWarnings" BeforeTargets="CoreCompile">
-      <ItemGroup>
-        <AutoGeneratedFiles Include="$(ProjectDir)obj\$(Configuration)\$(TargetFramework)\Generated Files\CsWinRT\*.cs" />
-      </ItemGroup>
-      <WriteLinesToFile File="%(AutoGeneratedFiles.FullPath)" Condition="!$([System.IO.File]::ReadAllText(%(AutoGeneratedFiles.FullPath)).StartsWith(&quot;#pragma warning&quot;))" Lines="$([System.String]::Concat(&quot;#pragma warning disable&quot;,$([System.Environment]::NewLine),$([System.Environment]::NewLine),$([System.IO.File]::ReadAllText(%(AutoGeneratedFiles.FullPath)))))" Overwrite="true" Encoding="Unicode" />
-    </Target>
+  <!-- Edited from: https://stackoverflow.com/questions/66374508/how-to-disable-compiler-warnings-in-only-generated-code-without-editing-files -->
+  <Target Name="DisableWarnings" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <AutoGeneratedFiles Include="$(ProjectDir)obj\$(Configuration)\$(TargetFramework)\Generated Files\CsWinRT\*.cs" />
+    </ItemGroup>
+    <WriteLinesToFile File="%(AutoGeneratedFiles.FullPath)" Condition="!$([System.IO.File]::ReadAllText(%(AutoGeneratedFiles.FullPath)).StartsWith(&quot;#pragma warning&quot;))" Lines="$([System.String]::Concat(&quot;#pragma warning disable&quot;,$([System.Environment]::NewLine),$([System.Environment]::NewLine),$([System.IO.File]::ReadAllText(%(AutoGeneratedFiles.FullPath)))))" Overwrite="true" Encoding="Unicode" />
+  </Target>
+
+	<PropertyGroup>
+		<FLLUseDependencyInjection>true</FLLUseDependencyInjection>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AdditionalFiles Remove="Languages\en.xaml" />
+		<AdditionalFiles Include="..\Flow.Launcher.Plugin.ClipboardPlus\Languages\en.xaml">
+			<Link>Languages\en.xaml</Link>
+		</AdditionalFiles>
+	</ItemGroup>
 
 </Project>

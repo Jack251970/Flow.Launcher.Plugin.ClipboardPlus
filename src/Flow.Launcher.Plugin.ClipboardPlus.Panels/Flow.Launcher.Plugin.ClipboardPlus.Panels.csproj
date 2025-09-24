@@ -1,30 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net9.0-windows</TargetFramework>
-        <Nullable>enable</Nullable>
-        <UseWPF>true</UseWPF>
-        <Version>3.0.2</Version>
-        <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <Version>3.0.2</Version>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DebugType>full</DebugType>
-      <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>False</DebugSymbols>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+		<NoWarn>$(NoWarn);FLSG0007</NoWarn>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-        <DebugType>none</DebugType>
-        <DebugSymbols>False</DebugSymbols>
-      <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-    </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DebugType>full</DebugType>
+		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+	</PropertyGroup>
     
-    <ItemGroup>
-      <ProjectReference Include="..\Flow.Launcher.Plugin.ClipboardPlus.Core\Flow.Launcher.Plugin.ClipboardPlus.Core.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Flow.Launcher.Plugin.ClipboardPlus.Core\Flow.Launcher.Plugin.ClipboardPlus.Core.csproj" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Flow.Launcher.Plugin" Version="5.0.0" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Flow.Launcher.Localization" Version="0.0.6" />
+    <PackageReference Include="Flow.Launcher.Plugin" Version="5.0.0" />
+  </ItemGroup>
+
+	<PropertyGroup>
+		<FLLUseDependencyInjection>true</FLLUseDependencyInjection>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AdditionalFiles Remove="Languages\en.xaml" />
+		<AdditionalFiles Include="..\Flow.Launcher.Plugin.ClipboardPlus\Languages\en.xaml">
+			<Link>Languages\en.xaml</Link>
+		</AdditionalFiles>
+	</ItemGroup>
 
 </Project>
