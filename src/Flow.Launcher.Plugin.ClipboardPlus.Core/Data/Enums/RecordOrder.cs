@@ -1,15 +1,16 @@
-﻿using System.ComponentModel;
+﻿using Flow.Launcher.Localization.Attributes;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Enums;
 
+[EnumLocalize]
 public enum RecordOrder
 {
-    [Description("flowlauncher_plugin_clipboardplus_record_order_create_time")]
+    [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_record_order_create_time))]
     CreateTime = 0,
 
-    [Description("flowlauncher_plugin_clipboardplus_record_order_source_application")]
+    [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_record_order_source_application))]
     SourceApplication = 1,
 
-    [Description("flowlauncher_plugin_clipboardplus_record_order_data_type")]
+    [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_record_order_data_type))]
     DataType = 2,
 }

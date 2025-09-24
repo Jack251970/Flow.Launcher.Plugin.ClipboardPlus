@@ -171,7 +171,9 @@ public class PreviewViewModel : BaseModel
 
     #region Type
 
+#pragma warning disable CA1822 // Mark members as static
     public Visibility TypeVisibility => Visibility.Visible;
+#pragma warning restore CA1822 // Mark members as static
 
     public string Type => ResourceHelper.GetString(ClipboardPlus, ClipboardData.DataType);
 
