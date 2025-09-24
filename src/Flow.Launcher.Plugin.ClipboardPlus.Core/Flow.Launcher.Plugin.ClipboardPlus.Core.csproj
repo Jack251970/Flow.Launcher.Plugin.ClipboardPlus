@@ -88,6 +88,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Flow.Launcher.Localization" Version="0.0.6" />
     <PackageReference Include="Flow.Launcher.Plugin" Version="5.0.0" />
