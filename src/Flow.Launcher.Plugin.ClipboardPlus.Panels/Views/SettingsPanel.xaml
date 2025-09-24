@@ -98,8 +98,10 @@
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            ItemsSource="{Binding RecordOrders, Mode=OneWay}"
-            SelectedItem="{Binding SelectedRecordOrder, Mode=TwoWay}" />
+            DisplayMemberPath="Display"
+            ItemsSource="{Binding AllRecordOrders, Mode=OneWay}"
+            SelectedItem="{Binding SelectedRecordOrder, Mode=TwoWay}"
+            SelectedValuePath="Value" />
 
         <!--  Action Top  -->
         <CheckBox
@@ -174,8 +176,10 @@
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            ItemsSource="{Binding ClickActions, Mode=OneWay}"
-            SelectedItem="{Binding SelectedClickAction, Mode=TwoWay}" />
+            DisplayMemberPath="Display"
+            ItemsSource="{Binding AllClickActions, Mode=OneWay}"
+            SelectedItem="{Binding SelectedClickAction, Mode=TwoWay}"
+            SelectedValuePath="Value" />
 
         <!--  Default Rich Text Copy Option  -->
         <TextBlock
@@ -190,8 +194,10 @@
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            ItemsSource="{Binding DefaultRichTextCopyOptions, Mode=OneWay}"
-            SelectedItem="{Binding SelectedDefaultRichTextCopyOption, Mode=TwoWay}" />
+            DisplayMemberPath="Display"
+            ItemsSource="{Binding AllDefaultRichTextCopyOptions, Mode=OneWay}"
+            SelectedItem="{Binding SelectedDefaultRichTextCopyOption, Mode=TwoWay}"
+            SelectedValuePath="Value" />
 
         <!--  Default Image Copy Option  -->
         <TextBlock
@@ -206,8 +212,10 @@
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            ItemsSource="{Binding DefaultImageCopyOptions, Mode=OneWay}"
-            SelectedItem="{Binding SelectedDefaultImageCopyOption, Mode=TwoWay}" />
+            DisplayMemberPath="Display"
+            ItemsSource="{Binding AllDefaultImageCopyOptions, Mode=OneWay}"
+            SelectedItem="{Binding SelectedDefaultImageCopyOption, Mode=TwoWay}"
+            SelectedValuePath="Value" />
 
         <!--  Default Files Copy Option  -->
         <TextBlock
@@ -222,8 +230,10 @@
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            ItemsSource="{Binding DefaultFilesCopyOptions, Mode=OneWay}"
-            SelectedItem="{Binding SelectedDefaultFilesCopyOption, Mode=TwoWay}" />
+            DisplayMemberPath="Display"
+            ItemsSource="{Binding AllDefaultFilesCopyOptions, Mode=OneWay}"
+            SelectedItem="{Binding SelectedDefaultFilesCopyOption, Mode=TwoWay}"
+            SelectedValuePath="Value" />
 
         <!--  Seperator  -->
         <Separator
@@ -436,9 +446,11 @@
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
+            DisplayMemberPath="Display"
             IsEnabled="{Binding KeepText, Mode=OneWay}"
-            ItemsSource="{Binding TextKeepTimes, Mode=OneWay}"
+            ItemsSource="{Binding AllTextKeepTimes, Mode=OneWay}"
             SelectedItem="{Binding SelectedTextKeepTime, Mode=TwoWay}"
+            SelectedValuePath="Value"
             Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
 
         <!--  Keep Images  -->
@@ -456,9 +468,11 @@
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
+            DisplayMemberPath="Display"
             IsEnabled="{Binding KeepImages, Mode=OneWay}"
-            ItemsSource="{Binding ImagesKeepTimes, Mode=OneWay}"
+            ItemsSource="{Binding AllImagesKeepTimes, Mode=OneWay}"
             SelectedItem="{Binding SelectedImagesKeepTime, Mode=TwoWay}"
+            SelectedValuePath="Value"
             Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
 
         <!--  Keep Files  -->
@@ -476,9 +490,11 @@
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
+            DisplayMemberPath="Display"
             IsEnabled="{Binding KeepFiles, Mode=OneWay}"
-            ItemsSource="{Binding FilesKeepTimes, Mode=OneWay}"
+            ItemsSource="{Binding AllFilesKeepTimes, Mode=OneWay}"
             SelectedItem="{Binding SelectedFilesKeepTime, Mode=TwoWay}"
+            SelectedValuePath="Value"
             Visibility="{Binding DatabasePanelVisibility, Mode=OneWay}" />
 
         <!--  Seperator  -->

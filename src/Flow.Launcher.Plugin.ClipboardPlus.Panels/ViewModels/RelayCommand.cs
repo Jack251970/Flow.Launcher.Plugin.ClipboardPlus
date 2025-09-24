@@ -3,14 +3,9 @@ using System.Windows.Input;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.ViewModels;
 
-internal class RelayCommand : ICommand
+internal class RelayCommand(Action<object?> action) : ICommand
 {
-    private readonly Action<object?> _action;
-
-    public RelayCommand(Action<object?> action)
-    {
-        _action = action;
-    }
+    private readonly Action<object?> _action = action;
 
     public virtual bool CanExecute(object? parameter)
     {
