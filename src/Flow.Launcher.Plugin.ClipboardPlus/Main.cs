@@ -24,7 +24,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private static readonly string ClassName = nameof(ClipboardPlus);
 
     // Plugin context
-    private PluginInitContext? Context = null;
+    internal static PluginInitContext Context { get; private set; } = null!;
 
     // State of using Windows clipboard history only
     private bool UseWindowsClipboardHistoryOnly;
@@ -33,7 +33,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private CultureInfo CultureInfo = null!;
 
     // Settings
-    private ISettings Settings = null!;
+    private Settings Settings = null!;
 
     // Score helper
     private ScoreHelper ScoreHelper = null!;
@@ -162,8 +162,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             if (WindowsClipboardHelper.IsHistoryEnabled())
             {
                 results.AddRange(
-                    new[]
-                    {
+                    [
                         new Result
                         {
                             Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_all_system_title"),
@@ -228,7 +227,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                                 return true;
                             },
                         }
-                    });
+                    ]);
             }
 
             // clear list and database actions
@@ -263,8 +262,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             if (!UseWindowsClipboardHistoryOnly)
             {
                 results.AddRange(
-                    new[]
-                    {
+                    [
                         new Result
                         {
                             Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_clear_both_title"),
@@ -346,7 +344,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                                 return true;
                             }
                         }
-                    }
+                    ]
                 );
             }
         }
@@ -607,8 +605,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
         // Copy Default Option
         results.AddRange(
-            new[]
-            {
+            [
                 new Result
                 {
                     Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_title"),
@@ -623,7 +620,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         return true;
                     }
                 }
-            }
+            ]
         );
 
         // Copy Addition Options
@@ -647,8 +644,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 break;
             case DataType.RichText:
                 results.AddRange(
-                    new[]
-                    {
+                    [
                         new Result
                         {
                             Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_rich_text_title"),
@@ -677,13 +673,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                                 return true;
                             }
                         }
-                    }
+                    ]
                 );
                 break;
             case DataType.Image:
                 results.AddRange(
-                    new[]
-                    {
+                    [
                         new Result
                         {
                             Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_image_title"),
@@ -712,13 +707,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                                 return true;
                             }
                         },
-                    }
+                    ]
                 );
                 break;
             case DataType.Files:
                 results.AddRange(
-                    new[]
-                    {
+                    [
                         new Result
                         {
                             Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_files_title"),
@@ -761,14 +755,14 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                                 return true;
                             }
                         }
-                    }
+                    ]
                 );
 
                 var validObject = clipboardData.DataToValid();
                 if (validObject is string[] filePaths && filePaths.Length == 1)
                 {
-                    results.AddRange(new[]
-                    {
+                    results.AddRange(
+                    [
                         new Result
                         {
                             Title = Context.GetTranslation("flowlauncher_plugin_clipboardplus_copy_file_path_title"),
@@ -797,7 +791,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                                 return true;
                             }
                         }
-                    });
+                    ]);
                 }
                 break;
             default:
@@ -1534,7 +1528,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         RecordsList.Clear();
     }
 
-    private void ReQuery()
+    private static void ReQuery()
     {
         Context.ReQuery(false);
     }
@@ -1640,7 +1634,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private async Task WaitWindowHideAndSimulatePaste()
+    private static async Task WaitWindowHideAndSimulatePaste()
     {
         while (Context!.API.IsMainWindowVisible())
         {
