@@ -870,7 +870,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             // Delete
             if (!fromSystem)
             {
-                var deleteResultSubtitle = saved ? 
+                var deleteResultSubtitle = saved ?
                     Localize.flowlauncher_plugin_clipboardplus_delete_both_subtitle() :
                     Localize.flowlauncher_plugin_clipboardplus_delete_list_subtitle();
                 results.Add(new Result
@@ -1030,7 +1030,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             var imageName = StringUtils.FormatImageName(Settings.CacheFormat, clipboardData.CreateTime,
                 string.IsNullOrEmpty(clipboardData.SenderApp) ?
-                Localize.flowlauncher_plugin_clipboardplus_unknown():
+                Localize.flowlauncher_plugin_clipboardplus_unknown() :
                 clipboardData.SenderApp);
             var imagePath = FileUtils.SaveImageCache(clipboardData, PathHelper.ImageCachePath, imageName);
             clipboardData.CachedImagePath = imagePath;
@@ -1784,7 +1784,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 if (Settings.ShowNotification)
                 {
                     Context.ShowMsg(Localize.flowlauncher_plugin_clipboardplus_success(),
-                        Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard()+
+                        Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard() +
                         StringUtils.CompressString(clipboardData.GetText(CultureInfo, validObject as string[]), StringMaxLength));
                 }
             }
@@ -1841,7 +1841,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 if (Settings.ShowNotification)
                 {
                     Context.ShowMsg(Localize.flowlauncher_plugin_clipboardplus_success(),
-                        Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard()+
+                        Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard() +
                         StringUtils.CompressString(clipboardData.GetText(CultureInfo), StringMaxLength));
                 }
             }
@@ -1856,10 +1856,10 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         {
             Context.ShowMsgError(Localize.flowlauncher_plugin_clipboardplus_fail(),
                     Localize.flowlauncher_plugin_clipboardplus_text_data_invalid());
-            }
         }
+    }
 
-        #endregion
+    #endregion
 
     #region Image File Format
 
@@ -1892,10 +1892,10 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             {
                 if (Settings.ShowNotification)
                 {
-                Context.ShowMsg(Localize.flowlauncher_plugin_clipboardplus_success(),
-                    Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard()+
-                    StringUtils.CompressString(clipboardData.GetText(CultureInfo), StringMaxLength));
-            }
+                    Context.ShowMsg(Localize.flowlauncher_plugin_clipboardplus_success(),
+                        Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard() +
+                        StringUtils.CompressString(clipboardData.GetText(CultureInfo), StringMaxLength));
+                }
             }
             else
             {
@@ -1939,7 +1939,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 if (Settings.ShowNotification)
                 {
                     Context.ShowMsg(Localize.flowlauncher_plugin_clipboardplus_success(),
-                        Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard()+
+                        Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard() +
                         StringUtils.CompressString(clipboardData.GetText(CultureInfo, validObject as string[]), StringMaxLength));
                 }
             }
@@ -2032,7 +2032,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 if (Settings.ShowNotification)
                 {
                     Context.ShowMsg(Localize.flowlauncher_plugin_clipboardplus_success(),
-                        Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard()+
+                        Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard() +
                         StringUtils.CompressString(clipboardData.GetText(CultureInfo, filePaths), StringMaxLength));
                 }
             }
@@ -2078,7 +2078,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 if (Settings.ShowNotification)
                 {
                     Context.ShowMsg(Localize.flowlauncher_plugin_clipboardplus_success(),
-                        Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard()+
+                        Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard() +
                         StringUtils.CompressString(clipboardData.GetText(CultureInfo, filePaths), StringMaxLength));
                 }
             }

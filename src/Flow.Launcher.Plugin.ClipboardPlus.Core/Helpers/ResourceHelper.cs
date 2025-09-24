@@ -93,7 +93,8 @@ public static class ResourceHelper
             DataType.RichText => Localize.flowlauncher_plugin_clipboardplus_rich_text(),
             DataType.Files => Localize.flowlauncher_plugin_clipboardplus_files(),
             DataType.Image => Localize.flowlauncher_plugin_clipboardplus_image(),
-            _ => Localize.flowlauncher_plugin_clipboardplus_others()        };
+            _ => Localize.flowlauncher_plugin_clipboardplus_others()
+        };
     }
 
     #endregion
