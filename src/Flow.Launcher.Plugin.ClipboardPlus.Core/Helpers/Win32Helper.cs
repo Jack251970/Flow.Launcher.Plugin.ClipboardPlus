@@ -1,4 +1,7 @@
-﻿using System.Runtime.Versioning;
+﻿using System;
+using System.Runtime.Versioning;
+using System.Threading;
+using System.Threading.Tasks;
 using Windows.Win32;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;

@@ -1,4 +1,5 @@
-﻿using UserControl = System.Windows.Controls.UserControl;
+﻿using System;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 

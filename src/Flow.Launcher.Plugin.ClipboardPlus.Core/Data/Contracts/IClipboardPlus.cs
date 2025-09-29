@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
+using System.Threading.Tasks;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Contracts;
 

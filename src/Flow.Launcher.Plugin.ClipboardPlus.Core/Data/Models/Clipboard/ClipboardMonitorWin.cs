@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2025 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
+using System;
+using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Windows.Media.Imaging;
 

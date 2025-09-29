@@ -1,9 +1,13 @@
 ﻿// Copyright (c) 2025 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;

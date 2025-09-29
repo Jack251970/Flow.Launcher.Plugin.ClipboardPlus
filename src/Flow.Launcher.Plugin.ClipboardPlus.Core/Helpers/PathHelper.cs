@@ -1,4 +1,6 @@
-﻿namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
+﻿using System.IO;
+
+namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 
 public static class PathHelper
 {

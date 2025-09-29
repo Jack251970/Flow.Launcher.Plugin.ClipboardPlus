@@ -1,7 +1,12 @@
 // Copyright (c) 2025 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 

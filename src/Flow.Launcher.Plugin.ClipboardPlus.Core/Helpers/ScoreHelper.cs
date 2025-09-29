@@ -1,6 +1,9 @@
 ﻿// Copyright (c) 2025 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 
 public class ScoreHelper
