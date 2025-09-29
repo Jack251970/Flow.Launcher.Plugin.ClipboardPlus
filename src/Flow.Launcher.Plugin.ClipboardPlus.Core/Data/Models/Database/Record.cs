@@ -1,4 +1,6 @@
-﻿namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
+﻿using System;
+
+namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Models;
 
 public class Record
 {

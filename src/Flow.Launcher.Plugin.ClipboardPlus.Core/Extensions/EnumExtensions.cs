@@ -1,4 +1,6 @@
-﻿namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Extensions;
+﻿using System.Collections.Generic;
+
+namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Extensions;
 
 public static class EnumExtensions
 {

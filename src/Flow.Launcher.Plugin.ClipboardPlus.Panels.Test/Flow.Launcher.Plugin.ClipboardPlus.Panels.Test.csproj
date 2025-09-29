@@ -1,49 +1,49 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <OutputType>WinExe</OutputType>
-        <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <UseWPF>true</UseWPF>
-        <UseWindowsForms>true</UseWindowsForms>
-        <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
-        <ApplicationIcon>icon.ico</ApplicationIcon>
-    </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <None Remove="Images\clipboard.png" />
-    </ItemGroup>
+  <ItemGroup>
+    <None Remove="Images\clipboard.png" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <Content Include="..\Flow.Launcher.Plugin.ClipboardPlus\Languages\*.xaml">
-        <Link>Languages\%(FileName)%(Extension)</Link>
-        <Generator>MSBuild:Compile</Generator>
-        <SubType>Designer</SubType>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-    </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\Flow.Launcher.Plugin.ClipboardPlus\Languages\*.xaml">
+      <Link>Languages\%(FileName)%(Extension)</Link>
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
-    <ItemGroup>
-      <Content Include="icon.ico" />
-      <Content Include="Images\clipboard.png">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-    </ItemGroup>
+  <ItemGroup>
+    <Content Include="icon.ico" />
+    <Content Include="Images\clipboard.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
-      <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
-      <PackageReference Include="ModernWpfUI" Version="0.9.6" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
+    <PackageReference Include="ModernWpfUI" Version="0.9.6" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Flow.Launcher.Plugin.ClipboardPlus.Panels\Flow.Launcher.Plugin.ClipboardPlus.Panels.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Flow.Launcher.Plugin.ClipboardPlus.Panels\Flow.Launcher.Plugin.ClipboardPlus.Panels.csproj" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <None Update="param_data.csv">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
+  <ItemGroup>
+    <None Update="param_data.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>

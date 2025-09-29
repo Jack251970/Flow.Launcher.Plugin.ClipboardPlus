@@ -1,4 +1,7 @@
-﻿namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Contracts;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Contracts;
 
 public interface ISettings
 {

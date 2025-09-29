@@ -1,4 +1,6 @@
-﻿using System.Windows.Media.Imaging;
+﻿using System;
+using System.IO;
+using System.Windows.Media.Imaging;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Extensions;
 

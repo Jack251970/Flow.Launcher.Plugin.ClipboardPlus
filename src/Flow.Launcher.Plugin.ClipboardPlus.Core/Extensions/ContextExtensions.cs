@@ -2,6 +2,8 @@
 // Licensed under the Apache License. See the LICENSE.
 
 using Flow.Launcher.Plugin.SharedModels;
+using System;
+
 #if DEBUG
 using System.Diagnostics;
 #endif
