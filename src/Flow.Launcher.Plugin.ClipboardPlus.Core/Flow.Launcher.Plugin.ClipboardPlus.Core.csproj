@@ -3,7 +3,7 @@
   <PropertyGroup>
 		<TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
 		<Nullable>enable</Nullable>
-    <Version>3.0.2</Version>
+    <Version>3.0.3</Version>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
