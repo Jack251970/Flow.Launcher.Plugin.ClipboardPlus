@@ -281,7 +281,10 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
 
     private static bool IsDataPlainText(DataPackageView dataObj)
     {
-        return dataObj.Contains(StandardDataFormats.Text);
+        return dataObj.Contains(StandardDataFormats.Text) ||
+            dataObj.Contains("AnsiText") ||
+            dataObj.Contains("OEMText") ||
+            dataObj.Contains("TEXT");
     }
 
     private static bool IsDataRichText(DataPackageView dataObj)
@@ -345,7 +348,7 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
         var plainText = string.Empty;
         if (IsDataPlainText(dataObj))
         {
-            plainText = await dataObj.GetTextAsync() ?? string.Empty;
+            plainText = await GetTextAsync(dataObj) ?? string.Empty;
         }
 
         var richText = string.Empty;
@@ -355,6 +358,31 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
         }
 
         return (plainText, richText, string.IsNullOrEmpty(richText) ? DataType.PlainText : DataType.RichText);
+    }
+
+    /// <summary>
+    /// Inspired from: https://github.com/WindowSill-app/WindowSill.ClipboardHistory
+    /// </summary>
+    private static async Task<string> GetTextAsync(DataPackageView dataObj)
+    {
+        string? text = null;
+        if (dataObj.Contains(StandardDataFormats.Text))
+        {
+            text = await dataObj.GetTextAsync();
+        }
+        else if (dataObj.Contains("AnsiText"))
+        {
+            text = await dataObj.GetDataAsync("AnsiText") as string;
+        }
+        else if (dataObj.Contains("OEMText"))
+        {
+            text = await dataObj.GetDataAsync("OEMText") as string;
+        }
+        else if (dataObj.Contains("TEXT"))
+        {
+            text = await dataObj.GetDataAsync("TEXT") as string;
+        }
+        return text ?? string.Empty;
     }
 
     public static async Task<string[]?> GetFilesContentAsync(DataPackageView dataObj)
