@@ -10,10 +10,10 @@ using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
 using Flow.Launcher.Plugin;
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace Build;
@@ -167,7 +167,7 @@ public class PublishTask : FrostingTask<BuildContext>
 
         if (versionFile != null)
         {
-            PluginMetadata? versionInfoObj = JsonConvert.DeserializeObject<PluginMetadata>(
+            PluginMetadata? versionInfoObj = JsonSerializer.Deserialize<PluginMetadata>(
                 File.ReadAllText(versionFile.ToString()!)
             );
             if (versionInfoObj != null)
