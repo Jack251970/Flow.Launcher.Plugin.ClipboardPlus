@@ -10,7 +10,7 @@
 	  <Nullable>enable</Nullable>
 	  <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
 		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
-	  <Version>3.0.3</Version>
+	  <Version>3.0.4</Version>
     <ReleaseOutputPath>./bin/Release</ReleaseOutputPath>
   </PropertyGroup>
 
