@@ -102,6 +102,7 @@ If you want to make query records fully match the Windows clipboard history, you
 - [ICONS](https://icons8.com/icons)
 - [ClipboardR](https://github.com/rainyl/Flow.Launcher.Plugin.ClipboardR)
 - [SharpClipboard](https://github.com/Willy-Kimura/SharpClipboard)
+- [WindowSill.ClipboardHistory](https://github.com/WindowSill-app/WindowSill.ClipboardHistory)
 
 ## 📄 License
 
