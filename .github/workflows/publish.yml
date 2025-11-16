@@ -58,3 +58,4 @@ jobs:
           files: |
             output/Clipboard+*.zip
           tag_name: "v${{ steps.version.outputs.prop }}"
+          generate_release_notes: true
