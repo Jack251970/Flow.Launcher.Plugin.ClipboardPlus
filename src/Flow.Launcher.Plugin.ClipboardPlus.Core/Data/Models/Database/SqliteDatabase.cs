@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -275,8 +276,8 @@ public class SqliteDatabase : IAsyncDisposable
                 return;
             }
 
-            var currentVersionFloat = float.Parse(currentVersion);
-            if (currentVersionFloat < float.Parse(DatabaseVersion10))
+            var currentVersionFloat = float.Parse(currentVersion, CultureInfo.InvariantCulture);
+            if (currentVersionFloat < float.Parse(DatabaseVersion10, CultureInfo.InvariantCulture))
             {
                 // Drop existing `record` and `asset` tables
                 await Connection.ExecuteAsync(SqlDropTables);
@@ -289,7 +290,7 @@ public class SqliteDatabase : IAsyncDisposable
                 return;
             }
 
-            if (currentVersionFloat < float.Parse(DatabaseVersion11))
+            if (currentVersionFloat < float.Parse(DatabaseVersion11, CultureInfo.InvariantCulture))
             {
                 // 1.0 -> 1.1
                 // Delete init_score column in `record` table
@@ -304,7 +305,7 @@ public class SqliteDatabase : IAsyncDisposable
                 }
             }
 
-            if (currentVersionFloat < float.Parse(DatabaseVersion))
+            if (currentVersionFloat < float.Parse(DatabaseVersion, CultureInfo.InvariantCulture))
             {
                 // 1.1 -> 1.2
                 // Rename unicode_text_b64 column to plain_text_b64 in `asset` table and
