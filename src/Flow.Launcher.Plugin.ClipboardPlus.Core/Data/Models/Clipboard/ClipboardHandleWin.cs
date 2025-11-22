@@ -255,11 +255,11 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
             // System.Runtime.InteropServices.COMException (0x800706BA)
             // RPC server is unavailable (0x800706BA (RPC_E_SERVER_UNAVAILABLE))
         }
-        catch (COMException e) when (e.HResult == DV_E_FORMATETC || e.HResult == DV_E_CLIPFORMAT)
+        catch (COMException e) when (e.HResult == DV_E_FORMATETC || e.HResult == DV_E_TYMED || e.HResult == DV_E_CLIPFORMAT)
         {
             // Sometimes the "FileGroupDescriptorW" format provided by the source app contains a virtual folder item, which cannot be represented as a StorageItem object.
-            // System.Runtime.InteropServices.COMException (0x800706BA)
-            // Invalid clipboard format (0x8004006A (DV_E_CLIPFORMAT))
+            // System.Runtime.InteropServices.COMException (0x80040069): Invalid tymed (DV_E_TYMED) - DataPackage does not support the type of storage medium provided by the source app for the "FileContents" format.
+            // System.Runtime.InteropServices.COMException (0x8004006A): Invalid clipboard format (DV_E_CLIPFORMAT)
         }
         catch (Exception e)
         {
@@ -397,7 +397,7 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
                 {
                     itemsList.Add(item.Path);
                 }
-                catch (Exception ex) when (ex.HResult == DV_E_FORMATETC || ex.HResult == DV_E_CLIPFORMAT)
+                catch (Exception ex) when (ex.HResult == DV_E_FORMATETC || ex.HResult == DV_E_TYMED || ex.HResult == DV_E_CLIPFORMAT)
                 {
                     // Not support for files from remote desktop
                 }
