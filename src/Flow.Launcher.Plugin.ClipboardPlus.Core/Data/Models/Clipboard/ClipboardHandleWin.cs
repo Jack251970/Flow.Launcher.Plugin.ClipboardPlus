@@ -259,8 +259,8 @@ internal class ClipboardHandleWin : BaseClipboardHandle, IDisposable
         {
             // Handle clipboard format-related errors that can occur with remote desktop or virtual items.
             // System.Runtime.InteropServices.COMException (0x80040064): Invalid FORMATETC structure (DV_E_FORMATETC) - The "FileGroupDescriptorW" format contains a virtual folder item that cannot be represented as a StorageItem object.
-            // System.Runtime.InteropServices.COMException (0x80040069): Invalid tymed (DV_E_TYMED) - DataPackage does not support the type of storage medium provided by the source app for the "FileContents" format.
-            // System.Runtime.InteropServices.COMException (0x8004006A): Invalid clipboard format (DV_E_CLIPFORMAT)
+            // System.Runtime.InteropServices.COMException (0x80040069): Invalid tymed (DV_E_TYMED) - DataPackage does not support the type of storage medium provided by the source app.
+            // System.Runtime.InteropServices.COMException (0x8004006A): Invalid clipboard format (DV_E_CLIPFORMAT) - The clipboard format is not supported.
         }
         catch (Exception e)
         {
