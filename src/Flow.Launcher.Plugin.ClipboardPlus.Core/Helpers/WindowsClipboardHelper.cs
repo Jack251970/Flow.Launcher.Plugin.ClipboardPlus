@@ -172,7 +172,7 @@ public class WindowsClipboardHelper : IDisposable
                     // refresh the list
                     _clipboardHistoryItems.Clear();
                     _clipboardHistoryItemsIds.Clear();
-                    foreach (ClipboardHistoryItem? item in items)
+                    foreach (var item in items)
                     {
                         _clipboardHistoryItems.Add(item);
                         _clipboardHistoryItemsIds.Add(item.Id);
@@ -186,35 +186,30 @@ public class WindowsClipboardHelper : IDisposable
 
             void RemoveItem(IReadOnlyList<ClipboardHistoryItem> items)
             {
-                if (OnHistoryItemRemoved == null)
-                    return;
+                if (OnHistoryItemRemoved == null) return;
                 var newClipboardHistoryItemsIds = items.Select(x => x.Id).ToList();
                 var removedItems = _clipboardHistoryItems
                     .Where(x => !newClipboardHistoryItemsIds.Contains(x.Id))
                     .Select(x => GetHashId(x.Id))
                     .ToArray();
-                if (removedItems.Length == 0)
-                    return;
+                if (removedItems.Length == 0) return;
                 OnHistoryItemRemoved.Invoke(this, removedItems);
                 _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Removed items: {string.Join(", ", removedItems)}");
             }
 
             async Task AddItemAsync(IReadOnlyList<ClipboardHistoryItem> items)
             {
-                if (OnHistoryItemAdded == null)
-                    return;
+                if (OnHistoryItemAdded == null) return;
                 var newItem = items.First(x => !_clipboardHistoryItemsIds.Contains(x.Id));
-                if (newItem == null)
-                    return;
+                if (newItem == null) return;
                 OnHistoryItemAdded.Invoke(this, await GetClipboardData(newItem));
                 _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Added item: {newItem.Id}");
             }
 
             bool UpdatedPinnedItems(IReadOnlyList<ClipboardHistoryItem> items)
             {
-                if (OnHistoryItemPinUpdated == null)
-                    return false;
-                // No idea how to get the updated item
+                if (OnHistoryItemPinUpdated == null) return false;
+                // TODO: See more in https://github.com/Jack251970/Flow.Launcher.Plugin.ClipboardPlus/issues/45
                 OnHistoryItemPinUpdated.Invoke(this, ClipboardData.NULL);
                 _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: No idea how to get the updated item.");
                 return false;
@@ -254,9 +249,9 @@ public class WindowsClipboardHelper : IDisposable
 
                 // get the clipboard data
                 var clipboardDataItems = new List<ClipboardData>();
-                foreach (ClipboardHistoryItem? item in laterSortedItems)
+                foreach (var item in laterSortedItems)
                 {
-                    ClipboardData clipboardData = await GetClipboardData(item);
+                    var clipboardData = await GetClipboardData(item);
                     if (!clipboardData.IsNull())
                     {
                         clipboardDataItems.Add(clipboardData);
@@ -289,9 +284,9 @@ public class WindowsClipboardHelper : IDisposable
 
                 // get the clipboard data
                 var clipboardDataItems = new List<ClipboardData>();
-                foreach (ClipboardHistoryItem? item in laterSortedItems)
+                foreach (var item in laterSortedItems)
                 {
-                    ClipboardData clipboardData = await GetClipboardData(item);
+                    var clipboardData = await GetClipboardData(item);
                     if (!clipboardData.IsNull())
                     {
                         clipboardDataItems.Add(clipboardData);
@@ -312,7 +307,7 @@ public class WindowsClipboardHelper : IDisposable
     private async Task<ClipboardData> GetClipboardData(ClipboardHistoryItem item)
     {
         // If the clipboard is empty, return.
-        DataPackageView dataObj = item.Content;
+        var dataObj = item.Content;
         if (dataObj == null)
         {
             return ClipboardData.NULL;
@@ -320,7 +315,7 @@ public class WindowsClipboardHelper : IDisposable
 
         // Get hash id & create time
         var hashId = GetHashId(item.Id);
-        DateTime createTime = item.Timestamp.DateTime;
+        var createTime = item.Timestamp.DateTime;
 
         // Determines whether a file/files have been cut/copied.
         if (_clipboardPlus.ObservableDataFormats.Images && ClipboardHandleWin.IsDataImage(dataObj))
@@ -332,7 +327,7 @@ public class WindowsClipboardHelper : IDisposable
                 {
                     if (await ClipboardHandleWin.GetImageContentAsync(dataObj) is BitmapImage capturedImage)
                     {
-                        ClipboardData clipboardData = _clipboardPlus.GetClipboardDataItem(
+                        var clipboardData = _clipboardPlus.GetClipboardDataItem(
                             capturedImage,
                             DataType.Image,
                             hashId,
@@ -360,8 +355,8 @@ public class WindowsClipboardHelper : IDisposable
         // Determines whether plain text or rich text has been cut/copied.
         else if (_clipboardPlus.ObservableDataFormats.Texts && ClipboardHandleWin.IsDataText(dataObj))
         {
-            (string? plainText, string? richText, DataType dataType) = await ClipboardHandleWin.GetTextContentAsync(dataObj);
-            ClipboardData clipboardData = _clipboardPlus.GetClipboardDataItem(
+            (string? plainText, string? richText, var dataType) = await ClipboardHandleWin.GetTextContentAsync(dataObj);
+            var clipboardData = _clipboardPlus.GetClipboardDataItem(
                 dataType == DataType.PlainText ? plainText : richText,
                 dataType,
                 hashId,
@@ -385,7 +380,7 @@ public class WindowsClipboardHelper : IDisposable
             // Therefore assign the content its rightful type.
             if (await ClipboardHandleWin.GetFilesContentAsync(dataObj) is string[] capturedFiles)
             {
-                ClipboardData clipboardData = _clipboardPlus.GetClipboardDataItem(
+                var clipboardData = _clipboardPlus.GetClipboardDataItem(
                     capturedFiles,
                     DataType.Files,
                     hashId,
@@ -402,7 +397,7 @@ public class WindowsClipboardHelper : IDisposable
             }
             else
             {
-                ClipboardData clipboardData = _clipboardPlus.GetClipboardDataItem(
+                var clipboardData = _clipboardPlus.GetClipboardDataItem(
                     dataObj,
                     DataType.Other,
                     hashId,
@@ -421,7 +416,7 @@ public class WindowsClipboardHelper : IDisposable
         // Determines whether an unknown object has been cut/copied.
         else if (_clipboardPlus.ObservableDataFormats.Others && (!ClipboardHandleWin.IsDataFiles(dataObj)))
         {
-            ClipboardData clipboardData = _clipboardPlus.GetClipboardDataItem(
+            var clipboardData = _clipboardPlus.GetClipboardDataItem(
                 dataObj,
                 DataType.Other,
                 hashId,
