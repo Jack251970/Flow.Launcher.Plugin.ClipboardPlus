@@ -151,35 +151,20 @@ public class WindowsClipboardHelper : IDisposable
                     // invoke the event
                     if (e != null)
                     {
-                        if (_clipboardHistoryItems.Count < items.Count)  // add 1 item
+                        if (_clipboardHistoryItems.Count < items.Count)  // Item added
                         {
-                            if (OnHistoryItemAdded != null)
-                            {
-                                var newItem = items.First(x => !_clipboardHistoryItemsIds.Contains(x.Id));
-                                OnHistoryItemAdded?.Invoke(this, await GetClipboardData(newItem));
-                                _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Added item: {newItem.Id}");
-                            }
+                            await AddItemAsync(items);
                         }
-                        else if (_clipboardHistoryItems.Count > items.Count)  // remove 1 item
+                        else if (_clipboardHistoryItems.Count > items.Count)  // Item removed
                         {
-                            if (OnHistoryItemRemoved != null)
-                            {
-                                var newClipboardHistoryItemsIds = items.Select(x => x.Id).ToList();
-                                var removedItems = _clipboardHistoryItems
-                                    .Where(x => !newClipboardHistoryItemsIds.Contains(x.Id))
-                                    .Select(x => GetHashId(x.Id))
-                                    .ToArray();
-                                OnHistoryItemRemoved.Invoke(this, removedItems);
-                                _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Removed items: {string.Join(", ", removedItems)}");
-                            }
+                            RemoveItem(items);
                         }
-                        else
+                        else // Windows clipboard history is full, or item pin updated
                         {
-                            if (OnHistoryItemPinUpdated != null)
+                            if (!UpdatedPinnedItems(items))
                             {
-                                // No idea how to get the updated item
-                                OnHistoryItemPinUpdated.Invoke(this, ClipboardData.NULL);
-                                _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: No idea how to get the updated item.");
+                                 RemoveItem(items);
+                                await AddItemAsync(items);
                             }
                         }
                     }
@@ -198,7 +183,43 @@ public class WindowsClipboardHelper : IDisposable
             {
                 _historyItemLock.Release();
             }
-        });
+
+            void RemoveItem(IReadOnlyList<ClipboardHistoryItem> items)
+            {
+                if (OnHistoryItemRemoved == null)
+                    return;
+                var newClipboardHistoryItemsIds = items.Select(x => x.Id).ToList();
+                var removedItems = _clipboardHistoryItems
+                    .Where(x => !newClipboardHistoryItemsIds.Contains(x.Id))
+                    .Select(x => GetHashId(x.Id))
+                    .ToArray();
+                if (removedItems.Length == 0)
+                    return;
+                OnHistoryItemRemoved.Invoke(this, removedItems);
+                _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Removed items: {string.Join(", ", removedItems)}");
+            }
+
+            async Task AddItemAsync(IReadOnlyList<ClipboardHistoryItem> items)
+            {
+                if (OnHistoryItemAdded == null)
+                    return;
+                var newItem = items.First(x => !_clipboardHistoryItemsIds.Contains(x.Id));
+                if (newItem == null)
+                    return;
+                OnHistoryItemAdded.Invoke(this, await GetClipboardData(newItem));
+                _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Added item: {newItem.Id}");
+            }
+
+            bool UpdatedPinnedItems(IReadOnlyList<ClipboardHistoryItem> items)
+            {
+                if (OnHistoryItemPinUpdated == null)
+                    return false;
+                // No idea how to get the updated item
+                OnHistoryItemPinUpdated.Invoke(this, ClipboardData.NULL);
+                _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: No idea how to get the updated item.");
+                return false;
+            }
+        });     
     }
 
     private void Clipboard_HistoryEnabledChanged(object? sender, object e)
