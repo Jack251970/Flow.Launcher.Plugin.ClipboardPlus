@@ -42,10 +42,10 @@ public class WindowsClipboardHelper : IDisposable
     {
         if (IsClipboardHistorySupported())
         {
-            ClipboardHistoryItemsResult historyItems = await Clipboard.GetHistoryItemsAsync();
+            var historyItems = await Clipboard.GetHistoryItemsAsync();
             if (Clipboard.ClearHistory() && historyItems.Status == ClipboardHistoryItemsResultStatus.Success)
             {
-                ClipboardHistoryItemsResult historyItemsAfter = await Clipboard.GetHistoryItemsAsync();
+                var historyItemsAfter = await Clipboard.GetHistoryItemsAsync();
                 if (historyItemsAfter.Status == ClipboardHistoryItemsResultStatus.Success)
                 {
                     return historyItems.Items.Count - historyItemsAfter.Items.Count;
@@ -60,10 +60,10 @@ public class WindowsClipboardHelper : IDisposable
     {
         if (IsClipboardHistorySupported())
         {
-            ClipboardHistoryItemsResult historyItems = await Clipboard.GetHistoryItemsAsync();
+            var historyItems = await Clipboard.GetHistoryItemsAsync();
             if (historyItems.Status == ClipboardHistoryItemsResultStatus.Success)
             {
-                foreach (ClipboardHistoryItem? item in historyItems.Items)
+                foreach (var item in historyItems.Items)
                 {
                     Clipboard.DeleteItemFromHistory(item);
                 }
@@ -143,10 +143,10 @@ public class WindowsClipboardHelper : IDisposable
             await _historyItemLock.WaitAsync();
             try
             {
-                ClipboardHistoryItemsResult historyItems = await Clipboard.GetHistoryItemsAsync();
+                var historyItems = await Clipboard.GetHistoryItemsAsync();
                 if (historyItems.Status == ClipboardHistoryItemsResultStatus.Success)
                 {
-                    IReadOnlyList<ClipboardHistoryItem> items = historyItems.Items;
+                    var items = historyItems.Items;
 
                     // invoke the event
                     if (e != null)
@@ -203,7 +203,7 @@ public class WindowsClipboardHelper : IDisposable
             {
                 if (OnHistoryItemAdded == null)
                     return;
-                ClipboardHistoryItem newItem = items.First(x => !_clipboardHistoryItemsIds.Contains(x.Id));
+                var newItem = items.First(x => !_clipboardHistoryItemsIds.Contains(x.Id));
                 if (newItem == null)
                     return;
                 OnHistoryItemAdded.Invoke(this, await GetClipboardData(newItem));
