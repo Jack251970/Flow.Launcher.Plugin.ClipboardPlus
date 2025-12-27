@@ -210,6 +210,9 @@ public class WindowsClipboardHelper : IDisposable
             {
                 if (OnHistoryItemPinUpdated == null) return false;
                 // TODO: See more in https://github.com/Jack251970/Flow.Launcher.Plugin.ClipboardPlus/issues/45
+                // Read file under %localappdata%\Microsoft\Windows\Clipboard\Pinned\some_GUID\metadata.json
+                // And check if pinned status changed
+                // For now, I wonder if this will be exposed in future Windows API
                 OnHistoryItemPinUpdated.Invoke(this, ClipboardData.NULL);
                 _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: No idea how to get the updated item.");
                 return false;
