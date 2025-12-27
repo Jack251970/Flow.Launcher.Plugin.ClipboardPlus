@@ -321,7 +321,7 @@ public class WindowsClipboardHelper : IDisposable
         if (_clipboardPlus.ObservableDataFormats.Images && ClipboardHandleWin.IsDataImage(dataObj))
         {
             // Make sure on the application dispatcher.
-            Task<ClipboardData> clipboardData = await System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
+            var clipboardData = await System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
             {
                 try
                 {
@@ -355,7 +355,7 @@ public class WindowsClipboardHelper : IDisposable
         // Determines whether plain text or rich text has been cut/copied.
         else if (_clipboardPlus.ObservableDataFormats.Texts && ClipboardHandleWin.IsDataText(dataObj))
         {
-            (string? plainText, string? richText, var dataType) = await ClipboardHandleWin.GetTextContentAsync(dataObj);
+            var (plainText, richText, dataType) = await ClipboardHandleWin.GetTextContentAsync(dataObj);
             var clipboardData = _clipboardPlus.GetClipboardDataItem(
                 dataType == DataType.PlainText ? plainText : richText,
                 dataType,
