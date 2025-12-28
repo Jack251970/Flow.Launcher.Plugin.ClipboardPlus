@@ -1147,6 +1147,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             WindowsClipboardHelper.OnHistoryItemAdded += WindowsClipboardHelper_OnHistoryItemAdded;
         }
         WindowsClipboardHelper.OnHistoryItemRemoved += WindowsClipboardHelper_OnHistoryItemRemoved;
+        WindowsClipboardHelper.OnHistoryItemPinUpdated += WindowsClipboardHelper_OnHistoryItemPinUpdated;
         WindowsClipboardHelper.OnHistoryEnabledChanged += WindowsClipboardHelper_OnHistoryEnabledChanged;
         WindowsClipboardHelper.EnableClipboardHistory();
         if (load)
@@ -1171,6 +1172,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             WindowsClipboardHelper.OnHistoryItemAdded -= WindowsClipboardHelper_OnHistoryItemAdded;
         }
         WindowsClipboardHelper.OnHistoryItemRemoved -= WindowsClipboardHelper_OnHistoryItemRemoved;
+        WindowsClipboardHelper.OnHistoryItemPinUpdated -= WindowsClipboardHelper_OnHistoryItemPinUpdated;
         WindowsClipboardHelper.OnHistoryEnabledChanged -= WindowsClipboardHelper_OnHistoryEnabledChanged;
         if (remove)
         {
@@ -1197,6 +1199,33 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         try
         {
             RemoveRecordsFromSystem(r => e.Contains(r.HashId));
+        }
+        finally
+        {
+            RecordsLock.Release();
+        }
+    }
+
+    private async void WindowsClipboardHelper_OnHistoryItemPinUpdated(object? sender, ClipboardData e)
+    {
+        await RecordsLock.WaitAsync();
+        try
+        {
+            var clipboardDataPair = RecordsList.FirstOrDefault(r => r.ClipboardData.HashId == e.HashId);
+            if (clipboardDataPair != null)
+            {
+                if (clipboardDataPair.ClipboardData.Pinned != e.Pinned)
+                {
+                    clipboardDataPair.TogglePinned();
+                }
+                RecordsList.Remove(clipboardDataPair);
+                RecordsList.AddFirst(clipboardDataPair);
+                Context.LogDebug(ClassName, $"Updated pin status for record: {e.HashId}, pinned: {e.Pinned}");
+            }
+            else
+            {
+                Context.LogDebug(ClassName, $"Unable to find the record for update: {e.HashId}");
+            }
         }
         finally
         {
