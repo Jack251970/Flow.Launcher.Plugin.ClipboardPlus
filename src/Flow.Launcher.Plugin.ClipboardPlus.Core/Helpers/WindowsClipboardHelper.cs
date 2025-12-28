@@ -285,7 +285,8 @@ public class WindowsClipboardHelper : IDisposable
             {
                 var newItem = items.FirstOrDefault(x => !_clipboardHistoryItemsIds.Contains(GetHashId(x)));
                 if (newItem == null) return;
-                var addedItem = await GetClipboardData(newItem);
+                _previousPinnedItemIds = GetPinnedClipboardItemIds();
+                var addedItem = await GetClipboardData(newItem, _previousPinnedItemIds);
                 if (!addedItem.IsNull())
                 {
                     OnHistoryItemAdded?.Invoke(this, addedItem);
@@ -343,11 +344,11 @@ public class WindowsClipboardHelper : IDisposable
         if (IsHistoryEnabled())
         {
             // Update previous pinned IDs under the history item lock
-            var pinnedIds = GetPinnedClipboardItemIds();
+            var currentPinnedIds = GetPinnedClipboardItemIds();
             await _historyItemLock.WaitAsync();
             try
             {
-                _previousPinnedItemIds = pinnedIds;
+                _previousPinnedItemIds = currentPinnedIds;
             }
             finally
             {
@@ -393,9 +394,10 @@ public class WindowsClipboardHelper : IDisposable
 
                 // get the clipboard data
                 var clipboardDataItems = new List<ClipboardData>();
+                var currentPinnedIds = GetPinnedClipboardItemIds();
                 foreach (var item in laterSortedItems)
                 {
-                    var clipboardData = await GetClipboardData(item);
+                    var clipboardData = await GetClipboardData(item, currentPinnedIds);
                     if (!clipboardData.IsNull())
                     {
                         clipboardDataItems.Add(clipboardData);
@@ -428,9 +430,10 @@ public class WindowsClipboardHelper : IDisposable
 
                 // get the clipboard data
                 var clipboardDataItems = new List<ClipboardData>();
+                var currentPinnedIds = GetPinnedClipboardItemIds();
                 foreach (var item in laterSortedItems)
                 {
-                    var clipboardData = await GetClipboardData(item);
+                    var clipboardData = await GetClipboardData(item, currentPinnedIds);
                     if (!clipboardData.IsNull())
                     {
                         clipboardDataItems.Add(clipboardData);
@@ -448,7 +451,7 @@ public class WindowsClipboardHelper : IDisposable
         return null;
     }
 
-    private async Task<ClipboardData> GetClipboardData(ClipboardHistoryItem item)
+    private async Task<ClipboardData> GetClipboardData(ClipboardHistoryItem item, HashSet<string> currentPinnedIds)
     {
         // If the clipboard is empty, return.
         var dataObj = item.Content;
@@ -460,7 +463,6 @@ public class WindowsClipboardHelper : IDisposable
         // Get hash id & create time & pinned list
         var hashId = GetHashId(item);
         var createTime = item.Timestamp.DateTime;
-        var currentPinnedIds = GetPinnedClipboardItemIds();
         var pinned = currentPinnedIds.Contains(hashId);
 
         // Determines whether a file/files have been cut/copied.
