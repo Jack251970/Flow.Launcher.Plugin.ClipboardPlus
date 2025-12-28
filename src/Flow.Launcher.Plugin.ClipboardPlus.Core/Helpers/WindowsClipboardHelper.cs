@@ -90,18 +90,23 @@ public class WindowsClipboardHelper : IDisposable
 
     #region Pinned Items Helper
 
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     /// <summary>
     /// Represents the metadata.json structure for pinned clipboard items
     /// </summary>
     private class PinnedClipboardMetadata
     {
-        public Dictionary<string, PinnedItemInfo>? items { get; set; }
+        public Dictionary<string, PinnedItemInfo>? Items { get; set; }
     }
 
     private class PinnedItemInfo
     {
-        public string? timestamp { get; set; }
-        public string? source { get; set; }
+        public string? Timestamp { get; set; }
+        public string? Source { get; set; }
     }
 
     /// <summary>
@@ -132,15 +137,11 @@ public class WindowsClipboardHelper : IDisposable
                     try
                     {
                         var jsonContent = File.ReadAllText(metadataPath);
-                        var options = new JsonSerializerOptions 
-                        { 
-                            PropertyNameCaseInsensitive = true 
-                        };
-                        var metadata = JsonSerializer.Deserialize<PinnedClipboardMetadata>(jsonContent, options);
+                        var metadata = JsonSerializer.Deserialize<PinnedClipboardMetadata>(jsonContent, _jsonOptions);
                         
-                        if (metadata?.items != null)
+                        if (metadata?.Items != null)
                         {
-                            foreach (var itemId in metadata.items.Keys)
+                            foreach (var itemId in metadata.Items.Keys)
                             {
                                 // Remove curly braces from GUID format (e.g., "{GUID}" -> "GUID")
                                 // and convert to lowercase to match ClipboardHistoryItem.Id format
@@ -152,7 +153,7 @@ public class WindowsClipboardHelper : IDisposable
                     catch (Exception ex)
                     {
                         // Log error but continue processing other metadata files
-                        _context?.LogException(ClassName, $"Failed to read metadata file: {metadataPath}", ex, "GetPinnedClipboardItemIds");
+                        _context.LogException(ClassName, $"Failed to read metadata file: {metadataPath}", ex, "GetPinnedClipboardItemIds");
                     }
                 }
             }
@@ -160,7 +161,7 @@ public class WindowsClipboardHelper : IDisposable
         catch (Exception ex)
         {
             // Log error accessing the pinned folder
-            _context?.LogException(ClassName, "Failed to access Windows clipboard pinned folder", ex, "GetPinnedClipboardItemIds");
+            _context.LogException(ClassName, "Failed to access Windows clipboard pinned folder", ex, "GetPinnedClipboardItemIds");
         }
 
         return pinnedIds;
