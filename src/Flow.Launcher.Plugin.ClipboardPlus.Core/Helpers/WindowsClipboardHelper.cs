@@ -457,9 +457,11 @@ public class WindowsClipboardHelper : IDisposable
             return ClipboardData.NULL;
         }
 
-        // Get hash id & create time
+        // Get hash id & create time & pinned list
         var hashId = GetHashId(item.Id);
         var createTime = item.Timestamp.DateTime;
+        var currentPinnedIds = GetPinnedClipboardItemIds();
+        var pinned = currentPinnedIds.Contains(hashId);
 
         // Determines whether a file/files have been cut/copied.
         if (_clipboardPlus.ObservableDataFormats.Images && ClipboardHandleWin.IsDataImage(dataObj))
@@ -483,6 +485,7 @@ public class WindowsClipboardHelper : IDisposable
                         if (!clipboardData.IsNull())
                         {
                             clipboardData.ClipboardHistoryItem = item;
+                            clipboardData.Pinned = pinned;
                         }
                         return clipboardData;
                     }
@@ -512,6 +515,7 @@ public class WindowsClipboardHelper : IDisposable
             if (!clipboardData.IsNull())
             {
                 clipboardData.ClipboardHistoryItem = item;
+                clipboardData.Pinned = pinned;
             }
             return clipboardData;
         }
@@ -536,6 +540,7 @@ public class WindowsClipboardHelper : IDisposable
                 if (!clipboardData.IsNull())
                 {
                     clipboardData.ClipboardHistoryItem = item;
+                    clipboardData.Pinned = pinned;
                 }
                 return clipboardData;
             }
@@ -553,6 +558,7 @@ public class WindowsClipboardHelper : IDisposable
                 if (!clipboardData.IsNull())
                 {
                     clipboardData.ClipboardHistoryItem = item;
+                    clipboardData.Pinned = pinned;
                 }
                 return clipboardData;
             }
@@ -572,6 +578,7 @@ public class WindowsClipboardHelper : IDisposable
             if (!clipboardData.IsNull())
             {
                 clipboardData.ClipboardHistoryItem = item;
+                clipboardData.Pinned = pinned;
             }
             return clipboardData;
         }
