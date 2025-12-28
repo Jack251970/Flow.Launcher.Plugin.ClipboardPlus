@@ -285,7 +285,7 @@ public class WindowsClipboardHelper : IDisposable
             async Task AddItemAsync(IReadOnlyList<ClipboardHistoryItem> items)
             {
                 if (OnHistoryItemAdded == null) return;
-                var newItem = items.First(x => !_clipboardHistoryItemsIds.Contains(x.Id));
+                var newItem = items.FirstOrDefault(x => !_clipboardHistoryItemsIds.Contains(x.Id));
                 if (newItem == null) return;
                 var addedItem = await GetClipboardData(newItem);
                 if (!addedItem.IsNull())
