@@ -191,6 +191,7 @@ public partial class MainWindow : Window
         ClipboardMonitorWin.StartMonitoring();
 
         Helper.SetClipboardPlus(ClipboardPlus);
+        Helper.EnableClipboardHistory();
         Helper.OnHistoryItemAdded += Helper_OnHistoryItemAdded;
         Helper.OnHistoryItemRemoved += Helper_OnHistoryItemRemoved;
         Helper.OnHistoryItemPinUpdated += Helper_OnHistoryItemPinUpdated;
@@ -221,6 +222,7 @@ public partial class MainWindow : Window
         ClipboardMonitorWPF.Dispose();
         ClipboardMonitorWin.ClipboardChanged -= OnClipboardChangedWin;
         ClipboardMonitorWin.Dispose();
+        Helper.DisableClipboardHistory();
         Helper.Dispose();
         await ClipboardPlus.DisposeAsync();
     }
