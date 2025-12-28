@@ -341,7 +341,7 @@ public class WindowsClipboardHelper : IDisposable
                         }
                         else
                         {
-                            _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Failed to get clipboard data for pinned item: {item.Id}");
+                            _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Failed to get clipboard data for pinned item: {historyItem.Id}");
                         }
                     }
                     return true;
