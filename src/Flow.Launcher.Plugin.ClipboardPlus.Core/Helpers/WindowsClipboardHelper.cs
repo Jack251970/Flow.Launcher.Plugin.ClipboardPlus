@@ -108,7 +108,7 @@ public class WindowsClipboardHelper : IDisposable
     /// Gets the set of pinned clipboard item IDs from Windows clipboard pinned folder
     /// </summary>
     /// <returns>HashSet of pinned item IDs (in lowercase)</returns>
-    private static HashSet<string> GetPinnedClipboardItemIds()
+    private HashSet<string> GetPinnedClipboardItemIds()
     {
         var pinnedIds = new HashSet<string>();
 
@@ -142,22 +142,25 @@ public class WindowsClipboardHelper : IDisposable
                         {
                             foreach (var itemId in metadata.items.Keys)
                             {
-                                // Remove curly braces and convert to lowercase to match ClipboardHistoryItem.Id format
+                                // Remove curly braces from GUID format (e.g., "{GUID}" -> "GUID")
+                                // and convert to lowercase to match ClipboardHistoryItem.Id format
                                 var normalizedId = itemId.Trim('{', '}').ToLower();
                                 pinnedIds.Add(normalizedId);
                             }
                         }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        // Ignore errors reading individual metadata files
+                        // Log error but continue processing other metadata files
+                        _context?.LogException(ClassName, $"Failed to read metadata file: {metadataPath}", ex, "GetPinnedClipboardItemIds");
                     }
                 }
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // Ignore errors accessing the pinned folder
+            // Log error accessing the pinned folder
+            _context?.LogException(ClassName, "Failed to access Windows clipboard pinned folder", ex, "GetPinnedClipboardItemIds");
         }
 
         return pinnedIds;
