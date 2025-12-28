@@ -119,6 +119,7 @@ public class WindowsClipboardHelper : IDisposable
 
         try
         {
+            // https://superuser.com/questions/1778831/where-is-the-file-that-contains-pinned-items-in-windows-10-clipboard
             var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             var clipboardPinnedPath = Path.Combine(localAppData, "Microsoft", "Windows", "Clipboard", "Pinned");
 
