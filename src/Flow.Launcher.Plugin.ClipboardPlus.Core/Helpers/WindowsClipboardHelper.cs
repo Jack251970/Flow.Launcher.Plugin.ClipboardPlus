@@ -352,18 +352,39 @@ public class WindowsClipboardHelper : IDisposable
         });
     }
 
-    private void Clipboard_HistoryEnabledChanged(object? sender, object e)
+    private async void Clipboard_HistoryEnabledChanged(object? sender, object e)
     {
         if (IsHistoryEnabled())
         {
-            _previousPinnedItemIds = GetPinnedClipboardItemIds();
+            // Update previous pinned IDs under the history item lock
+            var pinnedIds = GetPinnedClipboardItemIds();
+            await _historyItemLock.WaitAsync();
+            try
+            {
+                _previousPinnedItemIds = pinnedIds;
+            }
+            finally
+            {
+                _historyItemLock.Release();
+            }
+
+            // Trigger history changed handling (this method uses _historyItemLock internally)
             Clipboard_HistoryChanged(this, null!);
         }
         else
         {
-            _clipboardHistoryItems.Clear();
-            _clipboardHistoryItemsIds.Clear();
-            _previousPinnedItemIds.Clear();
+            // Clear history collections and previous pinned IDs under the history item lock
+            await _historyItemLock.WaitAsync();
+            try
+            {
+                _clipboardHistoryItems.Clear();
+                _clipboardHistoryItemsIds.Clear();
+                _previousPinnedItemIds.Clear();
+            }
+            finally
+            {
+                _historyItemLock.Release();
+            }
         }
         OnHistoryEnabledChanged?.Invoke(this, IsHistoryEnabled());
     }
