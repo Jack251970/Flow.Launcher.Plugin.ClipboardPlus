@@ -295,7 +295,7 @@ public class WindowsClipboardHelper : IDisposable
                 }
                 else
                 {
-                    _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Failed to get clipboard data for item: {newItem.Id}");
+                    _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Failed to get clipboard data for added item: {newItem.Id}");
                 }
             }
 
@@ -328,10 +328,8 @@ public class WindowsClipboardHelper : IDisposable
                 // If we found items with changed pin status, invoke the event
                 if (itemsWithChangedPinStatus.Count > 0)
                 {
-                    foreach (var item in itemsWithChangedPinStatus)
+                    foreach (var (historyItem, pinned) in itemsWithChangedPinStatus)
                     {
-                        var historyItem = item.Item;
-                        var pinned = item.IsPinned;
                         var clipboardData = await GetClipboardData(historyItem);
                         if (!clipboardData.IsNull())
                         {
