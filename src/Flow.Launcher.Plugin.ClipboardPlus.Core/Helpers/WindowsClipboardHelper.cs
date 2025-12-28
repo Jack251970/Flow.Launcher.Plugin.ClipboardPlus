@@ -211,7 +211,7 @@ public class WindowsClipboardHelper : IDisposable
 
     public event EventHandler<ClipboardData>? OnHistoryItemAdded;
     public event EventHandler<string[]>? OnHistoryItemRemoved;
-    public event EventHandler<ClipboardData>? OnHistoryItemPinUpdated;
+    public event EventHandler<(string HashId, bool Pinned)>? OnHistoryItemPinUpdated;
 
     public event EventHandler<bool>? OnHistoryEnabledChanged;
 
@@ -271,26 +271,24 @@ public class WindowsClipboardHelper : IDisposable
 
             void RemoveItem(IReadOnlyList<ClipboardHistoryItem> items)
             {
-                if (OnHistoryItemRemoved == null) return;
                 var newClipboardHistoryItemsIds = items.Select(x => x.Id).ToList();
                 var removedItems = _clipboardHistoryItems
                     .Where(x => !newClipboardHistoryItemsIds.Contains(x.Id))
                     .Select(x => GetHashId(x.Id))
                     .ToArray();
                 if (removedItems.Length == 0) return;
-                OnHistoryItemRemoved.Invoke(this, removedItems);
+                OnHistoryItemRemoved?.Invoke(this, removedItems);
                 _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Removed items: {string.Join(", ", removedItems)}");
             }
 
             async Task AddItemAsync(IReadOnlyList<ClipboardHistoryItem> items)
             {
-                if (OnHistoryItemAdded == null) return;
                 var newItem = items.FirstOrDefault(x => !_clipboardHistoryItemsIds.Contains(x.Id));
                 if (newItem == null) return;
                 var addedItem = await GetClipboardData(newItem);
                 if (!addedItem.IsNull())
                 {
-                    OnHistoryItemAdded.Invoke(this, addedItem);
+                    OnHistoryItemAdded?.Invoke(this, addedItem);
                     _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Added item: {newItem.Id}");
                 }
                 else
@@ -301,8 +299,6 @@ public class WindowsClipboardHelper : IDisposable
 
             async Task<bool> UpdatedPinnedItemsAsync(IReadOnlyList<ClipboardHistoryItem> items)
             {
-                if (OnHistoryItemPinUpdated == null) return false;
-                
                 // Get current pinned item IDs from Windows clipboard metadata
                 var currentPinnedIds = GetPinnedClipboardItemIds();
                 
@@ -330,17 +326,9 @@ public class WindowsClipboardHelper : IDisposable
                 {
                     foreach (var (historyItem, pinned) in itemsWithChangedPinStatus)
                     {
-                        var clipboardData = await GetClipboardData(historyItem);
-                        if (!clipboardData.IsNull())
-                        {
-                            clipboardData.Pinned = pinned;
-                            OnHistoryItemPinUpdated.Invoke(this, clipboardData);
-                            _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Pin status updated for item: {historyItem.Id}");
-                        }
-                        else
-                        {
-                            _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Failed to get clipboard data for pinned item: {historyItem.Id}");
-                        }
+                        // Sometimes getting clipboard data may fail, so we use HashId & Pinned instead
+                        OnHistoryItemPinUpdated?.Invoke(this, (GetHashId(historyItem.Id), pinned));
+                        _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Pin status updated for item: {historyItem.Id}");
                     }
                     return true;
                 }

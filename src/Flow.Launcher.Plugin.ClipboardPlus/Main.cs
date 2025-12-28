@@ -1206,7 +1206,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    private async void WindowsClipboardHelper_OnHistoryItemPinUpdated(object? sender, ClipboardData e)
+    private async void WindowsClipboardHelper_OnHistoryItemPinUpdated(object? sender, (string HashId, bool Pinned) e)
     {
         await RecordsLock.WaitAsync();
         try

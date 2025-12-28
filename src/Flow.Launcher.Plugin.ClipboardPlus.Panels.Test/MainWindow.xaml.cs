@@ -207,7 +207,7 @@ public partial class MainWindow : Window
         Debug.WriteLine("Clipboard history item removed: " + string.Join(", ", e));
     }
 
-    private void Helper_OnHistoryItemPinUpdated(object? sender, ClipboardData e)
+    private void Helper_OnHistoryItemPinUpdated(object? sender, (string HashId, bool Pinned) e)
     {
         Debug.WriteLine("Clipboard history item pin updated: " + e.HashId);
     }
