@@ -132,7 +132,11 @@ public class WindowsClipboardHelper : IDisposable
                     try
                     {
                         var jsonContent = File.ReadAllText(metadataPath);
-                        var metadata = JsonSerializer.Deserialize<PinnedClipboardMetadata>(jsonContent);
+                        var options = new JsonSerializerOptions 
+                        { 
+                            PropertyNameCaseInsensitive = true 
+                        };
+                        var metadata = JsonSerializer.Deserialize<PinnedClipboardMetadata>(jsonContent, options);
                         
                         if (metadata?.items != null)
                         {
