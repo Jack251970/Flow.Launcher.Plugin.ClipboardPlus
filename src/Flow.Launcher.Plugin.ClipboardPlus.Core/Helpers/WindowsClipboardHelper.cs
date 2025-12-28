@@ -287,8 +287,16 @@ public class WindowsClipboardHelper : IDisposable
                 if (OnHistoryItemAdded == null) return;
                 var newItem = items.First(x => !_clipboardHistoryItemsIds.Contains(x.Id));
                 if (newItem == null) return;
-                OnHistoryItemAdded.Invoke(this, await GetClipboardData(newItem));
-                _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Added item: {newItem.Id}");
+                var addedItem = await GetClipboardData(newItem);
+                if (!addedItem.IsNull())
+                {
+                    OnHistoryItemAdded.Invoke(this, addedItem);
+                    _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Added item: {newItem.Id}");
+                }
+                else
+                {
+                    _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Failed to get clipboard data for item: {newItem.Id}");
+                }
             }
 
             async Task<bool> UpdatedPinnedItemsAsync(IReadOnlyList<ClipboardHistoryItem> items)
@@ -327,6 +335,10 @@ public class WindowsClipboardHelper : IDisposable
                         {
                             OnHistoryItemPinUpdated.Invoke(this, clipboardData);
                             _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Pin status updated for item: {item.Id}");
+                        }
+                        else
+                        {
+                            _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Failed to get clipboard data for pinned item: {item.Id}");
                         }
                     }
                     return true;
