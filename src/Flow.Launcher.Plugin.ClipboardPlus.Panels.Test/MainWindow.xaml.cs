@@ -208,7 +208,7 @@ public partial class MainWindow : Window
 
     private void Helper_OnHistoryItemPinUpdated(object? sender, ClipboardData e)
     {
-        Debug.WriteLine("Clipboard history item pin updated");
+        Debug.WriteLine("Clipboard history item pin updated: " + e.HashId);
     }
 
     #endregion
