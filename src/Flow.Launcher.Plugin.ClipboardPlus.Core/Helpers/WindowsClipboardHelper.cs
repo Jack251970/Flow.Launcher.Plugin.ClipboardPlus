@@ -248,7 +248,7 @@ public class WindowsClipboardHelper : IDisposable
                         }
                         else // Windows clipboard history is full, or item pin updated
                         {
-                            if (!await UpdatedPinnedItems(items))
+                            if (!await UpdatedPinnedItemsAsync(items))
                             {
                                 RemoveItem(items);
                                 await AddItemAsync(items);
@@ -293,7 +293,7 @@ public class WindowsClipboardHelper : IDisposable
                 _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Added item: {newItem.Id}");
             }
 
-            async Task<bool> UpdatedPinnedItems(IReadOnlyList<ClipboardHistoryItem> items)
+            async Task<bool> UpdatedPinnedItemsAsync(IReadOnlyList<ClipboardHistoryItem> items)
             {
                 if (OnHistoryItemPinUpdated == null) return false;
                 
