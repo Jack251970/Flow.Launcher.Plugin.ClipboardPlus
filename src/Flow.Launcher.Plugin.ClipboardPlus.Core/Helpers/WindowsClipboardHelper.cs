@@ -260,7 +260,7 @@ public class WindowsClipboardHelper : IDisposable
                     foreach (var item in items)
                     {
                         _clipboardHistoryItems.Add(item);
-                        _clipboardHistoryItemsIds.Add(item.Id);
+                        _clipboardHistoryItemsIds.Add(GetHashId(item));
                     }
                 }
             }
@@ -271,10 +271,10 @@ public class WindowsClipboardHelper : IDisposable
 
             void RemoveItem(IReadOnlyList<ClipboardHistoryItem> items)
             {
-                var newClipboardHistoryItemsIds = items.Select(x => x.Id).ToList();
+                var newClipboardHistoryItemsIds = items.Select(x => GetHashId(x)).ToList();
                 var removedItems = _clipboardHistoryItems
-                    .Where(x => !newClipboardHistoryItemsIds.Contains(x.Id))
-                    .Select(x => GetHashId(x.Id))
+                    .Where(x => !newClipboardHistoryItemsIds.Contains(GetHashId(x)))
+                    .Select(x => GetHashId(x))
                     .ToArray();
                 if (removedItems.Length == 0) return;
                 OnHistoryItemRemoved?.Invoke(this, removedItems);
@@ -283,17 +283,17 @@ public class WindowsClipboardHelper : IDisposable
 
             async Task AddItemAsync(IReadOnlyList<ClipboardHistoryItem> items)
             {
-                var newItem = items.FirstOrDefault(x => !_clipboardHistoryItemsIds.Contains(x.Id));
+                var newItem = items.FirstOrDefault(x => !_clipboardHistoryItemsIds.Contains(GetHashId(x)));
                 if (newItem == null) return;
                 var addedItem = await GetClipboardData(newItem);
                 if (!addedItem.IsNull())
                 {
                     OnHistoryItemAdded?.Invoke(this, addedItem);
-                    _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Added item: {newItem.Id}");
+                    _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Added item: {GetHashId(newItem)}");
                 }
                 else
                 {
-                    _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Failed to get clipboard data for added item: {newItem.Id}");
+                    _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Failed to get clipboard data for added item: {GetHashId(newItem)}");
                 }
             }
 
@@ -307,7 +307,7 @@ public class WindowsClipboardHelper : IDisposable
                 
                 foreach (var item in items)
                 {
-                    var itemId = GetHashId(item.Id);
+                    var itemId = GetHashId(item);
                     var isPinnedNow = currentPinnedIds.Contains(itemId);
                     var wasPinnedBefore = _previousPinnedItemIds.Contains(itemId);
                     
@@ -327,8 +327,8 @@ public class WindowsClipboardHelper : IDisposable
                     foreach (var (historyItem, pinned) in itemsWithChangedPinStatus)
                     {
                         // Sometimes getting clipboard data may fail, so we use HashId & Pinned instead
-                        OnHistoryItemPinUpdated?.Invoke(this, (GetHashId(historyItem.Id), pinned));
-                        _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Pin status updated for item: {historyItem.Id}");
+                        OnHistoryItemPinUpdated?.Invoke(this, (GetHashId(historyItem), pinned));
+                        _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Pin status updated for item: {GetHashId(historyItem)}");
                     }
                     return true;
                 }
@@ -458,7 +458,7 @@ public class WindowsClipboardHelper : IDisposable
         }
 
         // Get hash id & create time & pinned list
-        var hashId = GetHashId(item.Id);
+        var hashId = GetHashId(item);
         var createTime = item.Timestamp.DateTime;
         var currentPinnedIds = GetPinnedClipboardItemIds();
         var pinned = currentPinnedIds.Contains(hashId);
@@ -588,9 +588,9 @@ public class WindowsClipboardHelper : IDisposable
 
     // item.Id with numbers and capital letters, while StringUtils.GetGuid() with numbers and lowercase letters
     // Therefore, we need to convert the item.Id to lowercase.
-    private static string GetHashId(string itemId)
+    private static string GetHashId(ClipboardHistoryItem item)
     {
-        return itemId.ToLower();
+        return item.Id.ToLower();
     }
 
     #endregion
