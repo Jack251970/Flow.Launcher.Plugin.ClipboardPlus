@@ -191,6 +191,7 @@ public partial class MainWindow : Window
         ClipboardMonitorWin.StartMonitoring();
 
         Helper.SetClipboardPlus(ClipboardPlus);
+        Helper.EnableClipboardHistory();
         Helper.OnHistoryItemAdded += Helper_OnHistoryItemAdded;
         Helper.OnHistoryItemRemoved += Helper_OnHistoryItemRemoved;
         Helper.OnHistoryItemPinUpdated += Helper_OnHistoryItemPinUpdated;
@@ -208,7 +209,7 @@ public partial class MainWindow : Window
 
     private void Helper_OnHistoryItemPinUpdated(object? sender, ClipboardData e)
     {
-        Debug.WriteLine("Clipboard history item pin updated");
+        Debug.WriteLine("Clipboard history item pin updated: " + e.HashId);
     }
 
     #endregion
@@ -221,6 +222,7 @@ public partial class MainWindow : Window
         ClipboardMonitorWPF.Dispose();
         ClipboardMonitorWin.ClipboardChanged -= OnClipboardChangedWin;
         ClipboardMonitorWin.Dispose();
+        Helper.DisableClipboardHistory();
         Helper.Dispose();
         await ClipboardPlus.DisposeAsync();
     }

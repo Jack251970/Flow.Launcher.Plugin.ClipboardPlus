@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -86,6 +88,86 @@ public class WindowsClipboardHelper : IDisposable
 
     #endregion
 
+    #region Pinned Items Helper
+
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
+    /// <summary>
+    /// Represents the metadata.json structure for pinned clipboard items
+    /// </summary>
+    private class PinnedClipboardMetadata
+    {
+        public Dictionary<string, PinnedItemInfo>? Items { get; set; }
+    }
+
+    private class PinnedItemInfo
+    {
+        public string? Timestamp { get; set; }
+        public string? Source { get; set; }
+    }
+
+    /// <summary>
+    /// Gets the set of pinned clipboard item IDs from Windows clipboard pinned folder
+    /// </summary>
+    /// <returns>HashSet of pinned item IDs (in lowercase)</returns>
+    private HashSet<string> GetPinnedClipboardItemIds()
+    {
+        var pinnedIds = new HashSet<string>();
+
+        try
+        {
+            // https://superuser.com/questions/1778831/where-is-the-file-that-contains-pinned-items-in-windows-10-clipboard
+            var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var clipboardPinnedPath = Path.Combine(localAppData, "Microsoft", "Windows", "Clipboard", "Pinned");
+
+            if (!Directory.Exists(clipboardPinnedPath))
+            {
+                return pinnedIds;
+            }
+
+            // Enumerate all GUID directories under Pinned
+            var guidDirs = Directory.GetDirectories(clipboardPinnedPath);
+            foreach (var guidDir in guidDirs)
+            {
+                var metadataPath = Path.Combine(guidDir, "metadata.json");
+                if (File.Exists(metadataPath))
+                {
+                    try
+                    {
+                        var jsonContent = File.ReadAllText(metadataPath);
+                        var metadata = JsonSerializer.Deserialize<PinnedClipboardMetadata>(jsonContent, _jsonOptions);
+                        
+                        if (metadata?.Items != null)
+                        {
+                            foreach (var itemId in metadata.Items.Keys)
+                            {
+                                // Convert to lowercase to match ClipboardHistoryItem.Id format
+                                pinnedIds.Add(itemId.ToLower());
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log error but continue processing other metadata files
+                        _context.LogException(ClassName, $"Failed to read metadata file: {metadataPath}", ex, "GetPinnedClipboardItemIds");
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log error accessing the pinned folder
+            _context.LogException(ClassName, "Failed to access Windows clipboard pinned folder", ex, "GetPinnedClipboardItemIds");
+        }
+
+        return pinnedIds;
+    }
+
+    #endregion
+
     #region Initialization
 
     private IClipboardPlus _clipboardPlus = null!;
@@ -104,6 +186,7 @@ public class WindowsClipboardHelper : IDisposable
     {
         if (IsClipboardHistorySupported())
         {
+            _previousPinnedItemIds = GetPinnedClipboardItemIds();
             Clipboard_HistoryChanged(this, null!);
             Clipboard.HistoryChanged += Clipboard_HistoryChanged;
             Clipboard.HistoryEnabledChanged += Clipboard_HistoryEnabledChanged;
@@ -116,6 +199,7 @@ public class WindowsClipboardHelper : IDisposable
         {
             _clipboardHistoryItems.Clear();
             _clipboardHistoryItemsIds.Clear();
+            _previousPinnedItemIds.Clear();
             Clipboard.HistoryChanged -= Clipboard_HistoryChanged;
             Clipboard.HistoryEnabledChanged -= Clipboard_HistoryEnabledChanged;
         }
@@ -135,6 +219,7 @@ public class WindowsClipboardHelper : IDisposable
 
     private readonly List<string> _clipboardHistoryItemsIds = [];
     private readonly List<ClipboardHistoryItem> _clipboardHistoryItems = [];
+    private HashSet<string> _previousPinnedItemIds = [];
 
     private void Clipboard_HistoryChanged(object? sender, ClipboardHistoryChangedEventArgs e)
     {
@@ -161,7 +246,7 @@ public class WindowsClipboardHelper : IDisposable
                         }
                         else // Windows clipboard history is full, or item pin updated
                         {
-                            if (!UpdatedPinnedItems(items))
+                            if (!await UpdatedPinnedItemsAsync(items))
                             {
                                 RemoveItem(items);
                                 await AddItemAsync(items);
@@ -200,21 +285,65 @@ public class WindowsClipboardHelper : IDisposable
             async Task AddItemAsync(IReadOnlyList<ClipboardHistoryItem> items)
             {
                 if (OnHistoryItemAdded == null) return;
-                var newItem = items.First(x => !_clipboardHistoryItemsIds.Contains(x.Id));
+                var newItem = items.FirstOrDefault(x => !_clipboardHistoryItemsIds.Contains(x.Id));
                 if (newItem == null) return;
-                OnHistoryItemAdded.Invoke(this, await GetClipboardData(newItem));
-                _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Added item: {newItem.Id}");
+                var addedItem = await GetClipboardData(newItem);
+                if (!addedItem.IsNull())
+                {
+                    OnHistoryItemAdded.Invoke(this, addedItem);
+                    _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Added item: {newItem.Id}");
+                }
+                else
+                {
+                    _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Failed to get clipboard data for item: {newItem.Id}");
+                }
             }
 
-            bool UpdatedPinnedItems(IReadOnlyList<ClipboardHistoryItem> items)
+            async Task<bool> UpdatedPinnedItemsAsync(IReadOnlyList<ClipboardHistoryItem> items)
             {
                 if (OnHistoryItemPinUpdated == null) return false;
-                // TODO: See more in https://github.com/Jack251970/Flow.Launcher.Plugin.ClipboardPlus/issues/45
-                // Read file under %localappdata%\Microsoft\Windows\Clipboard\Pinned\some_GUID\metadata.json
-                // And check if pinned status changed
-                // For now, I wonder if this will be exposed in future Windows API
-                OnHistoryItemPinUpdated.Invoke(this, ClipboardData.NULL);
-                _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: No idea how to get the updated item.");
+                
+                // Get current pinned item IDs from Windows clipboard metadata
+                var currentPinnedIds = GetPinnedClipboardItemIds();
+                
+                // Find items whose pin status changed
+                var itemsWithChangedPinStatus = new List<ClipboardHistoryItem>();
+                
+                foreach (var item in items)
+                {
+                    var itemId = GetHashId(item.Id);
+                    var isPinnedNow = currentPinnedIds.Contains(itemId);
+                    var wasPinnedBefore = _previousPinnedItemIds.Contains(itemId);
+                    
+                    // Check if pin status changed
+                    if (isPinnedNow != wasPinnedBefore)
+                    {
+                        itemsWithChangedPinStatus.Add(item);
+                    }
+                }
+                
+                // Update the previous pinned state
+                _previousPinnedItemIds = currentPinnedIds;
+                
+                // If we found items with changed pin status, invoke the event
+                if (itemsWithChangedPinStatus.Count > 0)
+                {
+                    foreach (var item in itemsWithChangedPinStatus)
+                    {
+                        var clipboardData = await GetClipboardData(item);
+                        if (!clipboardData.IsNull())
+                        {
+                            OnHistoryItemPinUpdated.Invoke(this, clipboardData);
+                            _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Pin status updated for item: {item.Id}");
+                        }
+                        else
+                        {
+                            _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Failed to get clipboard data for pinned item: {item.Id}");
+                        }
+                    }
+                    return true;
+                }
+                
                 return false;
             }
         });
@@ -224,12 +353,14 @@ public class WindowsClipboardHelper : IDisposable
     {
         if (IsHistoryEnabled())
         {
+            _previousPinnedItemIds = GetPinnedClipboardItemIds();
             Clipboard_HistoryChanged(this, null!);
         }
         else
         {
             _clipboardHistoryItems.Clear();
             _clipboardHistoryItemsIds.Clear();
+            _previousPinnedItemIds.Clear();
         }
         OnHistoryEnabledChanged?.Invoke(this, IsHistoryEnabled());
     }
