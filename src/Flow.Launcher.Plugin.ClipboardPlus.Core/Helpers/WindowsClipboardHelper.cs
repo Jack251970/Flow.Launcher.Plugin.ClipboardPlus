@@ -144,10 +144,8 @@ public class WindowsClipboardHelper : IDisposable
                         {
                             foreach (var itemId in metadata.Items.Keys)
                             {
-                                // Remove curly braces from GUID format (e.g., "{GUID}" -> "GUID")
-                                // and convert to lowercase to match ClipboardHistoryItem.Id format
-                                var normalizedId = itemId.Trim('{', '}').ToLower();
-                                pinnedIds.Add(normalizedId);
+                                // Convert to lowercase to match ClipboardHistoryItem.Id format
+                                pinnedIds.Add(itemId.ToLower());
                             }
                         }
                     }
