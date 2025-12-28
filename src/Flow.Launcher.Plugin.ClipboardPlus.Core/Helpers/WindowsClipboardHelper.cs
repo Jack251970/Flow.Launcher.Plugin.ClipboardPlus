@@ -307,7 +307,7 @@ public class WindowsClipboardHelper : IDisposable
                 var currentPinnedIds = GetPinnedClipboardItemIds();
                 
                 // Find items whose pin status changed
-                var itemsWithChangedPinStatus = new List<ClipboardHistoryItem>();
+                var itemsWithChangedPinStatus = new List<(ClipboardHistoryItem, bool)>();
                 
                 foreach (var item in items)
                 {
@@ -318,7 +318,7 @@ public class WindowsClipboardHelper : IDisposable
                     // Check if pin status changed
                     if (isPinnedNow != wasPinnedBefore)
                     {
-                        itemsWithChangedPinStatus.Add(item);
+                        itemsWithChangedPinStatus.Add((item, isPinnedNow));
                     }
                 }
                 
@@ -330,9 +330,12 @@ public class WindowsClipboardHelper : IDisposable
                 {
                     foreach (var item in itemsWithChangedPinStatus)
                     {
-                        var clipboardData = await GetClipboardData(item);
+                        var historyItem = item.Item1;
+                        var pinned = item.Item2;
+                        var clipboardData = await GetClipboardData(historyItem);
                         if (!clipboardData.IsNull())
                         {
+                            clipboardData.Pinned = pinned;
                             OnHistoryItemPinUpdated.Invoke(this, clipboardData);
                             _context.LogDebug(ClassName, $"Clipboard_HistoryChanged: Pin status updated for item: {item.Id}");
                         }
