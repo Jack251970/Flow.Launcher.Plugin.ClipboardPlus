@@ -44,6 +44,9 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -503,9 +506,37 @@
             Grid.ColumnSpan="2"
             Style="{StaticResource SettingPanelSeparatorStyle}" />
 
+        <!--  Excluded Apps  -->
+        <TextBlock
+            Grid.Row="24"
+            Grid.Column="0"
+            Margin="{StaticResource SettingPanelItemTopBottomMargin}"
+            VerticalAlignment="Top"
+            Text="{DynamicResource flowlauncher_plugin_clipboardplus_excluded_apps}"
+            ToolTip="{DynamicResource flowlauncher_plugin_clipboardplus_excluded_apps_tooltip}" />
+        <TextBox
+            Grid.Row="24"
+            Grid.Column="1"
+            MinWidth="200"
+            MinHeight="60"
+            Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            AcceptsReturn="True"
+            Text="{Binding ExcludedApps, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+            ToolTip="{DynamicResource flowlauncher_plugin_clipboardplus_excluded_apps_tooltip}"
+            TextWrapping="NoWrap"
+            VerticalScrollBarVisibility="Auto" />
+
+        <!--  Seperator  -->
+        <Separator
+            Grid.Row="25"
+            Grid.ColumnSpan="2"
+            Style="{StaticResource SettingPanelSeparatorStyle}" />
+
         <!--  Restore to Default  -->
         <Button
-            Grid.Row="24"
+            Grid.Row="26"
             Grid.ColumnSpan="2"
             HorizontalAlignment="Left"
             Command="{Binding RestoreToDefaultCommand}"

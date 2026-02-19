@@ -153,6 +153,9 @@
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_restore_to_default">Rétablir tous les paramètres aux valeurs par défaut</system:String>
 
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_excluded_apps">Programmes exclus :</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_excluded_apps_tooltip">Entrez un nom d'application par ligne (par ex. KeePass.exe) pour empêcher l'enregistrement des données du presse-papiers de cette application</system:String>
+
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">Date d'ajout</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_source_application">Application d'origine</system:String>

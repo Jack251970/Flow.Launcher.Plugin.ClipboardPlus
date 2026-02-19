@@ -50,6 +50,8 @@ public class Settings : ISettings
 
     public KeepTime FilesKeepTime { get; set; } = 0;
 
+    public List<string> ExcludedApps { get; set; } = [];
+
     [JsonIgnore]
     public List<Tuple<DataType, KeepTime>> KeepTimePairs =>
         [

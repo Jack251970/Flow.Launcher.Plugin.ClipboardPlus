@@ -975,6 +975,13 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             return;
         }
 
+        // Skip recording if the source application is excluded
+        if (Settings.ExcludedApps.Exists(app => e.SourceApplication.Name.Equals(app, StringComparison.OrdinalIgnoreCase)))
+        {
+            Context.LogDebug(ClassName, $"Clipboard change ignored for excluded app: {e.SourceApplication.Name}");
+            return;
+        }
+
         await RecordsLock.WaitAsync();
         try
         {
