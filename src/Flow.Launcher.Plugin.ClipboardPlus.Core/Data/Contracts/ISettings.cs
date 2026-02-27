@@ -111,14 +111,14 @@ public interface ISettings
     public KeepTime FilesKeepTime { get; set; }
 
     /// <summary>
+    /// List of application names to exclude from clipboard recording
+    /// </summary>
+    public List<AppInfo.AppInfo> ExcludedApps { get; set; }
+
+    /// <summary>
     /// List of data type and keep time pairs
     /// </summary>
     public List<Tuple<DataType, KeepTime>> KeepTimePairs { get; }
-
-    /// <summary>
-    /// List of application names to exclude from clipboard recording
-    /// </summary>
-    public List<string> ExcludedApps { get; set; }
 
     /// <summary>
     /// Restore settings to default values
