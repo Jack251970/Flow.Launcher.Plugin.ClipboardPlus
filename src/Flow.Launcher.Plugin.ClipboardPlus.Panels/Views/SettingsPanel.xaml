@@ -67,7 +67,7 @@
         <TextBox
             Grid.Row="0"
             Grid.Column="1"
-            MinWidth="100"
+            MinWidth="120"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
             AcceptsReturn="False"
@@ -84,13 +84,14 @@
         <ui:NumberBox
             Grid.Row="1"
             Grid.Column="1"
-            Width="100"
-            MinWidth="100"
+            Width="120"
+            MinWidth="120"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
             VerticalContentAlignment="Center"
             Maximum="{Binding MaxRecordsMaximum, Mode=OneTime}"
             Minimum="100"
+            SpinButtonPlacementMode="Compact"
             Value="{Binding MaxRecords, Mode=TwoWay}" />
 
         <!--  Record Order  -->
