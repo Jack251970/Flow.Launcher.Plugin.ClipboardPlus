@@ -1,6 +1,7 @@
 ﻿using Flow.Launcher.Plugin.ClipboardPlus.Core.Data.AppInfo;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -51,7 +52,7 @@ public class Settings : ISettings
 
     public KeepTime FilesKeepTime { get; set; } = 0;
 
-    public List<AppInfo> ExcludedApps { get; set; } = [];
+    public ObservableCollection<AppInfo> ExcludedApps { get; set; } = [];
 
     [JsonIgnore]
     public List<Tuple<DataType, KeepTime>> KeepTimePairs =>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Contracts;
 
@@ -113,7 +114,7 @@ public interface ISettings
     /// <summary>
     /// List of application names to exclude from clipboard recording
     /// </summary>
-    public List<AppInfo.AppInfo> ExcludedApps { get; set; }
+    public ObservableCollection<AppInfo.AppInfo> ExcludedApps { get; set; }
 
     /// <summary>
     /// List of data type and keep time pairs
