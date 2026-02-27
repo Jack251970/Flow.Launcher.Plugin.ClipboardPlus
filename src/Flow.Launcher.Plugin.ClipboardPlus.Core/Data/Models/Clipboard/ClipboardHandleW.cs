@@ -234,6 +234,12 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
                     return;
                 }
 
+                // If the source application is excluded, return.
+                if (GetApplicationInfo() && ClipboardMonitorInstance.IsPathExcluded(_executablePath))
+                {
+                    return;
+                }
+
                 // Determines whether a file/files have been cut/copied.
                 if (ClipboardMonitorInstance.ObservableFormats.Images && IsDataImage(dataObj))
                 {

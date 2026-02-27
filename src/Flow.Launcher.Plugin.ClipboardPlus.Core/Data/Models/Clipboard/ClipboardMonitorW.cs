@@ -24,6 +24,7 @@ public class ClipboardMonitorW : IClipboardMonitor
     private DispatcherTimer _timer = new();
     private ClipboardHandleW _clipboardHandle = new();
     private ObservableDataFormats _observableFormats = new();
+    private readonly List<string> _excludedPaths = [];
 
     private bool _monitorClipboard;
     private bool _observeLastEntry;
@@ -158,6 +159,32 @@ public class ClipboardMonitorW : IClipboardMonitor
         ClipboardFiles.Clear();
     }
 
+    /// <summary>
+    /// Adds a file system path to the collection of excluded paths.
+    /// </summary>
+    /// <remarks>Use this method to prevent the specified path from being processed or included in operations
+    /// that consider excluded paths. Paths added are not validated for existence.</remarks>
+    /// <param name="path">The file system path to exclude. Cannot be null or empty.</param>
+    public void AddExcludedPath(string path)
+    {
+        lock (_excludedPaths)
+        {
+            _excludedPaths.Add(path);
+        }
+    }
+
+    /// <summary>
+    /// Removes the specified path from the collection of excluded paths, if it exists.
+    /// </summary>
+    /// <param name="path">The path to remove from the excluded paths collection. Cannot be null or empty.</param>
+    public void RemoveExcludedPath(string path)
+    {
+        lock (_excludedPaths)
+        {
+            _excludedPaths.Remove(path);
+        }
+    }
+
     #endregion
 
     #region Private
@@ -176,6 +203,14 @@ public class ClipboardMonitorW : IClipboardMonitor
     internal void Invoke(object? content, DataType type, SourceApplication source)
     {
         ClipboardChanged?.Invoke(this, new ClipboardChangedEventArgs(content, type, source));
+    }
+
+    internal bool IsPathExcluded(string path)
+    {
+        lock (_excludedPaths)
+        {
+            return _excludedPaths.Contains(path);
+        }
     }
 
     #endregion
