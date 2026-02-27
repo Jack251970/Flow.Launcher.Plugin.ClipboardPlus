@@ -33,14 +33,14 @@ public partial class SettingsPanel : UserControl
         gridView.Columns[0].Width = workingWidth * col1;
     }
 
-    private void programSourceView_Loaded(object sender, RoutedEventArgs e)
+    private void ProgramSourceView_Loaded(object sender, RoutedEventArgs e)
     {
-        programSourceView.ItemsSource = _clipboardPlus.Settings.ExcludedApps;
+        ProgramSourceView.ItemsSource = _clipboardPlus.Settings.ExcludedApps;
     }
 
     private void DeleteProgramSource_OnClick(object sender, RoutedEventArgs e)
     {
-        var selectedItems = programSourceView
+        var selectedItems = ProgramSourceView
             .SelectedItems.Cast<AppInfo>()
             .ToList();
 
@@ -53,7 +53,7 @@ public partial class SettingsPanel : UserControl
             _clipboardPlus.Settings.ExcludedApps.RemoveAt(index);
         }
 
-        programSourceView.SelectedItems.Clear();
+        ProgramSourceView.SelectedItems.Clear();
     }
 
     private void AddProgramSource_OnClick(object sender, RoutedEventArgs e)
@@ -77,7 +77,7 @@ public partial class SettingsPanel : UserControl
             if (existingApp == null)
             {
                 _clipboardPlus.Settings.ExcludedApps.Add(addedApp);
-                programSourceView.SelectedItems.Clear(); // Clear selection after adding
+                ProgramSourceView.SelectedItems.Clear(); // Clear selection after adding
             }
         }
     }

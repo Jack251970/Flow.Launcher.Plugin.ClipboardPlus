@@ -519,14 +519,14 @@
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_excluded_apps}"
             ToolTip="{DynamicResource flowlauncher_plugin_clipboardplus_excluded_apps_tooltip}" />
         <ListView
-            x:Name="programSourceView"
+            x:Name="ProgramSourceView"
             Grid.Row="25"
             Grid.ColumnSpan="2"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             AllowDrop="True"
             BorderBrush="DarkGray"
             BorderThickness="1"
-            Loaded="programSourceView_Loaded"
+            Loaded="ProgramSourceView_Loaded"
             SelectionMode="Extended"
             SizeChanged="ListView_SizeChanged">
             <ListView.View>
