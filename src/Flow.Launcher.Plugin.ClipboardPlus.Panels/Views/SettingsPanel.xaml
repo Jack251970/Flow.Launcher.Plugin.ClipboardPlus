@@ -526,7 +526,7 @@
             AllowDrop="True"
             BorderBrush="DarkGray"
             BorderThickness="1"
-            Loaded="ProgramSourceView_Loaded"
+            ItemsSource="{Binding ExcludedApps, Mode=OneTime}"
             SelectionMode="Extended"
             SizeChanged="ListView_SizeChanged">
             <ListView.View>

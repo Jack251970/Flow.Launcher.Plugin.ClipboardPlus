@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -115,6 +116,12 @@ public class SettingsViewModel : BaseModel
 
         ExportEnabled = true;
     }
+
+    #endregion
+
+    #region Excluded Apps
+
+    public ObservableCollection<AppInfo> ExcludedApps => ClipboardPlus.Settings.ExcludedApps;
 
     #endregion
 

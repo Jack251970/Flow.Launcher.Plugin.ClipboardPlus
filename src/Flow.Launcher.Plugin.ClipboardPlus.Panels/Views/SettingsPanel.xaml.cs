@@ -33,11 +33,6 @@ public partial class SettingsPanel : UserControl
         gridView.Columns[0].Width = workingWidth * col1;
     }
 
-    private void ProgramSourceView_Loaded(object sender, RoutedEventArgs e)
-    {
-        ProgramSourceView.ItemsSource = _clipboardPlus.Settings.ExcludedApps;
-    }
-
     private void DeleteProgramSource_OnClick(object sender, RoutedEventArgs e)
     {
         var selectedItems = ProgramSourceView
