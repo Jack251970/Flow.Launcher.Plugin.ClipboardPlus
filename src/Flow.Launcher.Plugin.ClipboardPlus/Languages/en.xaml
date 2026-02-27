@@ -157,6 +157,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_application_name">Application name</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_add">Add</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete">Delete</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_add_excluded_program">Add excluded program</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cancel">Cancel</system:String>
 
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">Create time</system:String>

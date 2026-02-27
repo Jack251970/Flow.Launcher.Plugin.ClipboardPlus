@@ -59,6 +59,27 @@ public partial class SettingsPanel : UserControl
 
     private void AddProgramSource_OnClick(object sender, RoutedEventArgs e)
     {
-        //
+        if (sender is not Button button) return;
+
+        var dialog = new AppSelectionWindow(_clipboardPlus.Settings.ExcludedApps)
+        {
+            Owner = Window.GetWindow(button)
+        };
+
+        var result = dialog.ShowDialog();
+        if (result == true && dialog.ViewModel.SelectedApp != null)
+        {
+            var addedApp = dialog.ViewModel.SelectedApp;
+
+            // Check if app already exists in the list (additional safety check)
+            var existingApp = _clipboardPlus.Settings.ExcludedApps.FirstOrDefault(a =>
+                a.Equals(addedApp));
+
+            if (existingApp == null)
+            {
+                _clipboardPlus.Settings.ExcludedApps.Add(addedApp);
+                programSourceView.SelectedItems.Clear(); // Clear selection after adding
+            }
+        }
     }
 }
