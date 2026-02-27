@@ -396,4 +396,9 @@ internal class PublicAPIInstance : IPublicAPI
     {
         throw new NotImplementedException();
     }
+
+    public List<PluginPair> GetAllInitializedPlugins(bool includeFailed)
+    {
+        throw new NotImplementedException();
+    }
 }
