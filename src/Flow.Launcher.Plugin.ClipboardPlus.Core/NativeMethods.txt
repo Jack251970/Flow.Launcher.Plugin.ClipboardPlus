@@ -6,3 +6,8 @@ GetForegroundWindow
 GetWindowThreadProcessId
 GetWindowText
 WM_CLIPBOARDUPDATE
+
+ShellLink
+IShellLinkW
+IPersistFile
+PWSTR
