@@ -202,7 +202,14 @@ public class ClipboardMonitorWin : IClipboardMonitor
     {
         lock (_excludedPaths)
         {
-            return _excludedPaths.Contains(path);
+            foreach (var item in _excludedPaths)
+            {
+                if (string.Equals(item, path, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
