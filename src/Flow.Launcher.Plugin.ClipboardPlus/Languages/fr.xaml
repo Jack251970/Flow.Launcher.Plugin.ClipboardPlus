@@ -154,6 +154,11 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_restore_to_default">Rétablir tous les paramètres aux valeurs par défaut</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_excluded_apps">Programmes exclus :</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_application_name">Nom de l'application</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_add">Ajouter</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_delete">Supprimer</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_add_excluded_program">Ajouter un programme exclu</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cancel">Annuler</system:String>
 
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">Date d'ajout</system:String>

@@ -154,6 +154,11 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_restore_to_default">将所有设置恢复至默认</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_excluded_apps">排除的程序：</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_application_name">应用程序名称</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_add">添加</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_delete">删除</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_add_excluded_program">添加排除的程序</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cancel">取消</system:String>
 
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">创建时间</system:String>
