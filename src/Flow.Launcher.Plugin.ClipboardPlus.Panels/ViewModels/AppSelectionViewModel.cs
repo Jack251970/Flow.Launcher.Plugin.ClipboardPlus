@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Flow.Launcher.Plugin.ClipboardPlus.Core.Data.AppInfo;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.ViewModels
 {

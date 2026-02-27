@@ -1,5 +1,4 @@
-﻿using Flow.Launcher.Plugin.ClipboardPlus.Core.Data.AppInfo;
-using System.IO;
+﻿using System.IO;
 using Path = System.IO.Path;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;

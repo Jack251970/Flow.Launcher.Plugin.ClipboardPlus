@@ -1,4 +1,3 @@
-using Flow.Launcher.Plugin.ClipboardPlus.Core.Data.AppInfo;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;

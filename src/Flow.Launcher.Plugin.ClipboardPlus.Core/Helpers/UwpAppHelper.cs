@@ -1,5 +1,4 @@
-﻿using Flow.Launcher.Plugin.ClipboardPlus.Core.Data.AppInfo;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
