@@ -159,6 +159,7 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_delete">Supprimer</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_add_excluded_program">Ajouter un programme exclu</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_cancel">Annuler</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_search_applications">Rechercher des applications...</system:String>
 
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">Date d'ajout</system:String>
