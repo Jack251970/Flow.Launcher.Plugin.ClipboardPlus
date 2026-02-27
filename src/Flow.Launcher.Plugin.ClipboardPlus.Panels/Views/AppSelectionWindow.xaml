@@ -15,7 +15,6 @@
     Background="{DynamicResource PopuBGColor}"
     Foreground="{DynamicResource PopupTextColor}"
     ResizeMode="NoResize"
-    SizeToContent="Width"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <WindowChrome.WindowChrome>
