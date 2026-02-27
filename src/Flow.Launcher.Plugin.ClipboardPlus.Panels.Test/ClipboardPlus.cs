@@ -88,6 +88,12 @@ internal class ClipboardPlus : IClipboardPlus, IAsyncDisposable
             clipboardMonitor.RemoveExcludedPath(appPath);
     }
 
+    public void ClearExcludedPath()
+    {
+        foreach (var clipboardMonitor in ClipboardMonitors)
+            clipboardMonitor.ClearExcludedPath();
+    }
+
     private bool _disposed;
 
     public async ValueTask DisposeAsync()

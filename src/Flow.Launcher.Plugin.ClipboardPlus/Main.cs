@@ -2192,6 +2192,11 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         ClipboardMonitor?.RemoveExcludedPath(appPath);
     }
 
+    public void ClearExcludedPath()
+    {
+        ClipboardMonitor?.ClearExcludedPath();
+    }
+
     #endregion
 
     #region IAsyncDisposable Interface

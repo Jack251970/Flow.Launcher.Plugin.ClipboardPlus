@@ -37,4 +37,6 @@ public interface IClipboardPlus
     public void AddExcludedPath(string path);
 
     public void RemoveExcludedPath(string path);
+
+    public void ClearExcludedPath();
 }

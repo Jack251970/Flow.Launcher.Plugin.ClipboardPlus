@@ -43,5 +43,7 @@ public interface IClipboardMonitor : IDisposable
 
     public void RemoveExcludedPath(string path);
 
+    public void ClearExcludedPath();
+
     public event EventHandler<ClipboardChangedEventArgs>? ClipboardChanged;
 }

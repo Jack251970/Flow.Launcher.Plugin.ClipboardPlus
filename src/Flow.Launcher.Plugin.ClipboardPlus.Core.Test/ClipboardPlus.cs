@@ -71,4 +71,9 @@ internal class ClipboardPlus : IClipboardPlus
     {
         
     }
+
+    public void ClearExcludedPath()
+    {
+
+    }
 }

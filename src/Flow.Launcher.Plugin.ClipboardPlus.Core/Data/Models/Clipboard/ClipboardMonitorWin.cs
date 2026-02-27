@@ -176,6 +176,19 @@ public class ClipboardMonitorWin : IClipboardMonitor
         }
     }
 
+    /// <summary>
+    /// Removes all excluded paths from the collection.
+    /// </summary>
+    /// <remarks>This method clears the entire set of excluded paths, allowing all previously excluded paths
+    /// to be considered in subsequent operations. Thread safety is ensured during the operation.</remarks>
+    public void ClearExcludedPath()
+    {
+        lock (_excludedPaths)
+        {
+            _excludedPaths.Clear();
+        }
+    }
+
     #endregion
 
     #region Private

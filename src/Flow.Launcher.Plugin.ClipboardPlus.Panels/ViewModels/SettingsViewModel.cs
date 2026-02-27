@@ -134,6 +134,7 @@ public class SettingsViewModel : BaseModel
         var oldSyncWindowsClipboardHistory = SyncWindowsClipboardHistory;
         var oldUseWindowsClipboardHistoryOnly = UseWindowsClipboardHistoryOnly;
 
+        Settings.ExcludedApps.Clear();
         Settings.RestoreToDefault();
 
         RestoreRecordOrders();
@@ -174,6 +175,7 @@ public class SettingsViewModel : BaseModel
                 showRestartWarning = true;
             }
         }
+        ClipboardPlus.ClearExcludedPath();
         if (oldUseWindowsClipboardHistoryOnly && ClipboardPlus.UseWindowsClipboardHistoryOnly)
         {
             // If change to non-original value, show restart app warning
