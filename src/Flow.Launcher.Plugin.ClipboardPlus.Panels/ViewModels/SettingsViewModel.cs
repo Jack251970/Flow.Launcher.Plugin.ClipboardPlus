@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -118,6 +119,12 @@ public class SettingsViewModel : BaseModel
 
     #endregion
 
+    #region Excluded Apps
+
+    public ObservableCollection<AppInfo> ExcludedApps => ClipboardPlus.Settings.ExcludedApps;
+
+    #endregion
+
     #region Restore to Default
 
     public ICommand RestoreToDefaultCommand => new RelayCommand(RestoreToDefault);
@@ -127,6 +134,7 @@ public class SettingsViewModel : BaseModel
         var oldSyncWindowsClipboardHistory = SyncWindowsClipboardHistory;
         var oldUseWindowsClipboardHistoryOnly = UseWindowsClipboardHistoryOnly;
 
+        Settings.ExcludedApps.Clear();
         Settings.RestoreToDefault();
 
         RestoreRecordOrders();
@@ -167,6 +175,7 @@ public class SettingsViewModel : BaseModel
                 showRestartWarning = true;
             }
         }
+        ClipboardPlus.ClearExcludedPath();
         if (oldUseWindowsClipboardHistoryOnly && ClipboardPlus.UseWindowsClipboardHistoryOnly)
         {
             // If change to non-original value, show restart app warning

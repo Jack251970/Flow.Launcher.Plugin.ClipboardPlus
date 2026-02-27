@@ -33,4 +33,10 @@ public interface IClipboardPlus
     public event EventHandler<CultureInfo>? CultureInfoChanged;
 
     public ClipboardData GetClipboardDataItem(object? content, DataType dataType, string hashId, DateTime createTime, SourceApplication source, string clipboardText, string clipboardRtfText);
+
+    public void AddExcludedPath(string path);
+
+    public void RemoveExcludedPath(string path);
+
+    public void ClearExcludedPath();
 }

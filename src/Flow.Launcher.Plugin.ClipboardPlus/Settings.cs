@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Flow.Launcher.Plugin.ClipboardPlus.Core.Data.AppInfo;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -50,6 +52,8 @@ public class Settings : ISettings
 
     public KeepTime FilesKeepTime { get; set; } = 0;
 
+    public ObservableCollection<AppInfo> ExcludedApps { get; set; } = [];
+
     [JsonIgnore]
     public List<Tuple<DataType, KeepTime>> KeepTimePairs =>
         [
@@ -87,7 +91,7 @@ public class Settings : ISettings
                 {
                     return current;
                 }
-                return current + $"\t{prop.Name}: {prop.GetValue(this)}\n";
+                return current + $"\t{prop.Name}: {GetPropertyValueAsString(prop.GetValue(this))}\n";
             }
         );
         s += ")";
@@ -101,5 +105,14 @@ public class Settings : ISettings
             prop.GetCustomAttribute<JsonIgnoreAttribute>() != null ||
             // Is EncryptKey
             prop.Name == nameof(EncryptKey);
+    }
+
+    private static string GetPropertyValueAsString(object? value)
+    {
+        if (value is ObservableCollection<AppInfo> appInfos)
+        {
+            return $"[{string.Join(", ", appInfos.Select(a => a.DisplayName))}]";
+        }
+        return value?.ToString() ?? "null";
     }
 }

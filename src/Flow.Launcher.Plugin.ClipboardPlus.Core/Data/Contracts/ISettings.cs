@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Data.Contracts;
 
@@ -109,6 +110,11 @@ public interface ISettings
     /// Time to keep file records
     /// </summary>
     public KeepTime FilesKeepTime { get; set; }
+
+    /// <summary>
+    /// List of application names to exclude from clipboard recording
+    /// </summary>
+    public ObservableCollection<AppInfo.AppInfo> ExcludedApps { get; set; }
 
     /// <summary>
     /// List of data type and keep time pairs

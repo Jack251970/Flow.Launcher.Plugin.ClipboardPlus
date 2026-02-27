@@ -4,10 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converts="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.Converts"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:local="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
-    xmlns:userControls="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.UserControls"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewModels="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.ViewModels"
     d:DataContext="{d:DesignInstance viewModels:SettingsViewModel}"
     mc:Ignorable="d">
@@ -29,12 +30,18 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -60,7 +67,7 @@
         <TextBox
             Grid.Row="0"
             Grid.Column="1"
-            MinWidth="100"
+            MinWidth="120"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
             AcceptsReturn="False"
@@ -74,15 +81,17 @@
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_max_records}" />
-        <userControls:NumberBox
+        <ui:NumberBox
             Grid.Row="1"
             Grid.Column="1"
-            Width="100"
+            Width="120"
+            MinWidth="120"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
             VerticalContentAlignment="Center"
             Maximum="{Binding MaxRecordsMaximum, Mode=OneTime}"
             Minimum="100"
+            SpinButtonPlacementMode="Compact"
             Value="{Binding MaxRecords, Mode=TwoWay}" />
 
         <!--  Record Order  -->
@@ -503,9 +512,61 @@
             Grid.ColumnSpan="2"
             Style="{StaticResource SettingPanelSeparatorStyle}" />
 
+        <!--  Excluded Apps  -->
+        <TextBlock
+            Grid.Row="24"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Margin="{StaticResource SettingPanelItemTopBottomMargin}"
+            VerticalAlignment="Top"
+            Text="{DynamicResource flowlauncher_plugin_clipboardplus_excluded_apps}" />
+        <ListView
+            x:Name="ProgramSourceView"
+            Grid.Row="25"
+            Grid.ColumnSpan="2"
+            Margin="{StaticResource SettingPanelItemTopBottomMargin}"
+            AllowDrop="True"
+            BorderBrush="DarkGray"
+            BorderThickness="1"
+            ItemsSource="{Binding ExcludedApps, Mode=OneWay}"
+            SelectionMode="Extended"
+            SizeChanged="ListView_SizeChanged">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="150" Header="{DynamicResource flowlauncher_plugin_clipboardplus_application_name}">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <DockPanel Grid.Row="26" Grid.ColumnSpan="2">
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button
+                    MinWidth="100"
+                    Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
+                    Click="DeleteProgramSource_OnClick"
+                    Content="{DynamicResource flowlauncher_plugin_clipboardplus_delete}" />
+                <Button
+                    MinWidth="100"
+                    Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
+                    Click="AddProgramSource_OnClick"
+                    Content="{DynamicResource flowlauncher_plugin_clipboardplus_add}" />
+            </StackPanel>
+        </DockPanel>
+
+        <!--  Seperator  -->
+        <Separator
+            Grid.Row="27"
+            Grid.ColumnSpan="2"
+            Style="{StaticResource SettingPanelSeparatorStyle}" />
+
         <!--  Restore to Default  -->
         <Button
-            Grid.Row="24"
+            Grid.Row="28"
             Grid.ColumnSpan="2"
             HorizontalAlignment="Left"
             Command="{Binding RestoreToDefaultCommand}"

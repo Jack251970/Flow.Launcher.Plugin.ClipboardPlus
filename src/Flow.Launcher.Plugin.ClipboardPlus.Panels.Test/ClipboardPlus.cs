@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
@@ -19,6 +20,8 @@ internal class ClipboardPlus : IClipboardPlus, IAsyncDisposable
         Files = true,
         Others = false
     };
+
+    public List<IClipboardMonitor> ClipboardMonitors { get; private set; } = [];
 
     public SqliteDatabase Database { get; private set; }
 
@@ -71,6 +74,24 @@ internal class ClipboardPlus : IClipboardPlus, IAsyncDisposable
     public void SaveSettingJsonStorage()
     {
 
+    }
+
+    public void AddExcludedPath(string appPath)
+    {
+        foreach (var clipboardMonitor in ClipboardMonitors)
+            clipboardMonitor.AddExcludedPath(appPath);
+    }
+
+    public void RemoveExcludedPath(string appPath)
+    {
+        foreach (var clipboardMonitor in ClipboardMonitors)
+            clipboardMonitor.RemoveExcludedPath(appPath);
+    }
+
+    public void ClearExcludedPath()
+    {
+        foreach (var clipboardMonitor in ClipboardMonitors)
+            clipboardMonitor.ClearExcludedPath();
     }
 
     private bool _disposed;

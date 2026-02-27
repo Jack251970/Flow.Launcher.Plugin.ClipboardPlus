@@ -184,6 +184,9 @@ public partial class MainWindow : Window
 
     private void InitializeClipboardMonitor()
     {
+        ClipboardPlus.ClipboardMonitors.Add(ClipboardMonitorWPF);
+        ClipboardPlus.ClipboardMonitors.Add(ClipboardMonitorWin);
+
         ClipboardMonitorWPF.ClipboardChanged += OnClipboardChangeW;
         ClipboardMonitorWPF.StartMonitoring();
 

@@ -153,6 +153,14 @@
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_restore_to_default">將所有設定恢復至預設</system:String>
 
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_excluded_apps">排除的程式：</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_application_name">應用程式名稱</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_add">新增</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_delete">刪除</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_add_excluded_program">新增排除的程式</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_cancel">取消</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_search_applications">搜尋應用程式...</system:String>
+
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">建立時間</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_source_application">源應用</system:String>

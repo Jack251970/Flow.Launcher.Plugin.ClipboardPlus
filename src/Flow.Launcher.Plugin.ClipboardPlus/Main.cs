@@ -573,6 +573,16 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 EnableWindowsClipboardHelper(true);
             }
         }
+
+        // init excluded apps
+        if (ClipboardMonitor != null && Settings.ExcludedApps != null && Settings.ExcludedApps.Count > 0)
+        {
+            foreach (var app in Settings.ExcludedApps)
+            {
+                ClipboardMonitor.AddExcludedPath(app.Path);
+            }
+            Context.LogInfo(ClassName, $"Init {Settings.ExcludedApps.Count} excluded apps successfully");
+        }
     }
 
     #endregion
@@ -2171,6 +2181,21 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     CultureInfo IClipboardPlus.CultureInfo => CultureInfo;
 
     public event EventHandler<CultureInfo>? CultureInfoChanged;
+
+    public void AddExcludedPath(string appPath)
+    {
+        ClipboardMonitor?.AddExcludedPath(appPath);
+    }
+
+    public void RemoveExcludedPath(string appPath)
+    {
+        ClipboardMonitor?.RemoveExcludedPath(appPath);
+    }
+
+    public void ClearExcludedPath()
+    {
+        ClipboardMonitor?.ClearExcludedPath();
+    }
 
     #endregion
 
