@@ -79,20 +79,20 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
     /// </summary>
     public void StartMonitoring()
     {
-        if (System.Windows.Application.Current.MainWindow.IsLoaded)
+        if (Application.Current.MainWindow.IsLoaded)
         {
             MainWindow_Loaded(null, new RoutedEventArgs());
         }
         else
         {
-            System.Windows.Application.Current.MainWindow.Loaded += MainWindow_Loaded;
+            Application.Current.MainWindow.Loaded += MainWindow_Loaded;
         }
     }
 
     private async void MainWindow_Loaded(object? sender, RoutedEventArgs e)
     {
         // Get the handle of the main window.
-        var handle = new WindowInteropHelper(System.Windows.Application.Current.MainWindow).Handle;
+        var handle = new WindowInteropHelper(Application.Current.MainWindow).Handle;
         _handle = new(handle);
 
         // Add the hook to the window.
@@ -228,7 +228,7 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
             await Win32Helper.StartSTATaskAsync(() =>
             {
                 // If the clipboard is empty, return.
-                var dataObj = System.Windows.Clipboard.GetDataObject();
+                var dataObj = Clipboard.GetDataObject();
                 if (dataObj is null)
                 {
                     return;
@@ -238,7 +238,7 @@ internal class ClipboardHandleW : BaseClipboardHandle, IDisposable
                 if (ClipboardMonitorInstance.ObservableFormats.Images && IsDataImage(dataObj))
                 {
                     // Make sure on the application dispatcher.
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
                         if (GetImageContent(dataObj) is BitmapSource capturedImage)
                         {
