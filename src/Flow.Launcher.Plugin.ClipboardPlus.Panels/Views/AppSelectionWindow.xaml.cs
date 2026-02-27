@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
-using EyeProtect.ViewModels;
 using Flow.Launcher.Plugin.ClipboardPlus.Core.Data.AppInfo;
+using Flow.Launcher.Plugin.ClipboardPlus.Panels.ViewModels;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.Views
 {

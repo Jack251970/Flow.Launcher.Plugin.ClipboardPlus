@@ -9,7 +9,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Flow.Launcher.Plugin.ClipboardPlus.Core.Data.AppInfo;
 
-namespace EyeProtect.ViewModels
+namespace Flow.Launcher.Plugin.ClipboardPlus.Panels.ViewModels
 {
     public partial class AppSelectionViewModel : ObservableObject
     {
