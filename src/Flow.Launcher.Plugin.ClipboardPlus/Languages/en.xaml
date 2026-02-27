@@ -154,7 +154,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_restore_to_default">Restore all settings to default</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_excluded_apps">Excluded programs:</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_excluded_apps_tooltip">Enter one application name per line (e.g. KeePass.exe) to prevent recording clipboard data from that application</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_application_name">Application name</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_add">Add</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_delete">Delete</system:String>
 
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">Create time</system:String>

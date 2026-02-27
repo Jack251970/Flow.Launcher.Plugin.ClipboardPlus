@@ -29,6 +29,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -38,6 +39,8 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -510,33 +513,58 @@
         <TextBlock
             Grid.Row="24"
             Grid.Column="0"
+            Grid.ColumnSpan="2"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Top"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_excluded_apps}"
             ToolTip="{DynamicResource flowlauncher_plugin_clipboardplus_excluded_apps_tooltip}" />
-        <TextBox
-            Grid.Row="24"
-            Grid.Column="1"
-            MinWidth="200"
-            MinHeight="60"
-            Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            AcceptsReturn="True"
-            Text="{Binding ExcludedApps, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
-            ToolTip="{DynamicResource flowlauncher_plugin_clipboardplus_excluded_apps_tooltip}"
-            TextWrapping="NoWrap"
-            VerticalScrollBarVisibility="Auto" />
+        <ListView
+            x:Name="programSourceView"
+            Grid.Row="25"
+            Grid.ColumnSpan="2"
+            Margin="{StaticResource SettingPanelItemTopBottomMargin}"
+            AllowDrop="True"
+            BorderBrush="DarkGray"
+            BorderThickness="1"
+            Loaded="programSourceView_Loaded"
+            SelectionMode="Extended"
+            SizeChanged="ListView_SizeChanged">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="150" Header="{DynamicResource flowlauncher_plugin_clipboardplus_application_name}">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <DockPanel Grid.Row="26" Grid.ColumnSpan="2">
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button
+                    MinWidth="100"
+                    Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
+                    Click="DeleteProgramSource_OnClick"
+                    Content="{DynamicResource flowlauncher_plugin_clipboardplus_delete}" />
+                <Button
+                    MinWidth="100"
+                    Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
+                    Click="AddProgramSource_OnClick"
+                    Content="{DynamicResource flowlauncher_plugin_clipboardplus_add}" />
+            </StackPanel>
+        </DockPanel>
 
         <!--  Seperator  -->
         <Separator
-            Grid.Row="25"
+            Grid.Row="27"
             Grid.ColumnSpan="2"
             Style="{StaticResource SettingPanelSeparatorStyle}" />
 
         <!--  Restore to Default  -->
         <Button
-            Grid.Row="26"
+            Grid.Row="28"
             Grid.ColumnSpan="2"
             HorizontalAlignment="Left"
             Command="{Binding RestoreToDefaultCommand}"

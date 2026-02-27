@@ -154,7 +154,6 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_restore_to_default">将所有设置恢复至默认</system:String>
 
     <system:String x:Key="flowlauncher_plugin_clipboardplus_excluded_apps">排除的程序：</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_excluded_apps_tooltip">每行输入一个应用程序名称（例如 KeePass.exe），以防止记录该应用程序的剪贴板数据</system:String>
 
     <!--  Enum  -->
     <system:String x:Key="flowlauncher_plugin_clipboardplus_record_order_create_time">创建时间</system:String>
