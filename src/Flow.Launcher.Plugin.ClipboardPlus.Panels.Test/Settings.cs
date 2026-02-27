@@ -110,7 +110,7 @@ public class Settings : ISettings
     {
         if (value is ObservableCollection<AppInfo> appInfos)
         {
-            return $"[{string.Join(", ", appInfos.Select(a => a.ToString()))}]";
+            return $"[{string.Join(", ", appInfos.Select(a => a.DisplayName))}]";
         }
         return value?.ToString() ?? "null";
     }
