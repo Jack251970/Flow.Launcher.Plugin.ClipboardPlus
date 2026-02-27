@@ -573,6 +573,16 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 EnableWindowsClipboardHelper(true);
             }
         }
+
+        // init excluded apps
+        if (ClipboardMonitor != null && Settings.ExcludedApps != null && Settings.ExcludedApps.Count > 0)
+        {
+            foreach (var app in Settings.ExcludedApps)
+            {
+                ClipboardMonitor.AddExcludedPath(app.Path);
+            }
+            Context.LogInfo(ClassName, $"Init {Settings.ExcludedApps.Count} excluded apps successfully");
+        }
     }
 
     #endregion
