@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
-		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion>10.0.19041.1</SupportedOSPlatformVersion>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
 
