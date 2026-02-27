@@ -39,5 +39,9 @@ public interface IClipboardMonitor : IDisposable
 
     public void CleanClipboard();
 
+    public void AddExcludedPath(string path);
+
+    public void RemoveExcludedPath(string path);
+
     public event EventHandler<ClipboardChangedEventArgs>? ClipboardChanged;
 }
