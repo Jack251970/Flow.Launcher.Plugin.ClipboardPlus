@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -153,7 +152,6 @@ public class SettingsViewModel : BaseModel
         base.OnPropertyChanged(nameof(KeepText));
         base.OnPropertyChanged(nameof(KeepImages));
         base.OnPropertyChanged(nameof(KeepFiles));
-        base.OnPropertyChanged(nameof(ExcludedApps));
 
         ClipboardPlus.SaveSettingJsonStorage();
 
@@ -682,28 +680,6 @@ public class SettingsViewModel : BaseModel
         base.OnPropertyChanged(nameof(SelectedTextKeepTime));
         base.OnPropertyChanged(nameof(SelectedImagesKeepTime));
         base.OnPropertyChanged(nameof(SelectedFilesKeepTime));
-    }
-
-    #endregion
-
-    #region Excluded Apps
-
-    public string ExcludedApps
-    {
-        get => string.Join(Environment.NewLine, Settings.ExcludedApps);
-        set
-        {
-            var newApps = value.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(s => s.Trim())
-                .Where(s => !string.IsNullOrEmpty(s))
-                .ToList();
-            if (new HashSet<string>(Settings.ExcludedApps, StringComparer.OrdinalIgnoreCase).SetEquals(newApps))
-            {
-                return;
-            }
-            Settings.ExcludedApps = newApps;
-            OnPropertyChanged();
-        }
     }
 
     #endregion
