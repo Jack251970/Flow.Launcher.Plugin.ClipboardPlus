@@ -2172,6 +2172,16 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
 
     public event EventHandler<CultureInfo>? CultureInfoChanged;
 
+    public void AddExcludedPath(string appPath)
+    {
+        ClipboardMonitor?.AddExcludedPath(appPath);
+    }
+
+    public void RemoveExcludedPath(string appPath)
+    {
+        ClipboardMonitor?.RemoveExcludedPath(appPath);
+    }
+
     #endregion
 
     #region IAsyncDisposable Interface
