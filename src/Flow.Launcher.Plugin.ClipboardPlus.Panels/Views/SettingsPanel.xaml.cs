@@ -46,6 +46,7 @@ public partial class SettingsPanel : UserControl
         {
             var index = _clipboardPlus.Settings.ExcludedApps.IndexOf(item);
             _clipboardPlus.Settings.ExcludedApps.RemoveAt(index);
+            _clipboardPlus.RemoveExcludedPath(item.Path);
         }
 
         ProgramSourceView.SelectedItems.Clear();
@@ -72,6 +73,7 @@ public partial class SettingsPanel : UserControl
             if (existingApp == null)
             {
                 _clipboardPlus.Settings.ExcludedApps.Add(addedApp);
+                _clipboardPlus.AddExcludedPath(addedApp.Path);
                 ProgramSourceView.SelectedItems.Clear(); // Clear selection after adding
             }
         }

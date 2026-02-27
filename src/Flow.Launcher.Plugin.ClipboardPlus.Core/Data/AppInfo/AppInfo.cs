@@ -30,6 +30,9 @@ public abstract partial class AppInfo : IJsonOnDeserialized, IEquatable<AppInfo>
     public TaskCompletionNotifier<ImageSource?> AppIcon { get; set; }
         = new(() => Task.FromResult<ImageSource?>(null), runTaskImmediately: false);*/
 
+    [JsonIgnore]
+    public abstract string Path { get; }
+
     public virtual void OnDeserialized()
     {
         /*if (_loadIcon) AppIcon = new TaskCompletionNotifier<ImageSource>(() => IconHelper.GetIconFromFileOrFolderAsync(OverrideAppIconPath), runTaskImmediately: false);*/

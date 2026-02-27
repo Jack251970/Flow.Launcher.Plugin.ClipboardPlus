@@ -23,6 +23,8 @@ public sealed class UwpAppInfo : AppInfo, IEquatable<UwpAppInfo>
     [JsonPropertyName("package_family_name")]
     public string PackageFullName { get; set; } = string.Empty;
 
+    public override string Path => Package is not null ? Package.InstalledLocation.Path : string.Empty;
+
     // Parameterless constructor for XML serialization
     public UwpAppInfo() { }
 
