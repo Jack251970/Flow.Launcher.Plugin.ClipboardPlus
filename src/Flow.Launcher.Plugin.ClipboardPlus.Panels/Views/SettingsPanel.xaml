@@ -519,8 +519,7 @@
             Grid.ColumnSpan="2"
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Top"
-            Text="{DynamicResource flowlauncher_plugin_clipboardplus_excluded_apps}"
-            ToolTip="{DynamicResource flowlauncher_plugin_clipboardplus_excluded_apps_tooltip}" />
+            Text="{DynamicResource flowlauncher_plugin_clipboardplus_excluded_apps}" />
         <ListView
             x:Name="ProgramSourceView"
             Grid.Row="25"
