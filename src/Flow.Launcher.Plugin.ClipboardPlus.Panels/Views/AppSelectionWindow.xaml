@@ -28,8 +28,12 @@
             <RowDefinition />
             <RowDefinition Height="80" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0">
-            <StackPanel>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -61,7 +65,13 @@
                     </Button>
                 </Grid>
             </StackPanel>
-            <StackPanel Margin="26,0,26,0">
+            <Grid Grid.Row="1" Margin="26,0,26,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
                 <StackPanel Grid.Row="0" Margin="0,0,0,12">
                     <TextBlock
                         Grid.Column="0"
@@ -74,13 +84,13 @@
 
                 <!--  Search Box  -->
                 <TextBox
-                    Grid.Row="0"
+                    Grid.Row="1"
                     Margin="0,0,0,10"
                     ui:ControlHelper.PlaceholderText="Search applications..."
                     Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 <!--  App List  -->
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="2">
                     <!--  Loading Indicator  -->
                     <ui:ProgressRing
                         Width="50"
@@ -91,41 +101,43 @@
                         Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <!--  App List  -->
-                    <ListView
-                        x:Name="AppListBox"
-                        ItemsSource="{Binding FilteredAppList}"
-                        MouseDoubleClick="AppListBox_MouseDoubleClick"
-                        SelectedItem="{Binding SelectedApp, Mode=TwoWay}"
-                        Visibility="{Binding IsNotLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="5">
-                                    <Grid.ColumnDefinitions>
-                                        <!--<ColumnDefinition Width="Auto" />-->
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
+                    <ScrollViewer>
+                        <ListView
+                            x:Name="AppListBox"
+                            ItemsSource="{Binding FilteredAppList}"
+                            MouseDoubleClick="AppListBox_MouseDoubleClick"
+                            SelectedItem="{Binding SelectedApp, Mode=TwoWay}"
+                            Visibility="{Binding IsNotLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="5">
+                                        <Grid.ColumnDefinitions>
+                                            <!--<ColumnDefinition Width="Auto" />-->
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
 
-                                    <!--  App Icon  -->
-                                    <!--<Image
-                                        Grid.Column="0"
-                                        Width="32"
-                                        Height="32"
-                                        Margin="0 0 10 0"
-                                        Source="{Binding AppIcon.Result}" />-->
+                                        <!--  App Icon  -->
+                                        <!--<Image
+                                            Grid.Column="0"
+                                            Width="32"
+                                            Height="32"
+                                            Margin="0 0 10 0"
+                                            Source="{Binding AppIcon.Result}" />-->
 
-                                    <!--  App Name  -->
-                                    <TextBlock
-                                        Grid.Column="1"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding DisplayName}"
-                                        TextTrimming="CharacterEllipsis" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                                        <!--  App Name  -->
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding DisplayName}"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </ScrollViewer>
                 </Grid>
-            </StackPanel>
-        </StackPanel>
+            </Grid>
+        </Grid>
         <Border
             Grid.Row="1"
             Margin="0,14,0,0"
