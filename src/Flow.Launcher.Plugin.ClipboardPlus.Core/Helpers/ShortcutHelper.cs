@@ -12,7 +12,7 @@ using Path = System.IO.Path;
 
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 
-internal static class ShortcutHelper
+public static class ShortcutHelper
 {
     private static readonly string[] startMenuPaths =
     [
@@ -57,7 +57,7 @@ internal static class ShortcutHelper
         }
     }
 
-    internal static async Task<List<ShortcutAppInfo>> GetStartMenuAppsAsync()
+    public static async Task<List<ShortcutAppInfo>> GetStartMenuAppsAsync()
     {
         startMenuAppsListTask ??= LoadStartMenuAppsAsync();
         return await startMenuAppsListTask;

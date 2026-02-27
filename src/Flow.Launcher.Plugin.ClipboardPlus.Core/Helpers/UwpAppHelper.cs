@@ -10,7 +10,7 @@ using Windows.Management.Deployment;
 namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Helpers;
 
 [SupportedOSPlatform("windows10.0.19041.0")]
-internal class UwpAppHelper
+public class UwpAppHelper
 {
     private static readonly PackageCatalog? packageCatalog;
 
@@ -33,7 +33,7 @@ internal class UwpAppHelper
         }
     }
 
-    internal static async Task<List<UwpAppInfo>> GetUwpAppsAsync()
+    public static async Task<List<UwpAppInfo>> GetUwpAppsAsync()
     {
         uwpAppsListTask ??= LoadUwpAppsAsync();
         return await uwpAppsListTask;
