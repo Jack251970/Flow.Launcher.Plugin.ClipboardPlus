@@ -91,7 +91,7 @@ public class Settings : ISettings
                 {
                     return current;
                 }
-                return current + $"\t{prop.Name}: {prop.GetValue(this)}\n";
+                return current + $"\t{prop.Name}: {GetPropertyValueAsString(prop.GetValue(this))}\n";
             }
         );
         s += ")";
@@ -105,5 +105,14 @@ public class Settings : ISettings
             prop.GetCustomAttribute<JsonIgnoreAttribute>() != null ||
             // Is EncryptKey
             prop.Name == nameof(EncryptKey);
+    }
+
+    private static string GetPropertyValueAsString(object? value)
+    {
+        if (value is ObservableCollection<AppInfo> appInfos)
+        {
+            return $"[{string.Join(", ", appInfos.Select(a => a.ToString()))}]";
+        }
+        return value?.ToString() ?? "null";
     }
 }
