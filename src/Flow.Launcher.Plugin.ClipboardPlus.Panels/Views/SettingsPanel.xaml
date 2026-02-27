@@ -4,10 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converts="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.Converts"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ikw="http://schemas.inkore.net/lib/ui/wpf"
     xmlns:local="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
-    xmlns:userControls="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.UserControls"
+    xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
     xmlns:viewModels="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.ViewModels"
     d:DataContext="{d:DesignInstance viewModels:SettingsViewModel}"
     mc:Ignorable="d">
@@ -80,10 +81,11 @@
             Margin="{StaticResource SettingPanelItemTopBottomMargin}"
             VerticalAlignment="Center"
             Text="{DynamicResource flowlauncher_plugin_clipboardplus_max_records}" />
-        <userControls:NumberBox
+        <ui:NumberBox
             Grid.Row="1"
             Grid.Column="1"
             Width="100"
+            MinWidth="100"
             Margin="{StaticResource SettingPanelItemLeftTopBottomMargin}"
             HorizontalAlignment="Left"
             VerticalContentAlignment="Center"

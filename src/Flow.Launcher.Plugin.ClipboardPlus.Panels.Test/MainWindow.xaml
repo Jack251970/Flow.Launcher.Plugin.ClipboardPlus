@@ -7,7 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:panels="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.Views;assembly=Flow.Launcher.Plugin.ClipboardPlus.Panels"
     xmlns:ui="http://schemas.inkore.net/lib/ui/wpf/modern"
-    xmlns:usercontrol="clr-namespace:Flow.Launcher.Plugin.ClipboardPlus.Panels.UserControls;assembly=Flow.Launcher.Plugin.ClipboardPlus.Panels"
     Title="ClipboardPlus Test"
     Width="1000"
     Height="700"
