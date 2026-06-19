@@ -24,7 +24,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 		.github\workflows\publish.yml = .github\workflows\publish.yml
 		README.md = README.md
-		.github\workflows\remove-old-artifacts.yml = .github\workflows\remove-old-artifacts.yml
 	EndProjectSection
 EndProject
 Global
