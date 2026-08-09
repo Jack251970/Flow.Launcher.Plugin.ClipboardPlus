@@ -9,7 +9,7 @@ public enum DefaultRichTextCopyOption
     Rtf = 0,
 
     [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_plain_text_title))]
-    Plain = 1
+    Plain = 1,
 }
 
 [EnumLocalize]
@@ -19,7 +19,7 @@ public enum DefaultImageCopyOption
     Image = 0,
 
     [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_image_file_title))]
-    File = 1
+    File = 1,
 }
 
 [EnumLocalize]
@@ -28,15 +28,21 @@ public enum DefaultFilesCopyOption
     [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_files_title))]
     Files = 0,
 
+    [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_file_path_title))]
+    Path = 3,
+
+    [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_file_content_title))]
+    Content = 4,
+
     [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_sort_name_asc_title))]
     NameAsc = 1,
 
     [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_sort_name_desc_title))]
     NameDesc = 2,
 
-    [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_file_path_title))]
-    Path = 3,
+    [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_sort_path_asc_as_text_title))]
+    FileNameTextAsc = 5,
 
-    [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_file_content_title))]
-    Content = 4
+    [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_sort_path_desc_as_text_title))]
+    FileNameTextDesc = 6,
 }
