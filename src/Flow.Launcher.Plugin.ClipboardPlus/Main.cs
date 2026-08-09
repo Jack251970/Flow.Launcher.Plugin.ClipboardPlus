@@ -2060,7 +2060,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
 
         var sortedFilePaths = ascend ? SortAscending(validFilePaths) : SortDescending(validFilePaths);
-        var fileNames = sortedFilePaths.Select(Path.GetFileName);
+        var fileNames = sortedFilePaths
+            .Select(p => Path.GetFileName(Path.TrimEndingDirectorySeparator(p)))
+            .Where(name => !string.IsNullOrEmpty(name));
         var text = string.Join(Environment.NewLine, fileNames);
         var exception = await RetryActionOnSTAThreadAsync(() => Clipboard.SetText(text));
         if (exception == null)
