@@ -778,29 +778,27 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         }
                     });
 
-                    if (filePaths.Length == 1)
+                    // Copy file content
+                    if (filePaths.Length == 1 && existingFilePaths.Length == 1)
                     {
-                        if (existingFilePaths.Length == 1)
+                        results.Add(new Result
                         {
-                            // Copy file content
-                            results.Add(new Result
+                            Title = Localize.flowlauncher_plugin_clipboardplus_copy_file_content_title(),
+                            SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_file_content_subtitle(),
+                            IcoPath = PathHelper.CopyIconPath,
+                            Glyph = ResourceHelper.CopyGlyph,
+                            Score = ScoreInterval10,
+                            AddSelectedCount = false,
+                            Action = (c) =>
                             {
-                                Title = Localize.flowlauncher_plugin_clipboardplus_copy_file_content_title(),
-                                SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_file_content_subtitle(),
-                                IcoPath = PathHelper.CopyIconPath,
-                                Glyph = ResourceHelper.CopyGlyph,
-                                Score = ScoreInterval10,
-                                AddSelectedCount = false,
-                                Action = (c) =>
-                                {
-                                    CopyFileContentToClipboard(clipboardDataPair, existingFilePaths);
-                                    return true;
-                                }
-                            });
-                        }
+                                CopyFileContentToClipboard(clipboardDataPair, existingFilePaths);
+                                return true;
+                            }
+                        });
                     }
+
                     // Copy file by sorting paths
-                    else
+                    if (filePaths.Length > 1)
                     {
                         results.AddRange(
                         [
