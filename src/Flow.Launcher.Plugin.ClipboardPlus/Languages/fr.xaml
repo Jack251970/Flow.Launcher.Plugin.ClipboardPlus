@@ -66,9 +66,9 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_asc_subtitle">Copie cette entrée en tant que fichiers en triant les chemins des fichiers par ordre croissant.</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_desc_title">Copier en tant que fichiers par chemins décroissants</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_name_desc_subtitle">Copie cette entrée en tant que fichiers en triant les chemins des fichiers par ordre décroissant.</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_asc_as_text_title">Copier les noms de fichiers comme texte par chemins croissants</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_asc_as_text_title">Copier les noms de fichiers par chemins croissants</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_asc_as_text_subtitle">Trie les chemins complets par ordre croissant, puis copie uniquement les noms de fichiers séparés par des sauts de ligne.</system:String>
-    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_desc_as_text_title">Copier les noms de fichiers comme texte par chemins décroissants</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_desc_as_text_title">Copier les noms de fichiers par chemins décroissants</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_desc_as_text_subtitle">Trie les chemins complets par ordre décroissant, puis copie uniquement les noms de fichiers séparés par des sauts de ligne.</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_title">Copier en tant que chemin de fichier</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_subtitle">Copie cette entrée en tant que chemin de fichier.</system:String>
