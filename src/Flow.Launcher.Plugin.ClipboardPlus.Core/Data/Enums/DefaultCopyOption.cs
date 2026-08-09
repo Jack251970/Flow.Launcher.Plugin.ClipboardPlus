@@ -40,9 +40,15 @@ public enum DefaultFilesCopyOption
     [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_sort_name_desc_title))]
     NameDesc = 2,
 
+    [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_sort_path_asc_as_path_title))]
+    PathTextAsc = 5,
+
+    [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_sort_path_desc_as_path_title))]
+    PathTextDesc = 6,
+
     [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_sort_path_asc_as_text_title))]
-    FileNameTextAsc = 5,
+    FileNameTextAsc = 7,
 
     [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_sort_path_desc_as_text_title))]
-    FileNameTextDesc = 6,
+    FileNameTextDesc = 8,
 }
