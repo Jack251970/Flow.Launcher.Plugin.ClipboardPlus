@@ -70,6 +70,10 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_asc_as_text_subtitle">Sort by full path in ascending order, then copy newline-separated file names without directories</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_desc_as_text_title">Copy file names by descending paths</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_desc_as_text_subtitle">Sort by full path in descending order, then copy newline-separated file names without directories</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_asc_as_path_title">Copy paths in ascending order</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_asc_as_path_subtitle">Sort by full path in ascending order, then copy newline-separated full paths</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_desc_as_path_title">Copy paths in descending order</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_desc_as_path_subtitle">Sort by full path in descending order, then copy newline-separated full paths</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_title">Copy as file path</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_subtitle">Copy this record as file path</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_title">Copy as file content</system:String>
