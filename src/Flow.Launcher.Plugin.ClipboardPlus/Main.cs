@@ -2140,8 +2140,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private async void CopyFileNamesToClipboard(ClipboardDataPair _, string[] filePaths)
     {
         var fileNames = filePaths
-            .Select(p => Path.GetFileName(Path.TrimEndingDirectorySeparator(p)))
-            .Where(name => !string.IsNullOrEmpty(name));
+            .Select(FileUtils.GetPathName);
         var text = string.Join(Environment.NewLine, fileNames);
 
         if (string.IsNullOrEmpty(text))

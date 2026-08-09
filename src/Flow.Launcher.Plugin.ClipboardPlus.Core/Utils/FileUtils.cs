@@ -7,6 +7,32 @@ namespace Flow.Launcher.Plugin.ClipboardPlus.Core.Utils;
 
 public static class FileUtils
 {
+    public static string GetPathName(string path)
+    {
+        var trimmedPath = Path.TrimEndingDirectorySeparator(path);
+        var name = Path.GetFileName(trimmedPath);
+        if (!string.IsNullOrEmpty(name))
+        {
+            return name;
+        }
+
+        var root = Path.GetPathRoot(path);
+        if (string.IsNullOrEmpty(root))
+        {
+            return trimmedPath;
+        }
+
+        var trimmedRoot = root.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        if (string.IsNullOrEmpty(trimmedRoot))
+        {
+            return root;
+        }
+
+        var separatorIndex = trimmedRoot.LastIndexOfAny([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar]);
+        var rootLabel = trimmedRoot[(separatorIndex + 1)..];
+        return string.IsNullOrEmpty(rootLabel) ? trimmedRoot : rootLabel;
+    }
+
     public static string SaveImageCache(ClipboardData clipboardData, string imageCachePath, string name)
     {
         if (clipboardData.Data is not BitmapSource img)
