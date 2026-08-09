@@ -101,6 +101,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private const int ScoreInterval10 = 10 * ScoreInterval;
     private const int ScoreInterval11 = 11 * ScoreInterval;
     private const int ScoreInterval12 = 12 * ScoreInterval;
+    private const int ScoreInterval13 = 13 * ScoreInterval;
 
     private const int TopActionScore1 = 2 * ClipboardData.MaximumScore + 4 * ScoreInterval;
     private const int TopActionScore2 = 2 * ClipboardData.MaximumScore + 3 * ScoreInterval;
@@ -625,7 +626,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_subtitle(),
                     IcoPath = PathHelper.CopyIconPath,
                     Glyph = ResourceHelper.CopyGlyph,
-                    Score = ScoreInterval9,
+                    Score = ScoreInterval13,
                     AddSelectedCount = false,
                     Action = (c) =>
                     {
