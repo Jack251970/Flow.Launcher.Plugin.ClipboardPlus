@@ -76,6 +76,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_desc_as_path_subtitle">Trie les chemins d’accès complets des fichiers par ordre décroissant, puis les copie en les séparant par des sauts de ligne.</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_title">Copier en tant que chemin de fichier</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_subtitle">Copie cette entrée en tant que chemin de fichier.</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_name_title">Copier en tant que nom de fichier</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_name_subtitle">Copie les noms de fichiers sans les dossiers, séparés par des sauts de ligne.</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_title">Copier en tant que contenu de fichier</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_subtitle">Copie cette entrée en tant que contenu de fichier.</system:String>
 

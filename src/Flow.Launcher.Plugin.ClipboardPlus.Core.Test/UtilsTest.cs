@@ -67,6 +67,16 @@ public class UtilsTest
     }
 
     [Theory]
+    [InlineData(@"C:\", "C:")]
+    [InlineData(@"\\server\share\", "share")]
+    [InlineData(@"C:\folder\", "folder")]
+    [InlineData(@"C:\folder\file.txt", "file.txt")]
+    public void TestGetPathName(string path, string expected)
+    {
+        Assert.Equal(expected, FileUtils.GetPathName(path));
+    }
+
+    [Theory]
     [InlineData("Test")]
     [InlineData("你好")]
     [InlineData("📌")]
