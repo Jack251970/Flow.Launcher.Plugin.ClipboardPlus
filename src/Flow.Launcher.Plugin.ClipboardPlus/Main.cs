@@ -102,6 +102,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private const int ScoreInterval11 = 11 * ScoreInterval;
     private const int ScoreInterval12 = 12 * ScoreInterval;
     private const int ScoreInterval13 = 13 * ScoreInterval;
+    private const int ScoreInterval14 = 14 * ScoreInterval;
 
     private const int TopActionScore1 = 2 * ClipboardData.MaximumScore + 4 * ScoreInterval;
     private const int TopActionScore2 = 2 * ClipboardData.MaximumScore + 3 * ScoreInterval;
@@ -626,7 +627,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_subtitle(),
                     IcoPath = PathHelper.CopyIconPath,
                     Glyph = ResourceHelper.CopyGlyph,
-                    Score = ScoreInterval13,
+                    Score = ScoreInterval14,
                     AddSelectedCount = false,
                     Action = (c) =>
                     {
@@ -732,7 +733,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_files_subtitle(),
                     IcoPath = PathHelper.CopyIconPath,
                     Glyph = ResourceHelper.CopyGlyph,
-                    Score = ScoreInterval12,
+                    Score = ScoreInterval13,
                     AddSelectedCount = false,
                     Action = (c) =>
                     {
@@ -751,11 +752,27 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_file_path_subtitle(),
                         IcoPath = PathHelper.CopyIconPath,
                         Glyph = ResourceHelper.CopyGlyph,
-                        Score = ScoreInterval11,
+                        Score = ScoreInterval12,
                         AddSelectedCount = false,
                         Action = (c) =>
                         {
                             CopyFilePathToClipboard(clipboardDataPair, filePaths);
+                            return true;
+                        }
+                    });
+
+                    // Copy file name
+                    results.Add(new Result
+                    {
+                        Title = Localize.flowlauncher_plugin_clipboardplus_copy_file_name_title(),
+                        SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_file_name_subtitle(),
+                        IcoPath = PathHelper.CopyIconPath,
+                        Glyph = ResourceHelper.CopyGlyph,
+                        Score = ScoreInterval11,
+                        AddSelectedCount = false,
+                        Action = (c) =>
+                        {
+                            CopyFileNamesToClipboard(clipboardDataPair, filePaths);
                             return true;
                         }
                     });
@@ -1836,6 +1853,17 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             CopyOriginallyToClipboard(clipboardDataPair);
                         }
                         break;
+                    case DefaultFilesCopyOption.FileName:
+                        var validObject2 = clipboardData.DataToValid();
+                        if (validObject2 is string[] filePaths2)
+                        {
+                            CopyFileNamesToClipboard(clipboardDataPair, filePaths2);
+                        }
+                        else
+                        {
+                            CopyOriginallyToClipboard(clipboardDataPair);
+                        }
+                        break;
                     case DefaultFilesCopyOption.NameAsc:
                         CopyBySortingNameToClipboard(clipboardDataPair, true);
                         break;
@@ -2084,7 +2112,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         return [.. strings.OrderByDescending(path => path, new NaturalStringComparer())];
     }
 
-    private async void CopyFileNamesBySortingPathToClipboard(ClipboardDataPair clipboardDataPair, bool ascend)
+    private void CopyFileNamesBySortingPathToClipboard(ClipboardDataPair clipboardDataPair, bool ascend)
     {
         var clipboardData = clipboardDataPair.ClipboardData;
         if (clipboardData.DataType != DataType.Files)
@@ -2100,10 +2128,23 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
 
         var sortedFilePaths = ascend ? SortAscending(validFilePaths) : SortDescending(validFilePaths);
-        var fileNames = sortedFilePaths
+        CopyFileNamesToClipboard(clipboardDataPair, sortedFilePaths);
+    }
+
+    private async void CopyFileNamesToClipboard(ClipboardDataPair clipboardDataPair, string[] filePaths)
+    {
+        var fileNames = filePaths
             .Select(p => Path.GetFileName(Path.TrimEndingDirectorySeparator(p)))
             .Where(name => !string.IsNullOrEmpty(name));
         var text = string.Join(Environment.NewLine, fileNames);
+
+        if (string.IsNullOrEmpty(text))
+        {
+            Context.ShowMsgError(Localize.flowlauncher_plugin_clipboardplus_fail(),
+                Localize.flowlauncher_plugin_clipboardplus_files_data_invalid());
+            return;
+        }
+
         var exception = await RetryActionOnSTAThreadAsync(() => Clipboard.SetText(text));
         if (exception == null)
         {

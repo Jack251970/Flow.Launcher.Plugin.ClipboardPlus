@@ -76,6 +76,8 @@
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_sort_path_desc_as_path_subtitle">按完整路徑下降排序後，以換行分隔複製完整檔案路徑</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_title">複製為文件路徑</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_path_subtitle">複製記録為文件路徑</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_name_title">複製為文件名</system:String>
+    <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_name_subtitle">複製不含目錄的文件名，多個文件名以換行分隔</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_title">複製為文件內容</system:String>
     <system:String x:Key="flowlauncher_plugin_clipboardplus_copy_file_content_subtitle">複製記録為文件內容</system:String>
 

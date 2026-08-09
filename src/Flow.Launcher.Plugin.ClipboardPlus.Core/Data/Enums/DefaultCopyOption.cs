@@ -31,6 +31,9 @@ public enum DefaultFilesCopyOption
     [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_file_path_title))]
     Path = 3,
 
+    [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_file_name_title))]
+    FileName = 9,
+
     [EnumLocalizeKey(nameof(Localize.flowlauncher_plugin_clipboardplus_copy_file_content_title))]
     Content = 4,
 
