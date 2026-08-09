@@ -737,27 +737,29 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     }
                 });
 
-                // Copy file path or content
                 var validObject = clipboardData.DataToValid();
-                if (validObject is string[] filePaths && filePaths.Length == 1)
+                if (validObject is string[] filePaths)
                 {
-                    results.AddRange(
-                    [
-                        new Result
+                    // Copy file path
+                    results.Add(new Result
+                    {
+                        Title = Localize.flowlauncher_plugin_clipboardplus_copy_file_path_title(),
+                        SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_file_path_subtitle(),
+                        IcoPath = PathHelper.CopyIconPath,
+                        Glyph = ResourceHelper.CopyGlyph,
+                        Score = ScoreInterval7,
+                        AddSelectedCount = false,
+                        Action = (c) =>
                         {
-                            Title = Localize.flowlauncher_plugin_clipboardplus_copy_file_path_title(),
-                            SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_file_path_subtitle(),
-                            IcoPath = PathHelper.CopyIconPath,
-                            Glyph = ResourceHelper.CopyGlyph,
-                            Score = ScoreInterval7,
-                            AddSelectedCount = false,
-                            Action = (c) =>
-                            {
-                                CopyFilePathToClipboard(clipboardDataPair, filePaths);
-                                return true;
-                            }
-                        },
-                        new Result
+                            CopyFilePathToClipboard(clipboardDataPair, filePaths);
+                            return true;
+                        }
+                    });
+
+                    // Copy file content
+                    if (filePaths.Length == 1)
+                    {
+                        results.Add(new Result
                         {
                             Title = Localize.flowlauncher_plugin_clipboardplus_copy_file_content_title(),
                             SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_file_content_subtitle(),
@@ -770,8 +772,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                                 CopyFileContentToClipboard(clipboardDataPair, filePaths);
                                 return true;
                             }
-                        }
-                    ]);
+                        });
+                    }
                 }
 
                 // Copy file by sorting paths
@@ -1792,8 +1794,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         break;
                     case DefaultFilesCopyOption.Path:
                         var validObject = clipboardData.DataToValid();
-                        var filePaths = (validObject as string[])!;
-                        if (filePaths.Length == 1)
+                        if (validObject is string[] filePaths)
                         {
                             CopyFilePathToClipboard(clipboardDataPair, filePaths);
                         }
@@ -2135,12 +2136,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private async void CopyFilePathToClipboard(ClipboardDataPair clipboardDataPair, string[] filePaths)
     {
         var clipboardData = clipboardDataPair.ClipboardData;
-        var filePath = filePaths.FirstOrDefault();
-        if (File.Exists(filePath))
+        if (filePaths.Length > 0 && filePaths.All(FileUtils.Exists))
         {
+            var filePathText = string.Join(Environment.NewLine, filePaths);
             var exception = await RetryActionOnSTAThreadAsync(() =>
             {
-                Clipboard.SetText(filePath);
+                Clipboard.SetText(filePathText);
             });
             if (exception == null)
             {
