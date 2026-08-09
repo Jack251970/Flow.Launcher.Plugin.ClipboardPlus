@@ -1813,24 +1813,6 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     case DefaultFilesCopyOption.Files:
                         CopyOriginallyToClipboard(clipboardDataPair);
                         break;
-                    case DefaultFilesCopyOption.NameAsc:
-                        CopyBySortingNameToClipboard(clipboardDataPair, true);
-                        break;
-                    case DefaultFilesCopyOption.NameDesc:
-                        CopyBySortingNameToClipboard(clipboardDataPair, false);
-                        break;
-                    case DefaultFilesCopyOption.FileNameTextAsc:
-                        CopyFileNamesBySortingPathToClipboard(clipboardDataPair, true);
-                        break;
-                    case DefaultFilesCopyOption.FileNameTextDesc:
-                        CopyFileNamesBySortingPathToClipboard(clipboardDataPair, false);
-                        break;
-                    case DefaultFilesCopyOption.PathTextAsc:
-                        CopyFilePathsBySortingPathToClipboard(clipboardDataPair, true);
-                        break;
-                    case DefaultFilesCopyOption.PathTextDesc:
-                        CopyFilePathsBySortingPathToClipboard(clipboardDataPair, false);
-                        break;
                     case DefaultFilesCopyOption.Path:
                         var validObject = clipboardData.DataToValid();
                         if (validObject is string[] filePaths)
@@ -1853,6 +1835,24 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         {
                             CopyOriginallyToClipboard(clipboardDataPair);
                         }
+                        break;
+                    case DefaultFilesCopyOption.NameAsc:
+                        CopyBySortingNameToClipboard(clipboardDataPair, true);
+                        break;
+                    case DefaultFilesCopyOption.NameDesc:
+                        CopyBySortingNameToClipboard(clipboardDataPair, false);
+                        break;
+                    case DefaultFilesCopyOption.PathTextAsc:
+                        CopyFilePathsBySortingPathToClipboard(clipboardDataPair, true);
+                        break;
+                    case DefaultFilesCopyOption.PathTextDesc:
+                        CopyFilePathsBySortingPathToClipboard(clipboardDataPair, false);
+                        break;
+                    case DefaultFilesCopyOption.FileNameTextAsc:
+                        CopyFileNamesBySortingPathToClipboard(clipboardDataPair, true);
+                        break;
+                    case DefaultFilesCopyOption.FileNameTextDesc:
+                        CopyFileNamesBySortingPathToClipboard(clipboardDataPair, false);
                         break;
                     default:
                         break;
