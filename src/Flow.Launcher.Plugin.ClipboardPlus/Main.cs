@@ -721,53 +721,23 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 );
                 break;
             case DataType.Files:
-                results.AddRange(
-                    [
-                        new Result
-                        {
-                            Title = Localize.flowlauncher_plugin_clipboardplus_copy_files_title(),
-                            SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_files_subtitle(),
-                            IcoPath = PathHelper.CopyIconPath,
-                            Glyph = ResourceHelper.CopyGlyph,
-                            Score = ScoreInterval8,
-                            AddSelectedCount = false,
-                            Action = (c) =>
-                            {
-                                CopyOriginallyToClipboard(clipboardDataPair);
-                                return true;
-                            }
-                        },
-                        new Result
-                        {
-                            Title = Localize.flowlauncher_plugin_clipboardplus_copy_sort_name_asc_title(),
-                            SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_sort_name_asc_subtitle(),
-                            IcoPath = PathHelper.CopyIconPath,
-                            Glyph = ResourceHelper.CopyGlyph,
-                            Score = ScoreInterval7,
-                            AddSelectedCount = false,
-                            Action = (c) =>
-                            {
-                                CopyBySortingNameToClipboard(clipboardDataPair, true);
-                                return true;
-                            }
-                        },
-                        new Result
-                        {
-                            Title = Localize.flowlauncher_plugin_clipboardplus_copy_sort_name_desc_title(),
-                            SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_sort_name_desc_subtitle(),
-                            IcoPath = PathHelper.CopyIconPath,
-                            Glyph = ResourceHelper.CopyGlyph,
-                            Score = ScoreInterval6,
-                            AddSelectedCount = false,
-                            Action = (c) =>
-                            {
-                                CopyBySortingNameToClipboard(clipboardDataPair, false);
-                                return true;
-                            }
-                        }
-                    ]
-                );
+                // Copy as files
+                results.Add(new Result
+                {
+                    Title = Localize.flowlauncher_plugin_clipboardplus_copy_files_title(),
+                    SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_files_subtitle(),
+                    IcoPath = PathHelper.CopyIconPath,
+                    Glyph = ResourceHelper.CopyGlyph,
+                    Score = ScoreInterval8,
+                    AddSelectedCount = false,
+                    Action = (c) =>
+                    {
+                        CopyOriginallyToClipboard(clipboardDataPair);
+                        return true;
+                    }
+                });
 
+                // Copy file path or content
                 var validObject = clipboardData.DataToValid();
                 if (validObject is string[] filePaths && filePaths.Length == 1)
                 {
@@ -779,7 +749,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_file_path_subtitle(),
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
-                            Score = ScoreInterval5,
+                            Score = ScoreInterval7,
                             AddSelectedCount = false,
                             Action = (c) =>
                             {
@@ -793,7 +763,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                             SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_file_content_subtitle(),
                             IcoPath = PathHelper.CopyIconPath,
                             Glyph = ResourceHelper.CopyGlyph,
-                            Score = ScoreInterval4,
+                            Score = ScoreInterval6,
                             AddSelectedCount = false,
                             Action = (c) =>
                             {
@@ -803,6 +773,68 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         }
                     ]);
                 }
+
+                // Copy file by sorting paths
+                results.AddRange(
+                    [
+                        new Result
+                        {
+                            Title = Localize.flowlauncher_plugin_clipboardplus_copy_sort_name_asc_title(),
+                            SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_sort_name_asc_subtitle(),
+                            IcoPath = PathHelper.CopyIconPath,
+                            Glyph = ResourceHelper.CopyGlyph,
+                            Score = ScoreInterval5,
+                            AddSelectedCount = false,
+                            Action = (c) =>
+                            {
+                                CopyBySortingNameToClipboard(clipboardDataPair, true);
+                                return true;
+                            }
+                        },
+                        new Result
+                        {
+                            Title = Localize.flowlauncher_plugin_clipboardplus_copy_sort_name_desc_title(),
+                            SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_sort_name_desc_subtitle(),
+                            IcoPath = PathHelper.CopyIconPath,
+                            Glyph = ResourceHelper.CopyGlyph,
+                            Score = ScoreInterval4,
+                            AddSelectedCount = false,
+                            Action = (c) =>
+                            {
+                                CopyBySortingNameToClipboard(clipboardDataPair, false);
+                                return true;
+                            }
+                        },
+                        new Result
+                        {
+                            Title = Localize.flowlauncher_plugin_clipboardplus_copy_sort_path_asc_as_text_title(),
+                            SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_sort_path_asc_as_text_subtitle(),
+                            IcoPath = PathHelper.CopyIconPath,
+                            Glyph = ResourceHelper.CopyGlyph,
+                            Score = ScoreInterval3,
+                            AddSelectedCount = false,
+                            Action = (c) =>
+                            {
+                                CopyFileNamesBySortingPathToClipboard(clipboardDataPair, true);
+                                return true;
+                            }
+                        },
+                        new Result
+                        {
+                            Title = Localize.flowlauncher_plugin_clipboardplus_copy_sort_path_desc_as_text_title(),
+                            SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_sort_path_desc_as_text_subtitle(),
+                            IcoPath = PathHelper.CopyIconPath,
+                            Glyph = ResourceHelper.CopyGlyph,
+                            Score = ScoreInterval2,
+                            AddSelectedCount = false,
+                            Action = (c) =>
+                            {
+                                CopyFileNamesBySortingPathToClipboard(clipboardDataPair, false);
+                                return true;
+                            }
+                        }
+                    ]
+                );
                 break;
             default:
                 break;
@@ -1752,6 +1784,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     case DefaultFilesCopyOption.NameDesc:
                         CopyBySortingNameToClipboard(clipboardDataPair, false);
                         break;
+                    case DefaultFilesCopyOption.FileNameTextAsc:
+                        CopyFileNamesBySortingPathToClipboard(clipboardDataPair, true);
+                        break;
+                    case DefaultFilesCopyOption.FileNameTextDesc:
+                        CopyFileNamesBySortingPathToClipboard(clipboardDataPair, false);
+                        break;
                     case DefaultFilesCopyOption.Path:
                         var validObject = clipboardData.DataToValid();
                         var filePaths = (validObject as string[])!;
@@ -2004,6 +2042,44 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
     private static string[] SortDescending(string[] strings)
     {
         return [.. strings.OrderByDescending(path => path, new NaturalStringComparer())];
+    }
+
+    private async void CopyFileNamesBySortingPathToClipboard(ClipboardDataPair clipboardDataPair, bool ascend)
+    {
+        var clipboardData = clipboardDataPair.ClipboardData;
+        if (clipboardData.DataType != DataType.Files)
+        {
+            return;
+        }
+
+        if (clipboardData.DataToValid() is not string[] validFilePaths)
+        {
+            Context.ShowMsgError(Localize.flowlauncher_plugin_clipboardplus_fail(),
+                Localize.flowlauncher_plugin_clipboardplus_files_data_invalid());
+            return;
+        }
+
+        var sortedFilePaths = ascend ? SortAscending(validFilePaths) : SortDescending(validFilePaths);
+        var fileNames = sortedFilePaths
+            .Select(p => Path.GetFileName(Path.TrimEndingDirectorySeparator(p)))
+            .Where(name => !string.IsNullOrEmpty(name));
+        var text = string.Join(Environment.NewLine, fileNames);
+        var exception = await RetryActionOnSTAThreadAsync(() => Clipboard.SetText(text));
+        if (exception == null)
+        {
+            if (Settings.ShowNotification)
+            {
+                Context.ShowMsg(Localize.flowlauncher_plugin_clipboardplus_success(),
+                    Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard() +
+                    StringUtils.CompressString(text, StringMaxLength));
+            }
+        }
+        else
+        {
+            Context.LogException(ClassName, "Copy file names as text to clipboard failed", exception);
+            Context.ShowMsgError(Localize.flowlauncher_plugin_clipboardplus_fail(),
+                Localize.flowlauncher_plugin_clipboardplus_copy_to_clipboard_exception());
+        }
     }
 
     public class NaturalStringComparer : IComparer<string>
