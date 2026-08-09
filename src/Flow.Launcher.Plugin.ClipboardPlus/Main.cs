@@ -745,6 +745,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                 var validObject = clipboardData.DataToValid();
                 if (validObject is string[] filePaths)
                 {
+                    var existingFilePaths = filePaths.Where(FileUtils.Exists).ToArray();
+
                     // Copy file path
                     results.Add(new Result
                     {
@@ -777,23 +779,26 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                         }
                     });
 
-                    // Copy file content
                     if (filePaths.Length == 1)
                     {
-                        results.Add(new Result
+                        if (existingFilePaths.Length == 1)
                         {
-                            Title = Localize.flowlauncher_plugin_clipboardplus_copy_file_content_title(),
-                            SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_file_content_subtitle(),
-                            IcoPath = PathHelper.CopyIconPath,
-                            Glyph = ResourceHelper.CopyGlyph,
-                            Score = ScoreInterval10,
-                            AddSelectedCount = false,
-                            Action = (c) =>
+                            // Copy file content
+                            results.Add(new Result
                             {
-                                CopyFileContentToClipboard(clipboardDataPair, filePaths);
-                                return true;
-                            }
-                        });
+                                Title = Localize.flowlauncher_plugin_clipboardplus_copy_file_content_title(),
+                                SubTitle = Localize.flowlauncher_plugin_clipboardplus_copy_file_content_subtitle(),
+                                IcoPath = PathHelper.CopyIconPath,
+                                Glyph = ResourceHelper.CopyGlyph,
+                                Score = ScoreInterval10,
+                                AddSelectedCount = false,
+                                Action = (c) =>
+                                {
+                                    CopyFileContentToClipboard(clipboardDataPair, existingFilePaths);
+                                    return true;
+                                }
+                            });
+                        }
                     }
                     // Copy file by sorting paths
                     else
@@ -1844,7 +1849,8 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
                     case DefaultFilesCopyOption.Content:
                         var validObject1 = clipboardData.DataToValid();
                         var filePaths1 = (validObject1 as string[])!;
-                        if (filePaths1.Length == 1)
+                        var existingFilePaths = filePaths1.Where(FileUtils.Exists).ToArray();
+                        if (filePaths1.Length == 1 && existingFilePaths.Length == 1)
                         {
                             CopyFileContentToClipboard(clipboardDataPair, filePaths1);
                         }

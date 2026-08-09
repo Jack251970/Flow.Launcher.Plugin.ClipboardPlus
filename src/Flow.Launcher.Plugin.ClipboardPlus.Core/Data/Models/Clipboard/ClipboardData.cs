@@ -258,7 +258,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     /// <returns>
     /// If data type is Text, return the data as valid string.
     /// If data type is Image, return the data as BitmapSource.
-    /// If data type is Files, return the data as string[] with valid files.
+    /// If data type is Files, return the data as string[].
     /// Else return null.
     /// </returns>
     public readonly object? DataToValid()
@@ -290,12 +290,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
                 {
                     break;
                 }
-                var validFiles = filesToCopy.Where(FileUtils.Exists).ToArray();
-                if (validFiles.Length == 0)
-                {
-                    break;
-                }
-                return validFiles;
+                return filesToCopy;
             default:
                 break;
         }
