@@ -1,3 +1,4 @@
+// SqliteDatabase.cs
 // Copyright (c) 2025 Jack251970
 // Licensed under the Apache License. See the LICENSE.
 
@@ -387,20 +388,19 @@ public class SqliteDatabase : IAsyncDisposable
 
         await ProcessTaskQueueAsync(async () =>
         {
+            // Keep each asset and record together and commit the whole batch once.
+            // Disposal rolls back the batch if conversion or insertion fails.
+            using var transaction = Connection.BeginTransaction();
             foreach (var data in datas)
             {
-                // insert asset
-                var assets = new List<Asset>
-                {
-                    Asset.FromClipboardData(data, needEncryptData)
-                };
-                await Connection.ExecuteAsync(SqlInsertAsset, assets);
+                var asset = Asset.FromClipboardData(data, needEncryptData);
+                await Connection.ExecuteAsync(SqlInsertAsset, asset, transaction);
 
-                // insert record
-                // note: you must insert record after data
+                // The asset must exist before its record (foreign key).
                 var record = Record.FromClipboardData(data, needEncryptData);
-                await Connection.ExecuteAsync(SqlInsertRecord, record);
+                await Connection.ExecuteAsync(SqlInsertRecord, record, transaction);
             }
+            transaction.Commit();
         });
     }
 
