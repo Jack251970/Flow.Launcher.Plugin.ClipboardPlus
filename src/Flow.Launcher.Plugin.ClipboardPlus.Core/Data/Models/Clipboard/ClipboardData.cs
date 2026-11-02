@@ -64,6 +64,9 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     /// </summary>
     public readonly string DataMd5 { get; }
 
+    // A hash can only be reused if the bitmap was already frozen when hashed.
+    private readonly bool CanReuseImageHash;
+
     /// <summary>
     /// Type of the data.
     /// </summary>
@@ -163,9 +166,17 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         NeedEncryptData = encryptData;
         var serializedData = DataToString(false);
         DataMd5 = StringUtils.GetMd5(serializedData!);
-        encodedImage = dataType == DataType.Image && data is BitmapSource { IsFrozen: true }
-            ? serializedData
-            : null;
+        CanReuseImageHash = dataType == DataType.Image && data is BitmapSource { IsFrozen: true };
+        encodedImage = CanReuseImageHash ? serializedData : null;
+    }
+
+    private ClipboardData(object? data, DataType dataType, bool encryptData, string? reusableImageHash)
+    {
+        Data = data;
+        DataType = dataType;
+        NeedEncryptData = encryptData;
+        CanReuseImageHash = reusableImageHash is not null;
+        DataMd5 = reusableImageHash ?? StringUtils.GetMd5(DataToString(false)!);
     }
 
     public ClipboardData()
@@ -174,6 +185,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         DataType = DataType.Other;
         NeedEncryptData = false;
         DataMd5 = string.Empty;
+        CanReuseImageHash = false;
     }
 
     #endregion
@@ -610,7 +622,9 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
 
     public readonly ClipboardData Clone(bool pinned)
     {
-        return new ClipboardData(Data, DataType, EncryptData)
+        // Mutable images may have changed since construction, even if frozen later.
+        // Reuse only the hash computed from an image that was already immutable.
+        return new ClipboardData(Data, DataType, EncryptData, CanReuseImageHash ? DataMd5 : null)
         {
             HashId = HashId,
             SenderApp = SenderApp,
