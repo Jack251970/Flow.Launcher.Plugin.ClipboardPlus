@@ -1,4 +1,5 @@
-﻿using System;
+// ClipboardData.cs
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -149,12 +150,22 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     #region Constructors
 
     public ClipboardData(object? data, DataType dataType, bool encryptData)
+        : this(data, dataType, encryptData, out _)
+    {
+    }
+
+    // The caller may reuse the immutable image representation for immediate persistence.
+    // It is returned separately and is never retained by the history record.
+    internal ClipboardData(object? data, DataType dataType, bool encryptData, out string? encodedImage)
     {
         Data = data;
         DataType = dataType;
         NeedEncryptData = encryptData;
-        // We need data & data type & encrypt data to calculate the data MD5.
-        DataMd5 = StringUtils.GetMd5(DataToString(false)!);
+        var serializedData = DataToString(false);
+        DataMd5 = StringUtils.GetMd5(serializedData!);
+        encodedImage = dataType == DataType.Image && data is BitmapSource { IsFrozen: true }
+            ? serializedData
+            : null;
     }
 
     public ClipboardData()

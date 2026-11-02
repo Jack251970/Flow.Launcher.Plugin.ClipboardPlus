@@ -357,22 +357,43 @@ public class SqliteDatabase : IAsyncDisposable
     public async Task AddOneRecordAsync(ClipboardData data, bool needEncryptData)
 #endif
     {
+#if DEBUG
+        await AddOneRecordCoreAsync(data, needEncryptData, null, action);
+#else
+        await AddOneRecordCoreAsync(data, needEncryptData, null);
+#endif
+    }
+
+    // Only a frozen image captured and hashed by ClipboardData may use this path.
+    // The queued operation owns the encoded string until the write completes.
+    internal Task AddOneRecordWithEncodedImageAsync(ClipboardData data, string encodedImage)
+    {
+        if (data.DataType != DataType.Image || data.Data is not System.Windows.Media.Imaging.BitmapSource { IsFrozen: true })
+        {
+            throw new ArgumentException("An immutable image record is required.", nameof(data));
+        }
+        return AddOneRecordCoreAsync(data, true, encodedImage);
+    }
+
+    private async Task AddOneRecordCoreAsync(ClipboardData data, bool needEncryptData, string? encodedImage
+#if DEBUG
+        , Action<string>? action = null
+#endif
+    )
+    {
         await ProcessTaskQueueAsync(async () =>
         {
-            // insert asset
-            var assets = new List<Asset>
-            {
-                Asset.FromClipboardData(data, needEncryptData)
-            };
-            await Connection.ExecuteAsync(SqlInsertAsset, assets);
+            var asset = encodedImage is null
+                ? Asset.FromClipboardData(data, needEncryptData)
+                : new Asset { DataB64 = encodedImage, PlainTextB64 = data.PlainTextToString(needEncryptData)!, HashId = data.HashId };
+            await Connection.ExecuteAsync(SqlInsertAsset, asset);
 
-            // insert record
-            // note: you must insert record after data
+            // The asset must be inserted before its record.
             var record = Record.FromClipboardData(data, needEncryptData);
 #if DEBUG
             if (record.DataType == (int)DataType.Files && record.EncryptData == true)
             {
-                action?.Invoke($"{data}\n{record}\n{assets[0]}");
+                action?.Invoke($"{data}\n{record}\n{asset}");
             }
 #endif
             await Connection.ExecuteAsync(SqlInsertRecord, record);
