@@ -1,3 +1,4 @@
+// Main.cs
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -1075,12 +1076,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         try
         {
             // get clipboard data
-            var clipboardData = GetClipboardDataItem(e.Content, e.DataType, StringUtils.GetGuid(), DateTime.Now, e.SourceApplication, clipboardMonitor.ClipboardText, clipboardMonitor.ClipboardRtfText);
+            var clipboardData = GetClipboardDataItem(e.Content, e.DataType, StringUtils.GetGuid(), DateTime.Now, e.SourceApplication, clipboardMonitor.ClipboardText, clipboardMonitor.ClipboardRtfText, out var encodedImage);
 
             // add clipboard data
             if (!clipboardData.IsNull())
             {
-                AddClipboardDataItem(clipboardData);
+                AddClipboardDataItem(clipboardData, encodedImage);
             }
         }
         finally
@@ -1089,8 +1090,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         }
     }
 
-    public ClipboardData GetClipboardDataItem(object? content, DataType dataType, string hashId, DateTime createTime, SourceApplication source, string clipboardText, string clipboardRtfText)
+    public ClipboardData GetClipboardDataItem(object? content, DataType dataType, string hashId, DateTime createTime, SourceApplication source, string clipboardText, string clipboardRtfText) =>
+        GetClipboardDataItem(content, dataType, hashId, createTime, source, clipboardText, clipboardRtfText, out _);
+
+    private ClipboardData GetClipboardDataItem(object? content, DataType dataType, string hashId, DateTime createTime, SourceApplication source, string clipboardText, string clipboardRtfText, out string? encodedImage)
     {
+        encodedImage = null;
         if (content is null || dataType == DataType.Other)
         {
             return ClipboardData.NULL;
@@ -1103,7 +1108,7 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             Settings.KeepText && dataType == DataType.RichText ||
             Settings.KeepImages && dataType == DataType.Image ||
             Settings.KeepFiles && dataType == DataType.Files);
-        var clipboardData = new ClipboardData(content, dataType, Settings.EncryptData)
+        var clipboardData = new ClipboardData(content, dataType, Settings.EncryptData, out encodedImage)
         {
             HashId = hashId,
             SenderApp = source.Name,
@@ -1115,9 +1120,12 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
             Saved = saved
         };
 
+        if (!saved) encodedImage = null;
+
         // filter duplicate data
         if (RecordsList.Count != 0 && RecordsList.First().ClipboardData.DataEquals(clipboardData))
         {
+            encodedImage = null;
             return ClipboardData.NULL;
         }
 
@@ -1147,7 +1155,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         return clipboardData;
     }
 
-    private void AddClipboardDataItem(ClipboardData clipboardData)
+    private void AddClipboardDataItem(ClipboardData clipboardData) => AddClipboardDataItem(clipboardData, null);
+
+    private void AddClipboardDataItem(ClipboardData clipboardData, string? encodedImage)
     {
         // add to list and database if no repeat
         RecordsList.AddFirst(new ClipboardDataPair()
@@ -1162,7 +1172,9 @@ public class ClipboardPlus : IAsyncPlugin, IAsyncReloadable, IContextMenu, IPlug
         // save to database if needed
         if (clipboardData.Saved)
         {
-            _ = Database.AddOneRecordAsync(clipboardData, true);  // no need to wait
+            _ = encodedImage is null
+                ? Database.AddOneRecordAsync(clipboardData, true)
+                : Database.AddOneRecordWithEncodedImageAsync(clipboardData, encodedImage);
             Context.LogDebug(ClassName, $"Record {clipboardData.HashId} added to list and database");
         }
         else

@@ -1,4 +1,5 @@
-﻿using System;
+// ClipboardData.cs
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -62,6 +63,9 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     /// MD5 hash of the data, also used to identify the data.
     /// </summary>
     public readonly string DataMd5 { get; }
+
+    // A hash can only be reused if the bitmap was already frozen when hashed.
+    private readonly bool CanReuseImageHash;
 
     /// <summary>
     /// Type of the data.
@@ -149,12 +153,30 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
     #region Constructors
 
     public ClipboardData(object? data, DataType dataType, bool encryptData)
+        : this(data, dataType, encryptData, out _)
+    {
+    }
+
+    // The caller may reuse the immutable image representation for immediate persistence.
+    // It is returned separately and is never retained by the history record.
+    internal ClipboardData(object? data, DataType dataType, bool encryptData, out string? encodedImage)
     {
         Data = data;
         DataType = dataType;
         NeedEncryptData = encryptData;
-        // We need data & data type & encrypt data to calculate the data MD5.
-        DataMd5 = StringUtils.GetMd5(DataToString(false)!);
+        var serializedData = DataToString(false);
+        DataMd5 = StringUtils.GetMd5(serializedData!);
+        CanReuseImageHash = dataType == DataType.Image && data is BitmapSource { IsFrozen: true };
+        encodedImage = CanReuseImageHash ? serializedData : null;
+    }
+
+    private ClipboardData(object? data, DataType dataType, bool encryptData, string? reusableImageHash)
+    {
+        Data = data;
+        DataType = dataType;
+        NeedEncryptData = encryptData;
+        CanReuseImageHash = reusableImageHash is not null;
+        DataMd5 = reusableImageHash ?? StringUtils.GetMd5(DataToString(false)!);
     }
 
     public ClipboardData()
@@ -163,6 +185,7 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
         DataType = DataType.Other;
         NeedEncryptData = false;
         DataMd5 = string.Empty;
+        CanReuseImageHash = false;
     }
 
     #endregion
@@ -599,7 +622,9 @@ public partial struct ClipboardData : IEquatable<ClipboardData>, IDisposable
 
     public readonly ClipboardData Clone(bool pinned)
     {
-        return new ClipboardData(Data, DataType, EncryptData)
+        // Mutable images may have changed since construction, even if frozen later.
+        // Reuse only the hash computed from an image that was already immutable.
+        return new ClipboardData(Data, DataType, EncryptData, CanReuseImageHash ? DataMd5 : null)
         {
             HashId = HashId,
             SenderApp = SenderApp,
