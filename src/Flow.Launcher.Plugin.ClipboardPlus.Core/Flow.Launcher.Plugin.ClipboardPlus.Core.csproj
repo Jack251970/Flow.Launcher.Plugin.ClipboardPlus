@@ -22,7 +22,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="Dapper" Version="2.1.66" />
-    <PackageReference Include="Flow.Launcher.Localization" Version="0.0.6" />
+    <PackageReference Include="Flow.Launcher.Localization" Version="0.0.7" />
     <PackageReference Include="Flow.Launcher.Plugin" Version="5.2.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.3" />
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.269">
