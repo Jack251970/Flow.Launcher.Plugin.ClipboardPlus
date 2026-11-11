@@ -26,7 +26,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-    <PackageReference Include="Flow.Launcher.Localization" Version="0.0.6" />
+    <PackageReference Include="Flow.Launcher.Localization" Version="0.0.7" />
     <PackageReference Include="Flow.Launcher.Plugin" Version="5.2.0" />
 		<PackageReference Include="iNKORE.UI.WPF.Modern" Version="0.10.1">
 			<PrivateAssets>all</PrivateAssets>
